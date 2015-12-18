@@ -1,5 +1,6 @@
 package com.nhl.bootique.jdbc;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -16,8 +17,16 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 	private ConcurrentMap<String, DataSource> dataSources;
 
 	public LazyDataSourceFactory(Map<String, Map<String, String>> configs) {
-		this.configs = configs;
+		this.configs = Objects.requireNonNull(configs);
 		this.dataSources = new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * @since 0.6
+	 */
+	@Override
+	public Collection<String> allNames() {
+		return configs.keySet();
 	}
 
 	@Override

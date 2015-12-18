@@ -10,7 +10,7 @@
 
 	<groupId>com.nhl.bootique.jdbc</groupId>
 	<artifactId>bootique-jdbc</artifactId>
-	<version>0.6-SNAPSHOT</version>
+	<version>0.6</version>
 	<packaging>jar</packaging>
 
 	<name>JDBC Integration Bundle for Bootique</name>
@@ -23,7 +23,7 @@
 
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique-jdbc</developerConnection>
-		<tag>HEAD</tag>
+		<tag>bootique-jdbc-0.6</tag>
 	</scm>
 
 	<repositories>

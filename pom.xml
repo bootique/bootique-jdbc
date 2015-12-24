@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.nhl.bootique.parent</groupId>
 		<artifactId>bootique-parent</artifactId>
-		<version>0.6</version>
+		<version>0.9</version>
 	</parent>
 
 	<groupId>com.nhl.bootique.jdbc</groupId>
@@ -17,7 +17,7 @@
 	<description>Provides JDBC integration with Bootique</description>
 
 	<properties>
-		<bootique-version>0.9</bootique-version>
+		<bootique-version>0.10</bootique-version>
 		<tomcat-version>8.0.30</tomcat-version>
 	</properties>
 

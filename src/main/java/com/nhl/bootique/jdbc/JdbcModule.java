@@ -2,10 +2,10 @@ package com.nhl.bootique.jdbc;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Provides;
 import com.nhl.bootique.ConfigModule;
-import com.nhl.bootique.factory.FactoryConfigurationService;
+import com.nhl.bootique.config.ConfigurationFactory;
+import com.nhl.bootique.type.TypeRef;
 
 public class JdbcModule extends ConfigModule {
 
@@ -17,9 +17,9 @@ public class JdbcModule extends ConfigModule {
 	}
 
 	@Provides
-	public DataSourceFactory createDataSource(FactoryConfigurationService configService) {
-		Map<String, Map<String, String>> configs = configService
-				.factory(new TypeReference<Map<String, Map<String, String>>>() {
+	public DataSourceFactory createDataSource(ConfigurationFactory configFactory) {
+		Map<String, Map<String, String>> configs = configFactory
+				.config(new TypeRef<Map<String, Map<String, String>>>() {
 				}, configPrefix);
 		return new LazyDataSourceFactory(configs);
 	}

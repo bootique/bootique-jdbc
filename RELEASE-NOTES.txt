@@ -1,3 +1,7 @@
+0.7:
+
+#2 Adding Shutdown hook
+
 0.6:
 
- DataSourceFactory.allNames() method #1 
+#1 DataSourceFactory.allNames() method

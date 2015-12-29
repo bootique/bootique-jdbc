@@ -14,11 +14,15 @@ import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 public class LazyDataSourceFactory implements DataSourceFactory {
 
 	private Map<String, Map<String, String>> configs;
-	private ConcurrentMap<String, DataSource> dataSources;
+	private ConcurrentMap<String, org.apache.tomcat.jdbc.pool.DataSource> dataSources;
 
 	public LazyDataSourceFactory(Map<String, Map<String, String>> configs) {
 		this.configs = Objects.requireNonNull(configs);
 		this.dataSources = new ConcurrentHashMap<>();
+	}
+
+	void shutdown() {
+		dataSources.values().forEach(d -> d.close());
 	}
 
 	/**

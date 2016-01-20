@@ -1,4 +1,8 @@
-0.7:
+0.9:
+
+#3 Integrate with bootique-metrics
+
+0.8:
 
 #2 Adding Shutdown hook
 

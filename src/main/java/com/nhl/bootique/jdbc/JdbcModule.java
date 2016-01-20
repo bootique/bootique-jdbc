@@ -2,6 +2,7 @@ package com.nhl.bootique.jdbc;
 
 import java.util.Map;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Provides;
 import com.nhl.bootique.ConfigModule;
 import com.nhl.bootique.config.ConfigurationFactory;
@@ -19,18 +20,19 @@ public class JdbcModule extends ConfigModule {
 	}
 
 	@Provides
-	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger, ShutdownManager shutdownManager) {
+	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
+			MetricRegistry metricRegistry, ShutdownManager shutdownManager) {
 		Map<String, Map<String, String>> configs = configFactory
 				.config(new TypeRef<Map<String, Map<String, String>>>() {
 				}, configPrefix);
-		
-		LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);
-		
+
+		LazyDataSourceFactory factory = new LazyDataSourceFactory(configs, metricRegistry);
+
 		shutdownManager.addShutdownHook(() -> {
 			bootLogger.trace(() -> "shutting down DataSourceFactory...");
 			factory.shutdown();
 		});
-		
+
 		return factory;
 	}
 }

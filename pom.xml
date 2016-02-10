@@ -28,6 +28,28 @@
 		<url>https://github.com/nhl/bootique-jdbc</url>
 		<tag>HEAD</tag>
 	</scm>
+	
+	<distributionManagement>
+		<!-- TODO: move this to parent? -->
+		<snapshotRepository>
+			<id>bootique-snapshots</id>
+			<url>http://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<repositories>
+		<!-- TODO: move this to parent? -->
+		<repository>
+			<id>bootique-snapshots</id>
+			<url>http://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 		<dependencies>

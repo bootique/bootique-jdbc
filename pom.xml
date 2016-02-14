@@ -18,7 +18,7 @@
 	<description>Provides JDBC integration with Bootique</description>
 
 	<properties>
-		<bootique-version>0.11</bootique-version>
+		<bootique-version>0.12</bootique-version>
 		<bootique-metrics-version>0.5</bootique-metrics-version>
 		<tomcat-version>8.0.30</tomcat-version>
 	</properties>

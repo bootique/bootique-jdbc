@@ -9,87 +9,25 @@
 	</parent>
 
 	<groupId>com.nhl.bootique.jdbc</groupId>
-	<artifactId>bootique-jdbc</artifactId>
+	<artifactId>bootique-jdbc-parent</artifactId>
 	<version>0.10-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
-	<name>JDBC Integration Bundle for Bootique</name>
-	<description>Provides JDBC integration with Bootique</description>
+	<name>Parent of JDBC Integration Bundle for Bootique</name>
+	<description>
+		Parent POM of JDBC and instrumented JDBC Bootique modules.
+	</description>
 
-	<properties>
-		<bootique-version>0.12</bootique-version>
-		<bootique-metrics-version>0.5</bootique-metrics-version>
-		<tomcat-version>8.0.30</tomcat-version>
-	</properties>
+	<modules>
+		<module>bootique-jdbc</module>
+		<module>bootique-jdbc-instrumented</module>
+	</modules>
 
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique-jdbc</developerConnection>
 		<url>https://github.com/nhl/bootique-jdbc</url>
 		<tag>HEAD</tag>
 	</scm>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.nhl.bootique</groupId>
-				<artifactId>bootique</artifactId>
-				<version>${bootique-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.nhl.bootique.metrics</groupId>
-				<artifactId>bootique-metrics</artifactId>
-				<version>${bootique-metrics-version}</version>
-			</dependency>
-			<!-- TODO: see NHL-patched version at https://github.com/nhl/tomcat (not 
-				used here) -->
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jdbc</artifactId>
-				<version>${tomcat-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.derby</groupId>
-				<artifactId>derby</artifactId>
-				<version>10.12.1.1</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-	<dependencies>
-		<!-- Unit test dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Compile dependencies -->
-		<dependency>
-			<groupId>com.nhl.bootique</groupId>
-			<artifactId>bootique</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.nhl.bootique.metrics</groupId>
-			<artifactId>bootique-metrics</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
 
 	<build>
 		<plugins>

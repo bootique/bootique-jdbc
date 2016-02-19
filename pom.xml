@@ -10,7 +10,7 @@
 
 	<groupId>com.nhl.bootique.jdbc</groupId>
 	<artifactId>bootique-jdbc-parent</artifactId>
-	<version>0.10-SNAPSHOT</version>
+	<version>0.10</version>
 	<packaging>pom</packaging>
 
 	<name>Parent of JDBC Integration Bundle for Bootique</name>
@@ -26,7 +26,7 @@
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique-jdbc</developerConnection>
 		<url>https://github.com/nhl/bootique-jdbc</url>
-		<tag>HEAD</tag>
+		<tag>bootique-jdbc-parent-0.10</tag>
 	</scm>
 
 	<build>

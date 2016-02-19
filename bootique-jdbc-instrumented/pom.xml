@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.nhl.bootique.jdbc</groupId>
 		<artifactId>bootique-jdbc-parent</artifactId>
-		<version>0.11-SNAPSHOT</version>
+		<version>0.10.1</version>
 	</parent>
 
 	<artifactId>bootique-jdbc-instrumented</artifactId>

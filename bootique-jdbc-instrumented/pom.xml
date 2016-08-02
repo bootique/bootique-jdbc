@@ -15,10 +15,6 @@
 	<name>JDBC Integration Bundle for Bootique with metrics</name>
 	<description>Provides JDBC integration with Bootique, including metrics</description>
 
-	<properties>
-		<bootique-metrics-version>0.5</bootique-metrics-version>
-	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

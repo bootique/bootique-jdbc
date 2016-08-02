@@ -12,7 +12,7 @@
 	<artifactId>bootique-jdbc</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JDBC Integration Bundle for Bootique</name>
+	<name>bootique-jdbc: JDBC DataSource itegration module for Bootique</name>
 	<description>Provides JDBC integration with Bootique</description>
 
 	<properties>

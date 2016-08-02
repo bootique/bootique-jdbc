@@ -12,7 +12,7 @@
 	<artifactId>bootique-jdbc-instrumented</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JDBC Integration Bundle for Bootique with metrics</name>
+	<name>bootique-jdbc-instrumented: JDBC DataSource module for Bootique with metrics</name>
 	<description>Provides JDBC integration with Bootique, including metrics</description>
 
 	<dependencyManagement>

@@ -1,6 +1,7 @@
 ## 0.11
 
 * #8 Upgrade to bootique 0.19 and metrics 0.7 to have access to healthchecks API
+* #9 Move to io.bootique namespace
 
 ## 0.10
 

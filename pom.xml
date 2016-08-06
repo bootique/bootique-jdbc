@@ -4,12 +4,12 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.nhl.bootique.parent</groupId>
+		<groupId>io.bootique.parent</groupId>
 		<artifactId>bootique-parent</artifactId>
-		<version>0.10</version>
+		<version>0.12</version>
 	</parent>
 
-	<groupId>com.nhl.bootique.jdbc</groupId>
+	<groupId>io.bootique.jdbc</groupId>
 	<artifactId>bootique-jdbc-parent</artifactId>
 	<version>0.11-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -30,8 +30,8 @@
 	</modules>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique-jdbc</developerConnection>
-		<url>https://github.com/nhl/bootique-jdbc</url>
+		<developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jdbc</developerConnection>
+		<url>https://github.com/bootique/bootique-jdbc</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -47,12 +47,12 @@
 
 		<dependencies>
 			<dependency>
-				<groupId>com.nhl.bootique</groupId>
+				<groupId>io.bootique</groupId>
 				<artifactId>bootique</artifactId>
 				<version>${bootique-version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.nhl.bootique</groupId>
+				<groupId>io.bootique</groupId>
 				<artifactId>bootique-test</artifactId>
 				<version>${bootique-version}</version>
 			</dependency>

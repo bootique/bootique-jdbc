@@ -1,8 +1,7 @@
-package com.nhl.bootique.jdbc.instrumented;
+package io.bootique.jdbc.instrumented;
 
+import io.bootique.test.junit.BQModuleProviderChecker;
 import org.junit.Test;
-
-import com.nhl.bootique.test.junit.BQModuleProviderChecker;
 
 public class InstrumentedJdbcModuleProviderIT {
 

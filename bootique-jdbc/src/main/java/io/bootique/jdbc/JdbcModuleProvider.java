@@ -1,7 +1,7 @@
-package com.nhl.bootique.jdbc;
+package io.bootique.jdbc;
 
 import com.google.inject.Module;
-import com.nhl.bootique.BQModuleProvider;
+import io.bootique.BQModuleProvider;
 
 public class JdbcModuleProvider implements BQModuleProvider {
 

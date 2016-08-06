@@ -1,13 +1,13 @@
-package com.nhl.bootique.jdbc;
-
-import java.util.Map;
+package io.bootique.jdbc;
 
 import com.google.inject.Provides;
-import com.nhl.bootique.ConfigModule;
-import com.nhl.bootique.config.ConfigurationFactory;
-import com.nhl.bootique.log.BootLogger;
-import com.nhl.bootique.shutdown.ShutdownManager;
-import com.nhl.bootique.type.TypeRef;
+import io.bootique.ConfigModule;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.log.BootLogger;
+import io.bootique.shutdown.ShutdownManager;
+import io.bootique.type.TypeRef;
+
+import java.util.Map;
 
 public class JdbcModule extends ConfigModule {
 
@@ -20,9 +20,9 @@ public class JdbcModule extends ConfigModule {
 
 	@Provides
 	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-			ShutdownManager shutdownManager) {
+											  ShutdownManager shutdownManager) {
 		Map<String, Map<String, String>> configs = configFactory
-				.config(new TypeRef<Map<String, Map<String, String>>>() {
+				.config(new TypeRef<Map<String,Map<String,String>>>() {
 				}, configPrefix);
 
 		LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);

@@ -1,8 +1,7 @@
-package com.nhl.bootique.jdbc;
+package io.bootique.jdbc;
 
+import io.bootique.test.junit.BQModuleProviderChecker;
 import org.junit.Test;
-
-import com.nhl.bootique.test.junit.BQModuleProviderChecker;
 
 public class JdbcModuleProviderIT {
 	@Test

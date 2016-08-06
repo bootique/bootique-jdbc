@@ -1,16 +1,16 @@
-package com.nhl.bootique.jdbc.instrumented;
-
-import java.util.Map;
+package io.bootique.jdbc.instrumented;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Provides;
-import com.nhl.bootique.ConfigModule;
-import com.nhl.bootique.config.ConfigurationFactory;
-import com.nhl.bootique.jdbc.DataSourceFactory;
-import com.nhl.bootique.jdbc.LazyDataSourceFactory;
-import com.nhl.bootique.log.BootLogger;
-import com.nhl.bootique.shutdown.ShutdownManager;
-import com.nhl.bootique.type.TypeRef;
+import io.bootique.ConfigModule;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.log.BootLogger;
+import io.bootique.shutdown.ShutdownManager;
+import io.bootique.type.TypeRef;
+
+import java.util.Map;
 
 public class InstrumentedJdbcModule extends ConfigModule {
 
@@ -23,10 +23,10 @@ public class InstrumentedJdbcModule extends ConfigModule {
 
 	@Provides
 	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-			MetricRegistry metricRegistry, ShutdownManager shutdownManager) {
+											  MetricRegistry metricRegistry, ShutdownManager shutdownManager) {
 
 		Map<String, Map<String, String>> configs = configFactory
-				.config(new TypeRef<Map<String, Map<String, String>>>() {
+				.config(new TypeRef<Map<String,Map<String,String>>>() {
 				}, configPrefix);
 
 		LazyDataSourceFactory factory = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);

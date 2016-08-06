@@ -1,11 +1,11 @@
-package com.nhl.bootique.jdbc.instrumented;
+package io.bootique.jdbc.instrumented;
+
+import com.google.inject.Module;
+import io.bootique.BQModuleProvider;
+import io.bootique.jdbc.JdbcModule;
 
 import java.util.Collection;
 import java.util.Collections;
-
-import com.google.inject.Module;
-import com.nhl.bootique.BQModuleProvider;
-import com.nhl.bootique.jdbc.JdbcModule;
 
 public class InstrumentedJdbcModuleProvider implements BQModuleProvider {
 

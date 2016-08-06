@@ -1,8 +1,7 @@
-package com.nhl.bootique.jdbc;
-
-import java.util.Collection;
+package io.bootique.jdbc;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 
 public interface DataSourceFactory {
 

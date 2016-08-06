@@ -1,13 +1,12 @@
-package com.nhl.bootique.jdbc.instrumented;
-
-import java.util.Map;
-
-import org.apache.tomcat.jdbc.pool.ConnectionPool;
-import org.apache.tomcat.jdbc.pool.DataSource;
+package io.bootique.jdbc.instrumented;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
-import com.nhl.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.LazyDataSourceFactory;
+import org.apache.tomcat.jdbc.pool.ConnectionPool;
+import org.apache.tomcat.jdbc.pool.DataSource;
+
+import java.util.Map;
 
 public class InstrumentedLazyDataSourceFactory extends LazyDataSourceFactory {
 

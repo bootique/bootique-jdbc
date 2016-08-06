@@ -1,15 +1,14 @@
-package com.nhl.bootique.jdbc;
+package io.bootique.jdbc;
 
+import org.apache.tomcat.jdbc.pool.PoolConfiguration;
+
+import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import javax.sql.DataSource;
-
-import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 
 public class LazyDataSourceFactory implements DataSourceFactory {
 

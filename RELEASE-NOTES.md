@@ -1,3 +1,7 @@
+## 0.12
+
+* #10 Upgrade to Bootique 0.20
+
 ## 0.11
 
 * #8 Upgrade to bootique 0.19 and metrics 0.7 to have access to healthchecks API

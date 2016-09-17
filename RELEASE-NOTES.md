@@ -1,6 +1,7 @@
 ## 0.12
 
 * #10 Upgrade to Bootique 0.20
+* #11 Basic Derby-based unit test framework
 
 ## 0.11
 

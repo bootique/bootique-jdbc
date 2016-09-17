@@ -2,7 +2,7 @@
 
 * #10 Upgrade to Bootique 0.20
 * #11 Basic Derby-based unit test framework
-* #12 Port JDBC test utils from Cayenne
+* #12  JDBC test utils inspired by Cayenne unit tests
 
 ## 0.11
 

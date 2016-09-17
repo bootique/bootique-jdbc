@@ -4,18 +4,18 @@ import java.util.List;
 
 public class UpdatingSqlContext {
 
-    protected JdbcStore store;
+    protected DatabaseChannel channel;
     protected List<Binding> bindings;
     protected StringBuilder sqlBuffer;
 
-    protected UpdatingSqlContext(JdbcStore store, StringBuilder sqlBuffer, List<Binding> bindings) {
-        this.store = store;
+    protected UpdatingSqlContext(DatabaseChannel channel, StringBuilder sqlBuffer, List<Binding> bindings) {
+        this.channel = channel;
         this.bindings = bindings;
         this.sqlBuffer = sqlBuffer;
     }
 
     public int execute() {
-        return store.execute(sqlBuffer.toString(), bindings);
+        return channel.update(sqlBuffer.toString(), bindings);
     }
 
     public UpdatingSqlContext append(String sql) {
@@ -24,7 +24,7 @@ public class UpdatingSqlContext {
     }
 
     public UpdatingSqlContext appendIdentifier(String sqlIdentifier) {
-        sqlBuffer.append(store.quote(sqlIdentifier));
+        sqlBuffer.append(channel.quote(sqlIdentifier));
         return this;
     }
 

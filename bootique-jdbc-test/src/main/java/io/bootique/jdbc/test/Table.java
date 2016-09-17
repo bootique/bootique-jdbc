@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -21,15 +20,8 @@ public class Table {
     protected JdbcStore store;
     protected List<Column> columns;
 
-    public Table(JdbcStore store, String name) {
-        this.store = store;
-        this.name = name;
-        this.columns = Collections.emptyList();
-    }
-
-    public Table(JdbcStore store, String name, String... columns) {
-        this(store, name);
-        setColumnNames(columns);
+    public static Builder builder(JdbcStore store, String name) {
+        return new Builder().store(store).name(name);
     }
 
     public UpdateWhereBuilder update() {
@@ -59,25 +51,6 @@ public class Table {
 
     public JdbcStore getStore() {
         return store;
-    }
-
-    /**
-     * Sets columns that will be implicitly used in subsequent inserts and selects.
-     */
-    public Table setColumnNames(String... columnNames) {
-
-        List<Column> columnList = new ArrayList<>(columnNames.length);
-        for (String c : columnNames) {
-            columnList.add(new Column(c));
-        }
-
-        this.columns = columnList;
-        return this;
-    }
-
-    public Table setColumns(Column... columns) {
-        this.columns = asList(columns);
-        return this;
     }
 
     public Table insert(Object... values) {
@@ -352,5 +325,40 @@ public class Table {
             }
 
         }.execute(sql);
+    }
+
+    public static class Builder {
+
+        private Table table;
+
+        private Builder() {
+            this.table = new Table();
+        }
+
+        public Builder name(String name) {
+            table.name = name;
+            return this;
+        }
+
+        public Builder store(JdbcStore store) {
+            table.store = store;
+            return this;
+        }
+
+        public Builder columnNames(String... columnNames) {
+
+            List<Column> columns = new ArrayList<>(columnNames.length);
+            for (String c : columnNames) {
+                columns.add(new Column(c));
+            }
+
+            table.columns = columns;
+            return this;
+        }
+
+        public Builder columns(Column... columns) {
+            table.columns = asList(columns);
+            return this;
+        }
     }
 }

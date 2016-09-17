@@ -34,7 +34,6 @@ public class DerbyDatabase extends TestDatabase {
 
     @Override
     public void before() {
-        super.before();
         deleteDir(new File(location));
     }
 

@@ -1,5 +1,7 @@
 package io.bootique.jdbc.test;
 
+import org.slf4j.LoggerFactory;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,12 +18,15 @@ import java.util.function.Function;
  */
 public class DefaultDatabaseChannel implements DatabaseChannel {
 
+    private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);
+
+    protected boolean closed;
     protected DataSource dataSource;
 
     public DefaultDatabaseChannel(DataSource dataSource) {
+        LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
     }
-
 
     @Override
     public <T> List<T> select(String sql, long maxRows, Function<ResultSet, T> rowReader) {
@@ -37,7 +42,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
 
         List<T> result = new ArrayList<>();
 
-        Logger.log(sql);
+        LOGGER.info(sql);
         try (Connection c = getConnection();) {
             try (PreparedStatement st = c.prepareStatement(sql);) {
                 try (ResultSet rs = st.executeQuery();) {
@@ -62,7 +67,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     protected int updateWithExceptions(String sql, List<Binding> bindings) throws SQLException {
-        Logger.log(sql);
+        LOGGER.info(sql);
 
         try (Connection c = getConnection();) {
 
@@ -83,6 +88,11 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
 
     @Override
     public Connection getConnection() {
+
+        if (closed) {
+            throw new IllegalStateException("The channel is closed");
+        }
+
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
@@ -100,5 +110,11 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
             }
         }
         return connection;
+    }
+
+    @Override
+    public void close() {
+        LOGGER.debug("Test DatabaseChannel closed...");
+        this.closed = true;
     }
 }

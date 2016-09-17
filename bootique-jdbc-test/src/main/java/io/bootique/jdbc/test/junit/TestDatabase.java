@@ -34,13 +34,11 @@ public class TestDatabase extends ExternalResource {
     }
 
     @Override
-    protected void before() {
-        channel = null;
-    }
-
-    @Override
     protected void after() {
-        channel = null;
+        if (channel != null) {
+            channel.close();
+            channel = null;
+        }
     }
 
     public DatabaseChannel getChannel(BQTestRuntime runtime) {

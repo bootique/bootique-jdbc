@@ -30,4 +30,6 @@ public interface DatabaseChannel {
     int update(String sql, List<Binding> bindings);
 
     Connection getConnection();
+
+    void close();
 }

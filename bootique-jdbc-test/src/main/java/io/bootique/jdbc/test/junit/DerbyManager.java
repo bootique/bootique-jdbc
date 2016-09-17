@@ -26,7 +26,6 @@ import java.sql.SQLException;
  */
 public class DerbyManager extends ExternalResource {
 
-
     public static final OutputStream DEV_NULL = new OutputStream() {
 
         @Override

@@ -8,7 +8,7 @@ import java.sql.SQLException;
  */
 abstract class RowTemplate<T> extends ResultSetTemplate<T> {
 
-    public RowTemplate(DBManager parent) {
+    public RowTemplate(JdbcStore parent) {
         super(parent);
     }
 

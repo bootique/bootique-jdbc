@@ -7,9 +7,9 @@ import java.sql.SQLException;
 
 abstract class ResultSetTemplate<T> {
 
-    protected DBManager parent;
+    protected JdbcStore parent;
 
-    public ResultSetTemplate(DBManager parent) {
+    public ResultSetTemplate(JdbcStore parent) {
         this.parent = parent;
     }
 

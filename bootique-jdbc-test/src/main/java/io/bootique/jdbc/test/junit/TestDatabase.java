@@ -61,4 +61,9 @@ public class TestDatabase extends ExternalResource {
     public Table.Builder newTable(BQRuntime runtime, String name) {
         return getChannel(runtime).newTable(name);
     }
+
+    public Table.Builder newTable(BQTestRuntime runtime, String name) {
+        return getChannel(runtime).newTable(name);
+    }
+
 }

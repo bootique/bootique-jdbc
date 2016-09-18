@@ -1,6 +1,5 @@
 package io.bootique.jdbc.test;
 
-import io.bootique.Bootique;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.test.junit.DerbyDatabase;
 import io.bootique.jdbc.test.junit.TestDatabase;
@@ -11,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -35,12 +33,9 @@ public class DerbyDatabaseIT {
 
         this.derbyDir = new File("target/derby/DerbyDatabaseIT");
         assertFalse(derbyDir.exists());
-
-        Consumer<Bootique> configurator = bq -> {
-            bq.module(JdbcModule.class);
-        };
-        BQTestRuntime runtime = testFactory.newRuntime().configurator(configurator)
-                .start("--config=classpath:io/bootique/jdbc/test/DerbyDatabaseIT.yml");
+        BQTestRuntime runtime = testFactory.app("--config=classpath:io/bootique/jdbc/test/DerbyDatabaseIT.yml")
+                .module(JdbcModule.class)
+                .start();
         this.channel = db.getChannel(runtime);
         assertNotNull(this.channel);
     }

@@ -1,0 +1,83 @@
+package io.bootique.jdbc.test;
+
+import com.codahale.metrics.MetricRegistry;
+import com.google.inject.Binder;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
+import io.bootique.ConfigModule;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactory;
+import io.bootique.jdbc.test.derby.DerbyLifecycleListener;
+import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
+import io.bootique.jdbc.test.runtime.DbLifecycleListener;
+import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
+import io.bootique.log.BootLogger;
+import io.bootique.shutdown.ShutdownManager;
+import io.bootique.type.TypeRef;
+
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * @since 0.12
+ */
+public class JdbcTestModule extends ConfigModule {
+
+    public JdbcTestModule() {
+        super("jdbc");
+    }
+
+    public JdbcTestModule(String configPrefix) {
+        super(configPrefix);
+    }
+
+    public static Multibinder<DbLifecycleListener> contributeDbLifecycleListeners(Binder binder) {
+        return Multibinder.newSetBinder(binder, DbLifecycleListener.class);
+    }
+
+    @Override
+    public void configure(Binder binder) {
+
+        // for now we only support Derby...
+        contributeDbLifecycleListeners(binder).addBinding().to(DerbyLifecycleListener.class);
+    }
+
+    @Singleton
+    @Provides
+    DataSourceFactory provideDataSourceFactory(ConfigurationFactory configFactory,
+                                               BootLogger bootLogger,
+                                               MetricRegistry metricRegistry,
+                                               Set<DbLifecycleListener> dbLifecycleListeners,
+                                               ShutdownManager shutdownManager) {
+
+        // TODO: replace this with DI decoration of the base DataSourceFactory instead of repeating base module code
+
+        Map<String, Map<String, String>> configs = configFactory
+                .config(new TypeRef<Map<String, Map<String, String>>>() {
+                }, configPrefix);
+
+        LazyDataSourceFactory delegate = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);
+        TestDataSourceFactory factory = new TestDataSourceFactory(delegate, dbLifecycleListeners, configs);
+        shutdownManager.addShutdownHook(() -> {
+            bootLogger.trace(() -> "shutting down TestDataSourceFactory...");
+            factory.shutdown();
+        });
+
+        return factory;
+    }
+
+    @Singleton
+    @Provides
+    DatabaseChannelFactory provideDatabaseChannelFactory(DataSourceFactory dataSourceFactory) {
+        return new DatabaseChannelFactory(dataSourceFactory);
+    }
+
+    @Singleton
+    @Provides
+    DerbyLifecycleListener provideDerbyLifecycleListener(BootLogger bootLogger) {
+        return new DerbyLifecycleListener(bootLogger);
+    }
+}

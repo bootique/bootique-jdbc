@@ -5,6 +5,7 @@ import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.DefaultDatabaseChannel;
 import io.bootique.jdbc.test.Table;
+import io.bootique.log.BootLogger;
 import io.bootique.test.BQTestRuntime;
 import org.junit.rules.ExternalResource;
 
@@ -31,6 +32,7 @@ public class TestDatabase extends ExternalResource {
 
     private String dataSourceName;
     private DatabaseChannel channel;
+    private BootLogger logger;
     private BiConsumer<BQRuntime, DatabaseChannel> startupCallback;
 
     public TestDatabase(String dataSourceName) {
@@ -49,6 +51,11 @@ public class TestDatabase extends ExternalResource {
             channel.close();
             channel = null;
         }
+
+        if (logger != null) {
+            logger.stdout("Database '" + dataSourceName + "' stopped");
+            logger = null;
+        }
     }
 
     public DatabaseChannel getChannel(BQTestRuntime runtime) {
@@ -57,17 +64,27 @@ public class TestDatabase extends ExternalResource {
 
     public DatabaseChannel getChannel(BQRuntime runtime) {
 
-        // reusing the DataSource from Bootique runtime. Alternatively starting our own DataSource is probably a
-        // bad idea, especially with embedded databases...
-
         if (this.channel == null) {
-            this.channel = createChannel(runtime);
+            deferredBefore(runtime);
         }
 
         return this.channel;
     }
 
+    protected BootLogger getLogger() {
+        return logger;
+    }
+
+    protected void deferredBefore(BQRuntime runtime) {
+        this.channel = createChannel(runtime);
+        this.logger = runtime.getBootLogger();
+        logger.stdout("Database '" + dataSourceName + "' started");
+    }
+
     protected DatabaseChannel createChannel(BQRuntime runtime) {
+
+        // reusing the DataSource from Bootique runtime. Alternatively starting our own DataSource is probably a
+        // bad idea, especially with embedded databases...
         DataSourceFactory dataSourceFactory = runtime.getInstance(DataSourceFactory.class);
         DatabaseChannel channel = new DefaultDatabaseChannel(dataSourceFactory.forName(dataSourceName));
         startupCallback.accept(runtime, channel);

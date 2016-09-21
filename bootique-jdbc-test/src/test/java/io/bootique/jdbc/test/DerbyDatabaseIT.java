@@ -12,7 +12,6 @@ import org.junit.Test;
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -23,7 +22,7 @@ public class DerbyDatabaseIT {
     public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
 
     @Rule
-    public TestDatabase db = new DerbyDatabase("DerbyDatabaseIT");
+    public TestDatabase db = new DerbyDatabase("DerbyDatabaseIT", "target/derby/DerbyDatabaseIT");
 
     private File derbyDir;
     private DatabaseChannel channel;
@@ -32,7 +31,7 @@ public class DerbyDatabaseIT {
     public void before() {
 
         this.derbyDir = new File("target/derby/DerbyDatabaseIT");
-        assertFalse(derbyDir.exists());
+
         BQTestRuntime runtime = testFactory.app("--config=classpath:io/bootique/jdbc/test/DerbyDatabaseIT.yml")
                 .module(JdbcModule.class)
                 .start();
@@ -42,7 +41,6 @@ public class DerbyDatabaseIT {
 
     @Test
     public void testDbOp1() {
-
 
         channel.update("CREATE TABLE A (ID int)");
 

@@ -3,6 +3,7 @@
 * #10 Upgrade to Bootique 0.20
 * #11 Basic Derby-based unit test framework
 * #12 JDBC test utils inspired by Cayenne unit tests
+* #13 DataSource healthchecks
 * #14 InstrumentedJdbcModule uses incorrect config key
 * #15 DataSourceFactory must be a singleton
 

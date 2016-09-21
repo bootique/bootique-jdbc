@@ -12,7 +12,8 @@ public class InstrumentedLazyDataSourceFactory extends LazyDataSourceFactory {
 
 	private MetricRegistry metricRegistry;
 
-	public InstrumentedLazyDataSourceFactory(Map<String, Map<String, String>> configs, MetricRegistry metricRegistry) {
+	public InstrumentedLazyDataSourceFactory(Map<String, Map<String, String>> configs,
+											 MetricRegistry metricRegistry) {
 		super(configs);
 		this.metricRegistry = metricRegistry;
 	}
@@ -54,5 +55,4 @@ public class InstrumentedLazyDataSourceFactory extends LazyDataSourceFactory {
 			}
 		});
 	}
-
 }

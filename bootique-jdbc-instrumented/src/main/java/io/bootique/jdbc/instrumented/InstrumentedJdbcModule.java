@@ -15,10 +15,15 @@ import java.util.Map;
 public class InstrumentedJdbcModule extends ConfigModule {
 
 	public InstrumentedJdbcModule() {
+		super("jdbc");
 	}
 
 	public InstrumentedJdbcModule(String configPrefix) {
 		super(configPrefix);
+	}
+
+	String getConfixPrefix() {
+		return configPrefix;
 	}
 
 	@Provides

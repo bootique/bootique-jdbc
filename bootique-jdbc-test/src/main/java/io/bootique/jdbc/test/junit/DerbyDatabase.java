@@ -1,12 +1,14 @@
 package io.bootique.jdbc.test.junit;
 
+import io.bootique.BQRuntime;
+import io.bootique.jdbc.test.DatabaseChannel;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
+import java.util.function.BiConsumer;
 
 public class DerbyDatabase extends TestDatabase {
 
@@ -20,8 +22,12 @@ public class DerbyDatabase extends TestDatabase {
     private String location;
 
     public DerbyDatabase(String dataSourceName) {
+        this(dataSourceName, (runtime, channel) -> {
+        });
+    }
 
-        super(dataSourceName);
+    public DerbyDatabase(String dataSourceName, BiConsumer<BQRuntime, DatabaseChannel> startupCallback) {
+        super(dataSourceName, startupCallback);
 
         // suppressing derby.log in "user.dir".
         // TODO: perhaps preserve it, but route somewhere inside "location"?
@@ -29,6 +35,8 @@ public class DerbyDatabase extends TestDatabase {
             System.setProperty("derby.stream.error.field", DerbyDatabase.class.getName() + ".DEV_NULL");
         }
 
+        // TODO: location must match the datasource location... Otherwise the users must remember to always use
+        // jdbc:derby:target/derby/location;create=true
         this.location = "target/derby/" + dataSourceName;
     }
 

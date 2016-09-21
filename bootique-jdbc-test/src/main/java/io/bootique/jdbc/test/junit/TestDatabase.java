@@ -8,6 +8,9 @@ import io.bootique.jdbc.test.Table;
 import io.bootique.test.BQTestRuntime;
 import org.junit.rules.ExternalResource;
 
+import java.util.Objects;
+import java.util.function.BiConsumer;
+
 /**
  * An object that sets up a database for the unit tests and shuts it down after the tests
  * are executed. <p>
@@ -28,9 +31,16 @@ public class TestDatabase extends ExternalResource {
 
     private String dataSourceName;
     private DatabaseChannel channel;
+    private BiConsumer<BQRuntime, DatabaseChannel> startupCallback;
 
     public TestDatabase(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
+        this(dataSourceName, (runtime, channel) -> {
+        });
+    }
+
+    public TestDatabase(String dataSourceName, BiConsumer<BQRuntime, DatabaseChannel> startupCallback) {
+        this.dataSourceName = Objects.requireNonNull(dataSourceName);
+        this.startupCallback = Objects.requireNonNull(startupCallback);
     }
 
     @Override
@@ -47,15 +57,21 @@ public class TestDatabase extends ExternalResource {
 
     public DatabaseChannel getChannel(BQRuntime runtime) {
 
-        // reusing the DataSource from the Bootique runtime. Alternatively starting our own DataSource is probably a
+        // reusing the DataSource from Bootique runtime. Alternatively starting our own DataSource is probably a
         // bad idea, especially with embedded databases...
 
         if (this.channel == null) {
-            DataSourceFactory dataSourceFactory = runtime.getInstance(DataSourceFactory.class);
-            this.channel = new DefaultDatabaseChannel(dataSourceFactory.forName(dataSourceName));
+            this.channel = createChannel(runtime);
         }
 
         return this.channel;
+    }
+
+    protected DatabaseChannel createChannel(BQRuntime runtime) {
+        DataSourceFactory dataSourceFactory = runtime.getInstance(DataSourceFactory.class);
+        DatabaseChannel channel = new DefaultDatabaseChannel(dataSourceFactory.forName(dataSourceName));
+        startupCallback.accept(runtime, channel);
+        return channel;
     }
 
     public Table.Builder newTable(BQRuntime runtime, String name) {

@@ -58,8 +58,7 @@ public class InstrumentedJdbcModule extends ConfigModule {
 
     @Singleton
     @Provides
-    DataSourceHealthCheckGroup provideHealthCheckGroup(DataSourceFactory dataSourceFactory) {
+    DataSourceHealthCheckGroup provideDataSourceHealthCheckGroup(DataSourceFactory dataSourceFactory) {
         return new DataSourceHealthCheckGroup(dataSourceFactory);
     }
-
 }

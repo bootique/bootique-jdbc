@@ -1,6 +1,7 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.log.BootLogger;
@@ -18,6 +19,7 @@ public class JdbcModule extends ConfigModule {
 		super(configPrefix);
 	}
 
+	@Singleton
 	@Provides
 	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
 											  ShutdownManager shutdownManager) {

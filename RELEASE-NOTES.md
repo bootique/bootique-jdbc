@@ -4,6 +4,7 @@
 * #11 Basic Derby-based unit test framework
 * #12 JDBC test utils inspired by Cayenne unit tests
 * #14 InstrumentedJdbcModule uses incorrect config key
+* #15 DataSourceFactory must be a singleton
 
 ## 0.11
 

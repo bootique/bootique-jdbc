@@ -2,6 +2,7 @@ package io.bootique.jdbc.instrumented;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
@@ -26,6 +27,7 @@ public class InstrumentedJdbcModule extends ConfigModule {
 		return configPrefix;
 	}
 
+	@Singleton
 	@Provides
 	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
 											  MetricRegistry metricRegistry, ShutdownManager shutdownManager) {

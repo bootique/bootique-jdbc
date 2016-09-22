@@ -51,7 +51,7 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void beforeStartup(Optional<String> jdbcUrl) {
+    public void beforeStartup(String name, Optional<String> jdbcUrl) {
 
         getDbDir(jdbcUrl).ifPresent(location -> {
 
@@ -70,12 +70,12 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void afterStartup(Optional<String> jdbcUrl, DataSource dataSource) {
+    public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
         // do nothing...
     }
 
     @Override
-    public void afterShutdown(Optional<String> jdbcUrl) {
+    public void afterShutdown(String name, Optional<String> jdbcUrl) {
 
         getDbDir(jdbcUrl).ifPresent(location -> {
 

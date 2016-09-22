@@ -12,9 +12,9 @@ import java.util.Optional;
  */
 public interface DataSourceListener {
 
-    void beforeStartup(Optional<String> jdbcUrl);
+    void beforeStartup(String name, Optional<String> jdbcUrl);
 
-    void afterStartup(Optional<String> jdbcUrl, DataSource dataSource);
+    void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource);
 
-    void afterShutdown(Optional<String> jdbcUrl);
+    void afterShutdown(String name, Optional<String> jdbcUrl);
 }

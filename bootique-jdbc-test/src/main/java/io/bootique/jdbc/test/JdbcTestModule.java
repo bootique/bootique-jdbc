@@ -34,7 +34,7 @@ public class JdbcTestModule extends ConfigModule {
         super(configPrefix);
     }
 
-    public static Multibinder<DataSourceListener> contributeDbLifecycleListeners(Binder binder) {
+    public static Multibinder<DataSourceListener> contributeDataSourceListeners(Binder binder) {
         return Multibinder.newSetBinder(binder, DataSourceListener.class);
     }
 
@@ -42,7 +42,7 @@ public class JdbcTestModule extends ConfigModule {
     public void configure(Binder binder) {
 
         // for now we only support Derby...
-        contributeDbLifecycleListeners(binder).addBinding().to(DerbyListener.class);
+        contributeDataSourceListeners(binder).addBinding().to(DerbyListener.class);
     }
 
     @Singleton

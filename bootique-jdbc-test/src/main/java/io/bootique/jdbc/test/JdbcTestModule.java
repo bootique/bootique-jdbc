@@ -10,9 +10,9 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.LazyDataSourceFactory;
 import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactory;
-import io.bootique.jdbc.test.derby.DerbyLifecycleListener;
+import io.bootique.jdbc.test.derby.DerbyListener;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
-import io.bootique.jdbc.test.runtime.DbLifecycleListener;
+import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
@@ -34,15 +34,15 @@ public class JdbcTestModule extends ConfigModule {
         super(configPrefix);
     }
 
-    public static Multibinder<DbLifecycleListener> contributeDbLifecycleListeners(Binder binder) {
-        return Multibinder.newSetBinder(binder, DbLifecycleListener.class);
+    public static Multibinder<DataSourceListener> contributeDbLifecycleListeners(Binder binder) {
+        return Multibinder.newSetBinder(binder, DataSourceListener.class);
     }
 
     @Override
     public void configure(Binder binder) {
 
         // for now we only support Derby...
-        contributeDbLifecycleListeners(binder).addBinding().to(DerbyLifecycleListener.class);
+        contributeDbLifecycleListeners(binder).addBinding().to(DerbyListener.class);
     }
 
     @Singleton
@@ -50,7 +50,7 @@ public class JdbcTestModule extends ConfigModule {
     DataSourceFactory provideDataSourceFactory(ConfigurationFactory configFactory,
                                                BootLogger bootLogger,
                                                MetricRegistry metricRegistry,
-                                               Set<DbLifecycleListener> dbLifecycleListeners,
+                                               Set<DataSourceListener> dataSourceListeners,
                                                ShutdownManager shutdownManager) {
 
         // TODO: replace this with DI decoration of the base DataSourceFactory instead of repeating base module code
@@ -60,7 +60,7 @@ public class JdbcTestModule extends ConfigModule {
                 }, configPrefix);
 
         LazyDataSourceFactory delegate = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);
-        TestDataSourceFactory factory = new TestDataSourceFactory(delegate, dbLifecycleListeners, configs);
+        TestDataSourceFactory factory = new TestDataSourceFactory(delegate, dataSourceListeners, configs);
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down TestDataSourceFactory...");
             factory.shutdown();
@@ -77,7 +77,7 @@ public class JdbcTestModule extends ConfigModule {
 
     @Singleton
     @Provides
-    DerbyLifecycleListener provideDerbyLifecycleListener(BootLogger bootLogger) {
-        return new DerbyLifecycleListener(bootLogger);
+    DerbyListener provideDerbyLifecycleListener(BootLogger bootLogger) {
+        return new DerbyListener(bootLogger);
     }
 }

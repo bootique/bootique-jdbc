@@ -1,9 +1,10 @@
 package io.bootique.jdbc.test.derby;
 
-import io.bootique.jdbc.test.runtime.DbLifecycleListener;
+import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.log.BootLogger;
 import org.junit.Assert;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.OutputStream;
 import java.sql.DriverManager;
@@ -14,7 +15,13 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.fail;
 
-public class DerbyLifecycleListener implements DbLifecycleListener {
+/**
+ * An implementation of {@link DataSourceListener} that would ignore all DataSources, but those belonging to Apache
+ * Derby database. For Derby DataSources it will setup runtime environment, and do a shutdown at the end.
+ *
+ * @since 0.12
+ */
+public class DerbyListener implements DataSourceListener {
 
     public static final OutputStream DEV_NULL = new OutputStream() {
         @Override
@@ -25,24 +32,26 @@ public class DerbyLifecycleListener implements DbLifecycleListener {
 
     private BootLogger bootLogger;
 
-    public DerbyLifecycleListener(BootLogger bootLogger) {
+    public DerbyListener(BootLogger bootLogger) {
 
         this.bootLogger = bootLogger;
 
         // suppressing derby.log in "user.dir".
         // TODO: perhaps preserve it, but route somewhere inside "location"?
         if (System.getProperty("derby.stream.error.field") == null) {
-            System.setProperty("derby.stream.error.field", DerbyLifecycleListener.class.getName() + ".DEV_NULL");
+            System.setProperty("derby.stream.error.field", DerbyListener.class.getName() + ".DEV_NULL");
         }
     }
 
-    protected static Optional<String> getDbDir(String jdbcUrl) {
-        Matcher m = DERBY_URL_PATTERN.matcher(jdbcUrl);
-        return (m.find()) ? Optional.of(m.group(1)) : Optional.empty();
+    protected static Optional<String> getDbDir(Optional<String> jdbcUrl) {
+        return jdbcUrl.map(v -> {
+            Matcher m = DERBY_URL_PATTERN.matcher(v);
+            return m.find() ? m.group(1) : null;
+        });
     }
 
     @Override
-    public void beforeStartup(String jdbcUrl) {
+    public void beforeStartup(Optional<String> jdbcUrl) {
 
         getDbDir(jdbcUrl).ifPresent(location -> {
 
@@ -61,13 +70,18 @@ public class DerbyLifecycleListener implements DbLifecycleListener {
     }
 
     @Override
-    public void afterShutdown(String jdbcUrl) {
+    public void afterStartup(Optional<String> jdbcUrl, DataSource dataSource) {
+        // do nothing...
+    }
+
+    @Override
+    public void afterShutdown(Optional<String> jdbcUrl) {
 
         getDbDir(jdbcUrl).ifPresent(location -> {
 
-            bootLogger.stdout("Stopping all JVM Derby servers...");
+                    bootLogger.stdout("Stopping all JVM Derby servers...");
 
-            try {
+                    try {
                         DriverManager.getConnection("jdbc:derby:;shutdown=true");
                     } catch (SQLException e) {
                         // the exception is actually expected on shutdown... go figure...

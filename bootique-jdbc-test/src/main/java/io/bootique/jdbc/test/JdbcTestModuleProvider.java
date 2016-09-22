@@ -5,8 +5,7 @@ import io.bootique.BQModuleProvider;
 import io.bootique.jdbc.instrumented.InstrumentedJdbcModule;
 
 import java.util.Collection;
-
-import static java.util.Arrays.asList;
+import java.util.Collections;
 
 /**
  * @since 0.12
@@ -20,6 +19,6 @@ public class JdbcTestModuleProvider implements BQModuleProvider {
 
     @Override
     public Collection<Class<? extends Module>> overrides() {
-        return asList(InstrumentedJdbcModule.class);
+        return Collections.singleton(InstrumentedJdbcModule.class);
     }
 }

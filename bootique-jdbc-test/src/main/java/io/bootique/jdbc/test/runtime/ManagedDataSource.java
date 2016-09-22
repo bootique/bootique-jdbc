@@ -1,6 +1,7 @@
 package io.bootique.jdbc.test.runtime;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
 /**
  * @since 0.12
@@ -8,9 +9,9 @@ import javax.sql.DataSource;
 class ManagedDataSource {
 
     private DataSource dataSource;
-    private String url;
+    private Optional<String> url;
 
-    ManagedDataSource(DataSource dataSource, String url) {
+    ManagedDataSource(DataSource dataSource, Optional<String> url) {
         this.dataSource = dataSource;
         this.url = url;
     }
@@ -19,7 +20,7 @@ class ManagedDataSource {
         return dataSource;
     }
 
-    String getUrl() {
+    Optional<String> getUrl() {
         return url;
     }
 }

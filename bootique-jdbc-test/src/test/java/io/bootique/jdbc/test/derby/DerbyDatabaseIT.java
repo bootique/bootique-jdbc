@@ -1,5 +1,7 @@
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.test.derby;
 
+import io.bootique.jdbc.test.DatabaseChannel;
+import io.bootique.jdbc.test.Table;
 import io.bootique.test.BQTestRuntime;
 import io.bootique.test.junit.BQDaemonTestFactory;
 import org.junit.Before;

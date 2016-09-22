@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -20,14 +21,14 @@ public class TestDataSourceFactory implements DataSourceFactory {
     private LazyDataSourceFactory delegate;
     private Map<String, Map<String, String>> configs;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
-    private Collection<DbLifecycleListener> dbLifecycleListeners;
+    private Collection<DataSourceListener> dataSourceListeners;
 
     public TestDataSourceFactory(LazyDataSourceFactory delegate,
-                                 Collection<DbLifecycleListener> dbLifecycleListeners,
+                                 Collection<DataSourceListener> dataSourceListeners,
                                  Map<String, Map<String, String>> configs) {
         this.delegate = delegate;
         this.configs = configs;
-        this.dbLifecycleListeners = dbLifecycleListeners;
+        this.dataSourceListeners = dataSourceListeners;
         this.dataSources = new ConcurrentHashMap<>();
     }
 
@@ -36,7 +37,8 @@ public class TestDataSourceFactory implements DataSourceFactory {
 
         // stop the DB after the DataSources were shutdown...
         dataSources.values().forEach(dataSource ->
-                dbLifecycleListeners.forEach(listener -> listener.afterShutdown(dataSource.getUrl())));
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(dataSource.getUrl()))
+        );
     }
 
     @Override
@@ -52,18 +54,21 @@ public class TestDataSourceFactory implements DataSourceFactory {
     protected ManagedDataSource createDataSource(String name) {
 
         // prepare DB for startup before we trigger DS creation
-        String url = getDbUrl(name);
-        if (url != null) {
-            dbLifecycleListeners.forEach(listener -> listener.beforeStartup(url));
-        }
+        Optional<String> url = getDbUrl(name);
+        dataSourceListeners.forEach(listener -> listener.beforeStartup(url));
+
+        DataSource dataSource = delegate.forName(name);
+
+        // this callback is normally used for schema loading...
+        dataSourceListeners.forEach(listener -> listener.afterStartup(url, dataSource));
 
         return new ManagedDataSource(delegate.forName(name), url);
     }
 
-    protected String getDbUrl(String configName) {
+    protected Optional<String> getDbUrl(String configName) {
         Map<String, String> config = configs.getOrDefault(configName, Collections.emptyMap());
 
         // TODO: must have compiled config property names outside of test...
-        return config.get(URL_KEY);
+        return Optional.ofNullable(config.get(URL_KEY));
     }
 }

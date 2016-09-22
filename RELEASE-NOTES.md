@@ -6,6 +6,7 @@
 * #13 DataSource healthchecks
 * #14 InstrumentedJdbcModule uses incorrect config key
 * #15 DataSourceFactory must be a singleton
+* #16 Move TestDatabase from @Rule into DI-managed service attached to test runtime
 
 ## 0.11
 

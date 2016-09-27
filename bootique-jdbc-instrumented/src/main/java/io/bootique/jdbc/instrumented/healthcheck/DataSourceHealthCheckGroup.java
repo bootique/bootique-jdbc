@@ -1,8 +1,8 @@
 package io.bootique.jdbc.instrumented.healthcheck;
 
-import com.codahale.metrics.health.HealthCheck;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.metrics.healthcheck.HealthCheckGroup;
+import io.bootique.metrics.health.HealthCheck;
+import io.bootique.metrics.health.HealthCheckGroup;
 
 import java.util.HashMap;
 import java.util.Map;

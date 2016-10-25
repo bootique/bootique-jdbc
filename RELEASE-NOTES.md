@@ -1,3 +1,7 @@
+## 0.13
+
+*  #17 Table.selectOne ignores all columns but the first one
+
 ## 0.12
 
 * #10 Upgrade to Bootique 0.20

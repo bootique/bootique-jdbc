@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
@@ -139,6 +141,46 @@ public class Table {
             default:
                 throw new IllegalArgumentException("At most one object expected in the result");
         }
+    }
+
+    private int columnIndex(String columnName) {
+
+        for (int i = 0; i < columns.size(); i++) {
+
+            if (columnName.equals(columns.get(i).getName())) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Performs select operation against the table, returning result as a map using provided unique column as a key.
+     *
+     * @param mapColumn the name of a unique column to use as a map key.
+     * @return a map using provided unique column as a key.
+     * @since 0.21
+     */
+    public Map<Object, Object[]> selectAsMap(String mapColumn) {
+
+        int mapColumnIndex = columnIndex(mapColumn);
+        if (mapColumnIndex < 0) {
+            throw new IllegalArgumentException("Unknown column: " + mapColumn);
+        }
+
+        List<Object[]> list = select();
+
+        Map<Object, Object[]> map = new HashMap<>();
+
+        list.forEach(r -> {
+            Object[] existing = map.put(r[mapColumnIndex], r);
+            if (existing != null) {
+                throw new IllegalArgumentException("More than one row matches '" + r[mapColumnIndex] + "' value");
+            }
+        });
+
+        return map;
     }
 
     public List<Object[]> select() {

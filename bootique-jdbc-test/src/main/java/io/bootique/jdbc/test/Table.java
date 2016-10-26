@@ -191,7 +191,7 @@ public class Table {
 
         StringBuilder sql = new StringBuilder("SELECT ");
         for (int i = 0; i < columns.size(); i++) {
-            Column col = columns.get(0);
+            Column col = columns.get(i);
 
             if (i > 0) {
                 sql.append(", ");

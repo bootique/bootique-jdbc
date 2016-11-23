@@ -1,5 +1,6 @@
 package io.bootique.jdbc.test;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -18,14 +20,21 @@ import java.util.function.Function;
  */
 public class DefaultDatabaseChannel implements DatabaseChannel {
 
-    private static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);
 
     protected boolean closed;
     protected DataSource dataSource;
+    protected String identifierQuote;
 
-    public DefaultDatabaseChannel(DataSource dataSource) {
+    public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote) {
         LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
+        this.identifierQuote = Objects.requireNonNull(identifierQuote);
+    }
+
+    @Override
+    public String quote(String sqlIdentifier) {
+        return identifierQuote + Objects.requireNonNull(sqlIdentifier) + identifierQuote;
     }
 
     @Override

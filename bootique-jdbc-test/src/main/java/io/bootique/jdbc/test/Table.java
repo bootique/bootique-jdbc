@@ -43,7 +43,7 @@ public class Table {
         return new UpdateWhereBuilder(context);
     }
 
-    public int deleteAll() throws SQLException {
+    public int deleteAll() {
         return delete().execute();
     }
 

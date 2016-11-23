@@ -1,6 +1,7 @@
 ## 0.13
 
-*  #17 Table.selectOne ignores all columns but the first one
+* #17 Table.selectOne ignores all columns but the first one
+* #20 Test Table.deleteAll(..) should not declare a checked exception
 
 ## 0.12
 

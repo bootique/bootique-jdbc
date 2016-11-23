@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +56,19 @@ public class Table {
         return channel;
     }
 
+    /**
+     * @return returns an immutable list of columns.
+     * @since 0.13
+     */
+    public List<Column> getColumns() {
+        return Collections.unmodifiableList(columns);
+    }
+
     public Table insert(Object... values) {
 
         if (columns.size() != values.length) {
-            throw new IllegalArgumentException("Values do not match columns. There are " + columns.size() + " column(s) " +
-                    "and " + values.length + " value(s).");
+            throw new IllegalArgumentException(name + ": values do not match columns. There are " + columns.size()
+                    + " column(s) " + "and " + values.length + " value(s).");
         }
 
         StringBuilder sql = new StringBuilder();

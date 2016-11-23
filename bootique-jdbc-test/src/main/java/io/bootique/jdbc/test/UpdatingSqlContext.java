@@ -15,7 +15,11 @@ public class UpdatingSqlContext {
     }
 
     public int execute() {
-        return channel.update(sqlBuffer.toString(), bindings);
+        return channel.update(getSQL(), bindings);
+    }
+
+    protected String getSQL() {
+        return sqlBuffer.toString();
     }
 
     public UpdatingSqlContext append(String sql) {

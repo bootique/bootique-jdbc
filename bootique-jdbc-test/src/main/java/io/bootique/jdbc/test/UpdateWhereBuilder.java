@@ -7,7 +7,6 @@ public class UpdateWhereBuilder {
 
     protected UpdateWhereBuilder(UpdatingSqlContext context) {
         this.context = context;
-        context.append(" WHERE ");
     }
 
     public int execute() {
@@ -22,6 +21,9 @@ public class UpdateWhereBuilder {
 
         if (whereCount++ > 0) {
             context.append(" AND ");
+        }
+        else {
+            context.append(" WHERE ");
         }
 
         context.appendIdentifier(column).append(" = ?");

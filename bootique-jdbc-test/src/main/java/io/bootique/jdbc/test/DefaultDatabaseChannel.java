@@ -9,9 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A helper class to run common DB operations during unit tests.
@@ -25,11 +27,13 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     protected boolean closed;
     protected DataSource dataSource;
     protected String identifierQuote;
+    protected BindingValueToStringConverter valueToStringConverter;
 
     public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote) {
         LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
         this.identifierQuote = Objects.requireNonNull(identifierQuote);
+        this.valueToStringConverter = new BindingValueToStringConverter();
     }
 
     @Override
@@ -51,7 +55,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
 
         List<T> result = new ArrayList<>();
 
-        LOGGER.info(sql);
+        logPreparedStatement(sql, Collections.emptyList());
         try (Connection c = getConnection();) {
             try (PreparedStatement st = c.prepareStatement(sql);) {
                 try (ResultSet rs = st.executeQuery();) {
@@ -76,7 +80,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     protected int updateWithExceptions(String sql, List<Binding> bindings) throws SQLException {
-        LOGGER.info(sql);
+        logPreparedStatement(sql, bindings);
 
         try (Connection c = getConnection();) {
 
@@ -126,4 +130,24 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
         LOGGER.debug("Test DatabaseChannel closed...");
         this.closed = true;
     }
+
+    protected void logPreparedStatement(String sql, List<Binding> bindings) {
+
+        if (!LOGGER.isInfoEnabled()) {
+            return;
+        }
+
+        if (bindings.isEmpty()) {
+            LOGGER.info(sql);
+            return;
+        }
+
+        String toLog = bindings
+                .stream()
+                .map(b -> b.getColumn().getName() + "->" + valueToStringConverter.convert(b.getValue()))
+                .collect(Collectors.joining(", ", sql + " [", "]"));
+
+        LOGGER.info(toLog);
+    }
+
 }

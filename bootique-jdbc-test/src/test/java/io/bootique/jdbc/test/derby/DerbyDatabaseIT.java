@@ -3,7 +3,7 @@ package io.bootique.jdbc.test.derby;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
 import io.bootique.test.BQTestRuntime;
-import io.bootique.test.junit.BQDaemonTestFactory;
+import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 public class DerbyDatabaseIT {
 
     @Rule
-    public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
+    public BQTestFactory testFactory = new BQTestFactory();
 
     private File derbyDir;
     private DatabaseChannel channel;
@@ -31,7 +31,7 @@ public class DerbyDatabaseIT {
         BQTestRuntime runtime = testFactory
                 .app("--config=classpath:io/bootique/jdbc/test/DerbyDatabaseIT.yml")
                 .autoLoadModules()
-                .start();
+                .createRuntime();
         this.channel = DatabaseChannel.get(runtime);
         assertNotNull(this.channel);
     }

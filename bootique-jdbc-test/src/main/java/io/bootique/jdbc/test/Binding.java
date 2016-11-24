@@ -12,7 +12,15 @@ public class Binding {
         this.value = value;
     }
 
-    protected void bind(PreparedStatement statement, int position) {
+    public void bind(PreparedStatement statement, int position) {
         column.bind(statement, position, value);
+    }
+
+    public Column getColumn() {
+        return column;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }

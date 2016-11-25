@@ -14,7 +14,7 @@ public class TestDataManagerTest {
         Table t1 = Table.builder(channel, "t1").build();
         Table t2 = Table.builder(channel, "t2").build();
 
-        TestDataManager dm = new TestDataManager(t1, t2);
+        TestDataManager dm = new TestDataManager(true, t1, t2);
         assertSame(t1, dm.getTable("t1"));
         assertSame(t2, dm.getTable("t2"));
     }
@@ -24,13 +24,13 @@ public class TestDataManagerTest {
         Table t1 = Table.builder(channel, "t1").build();
         Table t2 = Table.builder(channel, "t2").build();
 
-        TestDataManager dm = new TestDataManager(t1, t2);
+        TestDataManager dm = new TestDataManager(true, t1, t2);
         dm.getTable("t3");
     }
 
     @Test
     public void testEmptyConstructor() throws Throwable {
-        TestDataManager dm = new TestDataManager();
+        TestDataManager dm = new TestDataManager(true);
         dm.before();
     }
 }

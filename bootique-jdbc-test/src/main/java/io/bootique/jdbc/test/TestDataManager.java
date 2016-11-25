@@ -14,9 +14,11 @@ public class TestDataManager extends ExternalResource {
 
     private Table[] tablesInInsertOrder;
     private Map<String, Table> tables;
+    private boolean deleteData;
 
 
-    public TestDataManager(Table... tablesInInsertOrder) {
+    public TestDataManager(boolean deleteData, Table... tablesInInsertOrder) {
+        this.deleteData = deleteData;
         this.tablesInInsertOrder = tablesInInsertOrder != null ? tablesInInsertOrder : new Table[0];
 
         tables = new HashMap<>();
@@ -27,9 +29,13 @@ public class TestDataManager extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-
         // do cleanup before the test; leave the data alone *after* - perhaps we want to inspect it manually, etc.
+        if (deleteData) {
+            deleteData();
+        }
+    }
 
+    protected void deleteData() {
         for (int i = tablesInInsertOrder.length - 1; i >= 0; i--) {
             tablesInInsertOrder[i].deleteAll();
         }

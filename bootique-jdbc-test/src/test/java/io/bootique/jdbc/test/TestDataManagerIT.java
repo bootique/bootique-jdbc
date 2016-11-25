@@ -17,7 +17,7 @@ public class TestDataManagerIT {
     private static Table T2;
 
     @Rule
-    public TestDataManager dataManager = new TestDataManager(T1, T2);
+    public TestDataManager dataManager = new TestDataManager(true, T1, T2);
 
     @BeforeClass
     public static void setupDB() {

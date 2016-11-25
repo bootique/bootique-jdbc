@@ -1,0 +1,5 @@
+jdbc:
+  TestDataManagerIT:
+    url: jdbc:derby:target/derby/TestDataManagerIT;create=true
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    initialSize: 1

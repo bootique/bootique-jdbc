@@ -4,6 +4,7 @@
 * #20 Test Table.deleteAll(..) should not declare a checked exception
 * #21 Tests: DataChannel to quote SQL identifiers by default
 * #22 Tests: DatabaseChannel should log prepared statement bindings
+* #23 jdbc-test: a simple data manager to keep table definitions and cleans up the DB before each test
 
 ## 0.12
 

@@ -40,7 +40,7 @@ public class Column {
                 bindNotNull(statement, position, value);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error binding value", e);
+            throw new RuntimeException("Error binding value for column '" + name + "'", e);
         }
     }
 
@@ -49,7 +49,8 @@ public class Column {
         int jdbcPosition = position + 1;
 
         if (typeUnknown()) {
-            throw new IllegalStateException("No type information for null value at index " + position);
+            throw new IllegalStateException("No type information for null value for column '" + name + "'at index "
+                    + position);
         } else {
             statement.setNull(jdbcPosition, type);
         }

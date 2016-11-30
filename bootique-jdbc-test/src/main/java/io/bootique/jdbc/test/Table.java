@@ -6,10 +6,12 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -64,44 +66,43 @@ public class Table {
         return Collections.unmodifiableList(columns);
     }
 
+    /**
+     * @param columns an array of columns that is a subset of the table columns.
+     * @return a builder for insert query.
+     * @since 0.13
+     */
+    public InsertBuilder insertColumns(String... columns) {
+
+        if (columns == null) {
+            throw new NullPointerException("Null columns");
+        }
+
+        if (columns.length == 0) {
+            throw new IllegalArgumentException("No columns in the list");
+        }
+
+        List<String> includeNames = asList(columns);
+        List<Column> subcolumns = this.columns.stream().filter(c -> includeNames.contains(c.getName()))
+                .collect(Collectors.toList());
+
+        return insertColumns(subcolumns);
+    }
+
     public Table insert(Object... values) {
-
-        if (columns.size() != values.length) {
-            throw new IllegalArgumentException(name + ": values do not match columns. There are " + columns.size()
-                    + " column(s) " + "and " + values.length + " value(s).");
-        }
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO ").append(channel.quote(name)).append(" (");
-
-        List<Binding> bindings = new ArrayList<>(values.length);
-        for (int i = 0; i < values.length; i++) {
-
-            Column col = columns.get(i);
-
-            bindings.add(new Binding(col, values[i]));
-
-            if (i > 0) {
-                sql.append(", ");
-            }
-
-            sql.append(channel.quote(col.getName()));
-        }
-
-        sql.append(") VALUES (");
-
-        for (int i = 0; i < values.length; i++) {
-            if (i > 0) {
-                sql.append(", ");
-            }
-
-            sql.append("?");
-        }
-
-        sql.append(")");
-
-        channel.update(sql.toString(), bindings);
+        insertColumns(columns).values(values).exec();
         return this;
+    }
+
+    protected InsertBuilder insertColumns(List<Column> columns) {
+        if (columns == null) {
+            throw new NullPointerException("Null columns");
+        }
+
+        if (columns.size() == 0) {
+            throw new IllegalArgumentException("No columns in the list");
+        }
+
+        return new InsertBuilder(channel, name, columns);
     }
 
     /**
@@ -409,7 +410,11 @@ public class Table {
         }
 
         public Builder columns(Column... columns) {
-            table.columns = asList(columns);
+            // must sort alphabetically for positional bindings
+            List<Column> list = asList(columns);
+            Collections.sort(list, Comparator.comparing(Column::getName));
+
+            table.columns = list;
             return this;
         }
     }

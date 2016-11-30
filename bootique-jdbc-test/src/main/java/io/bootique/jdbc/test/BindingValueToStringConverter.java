@@ -48,6 +48,7 @@ public class BindingValueToStringConverter {
         });
 
         converters.put(Number.class, Object::toString);
+        converters.put(Boolean.class, Object::toString);
 
         // TODO: add more types...
     }

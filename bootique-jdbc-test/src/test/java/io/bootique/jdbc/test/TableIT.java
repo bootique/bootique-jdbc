@@ -40,9 +40,16 @@ public class TableIT {
     }
 
     @Test
-    public void testInsertColumns() {
+    public void testInsertColumns1() {
         assertEquals(0, T1.getRowCount());
         T1.insertColumns("c2").values("v1").values("v2").exec();
+        assertEquals(2, T1.getRowCount());
+    }
+
+    @Test
+    public void testInsertColumns_OutOfOrder() {
+        assertEquals(0, T1.getRowCount());
+        T1.insertColumns("c2", "c1").values("v1", 1).values("v2", 2).exec();
         assertEquals(2, T1.getRowCount());
     }
 }

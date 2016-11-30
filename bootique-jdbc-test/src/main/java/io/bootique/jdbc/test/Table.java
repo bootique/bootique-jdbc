@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -81,9 +80,16 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        List<String> includeNames = asList(columns);
-        List<Column> subcolumns = this.columns.stream().filter(c -> includeNames.contains(c.getName()))
-                .collect(Collectors.toList());
+        Map<String, Column> allColumnsMap = new HashMap<>();
+        this.columns.forEach(c -> allColumnsMap.put(c.getName(), c));
+
+        List<Column> subcolumns = new ArrayList<>();
+        for(String name : columns) {
+            Column c = allColumnsMap.computeIfAbsent(name, key -> {
+                throw new IllegalArgumentException("'" + key + "' is not a valid column");
+            });
+            subcolumns.add(c);
+        }
 
         return insertColumns(subcolumns);
     }

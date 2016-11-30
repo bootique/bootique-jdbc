@@ -8,10 +8,10 @@ import java.util.List;
  */
 public class InsertBuilder {
 
-    private DatabaseChannel channel;
-    private String tableName;
-    private List<Column> columns;
-    private List<List<Binding>> bindings;
+    protected DatabaseChannel channel;
+    protected String tableName;
+    protected List<Column> columns;
+    protected List<List<Binding>> bindings;
 
     public InsertBuilder(DatabaseChannel channel, String tableName, List<Column> columns) {
         this.channel = channel;

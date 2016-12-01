@@ -16,16 +16,16 @@ public class LazyDataSourceFactoryIT {
 	private static final String URL = "jdbc:derby:target/testdb;create=true";
 	private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
-	private Map<String, Map<String, String>> configs;
-	private Map<String, String> derbyConfig;
+	private Map<String, TomcatDataSourceFactory> configs;
+	private TomcatDataSourceFactory derbyConfig;
 
 	@Before
 	public void before() {
 
-		this.derbyConfig = new HashMap<>();
-		derbyConfig.put("url", URL);
-		derbyConfig.put("initialSize", "2");
-		derbyConfig.put("driverClassName", DRIVER);
+		this.derbyConfig = new TomcatDataSourceFactory();
+		derbyConfig.setUrl(URL);
+		derbyConfig.setInitialSize(2);
+		derbyConfig.setDriverClassName(DRIVER);
 
 		this.configs = new HashMap<>();
 		configs.put("c1", derbyConfig);
@@ -49,7 +49,7 @@ public class LazyDataSourceFactoryIT {
 	@Test
 	public void testCreateDataSource_DriverAutoDetected() throws Exception {
 
-		derbyConfig.remove("driverClassName");
+		derbyConfig.setDriverClassName(null);
 
 		LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);
 		org.apache.tomcat.jdbc.pool.DataSource ds = factory.createDataSource("c1");

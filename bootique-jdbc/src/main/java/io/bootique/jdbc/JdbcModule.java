@@ -12,28 +12,28 @@ import java.util.Map;
 
 public class JdbcModule extends ConfigModule {
 
-	public JdbcModule() {
-	}
+    public JdbcModule() {
+    }
 
-	public JdbcModule(String configPrefix) {
-		super(configPrefix);
-	}
+    public JdbcModule(String configPrefix) {
+        super(configPrefix);
+    }
 
-	@Singleton
-	@Provides
-	public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-											  ShutdownManager shutdownManager) {
-		Map<String, Map<String, String>> configs = configFactory
-				.config(new TypeRef<Map<String,Map<String,String>>>() {
-				}, configPrefix);
+    @Singleton
+    @Provides
+    public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
+                                              ShutdownManager shutdownManager) {
+        Map<String, TomcatDataSourceFactory> configs = configFactory
+                .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
+                }, configPrefix);
 
-		LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);
+        LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);
 
-		shutdownManager.addShutdownHook(() -> {
-			bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
-			factory.shutdown();
-		});
+        shutdownManager.addShutdownHook(() -> {
+            bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
+            factory.shutdown();
+        });
 
-		return factory;
-	}
+        return factory;
+    }
 }

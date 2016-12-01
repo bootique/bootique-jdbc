@@ -9,6 +9,7 @@ import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.TomcatDataSourceFactory;
 import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactory;
 import io.bootique.jdbc.test.derby.DerbyListener;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
@@ -55,8 +56,8 @@ public class JdbcTestModule extends ConfigModule {
 
         // TODO: replace this with DI decoration of the base DataSourceFactory instead of repeating base module code
 
-        Map<String, Map<String, String>> configs = configFactory
-                .config(new TypeRef<Map<String, Map<String, String>>>() {
+        Map<String, TomcatDataSourceFactory> configs = configFactory
+                .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
                 }, configPrefix);
 
         LazyDataSourceFactory delegate = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);

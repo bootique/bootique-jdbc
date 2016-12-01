@@ -3,6 +3,7 @@ package io.bootique.jdbc.instrumented;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.TomcatDataSourceFactory;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.DataSource;
 
@@ -12,7 +13,7 @@ public class InstrumentedLazyDataSourceFactory extends LazyDataSourceFactory {
 
 	private MetricRegistry metricRegistry;
 
-	public InstrumentedLazyDataSourceFactory(Map<String, Map<String, String>> configs,
+	public InstrumentedLazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs,
 											 MetricRegistry metricRegistry) {
 		super(configs);
 		this.metricRegistry = metricRegistry;

@@ -2,10 +2,10 @@ package io.bootique.jdbc.test.runtime;
 
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.TomcatDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,16 +16,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class TestDataSourceFactory implements DataSourceFactory {
 
-    private static final String URL_KEY = "url";
-
     private LazyDataSourceFactory delegate;
-    private Map<String, Map<String, String>> configs;
+    private Map<String, TomcatDataSourceFactory> configs;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
     private Collection<DataSourceListener> dataSourceListeners;
 
     public TestDataSourceFactory(LazyDataSourceFactory delegate,
                                  Collection<DataSourceListener> dataSourceListeners,
-                                 Map<String, Map<String, String>> configs) {
+                                 Map<String, TomcatDataSourceFactory> configs) {
         this.delegate = delegate;
         this.configs = configs;
         this.dataSourceListeners = dataSourceListeners;
@@ -66,9 +64,7 @@ public class TestDataSourceFactory implements DataSourceFactory {
     }
 
     protected Optional<String> getDbUrl(String configName) {
-        Map<String, String> config = configs.getOrDefault(configName, Collections.emptyMap());
-
-        // TODO: must have compiled config property names outside of test...
-        return Optional.ofNullable(config.get(URL_KEY));
+        TomcatDataSourceFactory config = configs.getOrDefault(configName, new TomcatDataSourceFactory());
+        return Optional.ofNullable(config.getUrl());
     }
 }

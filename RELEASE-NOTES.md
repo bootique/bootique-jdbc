@@ -1,5 +1,6 @@
 ## 0.13
 
+* #6 LazyDataSourceFactory must explicitly declare all config properties
 * #17 Table.selectOne ignores all columns but the first one
 * #20 Test Table.deleteAll(..) should not declare a checked exception
 * #21 Tests: DataChannel to quote SQL identifiers by default

@@ -8,6 +8,7 @@ import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.TomcatDataSourceFactory;
 import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheckGroup;
 import io.bootique.log.BootLogger;
 import io.bootique.metrics.MetricsModule;
@@ -42,8 +43,8 @@ public class InstrumentedJdbcModule extends ConfigModule {
                                                      MetricRegistry metricRegistry,
                                                      ShutdownManager shutdownManager) {
 
-        Map<String, Map<String, String>> configs = configFactory
-                .config(new TypeRef<Map<String, Map<String, String>>>() {
+        Map<String, TomcatDataSourceFactory> configs = configFactory
+                .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
                 }, configPrefix);
 
         LazyDataSourceFactory factory = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);

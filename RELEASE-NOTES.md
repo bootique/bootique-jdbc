@@ -8,6 +8,7 @@
 * #22 Tests: DatabaseChannel should log prepared statement bindings
 * #23 jdbc-test: a simple data manager to keep table definitions and cleans up the DB before each test
 * #24 bootique-jdbc-test: Table.insert explicit binding style
+* #25 Suppress alarmist Tomcat DataSource messages from the logs
 
 ## 0.12
 

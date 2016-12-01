@@ -7,7 +7,6 @@ import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.LazyDataSourceFactory;
 import io.bootique.jdbc.TomcatDataSourceFactory;
 import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheckGroup;
 import io.bootique.log.BootLogger;
@@ -47,14 +46,8 @@ public class InstrumentedJdbcModule extends ConfigModule {
                 .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
                 }, configPrefix);
 
-        LazyDataSourceFactory factory = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);
-
-        shutdownManager.addShutdownHook(() -> {
-            bootLogger.trace(() -> "shutting down InstrumentedLazyDataSourceFactory...");
-            factory.shutdown();
-        });
-
-        return factory;
+        // TODO: figure out how to map LazyDataSourceFactoryFactory to config directly, bypassing configs map
+        return new InstrumentedLazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, metricRegistry);
     }
 
     @Singleton

@@ -116,6 +116,11 @@ public class TomcatDataSourceFactory {
         Objects.requireNonNull(url, "'url' property should not be null");
     }
 
+    public boolean isPartial() {
+        // should be manually aligned with #validate to avoid downstream errors.
+        return url == null;
+    }
+
     public void setAbandonWhenPercentageFull(int abandonWhenPercentageFull) {
         this.abandonWhenPercentageFull = abandonWhenPercentageFull;
     }
@@ -260,10 +265,6 @@ public class TomcatDataSourceFactory {
         this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -298,6 +299,10 @@ public class TomcatDataSourceFactory {
 
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     // a clone of org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)

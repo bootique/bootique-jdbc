@@ -10,10 +10,10 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.LazyDataSourceFactory;
 import io.bootique.jdbc.TomcatDataSourceFactory;
-import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactory;
+import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactoryFactory;
 import io.bootique.jdbc.test.derby.DerbyListener;
-import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
+import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
 import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
@@ -60,7 +60,10 @@ public class JdbcTestModule extends ConfigModule {
                 .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
                 }, configPrefix);
 
-        LazyDataSourceFactory delegate = new InstrumentedLazyDataSourceFactory(configs, metricRegistry);
+        LazyDataSourceFactory delegate =
+                new InstrumentedLazyDataSourceFactoryFactory(configs)
+                        .create(shutdownManager, bootLogger, metricRegistry);
+
         TestDataSourceFactory factory = new TestDataSourceFactory(delegate, dataSourceListeners, configs);
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down TestDataSourceFactory...");

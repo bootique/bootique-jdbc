@@ -1,5 +1,7 @@
 package io.bootique.jdbc;
 
+import io.bootique.annotation.BQConfig;
+import io.bootique.annotation.BQConfigProperty;
 import org.apache.tomcat.jdbc.pool.*;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 
@@ -12,6 +14,7 @@ import java.util.Properties;
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
  * @since 0.13
  */
+@BQConfig("Pooling JDBC DataSource configuration.")
 public class TomcatDataSourceFactory {
 
     private int abandonWhenPercentageFull;
@@ -121,188 +124,233 @@ public class TomcatDataSourceFactory {
         return url == null;
     }
 
+    @BQConfigProperty
     public void setAbandonWhenPercentageFull(int abandonWhenPercentageFull) {
         this.abandonWhenPercentageFull = abandonWhenPercentageFull;
     }
 
+    @BQConfigProperty
     public void setAlternateUsernameAllowed(boolean alternateUsernameAllowed) {
         this.alternateUsernameAllowed = alternateUsernameAllowed;
     }
 
+    @BQConfigProperty
     public void setCommitOnReturn(boolean commitOnReturn) {
         this.commitOnReturn = commitOnReturn;
     }
 
+    @BQConfigProperty
     public void setDataSourceJNDI(String dataSourceJNDI) {
         this.dataSourceJNDI = dataSourceJNDI;
     }
 
+    @BQConfigProperty
     public void setDefaultAutoCommit(Boolean defaultAutoCommit) {
         this.defaultAutoCommit = defaultAutoCommit;
     }
 
+    @BQConfigProperty
     public void setDefaultCatalog(String defaultCatalog) {
         this.defaultCatalog = defaultCatalog;
     }
 
+    @BQConfigProperty
     public void setDefaultReadOnly(Boolean defaultReadOnly) {
         this.defaultReadOnly = defaultReadOnly;
     }
 
+    @BQConfigProperty
     public void setDefaultTransactionIsolation(String defaultTransactionIsolation) {
         this.defaultTransactionIsolation = defaultTransactionIsolation;
     }
 
+    @BQConfigProperty
     public void setDriverClassName(String driverClassName) {
         this.driverClassName = driverClassName;
     }
 
+    @BQConfigProperty
     public void setFairQueue(boolean fairQueue) {
         this.fairQueue = fairQueue;
     }
 
+    @BQConfigProperty
     public void setIgnoreExceptionOnPreLoad(boolean ignoreExceptionOnPreLoad) {
         this.ignoreExceptionOnPreLoad = ignoreExceptionOnPreLoad;
     }
 
+    @BQConfigProperty
     public void setInitialSize(int initialSize) {
         this.initialSize = initialSize;
     }
 
+    @BQConfigProperty
     public void setInitSQL(String initSQL) {
         this.initSQL = initSQL;
     }
 
+    @BQConfigProperty
     public void setJdbcInterceptors(String jdbcInterceptors) {
         this.jdbcInterceptors = jdbcInterceptors;
     }
 
+    @BQConfigProperty
     public void setJmxEnabled(boolean jmxEnabled) {
         this.jmxEnabled = jmxEnabled;
     }
 
+    @BQConfigProperty
     public void setJmxObjectName(String jmxObjectName) {
         this.jmxObjectName = jmxObjectName;
     }
 
+    @BQConfigProperty
     public void setLogAbandoned(boolean logAbandoned) {
         this.logAbandoned = logAbandoned;
     }
 
+    @BQConfigProperty
     public void setLogValidationErrors(boolean logValidationErrors) {
         this.logValidationErrors = logValidationErrors;
     }
 
+    @BQConfigProperty
     public void setMaxActive(int maxActive) {
         this.maxActive = maxActive;
     }
 
+    @BQConfigProperty
     public void setMaxAge(long maxAge) {
         this.maxAge = maxAge;
     }
 
+    @BQConfigProperty
     public void setMaxIdle(int maxIdle) {
         this.maxIdle = maxIdle;
     }
 
+    @BQConfigProperty
     public void setMaxWait(int maxWait) {
         this.maxWait = maxWait;
     }
 
+    @BQConfigProperty
     public void setMinEvictableIdleTimeMillis(int minEvictableIdleTimeMillis) {
         this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
     }
 
+    @BQConfigProperty
     public void setMinIdle(int minIdle) {
         this.minIdle = minIdle;
     }
 
+    @BQConfigProperty
     public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun) {
         this.numTestsPerEvictionRun = numTestsPerEvictionRun;
     }
 
+    @BQConfigProperty
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @BQConfigProperty
     public void setPropagateInterruptState(boolean propagateInterruptState) {
         this.propagateInterruptState = propagateInterruptState;
     }
 
+    @BQConfigProperty
     public void setRemoveAbandoned(boolean removeAbandoned) {
         this.removeAbandoned = removeAbandoned;
     }
 
+    @BQConfigProperty
     public void setRemoveAbandonedTimeout(int removeAbandonedTimeout) {
         this.removeAbandonedTimeout = removeAbandonedTimeout;
     }
 
+    @BQConfigProperty
     public void setRollbackOnReturn(boolean rollbackOnReturn) {
         this.rollbackOnReturn = rollbackOnReturn;
     }
 
+    @BQConfigProperty
     public void setSuspectTimeout(int suspectTimeout) {
         this.suspectTimeout = suspectTimeout;
     }
 
+    @BQConfigProperty
     public void setTestOnBorrow(boolean testOnBorrow) {
         this.testOnBorrow = testOnBorrow;
     }
 
+    @BQConfigProperty
     public void setTestOnReturn(boolean testOnReturn) {
         this.testOnReturn = testOnReturn;
     }
 
+    @BQConfigProperty
     public void setTestWhileIdle(boolean testWhileIdle) {
         this.testWhileIdle = testWhileIdle;
     }
 
+    @BQConfigProperty
     public void setTestOnConnect(boolean testOnConnect) {
         this.testOnConnect = testOnConnect;
     }
 
+    @BQConfigProperty
     public void setTimeBetweenEvictionRunsMillis(int timeBetweenEvictionRunsMillis) {
         this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
     }
 
+    @BQConfigProperty
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @BQConfigProperty
     public void setUseDisposableConnectionFacade(boolean useDisposableConnectionFacade) {
         this.useDisposableConnectionFacade = useDisposableConnectionFacade;
     }
 
+    @BQConfigProperty
     public void setUseEquals(boolean useEquals) {
         this.useEquals = useEquals;
     }
 
+    @BQConfigProperty
     public void setUseLock(boolean useLock) {
         this.useLock = useLock;
     }
 
+    @BQConfigProperty
     public void setValidationQuery(String validationQuery) {
         this.validationQuery = validationQuery;
     }
 
+    @BQConfigProperty
     public void setValidationQueryTimeout(int validationQueryTimeout) {
         this.validationQueryTimeout = validationQueryTimeout;
     }
 
+    @BQConfigProperty
     public void setValidatorClassName(String validatorClassName) {
         this.validatorClassName = validatorClassName;
     }
 
+    @BQConfigProperty
     public void setValidationInterval(long validationInterval) {
         this.validationInterval = validationInterval;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
+    @BQConfigProperty
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     // a clone of org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)

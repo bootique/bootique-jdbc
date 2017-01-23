@@ -1,6 +1,7 @@
 package io.bootique.jdbc.instrumented;
 
 import com.codahale.metrics.MetricRegistry;
+import io.bootique.annotation.BQConfig;
 import io.bootique.jdbc.LazyDataSourceFactoryFactory;
 import io.bootique.jdbc.TomcatDataSourceFactory;
 import io.bootique.log.BootLogger;
@@ -8,6 +9,7 @@ import io.bootique.shutdown.ShutdownManager;
 
 import java.util.Map;
 
+@BQConfig
 public class InstrumentedLazyDataSourceFactoryFactory {
 
     private Map<String, TomcatDataSourceFactory> configs;

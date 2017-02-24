@@ -30,6 +30,6 @@ public class JdbcModuleProvider implements BQModuleProvider {
     public BQModule.Builder moduleBuilder() {
         return BQModuleProvider.super
                 .moduleBuilder()
-                .description("Provides configuration for and access to zero or more named JDBC DataSources.");
+                .description("Provides configuration for and access to named JDBC DataSources.");
     }
 }

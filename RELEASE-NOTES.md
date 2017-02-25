@@ -1,3 +1,7 @@
+## 0.14
+
+* #27 Upgrade to bootique 0.22 and bootique-metrics 0.9
+
 ## 0.13
 
 * #6 LazyDataSourceFactory must explicitly declare all config properties

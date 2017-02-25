@@ -32,7 +32,7 @@ public class InstrumentedJdbcModule extends ConfigModule {
 
     @Override
     public void configure(Binder binder) {
-        MetricsModule.contributeHealthCheckGroups(binder).addBinding().to(DataSourceHealthCheckGroup.class);
+        MetricsModule.extend(binder).addHealthCheckGroup(DataSourceHealthCheckGroup.class);
     }
 
     @Singleton

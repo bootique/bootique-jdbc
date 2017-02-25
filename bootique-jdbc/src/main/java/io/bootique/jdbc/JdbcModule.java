@@ -32,9 +32,8 @@ public class JdbcModule extends ConfigModule {
 
         // TODO: submit a patch to Tomcat to reduce this log level down...
 
-        BQCoreModule.contributeLogLevels(binder)
-                .addBinding(org.apache.tomcat.jdbc.pool.PooledConnection.class.getName())
-                .toInstance(Level.OFF);
+        BQCoreModule.extend(binder)
+                .setLogLevel(org.apache.tomcat.jdbc.pool.PooledConnection.class.getName(), Level.OFF);
     }
 
     @Singleton

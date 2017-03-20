@@ -25,12 +25,10 @@ public interface DatabaseChannel {
     }
 
     /**
-     * Quotes a SQL identifier as appropriate for the given DB. This implementation returns the identifier unchanged,
-     * while subclasses may implement a custom quoting strategy.
+     * @return DB-specific identifier quotation symbol.
+     * @since 0.14
      */
-    default String quote(String sqlIdentifier) {
-        return sqlIdentifier;
-    }
+    String getIdentifierQuote();
 
     <T> List<T> select(String sql, long maxRows, Function<ResultSet, T> rowReader);
 

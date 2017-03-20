@@ -7,11 +7,16 @@ public class UpdatingSqlContext {
     protected DatabaseChannel channel;
     protected List<Binding> bindings;
     protected StringBuilder sqlBuffer;
+    protected IdentifierQuotationStrategy quotationStrategy;
 
-    protected UpdatingSqlContext(DatabaseChannel channel, StringBuilder sqlBuffer, List<Binding> bindings) {
+    protected UpdatingSqlContext(DatabaseChannel channel,
+                                 IdentifierQuotationStrategy quotationStrategy,
+                                 StringBuilder sqlBuffer,
+                                 List<Binding> bindings) {
         this.channel = channel;
         this.bindings = bindings;
         this.sqlBuffer = sqlBuffer;
+        this.quotationStrategy = quotationStrategy;
     }
 
     public int execute() {
@@ -28,7 +33,7 @@ public class UpdatingSqlContext {
     }
 
     public UpdatingSqlContext appendIdentifier(String sqlIdentifier) {
-        sqlBuffer.append(channel.quote(sqlIdentifier));
+        sqlBuffer.append(quotationStrategy.quoted(sqlIdentifier));
         return this;
     }
 

@@ -11,13 +11,16 @@ public class InsertBuilder {
     protected DatabaseChannel channel;
     protected String tableName;
     protected List<Column> columns;
+    protected IdentifierQuotationStrategy quotationStrategy;
+
     protected List<List<Binding>> bindings;
 
-    public InsertBuilder(DatabaseChannel channel, String tableName, List<Column> columns) {
+    public InsertBuilder(DatabaseChannel channel, IdentifierQuotationStrategy quotationStrategy, String tableName, List<Column> columns) {
         this.channel = channel;
         this.bindings = new ArrayList<>();
         this.tableName = tableName;
         this.columns = columns;
+        this.quotationStrategy = quotationStrategy;
     }
 
     public InsertBuilder values(Object... values) {
@@ -39,7 +42,7 @@ public class InsertBuilder {
     public void exec() {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO ").append(channel.quote(tableName)).append(" (");
+        sql.append("INSERT INTO ").append(quotationStrategy.quoted(tableName)).append(" (");
 
         for (int i = 0; i < columns.size(); i++) {
 
@@ -49,7 +52,7 @@ public class InsertBuilder {
                 sql.append(", ");
             }
 
-            sql.append(channel.quote(col.getName()));
+            sql.append(quotationStrategy.quoted(col.getName()));
         }
 
         sql.append(") VALUES ");

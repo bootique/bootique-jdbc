@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
@@ -23,6 +24,7 @@ public class Table {
     protected String name;
     protected DatabaseChannel channel;
     protected List<Column> columns;
+    protected IdentifierQuotationStrategy quotationStrategy;
 
     public static Builder builder(DatabaseChannel channel, String name) {
         return new Builder().channel(channel).name(name);
@@ -30,8 +32,8 @@ public class Table {
 
     public UpdateWhereBuilder update() {
         StringBuilder sql = new StringBuilder();
-        sql.append("UPDATE ").append(channel.quote(name)).append(" SET ");
-        UpdatingSqlContext context = new UpdatingSqlContext(channel, sql, new ArrayList<>());
+        sql.append("UPDATE ").append(quotationStrategy.quoted(name)).append(" SET ");
+        UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());
         return new UpdateWhereBuilder(context);
     }
 
@@ -39,8 +41,8 @@ public class Table {
 
         StringBuilder sql = new StringBuilder();
 
-        sql.append("DELETE FROM ").append(channel.quote(name));
-        UpdatingSqlContext context = new UpdatingSqlContext(channel, sql, new ArrayList<>());
+        sql.append("DELETE FROM ").append(quotationStrategy.quoted(name));
+        UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());
 
         return new UpdateWhereBuilder(context);
     }
@@ -55,6 +57,14 @@ public class Table {
 
     public DatabaseChannel getChannel() {
         return channel;
+    }
+
+    /**
+     * @return an internal IdentifierQuotationStrategy used to generate quoted SQL identifiers.
+     * @since 0.14
+     */
+    public IdentifierQuotationStrategy getQuotationStrategy() {
+        return quotationStrategy;
     }
 
     /**
@@ -84,7 +94,7 @@ public class Table {
         this.columns.forEach(c -> allColumnsMap.put(c.getName(), c));
 
         List<Column> subcolumns = new ArrayList<>();
-        for(String name : columns) {
+        for (String name : columns) {
             Column c = allColumnsMap.computeIfAbsent(name, key -> {
                 throw new IllegalArgumentException("'" + key + "' is not a valid column");
             });
@@ -108,7 +118,7 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(channel, name, columns);
+        return new InsertBuilder(channel, quotationStrategy, name, columns);
     }
 
     /**
@@ -127,9 +137,9 @@ public class Table {
             if (i > 0) {
                 sql.append(", ");
             }
-            sql.append(channel.quote(col.getName()));
+            sql.append(quotationStrategy.quoted(col.getName()));
         }
-        sql.append(" FROM ").append(channel.quote(name));
+        sql.append(" FROM ").append(quotationStrategy.quoted(name));
 
         return selectOne(sql.toString(), rs -> {
             Object[] result = new Object[columns.size()];
@@ -212,9 +222,9 @@ public class Table {
             if (i > 0) {
                 sql.append(", ");
             }
-            sql.append(channel.quote(col.getName()));
+            sql.append(quotationStrategy.quoted(col.getName()));
         }
-        sql.append(" FROM ").append(channel.quote(name));
+        sql.append(" FROM ").append(quotationStrategy.quoted(name));
 
         return channel.select(sql.toString(), Long.MAX_VALUE, rs -> {
 
@@ -234,7 +244,7 @@ public class Table {
 
     public int getRowCount() {
 
-        String sql = "SELECT COUNT(*) FROM " + channel.quote(name);
+        String sql = "SELECT COUNT(*) FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -246,7 +256,7 @@ public class Table {
     }
 
     public Object getObject(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -258,7 +268,7 @@ public class Table {
     }
 
     public byte getByte(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -270,7 +280,7 @@ public class Table {
     }
 
     public byte[] getBytes(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -282,7 +292,7 @@ public class Table {
     }
 
     public int getInt(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -294,7 +304,7 @@ public class Table {
     }
 
     public long getLong(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -306,7 +316,7 @@ public class Table {
     }
 
     public double getDouble(String column) {
-        final String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -318,7 +328,7 @@ public class Table {
     }
 
     public boolean getBoolean(String column) {
-        final String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -331,7 +341,7 @@ public class Table {
 
     public String getString(String column) {
 
-        final String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -347,7 +357,7 @@ public class Table {
     }
 
     public java.sql.Date getSqlDate(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -359,7 +369,7 @@ public class Table {
     }
 
     public Time getTime(String column) {
-        String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -371,7 +381,7 @@ public class Table {
     }
 
     public Timestamp getTimestamp(String column) {
-        final String sql = "SELECT " + channel.quote(column) + " FROM " + channel.quote(name);
+        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
 
         return selectOne(sql, rs -> {
             try {
@@ -385,17 +395,38 @@ public class Table {
     public static class Builder {
 
         private Table table;
+        private boolean quotingSqlIdentifiers;
 
         private Builder() {
             this.table = new Table();
+            this.quotingSqlIdentifiers = true;
         }
 
         public Table build() {
+
+            Objects.requireNonNull(table.channel);
+            String quoteSymbol = table.channel.getIdentifierQuote();
+
+            table.quotationStrategy = quotingSqlIdentifiers
+                    ? id -> quoteSymbol + Objects.requireNonNull(id) + quoteSymbol
+                    : id -> id;
+
             return table;
         }
 
         public Builder name(String name) {
             table.name = name;
+            return this;
+        }
+
+        /**
+         * Suppress SQL identifier quotations.
+         *
+         * @return this builder instance.
+         * @since 0.14
+         */
+        public Builder dontQuoteSqlIdentifiers() {
+            this.quotingSqlIdentifiers = false;
             return this;
         }
 

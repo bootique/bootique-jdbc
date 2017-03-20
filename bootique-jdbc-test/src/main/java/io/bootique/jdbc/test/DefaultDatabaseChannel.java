@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultDatabaseChannel implements DatabaseChannel {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);
 
     protected boolean closed;
     protected DataSource dataSource;
@@ -37,8 +37,8 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     @Override
-    public String quote(String sqlIdentifier) {
-        return identifierQuote + Objects.requireNonNull(sqlIdentifier) + identifierQuote;
+    public String getIdentifierQuote() {
+        return identifierQuote;
     }
 
     @Override

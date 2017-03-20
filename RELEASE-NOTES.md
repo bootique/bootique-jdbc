@@ -1,6 +1,7 @@
 ## 0.14
 
 * #27 Upgrade to bootique 0.22 and bootique-metrics 0.9
+* #28 bootique-jdbc-test: Per-table identifier quoting strategy
 
 ## 0.13
 

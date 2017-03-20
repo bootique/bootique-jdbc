@@ -420,13 +420,15 @@ public class Table {
         }
 
         /**
-         * Suppress SQL identifier quotations.
+         * Sets whether SQL identifiers should be quoted in the generated SQL using DB-specific quotation symbol.
+         * True by default.
          *
+         * @param shouldQuote a flag indicating whether SQL identifiers should be surrounded in quotations.
          * @return this builder instance.
          * @since 0.14
          */
-        public Builder dontQuoteSqlIdentifiers() {
-            this.quotingSqlIdentifiers = false;
+        public Builder quoteSqlIdentifiers(boolean shouldQuote) {
+            this.quotingSqlIdentifiers = shouldQuote;
             return this;
         }
 

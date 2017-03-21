@@ -47,13 +47,13 @@ public class Column {
     protected void bindNull(PreparedStatement statement, int position) throws SQLException {
 
         int jdbcPosition = position + 1;
+        int type = this.type;
 
         if (typeUnknown()) {
-            throw new IllegalStateException("No type information for null value for column '" + name + "'at index "
-                    + position);
-        } else {
-            statement.setNull(jdbcPosition, type);
+            type = statement.getParameterMetaData().getParameterType(jdbcPosition);
         }
+
+        statement.setNull(jdbcPosition, type);
     }
 
     protected void bindNotNull(PreparedStatement statement, int position, Object value) throws SQLException {

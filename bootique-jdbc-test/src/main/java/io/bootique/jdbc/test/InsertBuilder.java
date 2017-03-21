@@ -39,6 +39,16 @@ public class InsertBuilder {
         return this;
     }
 
+    /**
+     * Returns a list of columns for this insert.
+     *
+     * @return a list of columns for this insert.
+     * @since 0.14
+     */
+    public List<Column> getColumns() {
+        return columns;
+    }
+
     public void exec() {
 
         StringBuilder sql = new StringBuilder();

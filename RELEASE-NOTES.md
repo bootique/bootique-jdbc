@@ -2,6 +2,7 @@
 
 * #27 Upgrade to bootique 0.22 and bootique-metrics 0.9
 * #28 bootique-jdbc-test: Per-table identifier quoting strategy
+* #29 bootique-jdbc-test: support for loading test data from CSV
 
 ## 0.13
 

@@ -1,5 +1,9 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.csv.CsvDataSet;
+import io.bootique.jdbc.test.csv.ValueConverter;
+import io.bootique.resource.ResourceFactory;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -102,6 +106,18 @@ public class Table {
         }
 
         return insertColumns(subcolumns);
+    }
+
+    /**
+     * Inserts test data from the provided CSV resource.
+     *
+     * @param csv a resource that stores CSV data.
+     * @return this table instance.
+     * @since 0.14
+     */
+    public Table insertFromCsv(ResourceFactory csv) {
+        new CsvDataSet(this, new ValueConverter(), csv).exec();
+        return this;
     }
 
     public Table insert(Object... values) {

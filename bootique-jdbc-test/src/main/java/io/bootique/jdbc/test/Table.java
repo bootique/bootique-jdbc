@@ -111,12 +111,23 @@ public class Table {
     /**
      * Inserts test data from the provided CSV resource.
      *
-     * @param csv a resource that stores CSV data.
+     * @param csvResource a resource that stores CSV data.
      * @return this table instance.
      * @since 0.14
      */
-    public Table insertFromCsv(ResourceFactory csv) {
-        new CsvDataSet(this, new ValueConverter(), csv).exec();
+    public Table insertFromCsv(String csvResource) {
+        return insertFromCsv(new ResourceFactory(csvResource));
+    }
+
+    /**
+     * Inserts test data from the provided CSV resource.
+     *
+     * @param csvResource a resource that stores CSV data.
+     * @return this table instance.
+     * @since 0.14
+     */
+    public Table insertFromCsv(ResourceFactory csvResource) {
+        new CsvDataSet(this, new ValueConverter(), csvResource).exec();
         return this;
     }
 

@@ -40,8 +40,8 @@ public class TableIT {
         channel.update("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         channel.update("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
 
-        T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").build();
-        T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").build();
+        T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").initColumnTypesFromDBMetadata().build();
+        T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").initColumnTypesFromDBMetadata().build();
     }
 
     @Test
@@ -85,7 +85,7 @@ public class TableIT {
 
         Object[] row1 = data.get(0);
         assertEquals(1, row1[0]);
-        Assert.assertNull(row1[1]);
+        assertEquals("", row1[1]);
         assertEquals("abcd", row1[2]);
 
         Object[] row2 = data.get(1);
@@ -95,12 +95,12 @@ public class TableIT {
     }
 
     @Test
-    public void testInsertFromCsv_Dates() {
+    public void testInsertFromCsv_Nulls_Dates() {
         assertEquals(0, T2.getRowCount());
         T2.insertFromCsv(new ResourceFactory("classpath:io/bootique/jdbc/test/t2.csv"));
 
         List<Object[]> data = T2.select();
-        assertEquals(2, data.size());
+        assertEquals(3, data.size());
 
         // sort in memory, as there's no guarantee that DB will return data in insertion order
         data.sort(Comparator.comparing(r -> (Integer) r[0]));
@@ -116,5 +116,9 @@ public class TableIT {
         assertEquals(Date.valueOf(LocalDate.of(2017, 1, 9)), row2[2]);
         assertEquals(Timestamp.valueOf(LocalDateTime.of(2017, 1, 10, 13, 0, 1)), row2[3]);
 
+        Object[] row3 = data.get(2);
+        Assert.assertNull(row3[1]);
+        assertEquals(Date.valueOf(LocalDate.of(2018, 1, 9)), row3[2]);
+        assertEquals(Timestamp.valueOf(LocalDateTime.of(2018, 1, 10, 14, 0, 1)), row3[3]);
     }
 }

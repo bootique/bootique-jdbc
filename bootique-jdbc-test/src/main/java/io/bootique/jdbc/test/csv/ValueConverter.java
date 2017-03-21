@@ -2,6 +2,8 @@ package io.bootique.jdbc.test.csv;
 
 import io.bootique.jdbc.test.Column;
 
+import java.sql.Types;
+
 /**
  * Converts String values coming from CSV to Java value objects.
  *
@@ -11,8 +13,32 @@ public class ValueConverter {
 
     public Object fromString(String value, Column column) {
 
-        // TODO: on Derby inserting CSV Strings in DATE and TIMESTAMP columns seems to work... No guarantee it will work
-        // on other DBs
-        return value == null || value.length() == 0 ? null : value;
+        if (value == null) {
+            return null;
+        }
+
+        if (value.length() == 0) {
+            // this is an empty String for char columns and a null for all others
+            return isChar(column.getType()) ? "" : null;
+        }
+
+        // for the purpose of SQL scripts, "NULL" String is null
+        if (value.equals("NULL")) {
+            return null;
+        }
+
+        // TODO: other conversions...
+        return value;
+    }
+
+    private static boolean isChar(int jdbcType) {
+        switch (jdbcType) {
+            case Types.VARCHAR:
+            case Types.CHAR:
+            case Types.CLOB:
+                return true;
+            default:
+                return false;
+        }
     }
 }

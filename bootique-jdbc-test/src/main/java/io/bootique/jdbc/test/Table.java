@@ -4,6 +4,8 @@ import io.bootique.jdbc.test.csv.CsvDataSet;
 import io.bootique.jdbc.test.csv.ValueConverter;
 import io.bootique.resource.ResourceFactory;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -423,6 +425,7 @@ public class Table {
 
         private Table table;
         private boolean quotingSqlIdentifiers;
+        private boolean initColumnTypesFromDBMetadata;
 
         private Builder() {
             this.table = new Table();
@@ -438,7 +441,40 @@ public class Table {
                     ? id -> quoteSymbol + Objects.requireNonNull(id) + quoteSymbol
                     : id -> id;
 
+            if (initColumnTypesFromDBMetadata) {
+                doInitColumnTypesFromDBMetadata();
+            }
+
             return table;
+        }
+
+        private void doInitColumnTypesFromDBMetadata() {
+
+            if (table.columns.isEmpty()) {
+                return;
+            }
+
+            List<Column> updatedColumns = new ArrayList<>(table.columns.size());
+
+            try (Connection c = table.channel.getConnection()) {
+
+                DatabaseMetaData md = c.getMetaData();
+                Map<String, Integer> types = new HashMap<>();
+                try (ResultSet rs = md.getColumns(null, null, table.getName(), "%")) {
+                    while (rs.next()) {
+                        types.put(rs.getString("COLUMN_NAME"), rs.getInt("DATA_TYPE"));
+                    }
+                }
+
+                table.columns.stream()
+                        .map(col -> new Column(col.getName(), types.get(col.getName())))
+                        .forEach(updatedColumns::add);
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error getting DB metadata", e);
+            }
+
+            table.columns = updatedColumns;
         }
 
         public Builder name(String name) {
@@ -459,8 +495,8 @@ public class Table {
             return this;
         }
 
-        public Builder channel(DatabaseChannel store) {
-            table.channel = store;
+        public Builder channel(DatabaseChannel channel) {
+            table.channel = channel;
             return this;
         }
 
@@ -472,6 +508,11 @@ public class Table {
             }
 
             table.columns = columns;
+            return this;
+        }
+
+        public Builder initColumnTypesFromDBMetadata() {
+            this.initColumnTypesFromDBMetadata = true;
             return this;
         }
 

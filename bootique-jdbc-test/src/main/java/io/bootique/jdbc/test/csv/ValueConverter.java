@@ -23,6 +23,7 @@ public class ValueConverter {
         }
 
         // for the purpose of SQL scripts, "NULL" String is null
+        // TODO: a more universal escape sequence for nulls
         if (value.equals("NULL")) {
             return null;
         }

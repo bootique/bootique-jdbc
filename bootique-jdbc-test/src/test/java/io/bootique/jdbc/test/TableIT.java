@@ -131,6 +131,20 @@ public class TableIT {
     }
 
     @Test
+    public void testContentsMatchCsv_Dates() {
+        assertEquals(0, T2.getRowCount());
+
+
+        T2.insertColumns("c1", "c2", "c3", "c4")
+                .values(3, null, "2018-01-09", "2018-01-10 14:00:01")
+                .values(1, null, "2016-01-09", "2016-01-10 10:00:00")
+                .values(2, null, "2017-01-09", "2017-01-10 13:00:01")
+                .exec();
+
+        T2.contentsMatchCsv("classpath:io/bootique/jdbc/test/t2.csv", "c1");
+    }
+
+    @Test
     public void testInsertFromCsv_Nulls_Dates() {
         assertEquals(0, T2.getRowCount());
         T2.insertFromCsv(new ResourceFactory("classpath:io/bootique/jdbc/test/t2.csv"));

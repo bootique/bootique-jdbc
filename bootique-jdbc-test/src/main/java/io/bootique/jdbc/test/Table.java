@@ -82,32 +82,28 @@ public class Table {
     }
 
     /**
+     * @param name column name
+     * @return a column for name.
+     * @since 0.14
+     */
+    public Column getColumn(String name) {
+
+        for(Column c : columns) {
+            if(name.equals(c.getName())) {
+                return c;
+            }
+        }
+
+        throw new IllegalArgumentException("No such column: " + name);
+    }
+
+    /**
      * @param columns an array of columns that is a subset of the table columns.
      * @return a builder for insert query.
      * @since 0.13
      */
     public InsertBuilder insertColumns(String... columns) {
-
-        if (columns == null) {
-            throw new NullPointerException("Null columns");
-        }
-
-        if (columns.length == 0) {
-            throw new IllegalArgumentException("No columns in the list");
-        }
-
-        Map<String, Column> allColumnsMap = new HashMap<>();
-        this.columns.forEach(c -> allColumnsMap.put(c.getName(), c));
-
-        List<Column> subcolumns = new ArrayList<>();
-        for (String name : columns) {
-            Column c = allColumnsMap.computeIfAbsent(name, key -> {
-                throw new IllegalArgumentException("'" + key + "' is not a valid column");
-            });
-            subcolumns.add(c);
-        }
-
-        return insertColumns(subcolumns);
+        return insertColumns(toColumnsList(columns));
     }
 
     /**
@@ -129,7 +125,7 @@ public class Table {
      * @since 0.14
      */
     public Table insertFromCsv(ResourceFactory csvResource) {
-        new CsvDataSet(this, new ValueConverter(), csvResource).exec();
+        new CsvDataSet(this, new ValueConverter(), csvResource).insert();
         return this;
     }
 
@@ -138,7 +134,7 @@ public class Table {
         return this;
     }
 
-    protected InsertBuilder insertColumns(List<Column> columns) {
+    public InsertBuilder insertColumns(List<Column> columns) {
         if (columns == null) {
             throw new NullPointerException("Null columns");
         }
@@ -238,7 +234,20 @@ public class Table {
         return map;
     }
 
+    /**
+     * @param columns an array of columns to select/
+     * @return select result.
+     * @since 0.14
+     */
+    public List<Object[]> selectColumns(String... columns) {
+        return selectColumns(toColumnsList(columns));
+    }
+
     public List<Object[]> select() {
+        return selectColumns(this.columns);
+    }
+
+    public List<Object[]> selectColumns(List<Column> columns) {
 
         if (columns.isEmpty()) {
             throw new IllegalArgumentException("No columns");
@@ -419,6 +428,50 @@ public class Table {
                 throw new RuntimeException("Error reading ResultSet", e);
             }
         });
+    }
+
+    /**
+     * @param csvResource a CSV resource to use in data comparisons.
+     * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
+     *                    all row columns are used in comparision.
+     * @since 0.14
+     */
+    public void contentsMatchCsv(String csvResource, String... rowKey) {
+        contentsMatchCsv(new ResourceFactory(csvResource), rowKey);
+    }
+
+    /**
+     * @param csvResource a CSV resource to use in data comparisons.
+     * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
+     *                    all row columns are used in comparision.
+     * @since 0.14
+     */
+    public void contentsMatchCsv(ResourceFactory csvResource, String... rowKey) {
+        new CsvDataSet(this, new ValueConverter(), csvResource).matchContents(rowKey);
+    }
+
+
+    protected List<Column> toColumnsList(String... columns) {
+        if (columns == null) {
+            throw new NullPointerException("Null columns");
+        }
+
+        if (columns.length == 0) {
+            throw new IllegalArgumentException("No columns in the list");
+        }
+
+        Map<String, Column> allColumnsMap = new HashMap<>();
+        this.columns.forEach(c -> allColumnsMap.put(c.getName(), c));
+
+        List<Column> subcolumns = new ArrayList<>();
+        for (String name : columns) {
+            Column c = allColumnsMap.computeIfAbsent(name, key -> {
+                throw new IllegalArgumentException("'" + key + "' is not a valid column");
+            });
+            subcolumns.add(c);
+        }
+
+        return subcolumns;
     }
 
     public static class Builder {

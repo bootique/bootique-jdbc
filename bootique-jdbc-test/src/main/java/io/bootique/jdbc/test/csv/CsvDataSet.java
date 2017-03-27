@@ -11,7 +11,19 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @since 0.14
@@ -28,43 +40,99 @@ public class CsvDataSet {
         this.converter = converter;
     }
 
-    public void exec() {
+    public void matchContents(String... rowKeyColumns) {
+
+        CsvRecordSet refSet = read();
+        if (refSet.size() == 0) {
+            assertEquals("Expected empty table", 0, table.getRowCount());
+        }
+
+        if (rowKeyColumns == null || rowKeyColumns.length == 0) {
+            rowKeyColumns = refSet.getHeader().stream().map(Column::getName).toArray(i -> new String[i]);
+        }
+
+        RowKeyFactory keyFactory = RowKeyFactory.create(refSet.getHeader(), rowKeyColumns);
+
+        List<Object[]> data = table.selectColumns(refSet.getHeader());
+        assertEquals("Reference dataset has " + refSet.size() + " record(s). DB has " + data.size(),
+                refSet.size(),
+                data.size());
+
+        Map<RowKey, Object[]> mappedData = new HashMap<>();
+        data.stream().forEach(row -> {
+
+            RowKey key = keyFactory.createKey(row);
+
+            // TODO: remove row key values from the rest of the row to speed up value comparision
+            mappedData.put(key, row);
+        });
+
+        refSet.records().forEach(ref -> {
+
+            RowKey rowKey = keyFactory.createKey(ref);
+            Object[] row = mappedData.get(rowKey);
+            assertNotNull("No DB records for key: " + rowKey, row);
+
+            for (int i = 0; i < row.length; i++) {
+                Object refVal = ref[i];
+                Object dbVal = row[i];
+
+                if (refVal == null) {
+                    assertNull("Expected null value at index [" + i + "] for row " + rowKey, dbVal);
+                } else {
+                    assertEquals("Unexpected value [" + dbVal + "] at index [" + i + "] for row " + rowKey, refVal, dbVal);
+                }
+            }
+        });
+    }
+
+
+    public void insert() {
+
+        CsvRecordSet recordSet = read();
+        if (recordSet.size() != 0) {
+            InsertBuilder builder = table.insertColumns(recordSet.getHeader());
+            recordSet.records().forEach(row -> builder.values(row));
+            builder.exec();
+        }
+    }
+
+    protected CsvRecordSet read() {
 
         try (Reader csvReader = new InputStreamReader(csv.getUrl().openStream(), "UTF-8")) {
             try (CSVParser parser = new CSVParser(csvReader, CSVFormat.DEFAULT, 0, 0)) {
 
+
                 Iterator<CSVRecord> it = parser.iterator();
-                if(!it.hasNext()) {
-                    return;
+                if (!it.hasNext()) {
+                    return new CsvRecordSet(converter, Collections.emptyList(), Collections.emptyList());
                 }
 
                 CSVRecord headerRow = it.next();
-                String[] header = new String[headerRow.size()];
-                for (int i = 0; i < header.length; i++) {
-                    header[i] = headerRow.get(i);
+                List<Column> header = new ArrayList<>(headerRow.size());
+                for (String column : headerRow) {
+                    header.add(table.getColumn(column));
                 }
 
-                InsertBuilder insertBuilder = table.insertColumns(header);
+                if (!it.hasNext()) {
+                    return new CsvRecordSet(converter, header, Collections.emptyList());
+                }
 
-                it.forEachRemaining(row -> {
+                List<CSVRecord> records = new ArrayList<>();
 
-                    if (row.size() != header.length) {
-                        throw new IllegalStateException("Row length "
-                                + row.size()
-                                + " is different from header length "
-                                + header.length + ".");
-                    }
+                StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                        .forEach(r -> {
+                            if (r.size() != header.size()) {
+                                throw new IllegalStateException("Row length "
+                                        + r.size()
+                                        + " is different from header length "
+                                        + header.size() + ".");
+                            }
+                            records.add(r);
+                        });
 
-                    Object[] values = new Object[header.length];
-                    for (int i = 0; i < header.length; i++) {
-                        Column column = insertBuilder.getColumns().get(i);
-                        values[i] = converter.fromString(row.get(i), column);
-                    }
+                return new CsvRecordSet(converter, header, records);
 
-                    insertBuilder.values(values);
-                });
-
-                insertBuilder.exec();
             }
         } catch (IOException e) {
             throw new RuntimeException("Error reading CSV " + csv, e);

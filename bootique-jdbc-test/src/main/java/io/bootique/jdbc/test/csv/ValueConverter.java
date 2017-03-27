@@ -28,8 +28,19 @@ public class ValueConverter {
             return null;
         }
 
-        // TODO: other conversions...
-        return value;
+        if (isChar(column.getType())) {
+            return value;
+        }
+
+        switch (column.getType()) {
+            case Types.INTEGER:
+                return Integer.valueOf(value);
+            case Types.BIGINT:
+                return Long.valueOf(value);
+            // TODO: other conversions...
+            default:
+                return value;
+        }
     }
 
     private static boolean isChar(int jdbcType) {
@@ -42,4 +53,6 @@ public class ValueConverter {
                 return false;
         }
     }
+
+
 }

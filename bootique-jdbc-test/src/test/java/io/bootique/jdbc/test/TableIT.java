@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TableIT {
 
@@ -92,6 +93,41 @@ public class TableIT {
         assertEquals(2, row2[0]);
         assertEquals("tt", row2[1]);
         assertEquals("xyz", row2[2]);
+    }
+
+    @Test
+    public void testContentsMatchCsv() {
+        assertEquals(0, T1.getRowCount());
+
+
+        T1.insertColumns("c1", "c2", "c3")
+                .values(2, "tt", "xyz")
+                .values(1, "", "abcd")
+                .exec();
+
+        T1.contentsMatchCsv("classpath:io/bootique/jdbc/test/t1.csv", "c1");
+    }
+
+    @Test
+    public void testContentsMatchCsv_NoMatch() {
+        assertEquals(0, T1.getRowCount());
+
+
+        T1.insertColumns("c1", "c2", "c3")
+                .values(1, "tt", "xyz")
+                .values(2, "", "abcd")
+                .exec();
+
+        boolean succeeded;
+        try {
+            T1.contentsMatchCsv("classpath:io/bootique/jdbc/test/t1.csv", "c1");
+            succeeded = true;
+        } catch (AssertionError e) {
+            // expected
+            succeeded = false;
+        }
+
+        assertFalse("Must have failed - data sets do not match", succeeded);
     }
 
     @Test

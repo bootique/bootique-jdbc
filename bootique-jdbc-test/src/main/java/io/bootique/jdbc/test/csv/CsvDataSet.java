@@ -77,10 +77,12 @@ public class CsvDataSet {
                 Object refVal = ref[i];
                 Object dbVal = row[i];
 
+                String columnName = refSet.getHeader().get(i).getName();
+
                 if (refVal == null) {
-                    assertNull("Expected null value at index [" + i + "] for row " + rowKey, dbVal);
+                    assertNull("Expected null value in column [" + columnName + "], row " + rowKey, dbVal);
                 } else {
-                    assertEquals("Unexpected value [" + dbVal + "] at index [" + i + "] for row " + rowKey, refVal, dbVal);
+                    assertEquals("Unexpected value in column [" + columnName + "], row " + rowKey, refVal, dbVal);
                 }
             }
         });

@@ -25,10 +25,10 @@ public class RowKeyFactory {
             }
 
             Assert.assertTrue("Key '" + rowKeyColumns[i] + "' is not a part of the row", index >= 0);
+            keyIndexes[i] = index;
         }
 
         return new RowKeyFactory(keyIndexes);
-
     }
 
     RowKeyFactory(int[] keyIndexes) {

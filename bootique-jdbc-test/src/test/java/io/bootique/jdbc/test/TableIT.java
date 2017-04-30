@@ -1,7 +1,7 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.BQRuntime;
 import io.bootique.resource.ResourceFactory;
-import io.bootique.test.BQTestRuntime;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -31,12 +31,12 @@ public class TableIT {
 
     @BeforeClass
     public static void setupDB() {
-        BQTestRuntime testRuntime = TEST_FACTORY
+        BQRuntime runtime = TEST_FACTORY
                 .app("--config=classpath:io/bootique/jdbc/test/TableIT.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DatabaseChannel channel = DatabaseChannel.get(testRuntime);
+        DatabaseChannel channel = DatabaseChannel.get(runtime);
 
         channel.update("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         channel.update("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");

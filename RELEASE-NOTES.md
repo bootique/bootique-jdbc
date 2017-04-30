@@ -1,3 +1,7 @@
+## 0.15
+
+* #32 Upgrade to BQ 0.23 and update test API to match the new Bootique test API
+
 ## 0.14
 
 * #27 Upgrade to bootique 0.22 and bootique-metrics 0.9

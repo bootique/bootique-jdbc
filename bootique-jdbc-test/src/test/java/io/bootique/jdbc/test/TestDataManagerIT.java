@@ -1,6 +1,6 @@
 package io.bootique.jdbc.test;
 
-import io.bootique.test.BQTestRuntime;
+import io.bootique.BQRuntime;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -21,7 +21,7 @@ public class TestDataManagerIT {
 
     @BeforeClass
     public static void setupDB() {
-        BQTestRuntime testRuntime = TEST_FACTORY
+        BQRuntime testRuntime = TEST_FACTORY
                 .app("--config=classpath:io/bootique/jdbc/test/TestDataManagerIT.yml")
                 .autoLoadModules()
                 .createRuntime();

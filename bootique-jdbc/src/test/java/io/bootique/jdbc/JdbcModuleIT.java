@@ -1,7 +1,7 @@
 package io.bootique.jdbc;
 
 import io.bootique.BQCoreModule;
-import io.bootique.test.BQTestRuntime;
+import io.bootique.BQRuntime;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,8 +20,8 @@ public class JdbcModuleIT {
     @Test
     public void testPartialConfigsExcluded() {
 
-        BQTestRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml").autoLoadModules().createRuntime();
-        DataSourceFactory factory = runtime.getRuntime().getInstance(DataSourceFactory.class);
+        BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml").autoLoadModules().createRuntime();
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
@@ -30,7 +30,7 @@ public class JdbcModuleIT {
     @Test
     public void testPartialConfigsExcluded_Vars() {
 
-        BQTestRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")
                 .autoLoadModules()
                 .module(b -> {
                     BQCoreModule.extend(b)
@@ -39,7 +39,7 @@ public class JdbcModuleIT {
                             .setVar("BQ_JDBC_FULLDSVARS_URL", "jdbc:dummy");
                 })
                 .createRuntime();
-        DataSourceFactory factory = runtime.getRuntime().getInstance(DataSourceFactory.class);
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);

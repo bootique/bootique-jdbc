@@ -1,8 +1,8 @@
 package io.bootique.jdbc.test.derby;
 
+import io.bootique.BQRuntime;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
-import io.bootique.test.BQTestRuntime;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,9 +10,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class DerbyDatabaseIT {
@@ -28,7 +26,7 @@ public class DerbyDatabaseIT {
 
         this.derbyDir = new File("target/derby/DerbyDatabaseIT");
 
-        BQTestRuntime runtime = testFactory
+        BQRuntime runtime = testFactory
                 .app("--config=classpath:io/bootique/jdbc/test/DerbyDatabaseIT.yml")
                 .autoLoadModules()
                 .createRuntime();

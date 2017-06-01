@@ -28,12 +28,14 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     protected DataSource dataSource;
     protected String identifierQuote;
     protected BindingValueToStringConverter valueToStringConverter;
+    private ObjectValueConverter objectValueConverter;
 
     public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote) {
         LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
         this.identifierQuote = Objects.requireNonNull(identifierQuote);
         this.valueToStringConverter = new BindingValueToStringConverter();
+        this.objectValueConverter = new ObjectValueConverter();
     }
 
     @Override
@@ -88,7 +90,9 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
             try (PreparedStatement st = c.prepareStatement(sql);) {
 
                 for (int i = 0; i < bindings.size(); i++) {
-                    bindings.get(i).bind(st, i);
+                    Binding binding = bindings.get(i);
+                    binding.setValue(objectValueConverter.convert(binding.getValue()));
+                    binding.bind(st, i);
                 }
 
                 count = st.executeUpdate();

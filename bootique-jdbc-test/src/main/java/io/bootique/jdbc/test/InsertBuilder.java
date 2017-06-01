@@ -29,11 +29,10 @@ public class InsertBuilder {
                     + " column(s) " + "and " + values.length + " value(s).");
         }
 
-        ObjectValueConverter converter = new ObjectValueConverter();
         List<Binding> bindings = new ArrayList<>(values.length);
         for (int i = 0; i < values.length; i++) {
             Column col = columns.get(i);
-            bindings.add(new Binding(col, converter.convert(values[i])));
+            bindings.add(new Binding(col, values[i]));
         }
 
         this.bindings.add(bindings);

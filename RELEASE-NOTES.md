@@ -1,6 +1,7 @@
 ## 0.15
 
 * #32 Upgrade to BQ 0.23 and update test API to match the new Bootique test API
+* #33 Support for binding java.time classes when inserting test data via Table
 
 ## 0.14
 

@@ -42,5 +42,12 @@ public interface DatabaseChannel {
 
     void close();
 
+    /**
+     * Converts java types into proper sql types
+     *
+     * @param value an object to be converted
+     * @return converted {@code value}
+     * @since 0.15
+     */
     Object convert(Object value);
 }

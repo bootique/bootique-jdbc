@@ -41,4 +41,6 @@ public interface DatabaseChannel {
     Connection getConnection();
 
     void close();
+
+    Object convert(Object value);
 }

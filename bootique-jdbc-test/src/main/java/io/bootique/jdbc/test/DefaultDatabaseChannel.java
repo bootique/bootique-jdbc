@@ -28,7 +28,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     protected DataSource dataSource;
     protected String identifierQuote;
     protected BindingValueToStringConverter valueToStringConverter;
-    private ObjectValueConverter objectValueConverter;
+    protected ObjectValueConverter objectValueConverter;
 
     public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote) {
         LOGGER.debug("Test DatabaseChannel opened...");
@@ -90,9 +90,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
             try (PreparedStatement st = c.prepareStatement(sql);) {
 
                 for (int i = 0; i < bindings.size(); i++) {
-                    Binding binding = bindings.get(i);
-                    binding.setValue(objectValueConverter.convert(binding.getValue()));
-                    binding.bind(st, i);
+                    bindings.get(i).bind(st, i);
                 }
 
                 count = st.executeUpdate();
@@ -133,6 +131,11 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     public void close() {
         LOGGER.debug("Test DatabaseChannel closed...");
         this.closed = true;
+    }
+
+    @Override
+    public Object convert(Object value) {
+        return objectValueConverter.convert(value);
     }
 
     protected void logPreparedStatement(String sql, List<Binding> bindings) {

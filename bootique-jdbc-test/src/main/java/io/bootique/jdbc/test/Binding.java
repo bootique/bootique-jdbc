@@ -23,12 +23,4 @@ public class Binding {
     public Object getValue() {
         return value;
     }
-
-    public void setColumn(Column column) {
-        this.column = column;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
 }

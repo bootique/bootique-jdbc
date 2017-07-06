@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -185,6 +186,46 @@ public class TableIT {
                 .values(3, 3, "2017-01-09", "2017-01-10 13:00:01")
                 .exec();
         assertEquals(3, T2.getRowCount());
+    }
+
+    @Test
+    public void testUpdate() {
+        assertEquals(0, T1.getRowCount());
+        T1.insert(1, "x", "y");
+        T1.updateSet()
+                .set("c1", 2, Types.INTEGER)
+                .set("c2", "a", Types.VARCHAR)
+                .set("c3", "b", Types.VARCHAR)
+                .execute();
+
+        List<Object[]> data = T1.select();
+        assertEquals(1, data.size());
+
+        Object[] row = data.get(0);
+        assertEquals(2, row[0]);
+        assertEquals("a", row[1]);
+        assertEquals("b", row[2]);
+    }
+
+    @Test
+    public void testUpdateColumns_OutOfOrder() {
+        assertEquals(0, T2.getRowCount());
+        T2.insert(1, 2, LocalDate.now(), null);
+
+        T2.updateSet()
+                .set("c3", LocalDate.parse("2018-01-09"), Types.DATE)
+                .set("c1", "3", Types.INTEGER)
+                .set("c2", 4, Types.INTEGER)
+                .execute();
+
+        List<Object[]> data = T2.select();
+        assertEquals(1, data.size());
+
+        Object[] row = data.get(0);
+        assertEquals(3, row[0]);
+        assertEquals(4, row[1]);
+        assertEquals(Date.valueOf("2018-01-09"), row[2]);
+        assertEquals(null, row[3]);
     }
 
 }

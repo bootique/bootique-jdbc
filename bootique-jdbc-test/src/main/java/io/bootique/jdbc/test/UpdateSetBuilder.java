@@ -1,19 +1,16 @@
 package io.bootique.jdbc.test;
 
-import java.util.List;
-
 public class UpdateSetBuilder {
 
     protected UpdatingSqlContext context;
-    protected List<Binding> bindings;
-    protected StringBuilder sqlBuffer;
     protected int setCount;
 
     protected UpdateSetBuilder(UpdatingSqlContext context) {
         this.context = context;
-        this.bindings = bindings;
-        this.sqlBuffer = sqlBuffer;
-        sqlBuffer.append(" SET ");
+    }
+
+    public int execute() {
+        return context.execute();
     }
 
     public UpdateSetBuilder set(String column, Object value) {
@@ -22,7 +19,7 @@ public class UpdateSetBuilder {
 
     public UpdateSetBuilder set(String column, Object value, int valueType) {
         if (setCount++ > 0) {
-            sqlBuffer.append(", ");
+            context.append(", ");
         }
 
         context.appendIdentifier(column).append(" = ?");

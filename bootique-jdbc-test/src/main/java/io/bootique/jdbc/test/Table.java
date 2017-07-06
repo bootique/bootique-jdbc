@@ -43,6 +43,19 @@ public class Table {
         return new UpdateWhereBuilder(context);
     }
 
+    /**
+     * Update table statement
+     *
+     * @return {@link UpdateSetBuilder}
+     * @since 0.23
+     */
+    public UpdateSetBuilder updateSet() {
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE ").append(quotationStrategy.quoted(name)).append(" SET ");
+        UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());
+        return new UpdateSetBuilder(context);
+    }
+
     public UpdateWhereBuilder delete() {
 
         StringBuilder sql = new StringBuilder();

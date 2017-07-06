@@ -38,6 +38,6 @@ public class UpdatingSqlContext {
     }
 
     public void addBinding(Column column, Object value) {
-        bindings.add(new Binding(column, value));
+        bindings.add(new Binding(column, channel.convert(value)));
     }
 }

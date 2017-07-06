@@ -47,7 +47,7 @@ public class Table {
      * Update table statement
      *
      * @return {@link UpdateSetBuilder}
-     * @since 0.23
+     * @since 0.15
      */
     public UpdateSetBuilder updateSet() {
         StringBuilder sql = new StringBuilder();

@@ -36,20 +36,13 @@ public class Table {
         return new Builder().channel(channel).name(name);
     }
 
-    public UpdateWhereBuilder update() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("UPDATE ").append(quotationStrategy.quoted(name)).append(" SET ");
-        UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());
-        return new UpdateWhereBuilder(context);
-    }
-
     /**
      * Update table statement
      *
      * @return {@link UpdateSetBuilder}
      * @since 0.15
      */
-    public UpdateSetBuilder updateSet() {
+    public UpdateSetBuilder update() {
         StringBuilder sql = new StringBuilder();
         sql.append("UPDATE ").append(quotationStrategy.quoted(name)).append(" SET ");
         UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());

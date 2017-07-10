@@ -192,7 +192,7 @@ public class TableIT {
     public void testUpdate() {
         assertEquals(0, T1.getRowCount());
         T1.insert(1, "x", "y");
-        T1.updateSet()
+        T1.update()
                 .set("c1", 2, Types.INTEGER)
                 .set("c2", "a", Types.VARCHAR)
                 .set("c3", "b", Types.VARCHAR)
@@ -212,10 +212,33 @@ public class TableIT {
         assertEquals(0, T2.getRowCount());
         T2.insert(1, 2, LocalDate.now(), null);
 
-        T2.updateSet()
+        T2.update()
                 .set("c3", LocalDate.parse("2018-01-09"), Types.DATE)
                 .set("c1", "3", Types.INTEGER)
                 .set("c2", 4, Types.INTEGER)
+                .execute();
+
+        List<Object[]> data = T2.select();
+        assertEquals(1, data.size());
+
+        Object[] row = data.get(0);
+        assertEquals(3, row[0]);
+        assertEquals(4, row[1]);
+        assertEquals(Date.valueOf("2018-01-09"), row[2]);
+        assertEquals(null, row[3]);
+    }
+
+    @Test
+    public void testUpdateColumns_Where() {
+        assertEquals(0, T2.getRowCount());
+        T2.insert(1, 0, LocalDate.now(), new Date(0));
+
+        T2.update()
+                .set("c3", LocalDate.parse("2018-01-09"), Types.DATE)
+                .set("c1", "3", Types.INTEGER)
+                .set("c2", 4, Types.INTEGER)
+                .set("c4", null, Types.TIMESTAMP)
+                .where("c1", 1)
                 .execute();
 
         List<Object[]> data = T2.select();

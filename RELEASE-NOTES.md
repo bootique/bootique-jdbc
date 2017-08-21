@@ -1,3 +1,7 @@
+## 0.24
+
+* #39 Change CSV date time format in tests to follow ISO-8601
+
 ## 0.15
 
 * #32 Upgrade to BQ 0.23 and update test API to match the new Bootique test API

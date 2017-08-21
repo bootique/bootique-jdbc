@@ -9,7 +9,6 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Converts String values coming from CSV to Java value objects.
@@ -17,10 +16,6 @@ import java.time.format.DateTimeFormatter;
  * @since 0.14
  */
 public class ValueConverter {
-
-    // same as ISO, except there's space between date and time
-
-    private static DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Object fromString(String value, Column column) {
 
@@ -53,7 +48,8 @@ public class ValueConverter {
             case Types.TIME:
                 return Time.valueOf(LocalTime.parse(value));
             case Types.TIMESTAMP:
-                return Timestamp.valueOf(LocalDateTime.parse(value, DATE_TIME_FORMAT));
+                // The format is ISO-8601: yyyy-MM-ddTHH:mm:ss
+                return Timestamp.valueOf(LocalDateTime.parse(value));
             // TODO: other conversions...
             default:
                 return value;

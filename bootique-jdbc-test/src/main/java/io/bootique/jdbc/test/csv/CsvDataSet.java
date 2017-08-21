@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,9 +22,7 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * @since 0.14
@@ -77,15 +76,39 @@ public class CsvDataSet {
                 Object refVal = ref[i];
                 Object dbVal = row[i];
 
-                String columnName = refSet.getHeader().get(i).getName();
+                Column c = refSet.getHeader().get(i);
 
                 if (refVal == null) {
-                    assertNull("Expected null value in column [" + columnName + "], row " + rowKey, dbVal);
-                } else {
-                    assertEquals("Unexpected value in column [" + columnName + "], row " + rowKey, refVal, dbVal);
+                    compareNull(c, rowKey, dbVal);
+                    continue;
+                }
+
+                switch (c.getType()) {
+                    case Types.VARBINARY:
+                    case Types.BINARY:
+                    case Types.LONGVARBINARY:
+                    case Types.BLOB:
+                        // TODO: check that data type is actually a byte[]?
+                        compareByteArrays(c, rowKey, (byte[]) refVal, (byte[]) dbVal);
+                        break;
+                    default:
+                        compareValues(c, rowKey, refVal, dbVal);
+                        break;
                 }
             }
         });
+    }
+
+    private void compareNull(Column c, RowKey rowKey, Object dbVal) {
+        assertNull("Expected null value in column [" + c.getName() + "], row " + rowKey, dbVal);
+    }
+
+    private void compareByteArrays(Column c, RowKey rowKey, byte[] refVal, byte[] dbVal) {
+        assertArrayEquals("Unexpected value in column [" + c.getName() + "], row " + rowKey, refVal, dbVal);
+    }
+
+    private void compareValues(Column c, RowKey rowKey, Object refVal, Object dbVal) {
+        assertEquals("Unexpected value in column [" + c.getName() + "], row " + rowKey, refVal, dbVal);
     }
 
 

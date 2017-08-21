@@ -1,6 +1,7 @@
 ## 0.24
 
 * #39 Change CSV date time format in tests to follow ISO-8601
+* #40 Tests: Support for loading Base64-encoded binary data from .csv
 
 ## 0.15
 

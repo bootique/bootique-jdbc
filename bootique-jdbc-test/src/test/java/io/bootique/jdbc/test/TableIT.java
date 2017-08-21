@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class TableIT {
 
@@ -26,9 +25,10 @@ public class TableIT {
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
     private static Table T1;
     private static Table T2;
+    private static Table T3;
 
     @Rule
-    public TestDataManager dataManager = new TestDataManager(true, T1, T2);
+    public TestDataManager dataManager = new TestDataManager(true, T1, T2, T3);
 
     @BeforeClass
     public static void setupDB() {
@@ -41,9 +41,11 @@ public class TableIT {
 
         channel.update("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         channel.update("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
+        channel.update("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
 
         T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").initColumnTypesFromDBMetadata().build();
         T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").initColumnTypesFromDBMetadata().build();
+        T3 = channel.newTable("t3").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
     }
 
     @Test
@@ -97,6 +99,30 @@ public class TableIT {
     }
 
     @Test
+    public void testInsertFromCsv_Binary() {
+        assertEquals(0, T3.getRowCount());
+        T3.insertFromCsv(new ResourceFactory("classpath:io/bootique/jdbc/test/t3.csv"));
+
+        List<Object[]> data = T3.select();
+        assertEquals(3, data.size());
+
+        // sort in memory, as there's no guarantee that DB will return data in insertion order
+        data.sort(Comparator.comparing(r -> (Integer) r[0]));
+
+        Object[] row1 = data.get(0);
+        assertEquals(1, row1[0]);
+        assertArrayEquals("abcd".getBytes(), (byte[]) row1[1]);
+
+        Object[] row2 = data.get(1);
+        assertEquals(2, row2[0]);
+        assertArrayEquals("kmln".getBytes(), (byte[]) row2[1]);
+
+        Object[] row3 = data.get(2);
+        assertEquals(3, row3[0]);
+        assertNull(row3[1]);
+    }
+
+    @Test
     public void testContentsMatchCsv() {
         assertEquals(0, T1.getRowCount());
 
@@ -143,6 +169,20 @@ public class TableIT {
                 .exec();
 
         T2.contentsMatchCsv("classpath:io/bootique/jdbc/test/t2.csv", "c1");
+    }
+
+    @Test
+    public void testContentsMatchCsv_Binary() {
+        assertEquals(0, T3.getRowCount());
+
+
+        T3.insertColumns("c1", "c2")
+                .values(3, null)
+                .values(1, "abcd".getBytes())
+                .values(2, "kmln".getBytes())
+                .exec();
+
+        T3.contentsMatchCsv("classpath:io/bootique/jdbc/test/t3.csv", "c1");
     }
 
     @Test

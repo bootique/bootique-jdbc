@@ -9,6 +9,7 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Base64;
 
 /**
  * Converts String values coming from CSV to Java value objects.
@@ -50,6 +51,11 @@ public class ValueConverter {
             case Types.TIMESTAMP:
                 // The format is ISO-8601: yyyy-MM-ddTHH:mm:ss
                 return Timestamp.valueOf(LocalDateTime.parse(value));
+            case Types.BINARY:
+            case Types.VARBINARY:
+            case Types.LONGVARBINARY:
+            case Types.BLOB:
+                return Base64.getDecoder().decode(value);
             // TODO: other conversions...
             default:
                 return value;

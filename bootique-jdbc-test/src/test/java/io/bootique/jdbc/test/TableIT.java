@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,8 +29,6 @@ public class TableIT {
 
     @Rule
     public TestDataManager dataManager = new TestDataManager(true, T1, T2);
-
-    private static DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @BeforeClass
     public static void setupDB() {
@@ -181,7 +178,7 @@ public class TableIT {
         assertEquals(0, T2.getRowCount());
 
         T2.insertColumns("c1", "c2", "c3", "c4")
-                .values(1, null, LocalDate.parse("2018-01-09"), LocalDateTime.parse("2018-01-10 14:00:01", DATE_TIME_FORMAT))
+                .values(1, null, LocalDate.parse("2018-01-09"), LocalDateTime.parse("2018-01-10T04:00:01"))
                 .values(2, null, "2016-01-09", "2016-01-10 10:00:00")
                 .values(3, 3, "2017-01-09", "2017-01-10 13:00:01")
                 .exec();

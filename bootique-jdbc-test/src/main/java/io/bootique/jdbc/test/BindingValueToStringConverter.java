@@ -1,5 +1,8 @@
 package io.bootique.jdbc.test;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -10,6 +13,10 @@ import java.util.function.Function;
 public class BindingValueToStringConverter {
 
     private static final int TRIM_VALUES_THRESHOLD = 30;
+
+    // hex encoding outputs 2 chars for each byte
+    private static final int BYTE_TRIM_VALUES_THRESHOLD = TRIM_VALUES_THRESHOLD / 2;
+
 
     private Map<Class<?>, Function<Object, String>> converters;
     private Function<Object, String> nullConverter;
@@ -49,6 +56,10 @@ public class BindingValueToStringConverter {
 
         converters.put(Number.class, Object::toString);
         converters.put(Boolean.class, Object::toString);
+        converters.put(byte[].class, this::convertByteArray);
+        converters.put(Timestamp.class, this::convertTimestamp);
+        converters.put(Date.class, this::convertSqlDate);
+        converters.put(Time.class, this::convertTime);
 
         // TODO: add more types...
     }
@@ -74,5 +85,55 @@ public class BindingValueToStringConverter {
 
     public String convert(Object value) {
         return converter(value).apply(value);
+    }
+
+    private String convertTimestamp(Object value) {
+        if (value == null) {
+            return nullConverter.apply(value);
+        }
+
+        Timestamp ts = (Timestamp) value;
+        return ts.toLocalDateTime().toString();
+    }
+
+    private String convertSqlDate(Object value) {
+        if (value == null) {
+            return nullConverter.apply(value);
+        }
+
+        Date d = (Date) value;
+        return d.toLocalDate().toString();
+    }
+
+    private String convertTime(Object value) {
+        if (value == null) {
+            return nullConverter.apply(value);
+        }
+
+        Time t = (Time) value;
+        return t.toLocalTime().toString();
+    }
+
+    private String convertByteArray(Object value) {
+        if (value == null) {
+            return nullConverter.apply(value);
+        }
+
+        final char[] DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+        byte[] bytes = (byte[]) value;
+
+        int l = bytes.length <= BYTE_TRIM_VALUES_THRESHOLD ? bytes.length : BYTE_TRIM_VALUES_THRESHOLD;
+
+        char[] out = new char[l << 1];
+        int i = 0;
+
+        for (int var4 = 0; i < l; ++i) {
+            out[var4++] = DIGITS[(240 & bytes[i]) >>> 4];
+            out[var4++] = DIGITS[15 & bytes[i]];
+        }
+
+        String bytesAsString = new String(out);
+        return bytes.length <= BYTE_TRIM_VALUES_THRESHOLD ? bytesAsString : bytesAsString + "...";
     }
 }

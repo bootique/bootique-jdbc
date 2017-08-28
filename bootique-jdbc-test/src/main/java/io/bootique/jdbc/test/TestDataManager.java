@@ -35,7 +35,12 @@ public class TestDataManager extends ExternalResource {
         }
     }
 
-    protected void deleteData() {
+    /**
+     * Deletes data from the managed tables.
+     *
+     * @since 0.24
+     */
+    public void deleteData() {
         for (int i = tablesInInsertOrder.length - 1; i >= 0; i--) {
             tablesInInsertOrder[i].deleteAll();
         }

@@ -26,9 +26,10 @@ public class TableIT {
     private static Table T1;
     private static Table T2;
     private static Table T3;
+    private static Table T4;
 
     @Rule
-    public TestDataManager dataManager = new TestDataManager(true, T1, T2, T3);
+    public TestDataManager dataManager = new TestDataManager(true, T1, T2, T3, T4);
 
     @BeforeClass
     public static void setupDB() {
@@ -42,10 +43,12 @@ public class TableIT {
         channel.update("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         channel.update("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
         channel.update("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
+        channel.update("CREATE TABLE \"t4\" (\"c1\" INT, \"c2\" BOOLEAN)");
 
         T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").initColumnTypesFromDBMetadata().build();
         T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").initColumnTypesFromDBMetadata().build();
         T3 = channel.newTable("t3").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
+        T4 = channel.newTable("t4").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
     }
 
     @Test
@@ -121,6 +124,31 @@ public class TableIT {
         assertEquals(3, row3[0]);
         assertNull(row3[1]);
     }
+
+    @Test
+    public void testInsertFromCsv_Boolean() {
+        assertEquals(0, T4.getRowCount());
+        T4.insertFromCsv(new ResourceFactory("classpath:io/bootique/jdbc/test/t4.csv"));
+
+        List<Object[]> data = T4.select();
+        assertEquals(3, data.size());
+
+        // sort in memory, as there's no guarantee that DB will return data in insertion order
+        data.sort(Comparator.comparing(r -> (Integer) r[0]));
+
+        Object[] row1 = data.get(0);
+        assertEquals(1, row1[0]);
+        assertEquals(true, (Boolean) row1[1]);
+
+        Object[] row2 = data.get(1);
+        assertEquals(2, row2[0]);
+        assertEquals(false, (Boolean) row2[1]);
+
+        Object[] row3 = data.get(2);
+        assertEquals(3, row3[0]);
+        assertNull(row3[1]);
+    }
+
 
     @Test
     public void testContentsMatchCsv() {

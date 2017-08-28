@@ -56,6 +56,9 @@ public class ValueConverter {
             case Types.LONGVARBINARY:
             case Types.BLOB:
                 return Base64.getDecoder().decode(value);
+            case Types.BIT:
+            case Types.BOOLEAN:
+                return Boolean.valueOf(value);
             // TODO: other conversions...
             default:
                 return value;

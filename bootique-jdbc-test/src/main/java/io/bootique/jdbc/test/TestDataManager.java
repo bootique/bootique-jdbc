@@ -1,5 +1,6 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.matcher.TableMatcher;
 import org.junit.rules.ExternalResource;
 
 import java.util.HashMap;
@@ -46,8 +47,17 @@ public class TestDataManager extends ExternalResource {
         }
     }
 
-    public Table getTable(String name) {
-        return tables.computeIfAbsent(name, n -> {
+    /**
+     * @param tableName the name of a table whose data we'd like to check.
+     * @return a new TableMatcher for the specified table.
+     * @since 0.24
+     */
+    public TableMatcher matcher(String tableName) {
+        return getTable(tableName).matcher();
+    }
+
+    public Table getTable(String tableName) {
+        return tables.computeIfAbsent(tableName, n -> {
             throw new IllegalArgumentException("Unknown table name: " + n);
         });
     }

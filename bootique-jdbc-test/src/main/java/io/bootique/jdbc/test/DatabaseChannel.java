@@ -20,8 +20,8 @@ public interface DatabaseChannel {
         return runtime.getInstance(DatabaseChannelFactory.class).getChannel(dataSourceName);
     }
 
-    default Table.Builder newTable(String name) {
-        return Table.builder(this, name);
+    default Table.Builder newTable(String tableName) {
+        return Table.builder(this, tableName);
     }
 
     /**

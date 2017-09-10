@@ -2,6 +2,7 @@ package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.csv.CsvDataSet;
 import io.bootique.jdbc.test.csv.ValueConverter;
+import io.bootique.jdbc.test.matcher.TableMatcher;
 import io.bootique.resource.ResourceFactory;
 
 import java.sql.Connection;
@@ -94,8 +95,8 @@ public class Table {
      */
     public Column getColumn(String name) {
 
-        for(Column c : columns) {
-            if(name.equals(c.getName())) {
+        for (Column c : columns) {
+            if (name.equals(c.getName())) {
                 return c;
             }
         }
@@ -150,6 +151,14 @@ public class Table {
         }
 
         return new InsertBuilder(channel, quotationStrategy, name, columns);
+    }
+
+    /**
+     * @return a new instance of {@link TableMatcher} for this table that allows to make assertions about the table data.
+     * @since 0.24
+     */
+    public TableMatcher matcher() {
+        return new TableMatcher(this);
     }
 
     /**

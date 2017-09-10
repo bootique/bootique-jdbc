@@ -35,15 +35,30 @@ public class JdbcTestModule extends ConfigModule {
         super(configPrefix);
     }
 
+    /**
+     * @param binder  Guice DI binder.
+     * @return DataSourceListener binder.
+     * @deprecated since 0.24 in favor of {@link #extend(Binder)}.
+     */
+    @Deprecated
     public static Multibinder<DataSourceListener> contributeDataSourceListeners(Binder binder) {
         return Multibinder.newSetBinder(binder, DataSourceListener.class);
+    }
+
+    /**
+     * @param binder Guice DI binder.
+     * @return an instance of extender.
+     * @since 0.24
+     */
+    public static JdbcTestModuleExtender extend(Binder binder) {
+        return new JdbcTestModuleExtender(binder);
     }
 
     @Override
     public void configure(Binder binder) {
 
         // for now we only support Derby...
-        contributeDataSourceListeners(binder).addBinding().to(DerbyListener.class);
+        JdbcTestModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
     }
 
     @Singleton

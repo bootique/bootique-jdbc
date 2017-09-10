@@ -2,6 +2,7 @@
 
 * #39 Change CSV date time format in tests to follow ISO-8601
 * #40 Tests: Support for loading Base64-encoded binary data from .csv
+* #41 JdbcTestModule - replace 'contributeDataSourceListeners' with an extender
 * #42 Test API: Support for boolean values in CSV
 * #43 Test API: Generated SQL needs to print pretty String for byte[] and timestamps
 

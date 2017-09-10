@@ -52,4 +52,11 @@ public class TestDataManager extends ExternalResource {
         });
     }
 
+    /**
+     * @return an array of registered tables in insert order.
+     * @since 0.24
+     */
+    public Table[] getTablesInInsertOrder() {
+        return tablesInInsertOrder;
+    }
 }

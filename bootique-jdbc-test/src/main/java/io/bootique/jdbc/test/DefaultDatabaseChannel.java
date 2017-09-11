@@ -1,5 +1,9 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.jdbc.RowReader;
+import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
+import io.bootique.jdbc.test.jdbc.StatementBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,21 +33,25 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     protected String identifierQuote;
     protected BindingValueToStringConverter valueToStringConverter;
     protected ObjectValueConverter objectValueConverter;
+    protected IdentifierQuotationStrategy identifierQuotationStrategy;
 
     public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote) {
         LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
         this.identifierQuote = Objects.requireNonNull(identifierQuote);
+        this.identifierQuotationStrategy = id -> identifierQuote + Objects.requireNonNull(id) + identifierQuote;
         this.valueToStringConverter = new BindingValueToStringConverter();
         this.objectValueConverter = new ObjectValueConverter();
     }
 
     @Override
+    @Deprecated
     public String getIdentifierQuote() {
         return identifierQuote;
     }
 
     @Override
+    @Deprecated
     public <T> List<T> select(String sql, long maxRows, Function<ResultSet, T> rowReader) {
         try {
             return selectWithExceptions(sql, maxRows, rowReader);
@@ -52,6 +60,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
         }
     }
 
+    @Deprecated
     protected <T> List<T> selectWithExceptions(String sql, long maxRows, Function<ResultSet, T> rowReader)
             throws SQLException {
 
@@ -72,7 +81,14 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
         return result;
     }
 
+    /**
+     * @param sql
+     * @param bindings
+     * @return update count.
+     * @deprecated since 0.24 as the statements are built and executed by {@link StatementBuilder}.
+     */
     @Override
+    @Deprecated
     public int update(String sql, List<Binding> bindings) {
         try {
             return updateWithExceptions(sql, bindings);
@@ -81,6 +97,14 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
         }
     }
 
+    /**
+     * @param sql
+     * @param bindings
+     * @return update count.
+     * @throws SQLException
+     * @deprecated since 0.24 as the statements are built and executed by {@link StatementBuilder}.
+     */
+    @Deprecated
     protected int updateWithExceptions(String sql, List<Binding> bindings) throws SQLException {
         logPreparedStatement(sql, bindings);
 
@@ -134,10 +158,36 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     @Override
+    @Deprecated
     public Object convert(Object value) {
         return objectValueConverter.convert(value);
     }
 
+    @Override
+    public ExecStatementBuilder newExecStatement() {
+        return new ExecStatementBuilder(
+                this,
+                objectValueConverter,
+                valueToStringConverter,
+                identifierQuotationStrategy);
+    }
+
+    @Override
+    public <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader) {
+        return new SelectStatementBuilder(
+                rowReader,
+                this,
+                objectValueConverter,
+                valueToStringConverter,
+                identifierQuotationStrategy);
+    }
+
+    /**
+     * @param sql
+     * @param bindings
+     * @deprecated since 0.24 as the statements are built and executed by {@link StatementBuilder}.
+     */
+    @Deprecated
     protected void logPreparedStatement(String sql, List<Binding> bindings) {
 
         if (!LOGGER.isInfoEnabled()) {
@@ -156,5 +206,4 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
 
         LOGGER.info(toLog);
     }
-
 }

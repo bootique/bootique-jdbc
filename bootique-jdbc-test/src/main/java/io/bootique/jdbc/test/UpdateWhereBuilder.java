@@ -1,16 +1,30 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+
 public class UpdateWhereBuilder {
 
-    protected UpdatingSqlContext context;
+    protected ExecStatementBuilder builder;
     protected int whereCount;
 
-    protected UpdateWhereBuilder(UpdatingSqlContext context) {
-        this.context = context;
+    protected UpdateWhereBuilder(ExecStatementBuilder builder) {
+        this.builder = builder;
     }
 
+    /**
+     * @return the number of updated records.
+     * @deprecated since 0.24 in favor for {@link #exec()}.
+     */
     public int execute() {
-        return context.execute();
+        return builder.exec();
+    }
+
+    /**
+     * @return the number of updated records.
+     * @since 0.24
+     */
+    public int exec() {
+        return builder.exec();
     }
 
     public UpdateWhereBuilder and(String column, Object value) {
@@ -20,14 +34,14 @@ public class UpdateWhereBuilder {
     public UpdateWhereBuilder and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
-            context.append(" AND ");
-        }
-        else {
-            context.append(" WHERE ");
+            builder.append(" AND ");
+        } else {
+            builder.append(" WHERE ");
         }
 
-        context.appendIdentifier(column).append(" = ?");
-        context.addBinding(new Column(column, valueType), value);
+        builder.appendIdentifier(column)
+                .append(" = ")
+                .appendBinding(column, valueType, value);
 
         return this;
     }
@@ -38,11 +52,12 @@ public class UpdateWhereBuilder {
 
     public UpdateWhereBuilder or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
-            context.append(" OR ");
+            builder.append(" OR ");
         }
 
-        context.appendIdentifier(column).append(" = ?");
-        context.addBinding(new Column(column, valueType), value);
+        builder.appendIdentifier(column)
+                .append(" = ")
+                .appendBinding(column, valueType, value);
 
         return this;
     }

@@ -1,4 +1,4 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
@@ -6,19 +6,19 @@ import io.bootique.shutdown.ShutdownManager;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LazyDataSourceFactoryFactory {
+public class TomcatCPLazyDataSourceFactoryFactory {
 
-    private Map<String, TomcatDataSourceFactory> configs;
+    private Map<String, TomcatCPDataSourceFactory> configs;
 
-    public LazyDataSourceFactoryFactory(Map<String, TomcatDataSourceFactory> configs) {
+    public TomcatCPLazyDataSourceFactoryFactory(Map<String, TomcatCPDataSourceFactory> configs) {
         this.configs = configs;
     }
 
     // addresses an issue when a config is created as a side effect of defining BQ_JDBC_XYZ_PASSWORD
     // shell var and such...
-    public static Map<String, TomcatDataSourceFactory> prunePartialConfigs(Map<String, TomcatDataSourceFactory> configs) {
+    public static Map<String, TomcatCPDataSourceFactory> prunePartialConfigs(Map<String, TomcatCPDataSourceFactory> configs) {
 
-        Map<String, TomcatDataSourceFactory> clean = new HashMap<>();
+        Map<String, TomcatCPDataSourceFactory> clean = new HashMap<>();
         configs.forEach((name, config) -> {
             if (!config.isPartial()) {
                 clean.put(name, config);
@@ -28,8 +28,8 @@ public class LazyDataSourceFactoryFactory {
         return clean;
     }
 
-    public LazyDataSourceFactory create(ShutdownManager shutdownManager, BootLogger bootLogger) {
-        LazyDataSourceFactory factory = new LazyDataSourceFactory(prunePartialConfigs(configs));
+    public TomcatCPLazyDataSourceFactory create(ShutdownManager shutdownManager, BootLogger bootLogger) {
+        TomcatCPLazyDataSourceFactory factory = new TomcatCPLazyDataSourceFactory(prunePartialConfigs(configs));
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
             factory.shutdown();

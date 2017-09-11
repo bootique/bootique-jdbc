@@ -18,7 +18,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>io.bootique.jdbc</groupId>
-				<artifactId>bootique-jdbc</artifactId>
+				<artifactId>bootique-jdbc-tomcat</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -60,7 +60,7 @@
 		<!-- Compile dependencies -->
 		<dependency>
 			<groupId>io.bootique.jdbc</groupId>
-			<artifactId>bootique-jdbc</artifactId>
+			<artifactId>bootique-jdbc-tomcat</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

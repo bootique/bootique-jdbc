@@ -1,7 +1,8 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,8 +13,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class JdbcModuleIT {
-
+public class TomcatCPModuleIT {
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();
 

@@ -32,6 +32,7 @@ public class Table {
     protected String name;
     protected DatabaseChannel channel;
     protected List<Column> columns;
+    protected IdentifierQuotationStrategy quotationStrategy;
 
     public static Builder builder(DatabaseChannel channel, String name) {
         return new Builder().channel(channel).name(name);
@@ -43,6 +44,34 @@ public class Table {
 
     public DatabaseChannel getChannel() {
         return channel;
+    }
+
+    /**
+     * @return an internal IdentifierQuotationStrategy used to generate quoted SQL identifiers.
+     * @since 0.14
+     */
+    public IdentifierQuotationStrategy getQuotationStrategy() {
+        return quotationStrategy;
+    }
+
+    /**
+     * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
+     * using policies specified for this table.
+     * @since 0.24
+     */
+    public ExecStatementBuilder newExecStatement() {
+        return getChannel().newExecStatement().quoteIdentifiersWith(quotationStrategy);
+    }
+
+    /**
+     * @param rowReader a function that converts a ResultSet row into an object.
+     * @param <T>       the type of objects read by returned statement builder.
+     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
+     * PreparedStatement using policies specified for this table.
+     * @since 0.24
+     */
+    public <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader) {
+        return getChannel().newSelectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
@@ -76,7 +105,7 @@ public class Table {
      * @since 0.15
      */
     public UpdateSetBuilder update() {
-        ExecStatementBuilder builder = channel.newExecStatement()
+        ExecStatementBuilder builder = newExecStatement()
                 .append("UPDATE ")
                 .appendIdentifier(name)
                 .append(" SET ");
@@ -85,7 +114,7 @@ public class Table {
     }
 
     public UpdateWhereBuilder delete() {
-        ExecStatementBuilder builder = channel.newExecStatement()
+        ExecStatementBuilder builder = newExecStatement()
                 .append("DELETE FROM ")
                 .appendIdentifier(name);
 
@@ -142,7 +171,7 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(channel.newExecStatement(), name, columns);
+        return new InsertBuilder(newExecStatement(), name, columns);
     }
 
     /**
@@ -208,7 +237,7 @@ public class Table {
             throw new IllegalArgumentException("No columns");
         }
 
-        SelectStatementBuilder<Object[]> builder = channel
+        SelectStatementBuilder<Object[]> builder = this
                 .newSelectStatement(RowReader.arrayReader(columns.size()))
                 .append("SELECT ");
 
@@ -225,7 +254,7 @@ public class Table {
     }
 
     public int getRowCount() {
-        return channel.newSelectStatement(RowReader.intReader())
+        return newSelectStatement(RowReader.intReader())
                 .append("SELECT COUNT(*) FROM ")
                 .appendIdentifier(name)
                 .select(1)
@@ -237,8 +266,7 @@ public class Table {
     }
 
     protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = channel
-                .newSelectStatement(reader)
+        SelectStatementBuilder<T> builder = newSelectStatement(reader)
                 .append("SELECT ")
                 .appendIdentifier(columnName)
                 .append(" FROM ")
@@ -375,6 +403,11 @@ public class Table {
 
             Objects.requireNonNull(table.channel);
 
+            String quoteSymbol = table.channel.getIdentifierQuote();
+            table.quotationStrategy = quotingSqlIdentifiers && quoteSymbol != null
+                    ? IdentifierQuotationStrategy.forQuoteSymbol(quoteSymbol)
+                    : IdentifierQuotationStrategy.noQuote();
+
             if (initColumnTypesFromDBMetadata) {
                 doInitColumnTypesFromDBMetadata();
             }
@@ -429,6 +462,11 @@ public class Table {
             }
 
             table.columns = columns;
+            return this;
+        }
+
+        public Builder quoteSqlIdentifiers(boolean shouldQuote) {
+            this.quotingSqlIdentifiers = shouldQuote;
             return this;
         }
 

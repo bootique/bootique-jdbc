@@ -75,6 +75,18 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
         return sqlBuffer.toString();
     }
 
+    /**
+     * Sets a quotation strategy for identifiers that is different from the default startegy defined in the parent
+     * channel.
+     *
+     * @param quotationStrategy new quotation strategy to override the default.
+     * @return this builder instance.
+     */
+    public T quoteIdentifiersWith(IdentifierQuotationStrategy quotationStrategy) {
+        this.quotationStrategy = quotationStrategy;
+        return (T) this;
+    }
+
     public T append(String sql) {
         sqlBuffer.append(sql);
         return (T) this;

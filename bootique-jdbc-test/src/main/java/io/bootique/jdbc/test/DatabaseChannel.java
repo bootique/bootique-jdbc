@@ -29,6 +29,12 @@ public interface DatabaseChannel {
     }
 
     /**
+     * @return DB-specific identifier quotation symbol.
+     * @since 0.14
+     */
+    String getIdentifierQuote();
+
+    /**
      * @param sql
      * @param maxRows
      * @param rowReader

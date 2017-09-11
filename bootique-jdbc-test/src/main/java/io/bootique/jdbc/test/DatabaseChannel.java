@@ -29,13 +29,6 @@ public interface DatabaseChannel {
     }
 
     /**
-     * @return DB-specific identifier quotation symbol.
-     * @since 0.14
-     * @deprecated since 0.24 as quotation strategy is handled by the {@link StatementBuilder}.
-     */
-    String getIdentifierQuote();
-
-    /**
      * @param sql
      * @param maxRows
      * @param rowReader

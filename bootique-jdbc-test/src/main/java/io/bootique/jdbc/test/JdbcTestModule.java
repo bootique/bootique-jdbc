@@ -14,6 +14,7 @@ import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactoryFactory;
 import io.bootique.jdbc.test.derby.DerbyListener;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
+import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
@@ -27,16 +28,8 @@ import java.util.Set;
  */
 public class JdbcTestModule extends ConfigModule {
 
-    public JdbcTestModule() {
-        super("jdbc");
-    }
-
-    public JdbcTestModule(String configPrefix) {
-        super(configPrefix);
-    }
-
     /**
-     * @param binder  Guice DI binder.
+     * @param binder Guice DI binder.
      * @return DataSourceListener binder.
      * @deprecated since 0.24 in favor of {@link #extend(Binder)}.
      */
@@ -71,9 +64,13 @@ public class JdbcTestModule extends ConfigModule {
 
         // TODO: replace this with DI decoration of the base DataSourceFactory instead of repeating base module code
 
-        Map<String, TomcatDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
-                }, configPrefix);
+        TypeRef<Map<String, TomcatDataSourceFactory>> typeRef = new TypeRef<Map<String, TomcatDataSourceFactory>>() {
+        };
+
+        Map<String, TomcatDataSourceFactory> configs = configFactory.config(
+                typeRef,
+                // using overridden module config prefix
+                "jdbc");
 
         LazyDataSourceFactory delegate =
                 new InstrumentedLazyDataSourceFactoryFactory(configs)
@@ -90,8 +87,10 @@ public class JdbcTestModule extends ConfigModule {
 
     @Singleton
     @Provides
-    DatabaseChannelFactory provideDatabaseChannelFactory(DataSourceFactory dataSourceFactory) {
-        return new DatabaseChannelFactory(dataSourceFactory);
+    DatabaseChannelFactory provideDatabaseChannelFactory(
+            ConfigurationFactory configFactory,
+            DataSourceFactory dataSourceFactory) {
+        return configFactory.config(DatabaseChannelFactoryFactory.class, configPrefix).createFactory(dataSourceFactory);
     }
 
     @Singleton

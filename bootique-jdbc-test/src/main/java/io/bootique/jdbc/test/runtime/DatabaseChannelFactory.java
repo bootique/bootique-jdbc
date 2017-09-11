@@ -3,11 +3,13 @@ package io.bootique.jdbc.test.runtime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.DefaultDatabaseChannel;
+import io.bootique.jdbc.test.IdentifierQuotationStrategy;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,12 +18,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class DatabaseChannelFactory {
 
+    private boolean quotingIdentifiers;
     private DataSourceFactory dataSourceFactory;
     private ConcurrentMap<String, DatabaseChannel> channels;
 
-    public DatabaseChannelFactory(DataSourceFactory dataSourceFactory) {
+    public DatabaseChannelFactory(DataSourceFactory dataSourceFactory, boolean quotingIdentifiers) {
         this.channels = new ConcurrentHashMap<>();
         this.dataSourceFactory = dataSourceFactory;
+        this.quotingIdentifiers = quotingIdentifiers;
     }
 
     public DatabaseChannel getChannel() {
@@ -43,6 +47,24 @@ public class DatabaseChannelFactory {
     protected DatabaseChannel createChannel(String dataSourceName) {
         DataSource dataSource = dataSourceFactory.forName(dataSourceName);
 
+
+        return new DefaultDatabaseChannel(dataSource, createQuotationStrategy(dataSource));
+    }
+
+    private IdentifierQuotationStrategy createQuotationStrategy(DataSource dataSource) {
+        if (quotingIdentifiers) {
+
+            String identifierQuote = getIdentifierQuote(dataSource);
+
+            return identifierQuote != null
+                    ? id -> identifierQuote + Objects.requireNonNull(id) + identifierQuote
+                    : id -> id;
+        }
+
+        return id -> id;
+    }
+
+    private String getIdentifierQuote(DataSource dataSource) {
         String identifierQuote;
         try (Connection c = dataSource.getConnection()) {
             identifierQuote = c.getMetaData().getIdentifierQuoteString();
@@ -50,11 +72,9 @@ public class DatabaseChannelFactory {
             throw new RuntimeException("Error reading test DB metadata");
         }
 
-        // if no quotations are supported, the returned value is space, so "trim" should do the trick of converting this
-        // to no-quote
+        // if no quotations are supported, per JDBC spec the returned value is space,
+        // so "trim" should do the trick of converting this to no-quote
 
-        identifierQuote = identifierQuote.trim();
-
-        return new DefaultDatabaseChannel(dataSource, identifierQuote);
+        return identifierQuote.trim().length() == 0 ? null : identifierQuote;
     }
 }

@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,24 +29,23 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
 
     protected boolean closed;
     protected DataSource dataSource;
-    protected String identifierQuote;
     protected BindingValueToStringConverter valueToStringConverter;
     protected ObjectValueConverter objectValueConverter;
     protected IdentifierQuotationStrategy identifierQuotationStrategy;
 
-    public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote) {
+    public DefaultDatabaseChannel(DataSource dataSource, IdentifierQuotationStrategy identifierQuotationStrategy) {
         LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
-        this.identifierQuote = Objects.requireNonNull(identifierQuote);
-        this.identifierQuotationStrategy = id -> identifierQuote + Objects.requireNonNull(id) + identifierQuote;
+        this.identifierQuotationStrategy = identifierQuotationStrategy;
         this.valueToStringConverter = new BindingValueToStringConverter();
         this.objectValueConverter = new ObjectValueConverter();
     }
 
-    @Override
-    @Deprecated
-    public String getIdentifierQuote() {
-        return identifierQuote;
+    /**
+     * @return a strategy object that encloses SQL identifiers in quotations specific to a given DB.
+     */
+    IdentifierQuotationStrategy getIdentifierQuotationStrategy() {
+        return identifierQuotationStrategy;
     }
 
     @Override

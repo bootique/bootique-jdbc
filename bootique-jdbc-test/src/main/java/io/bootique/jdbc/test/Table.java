@@ -33,9 +33,6 @@ public class Table {
     protected DatabaseChannel channel;
     protected List<Column> columns;
 
-    @Deprecated
-    protected IdentifierQuotationStrategy quotationStrategy;
-
     public static Builder builder(DatabaseChannel channel, String name) {
         return new Builder().channel(channel).name(name);
     }
@@ -97,16 +94,6 @@ public class Table {
 
     public int deleteAll() {
         return delete().exec();
-    }
-
-    /**
-     * @return an internal IdentifierQuotationStrategy used to generate quoted SQL identifiers.
-     * @since 0.14
-     * @deprecated since 0.24 as quotation strategy is encapsulated inside {@link io.bootique.jdbc.test.jdbc.StatementBuilder}.
-     */
-    @Deprecated
-    public IdentifierQuotationStrategy getQuotationStrategy() {
-        return quotationStrategy;
     }
 
     /**
@@ -387,11 +374,6 @@ public class Table {
         public Table build() {
 
             Objects.requireNonNull(table.channel);
-            String quoteSymbol = table.channel.getIdentifierQuote();
-
-            table.quotationStrategy = quotingSqlIdentifiers
-                    ? id -> quoteSymbol + Objects.requireNonNull(id) + quoteSymbol
-                    : id -> id;
 
             if (initColumnTypesFromDBMetadata) {
                 doInitColumnTypesFromDBMetadata();
@@ -431,20 +413,6 @@ public class Table {
 
         public Builder name(String name) {
             table.name = name;
-            return this;
-        }
-
-        /**
-         * Sets whether SQL identifiers should be quoted in the generated SQL using DB-specific quotation symbol.
-         * True by default.
-         *
-         * @param shouldQuote a flag indicating whether SQL identifiers should be surrounded in quotations.
-         * @return this builder instance.
-         * @since 0.14
-         * @deprecated since 0.24 as quotation strategy is encapsulated inside {@link io.bootique.jdbc.test.jdbc.StatementBuilder}.
-         */
-        public Builder quoteSqlIdentifiers(boolean shouldQuote) {
-            this.quotingSqlIdentifiers = shouldQuote;
             return this;
         }
 

@@ -43,40 +43,40 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertHasRows() {
+    public void testAssertMatches() {
         TableMatcher matcher = new TableMatcher(T1);
-        matcher.assertHasRows(0);
+        matcher.assertMatches(0);
 
         T1.insert(1, "y", "z");
-        matcher.assertHasRows(1);
+        matcher.assertMatches(1);
 
         T1.insert(2, "a", "b");
-        matcher.assertHasRows(2);
+        matcher.assertMatches(2);
     }
 
     @Test
-    public void testAssertHasRows_WithCondition() {
+    public void testAssertMatches_WithCondition() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
         T1.insert(2, "a", "b");
-        matcher.eq("c3", "z").eq("c1", 1).assertHasRows(1);
+        matcher.eq("c3", "z").eq("c1", 1).assertMatches(1);
     }
 
     @Test
-    public void testAssertHasRows_Negative() {
+    public void testAssertMatches_Negative() {
         TableMatcher matcher = new TableMatcher(T1);
-        assertAssertionError(() -> matcher.assertHasRows(1), "The matcher incorrectly assumed there's 1 row in " +
+        assertAssertionError(() -> matcher.assertMatches(1), "The matcher incorrectly assumed there's 1 row in " +
                 "DB when there's none.");
     }
 
     @Test
-    public void testAssertHasRows_WithCondition_Negative() {
+    public void testAssertMatches_WithCondition_Negative() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
 
-        assertAssertionError(() -> matcher.eq("c2", "z").eq("c1", 2).assertHasRows(1),
+        assertAssertionError(() -> matcher.eq("c2", "z").eq("c1", 2).assertMatches(1),
                 "The matcher incorrectly assumed there was 1 row matching condition.");
     }
 

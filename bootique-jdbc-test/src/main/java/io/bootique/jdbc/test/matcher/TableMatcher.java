@@ -24,16 +24,16 @@ public class TableMatcher {
         return new RowCountMatcher(table).eq(column, value);
     }
 
-    public void assertHasRows(int expectedRows) {
-        new RowCountMatcher(table).assertHasRows(expectedRows);
+    public void assertMatches(int expectedRows) {
+        new RowCountMatcher(table).assertMatches(expectedRows);
     }
 
     public void assertOneMatch() {
         new RowCountMatcher(table).assertOneMatch();
     }
 
-    public void assertNoMatch() {
-        new RowCountMatcher(table).assertNoMatch();
+    public void assertNoMatches() {
+        new RowCountMatcher(table).assertNoMatches();
     }
 
     public void assertMatchesCsv(String csvResource, String... keyColumns) {

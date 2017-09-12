@@ -54,25 +54,25 @@ public class TableIT {
     @Test
     public void testInsert() {
         T1.insert(1, "x", "y");
-        T1.matcher().assertHasRows(1);
+        T1.matcher().assertMatches(1);
     }
 
     @Test
     public void testInsertColumns1() {
         T1.insertColumns("c2").values("v1").values("v2").exec();
-        T1.matcher().assertHasRows(2);
+        T1.matcher().assertMatches(2);
     }
 
     @Test
     public void testInsertColumns_OutOfOrder() {
         T1.insertColumns("c2", "c1").values("v1", 1).values("v2", 2).exec();
-        T1.matcher().assertHasRows(2);
+        T1.matcher().assertMatches(2);
     }
 
     @Test
     public void testInsertFromCsv_Empty() {
         T1.insertFromCsv(new ResourceFactory("classpath:io/bootique/jdbc/test/empty.csv"));
-        T1.matcher().assertNoMatch();
+        T1.matcher().assertNoMatches();
     }
 
     @Test

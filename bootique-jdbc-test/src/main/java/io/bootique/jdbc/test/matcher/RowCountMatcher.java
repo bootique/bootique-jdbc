@@ -27,7 +27,7 @@ public class RowCountMatcher {
         return this;
     }
 
-    public void assertHasRows(int expectedRowCount) {
+    public void assertMatches(int expectedRowCount) {
 
         SelectStatementBuilder<Integer> builder = countStatement();
         int count = appendConditions(builder)
@@ -66,11 +66,11 @@ public class RowCountMatcher {
     }
 
     public void assertOneMatch() {
-        assertHasRows(1);
+        assertMatches(1);
     }
 
-    public void assertNoMatch() {
-        assertHasRows(0);
+    public void assertNoMatches() {
+        assertMatches(0);
     }
 
     private Collection<BinaryCondition> getConditions() {

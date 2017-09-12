@@ -169,7 +169,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     @Override
-    public ExecStatementBuilder newExecStatement() {
+    public ExecStatementBuilder execStatement() {
         return new ExecStatementBuilder(
                 this,
                 objectValueConverter,
@@ -178,7 +178,7 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     @Override
-    public <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader) {
+    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
         return new SelectStatementBuilder(
                 rowReader,
                 this,

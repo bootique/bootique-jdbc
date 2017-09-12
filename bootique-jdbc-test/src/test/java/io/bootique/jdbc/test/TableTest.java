@@ -23,7 +23,7 @@ public class TableTest {
         ExecStatementBuilder mockExecBuilder = mock(ExecStatementBuilder.class);
 
         mockChannel = mock(DatabaseChannel.class);
-        when(mockChannel.newExecStatement()).thenReturn(mockExecBuilder);
+        when(mockChannel.execStatement()).thenReturn(mockExecBuilder);
     }
 
     @Test

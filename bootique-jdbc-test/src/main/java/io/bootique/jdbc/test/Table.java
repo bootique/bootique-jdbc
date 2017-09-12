@@ -60,8 +60,8 @@ public class Table {
      * using policies specified for this table.
      * @since 0.24
      */
-    public ExecStatementBuilder newExecStatement() {
-        return getChannel().newExecStatement().quoteIdentifiersWith(quotationStrategy);
+    public ExecStatementBuilder execStatement() {
+        return getChannel().execStatement().quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
@@ -71,8 +71,8 @@ public class Table {
      * PreparedStatement using policies specified for this table.
      * @since 0.24
      */
-    public <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader) {
-        return getChannel().newSelectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
+    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
+        return getChannel().selectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Table {
      * @since 0.15
      */
     public UpdateSetBuilder update() {
-        ExecStatementBuilder builder = newExecStatement()
+        ExecStatementBuilder builder = execStatement()
                 .append("UPDATE ")
                 .appendIdentifier(name)
                 .append(" SET ");
@@ -115,7 +115,7 @@ public class Table {
     }
 
     public UpdateWhereBuilder delete() {
-        ExecStatementBuilder builder = newExecStatement()
+        ExecStatementBuilder builder = execStatement()
                 .append("DELETE FROM ")
                 .appendIdentifier(name);
 
@@ -172,7 +172,7 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(newExecStatement(), name, columns);
+        return new InsertBuilder(execStatement(), name, columns);
     }
 
     /**
@@ -247,7 +247,7 @@ public class Table {
         }
 
         SelectStatementBuilder<Object[]> builder = this
-                .newSelectStatement(RowReader.arrayReader(columns.size()))
+                .selectStatement(RowReader.arrayReader(columns.size()))
                 .append("SELECT ");
 
         for (int i = 0; i < columns.size(); i++) {
@@ -267,7 +267,7 @@ public class Table {
      * @deprecated since 0.24 consider using <code>table.matcher().assertHasRows(i)</code>
      */
     public int getRowCount() {
-        return newSelectStatement(RowReader.intReader())
+        return selectStatement(RowReader.intReader())
                 .append("SELECT COUNT(*) FROM ")
                 .appendIdentifier(name)
                 .select(1)
@@ -279,7 +279,7 @@ public class Table {
     }
 
     protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = newSelectStatement(reader)
+        SelectStatementBuilder<T> builder = selectStatement(reader)
                 .append("SELECT ")
                 .appendIdentifier(columnName)
                 .append(" FROM ")

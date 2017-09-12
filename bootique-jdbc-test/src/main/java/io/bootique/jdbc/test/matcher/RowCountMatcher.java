@@ -38,7 +38,7 @@ public class RowCountMatcher {
     }
 
     protected SelectStatementBuilder<Integer> countStatement() {
-        return table.newSelectStatement(RowReader.intReader())
+        return table.selectStatement(RowReader.intReader())
                 .append("SELECT COUNT(*) FROM ")
                 .appendIdentifier(table.getName());
     }

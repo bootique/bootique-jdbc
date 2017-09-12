@@ -1,17 +1,32 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+
 public class UpdateSetBuilder {
 
-    protected UpdatingSqlContext context;
+    protected ExecStatementBuilder builder;
     protected int setCount;
 
-    protected UpdateSetBuilder(UpdatingSqlContext context) {
-        this.context = context;
+    protected UpdateSetBuilder(ExecStatementBuilder builder) {
+        this.builder = builder;
     }
 
+    /**
+     * @return the number of updated records.
+     * @deprecated since 0.24 in favor for {@link #exec()}.
+     */
     public int execute() {
-        return context.execute();
+        return builder.exec();
     }
+
+    /**
+     * @return the number of updated records.
+     * @since 0.24
+     */
+    public int exec() {
+        return builder.exec();
+    }
+
 
     public UpdateSetBuilder set(String column, Object value) {
         return set(column, value, Column.NO_TYPE);
@@ -19,11 +34,12 @@ public class UpdateSetBuilder {
 
     public UpdateSetBuilder set(String column, Object value, int valueType) {
         if (setCount++ > 0) {
-            context.append(", ");
+            builder.append(", ");
         }
 
-        context.appendIdentifier(column).append(" = ?");
-        context.addBinding(new Column(column, valueType), value);
+        builder.appendIdentifier(column)
+                .append(" = ")
+                .appendBinding(column, valueType, value);
         return this;
     }
 
@@ -32,7 +48,7 @@ public class UpdateSetBuilder {
     }
 
     public UpdateWhereBuilder where(String column, Object value, int valueType) {
-        UpdateWhereBuilder where = new UpdateWhereBuilder(context);
+        UpdateWhereBuilder where = new UpdateWhereBuilder(builder);
         where.and(column, value, valueType);
         return where;
     }

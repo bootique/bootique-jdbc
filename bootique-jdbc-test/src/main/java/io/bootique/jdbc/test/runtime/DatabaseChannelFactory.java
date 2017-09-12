@@ -16,12 +16,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class DatabaseChannelFactory {
 
+    private boolean quotingIdentifiers;
     private DataSourceFactory dataSourceFactory;
     private ConcurrentMap<String, DatabaseChannel> channels;
 
-    public DatabaseChannelFactory(DataSourceFactory dataSourceFactory) {
+    public DatabaseChannelFactory(DataSourceFactory dataSourceFactory, boolean quotingIdentifiers) {
         this.channels = new ConcurrentHashMap<>();
         this.dataSourceFactory = dataSourceFactory;
+        this.quotingIdentifiers = quotingIdentifiers;
     }
 
     public DatabaseChannel getChannel() {
@@ -43,6 +45,13 @@ public class DatabaseChannelFactory {
     protected DatabaseChannel createChannel(String dataSourceName) {
         DataSource dataSource = dataSourceFactory.forName(dataSourceName);
 
+        // even if no quoting is required by default, let's still pass a quotation symbol down to
+        // the channel, as tables may redefine the policy.
+        return new DefaultDatabaseChannel(dataSource, getIdentifierQuote(dataSource), quotingIdentifiers);
+    }
+
+
+    private String getIdentifierQuote(DataSource dataSource) {
         String identifierQuote;
         try (Connection c = dataSource.getConnection()) {
             identifierQuote = c.getMetaData().getIdentifierQuoteString();
@@ -50,11 +59,9 @@ public class DatabaseChannelFactory {
             throw new RuntimeException("Error reading test DB metadata");
         }
 
-        // if no quotations are supported, the returned value is space, so "trim" should do the trick of converting this
-        // to no-quote
+        // if no quotations are supported, per JDBC spec the returned value is space,
+        // so "trim" should do the trick of converting this to no-quote
 
-        identifierQuote = identifierQuote.trim();
-
-        return new DefaultDatabaseChannel(dataSource, identifierQuote);
+        return identifierQuote.trim().length() == 0 ? null : identifierQuote;
     }
 }

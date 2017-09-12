@@ -1,6 +1,7 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.matcher.TableMatcher;
+import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TableTest {
 
@@ -18,7 +20,10 @@ public class TableTest {
 
     @Before
     public void before() {
+        ExecStatementBuilder mockExecBuilder = mock(ExecStatementBuilder.class);
+
         mockChannel = mock(DatabaseChannel.class);
+        when(mockChannel.newExecStatement()).thenReturn(mockExecBuilder);
     }
 
     @Test

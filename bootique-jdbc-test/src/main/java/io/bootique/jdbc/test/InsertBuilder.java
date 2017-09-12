@@ -1,5 +1,7 @@
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,19 +10,16 @@ import java.util.List;
  */
 public class InsertBuilder {
 
-    protected DatabaseChannel channel;
     protected String tableName;
+    protected ExecStatementBuilder builder;
     protected List<Column> columns;
-    protected IdentifierQuotationStrategy quotationStrategy;
+    protected List<Object[]> values;
 
-    protected List<List<Binding>> bindings;
-
-    public InsertBuilder(DatabaseChannel channel, IdentifierQuotationStrategy quotationStrategy, String tableName, List<Column> columns) {
-        this.channel = channel;
-        this.bindings = new ArrayList<>();
+    public InsertBuilder(ExecStatementBuilder builder, String tableName, List<Column> columns) {
+        this.values = new ArrayList<>();
         this.tableName = tableName;
         this.columns = columns;
-        this.quotationStrategy = quotationStrategy;
+        this.builder = builder;
     }
 
     public InsertBuilder values(Object... values) {
@@ -29,13 +28,7 @@ public class InsertBuilder {
                     + " column(s) " + "and " + values.length + " value(s).");
         }
 
-        List<Binding> bindings = new ArrayList<>(values.length);
-        for (int i = 0; i < values.length; i++) {
-            Column col = columns.get(i);
-            bindings.add(new Binding(col, channel.convert(values[i])));
-        }
-
-        this.bindings.add(bindings);
+        this.values.add(values);
         return this;
     }
 
@@ -51,47 +44,44 @@ public class InsertBuilder {
 
     public void exec() {
 
-        StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO ").append(quotationStrategy.quoted(tableName)).append(" (");
+        builder.append("INSERT INTO ")
+                .appendIdentifier(tableName)
+                .append(" (");
 
         for (int i = 0; i < columns.size(); i++) {
 
             Column col = columns.get(i);
 
             if (i > 0) {
-                sql.append(", ");
+                builder.append(", ");
             }
 
-            sql.append(quotationStrategy.quoted(col.getName()));
+            builder.appendIdentifier(col.getName());
         }
 
-        sql.append(") VALUES ");
+        builder.append(") VALUES ");
 
-        List<Binding> flatBindings = new ArrayList<>();
-
-        for (int i = 0; i < bindings.size(); i++) {
+        for (int i = 0; i < values.size(); i++) {
 
             if (i > 0) {
-                sql.append(", ");
+                builder.append(", ");
             }
 
-            sql.append("(");
+            builder.append("(");
 
-            List<Binding> rowBindings = bindings.get(i);
+            Object[] rowValues = values.get(i);
 
             for (int j = 0; j < columns.size(); j++) {
                 if (j > 0) {
-                    sql.append(", ");
+                    builder.append(", ");
                 }
 
-                sql.append("?");
-                flatBindings.add(rowBindings.get(j));
+                builder.appendBinding(columns.get(j), rowValues[j]);
             }
 
-            sql.append(")");
+            builder.append(")");
         }
 
-        channel.update(sql.toString(), flatBindings);
+        builder.exec();
     }
-
 }

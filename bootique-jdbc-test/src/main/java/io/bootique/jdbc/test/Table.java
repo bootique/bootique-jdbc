@@ -3,6 +3,9 @@ package io.bootique.jdbc.test;
 import io.bootique.jdbc.test.csv.CsvDataSet;
 import io.bootique.jdbc.test.csv.ValueConverter;
 import io.bootique.jdbc.test.matcher.TableMatcher;
+import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.jdbc.RowReader;
+import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import io.bootique.resource.ResourceFactory;
 
 import java.sql.Connection;
@@ -18,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 
@@ -37,33 +39,6 @@ public class Table {
         return new Builder().channel(channel).name(name);
     }
 
-    /**
-     * Update table statement
-     *
-     * @return {@link UpdateSetBuilder}
-     * @since 0.15
-     */
-    public UpdateSetBuilder update() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("UPDATE ").append(quotationStrategy.quoted(name)).append(" SET ");
-        UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());
-        return new UpdateSetBuilder(context);
-    }
-
-    public UpdateWhereBuilder delete() {
-
-        StringBuilder sql = new StringBuilder();
-
-        sql.append("DELETE FROM ").append(quotationStrategy.quoted(name));
-        UpdatingSqlContext context = new UpdatingSqlContext(channel, quotationStrategy, sql, new ArrayList<>());
-
-        return new UpdateWhereBuilder(context);
-    }
-
-    public int deleteAll() {
-        return delete().execute();
-    }
-
     public String getName() {
         return name;
     }
@@ -78,6 +53,26 @@ public class Table {
      */
     public IdentifierQuotationStrategy getQuotationStrategy() {
         return quotationStrategy;
+    }
+
+    /**
+     * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
+     * using policies specified for this table.
+     * @since 0.24
+     */
+    public ExecStatementBuilder newExecStatement() {
+        return getChannel().newExecStatement().quoteIdentifiersWith(quotationStrategy);
+    }
+
+    /**
+     * @param rowReader a function that converts a ResultSet row into an object.
+     * @param <T>       the type of objects read by returned statement builder.
+     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
+     * PreparedStatement using policies specified for this table.
+     * @since 0.24
+     */
+    public <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader) {
+        return getChannel().newSelectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
@@ -102,6 +97,33 @@ public class Table {
         }
 
         throw new IllegalArgumentException("No such column: " + name);
+    }
+
+    /**
+     * Update table statement
+     *
+     * @return {@link UpdateSetBuilder}
+     * @since 0.15
+     */
+    public UpdateSetBuilder update() {
+        ExecStatementBuilder builder = newExecStatement()
+                .append("UPDATE ")
+                .appendIdentifier(name)
+                .append(" SET ");
+
+        return new UpdateSetBuilder(builder);
+    }
+
+    public UpdateWhereBuilder delete() {
+        ExecStatementBuilder builder = newExecStatement()
+                .append("DELETE FROM ")
+                .appendIdentifier(name);
+
+        return new UpdateWhereBuilder(builder);
+    }
+
+    public int deleteAll() {
+        return delete().exec();
     }
 
     /**
@@ -150,7 +172,7 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(channel, quotationStrategy, name, columns);
+        return new InsertBuilder(newExecStatement(), name, columns);
     }
 
     /**
@@ -159,66 +181,6 @@ public class Table {
      */
     public TableMatcher matcher() {
         return new TableMatcher(this);
-    }
-
-    /**
-     * Selects a single row from the mapped table.
-     */
-    public Object[] selectOne() {
-
-        if (columns.isEmpty()) {
-            throw new IllegalArgumentException("No columns");
-        }
-
-        StringBuilder sql = new StringBuilder("SELECT ");
-        for (int i = 0; i < columns.size(); i++) {
-            Column col = columns.get(i);
-
-            if (i > 0) {
-                sql.append(", ");
-            }
-            sql.append(quotationStrategy.quoted(col.getName()));
-        }
-        sql.append(" FROM ").append(quotationStrategy.quoted(name));
-
-        return selectOne(sql.toString(), rs -> {
-            Object[] result = new Object[columns.size()];
-
-            try {
-                for (int i = 1; i <= result.length; i++) {
-                    result[i - 1] = rs.getObject(i);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-
-            return result;
-        });
-    }
-
-    protected <T> T selectOne(String sql, Function<ResultSet, T> rowReader) {
-
-        List<T> result = channel.select(sql, 2, rowReader);
-        switch (result.size()) {
-            case 0:
-                return null;
-            case 1:
-                return result.get(0);
-            default:
-                throw new IllegalArgumentException("At most one object expected in the result");
-        }
-    }
-
-    private int columnIndex(String columnName) {
-
-        for (int i = 0; i < columns.size(); i++) {
-
-            if (columnName.equals(columns.get(i).getName())) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     /**
@@ -250,159 +212,107 @@ public class Table {
     }
 
     /**
-     * @param columns an array of columns to select/
-     * @return select result.
+     * Selects all data from the table.
+     *
+     * @return a List of Object[] where each array represents a row in the underlying table.
+     */
+    public List<Object[]> select() {
+        return selectColumns(this.columns);
+    }
+
+    /**
+     * Selects a single row from the mapped table.
+     */
+    public Object[] selectOne() {
+        return ensureAtMostOneRow(selectColumnsBuilder(this.columns), null);
+    }
+
+    /**
+     * @param columns an array of columns to select.
+     * @return a List of Object[] where each array represents a row in the underlying table made of columns requested
+     * in this method.
      * @since 0.14
      */
     public List<Object[]> selectColumns(String... columns) {
         return selectColumns(toColumnsList(columns));
     }
 
-    public List<Object[]> select() {
-        return selectColumns(this.columns);
+    public List<Object[]> selectColumns(List<Column> columns) {
+        return selectColumnsBuilder(columns).select(Long.MAX_VALUE);
     }
 
-    public List<Object[]> selectColumns(List<Column> columns) {
-
+    protected SelectStatementBuilder<Object[]> selectColumnsBuilder(List<Column> columns) {
         if (columns.isEmpty()) {
             throw new IllegalArgumentException("No columns");
         }
 
-        StringBuilder sql = new StringBuilder("SELECT ");
+        SelectStatementBuilder<Object[]> builder = this
+                .newSelectStatement(RowReader.arrayReader(columns.size()))
+                .append("SELECT ");
+
         for (int i = 0; i < columns.size(); i++) {
             Column col = columns.get(i);
 
             if (i > 0) {
-                sql.append(", ");
+                builder.append(", ");
             }
-            sql.append(quotationStrategy.quoted(col.getName()));
+            builder.appendIdentifier(col.getName());
         }
-        sql.append(" FROM ").append(quotationStrategy.quoted(name));
 
-        return channel.select(sql.toString(), Long.MAX_VALUE, rs -> {
-
-            Object[] row = new Object[columns.size()];
-
-            try {
-                for (int i = 1; i <= row.length; i++) {
-                    row[i - 1] = rs.getObject(i);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-
-            return row;
-        });
+        return builder.append(" FROM ").appendIdentifier(name);
     }
 
     public int getRowCount() {
+        return newSelectStatement(RowReader.intReader())
+                .append("SELECT COUNT(*) FROM ")
+                .appendIdentifier(name)
+                .select(1)
+                .get(0);
+    }
 
-        String sql = "SELECT COUNT(*) FROM " + quotationStrategy.quoted(name);
+    protected <T> T selectColumn(String columnName, RowReader<T> reader) {
+        return selectColumn(columnName, reader, null);
+    }
 
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getInt(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+    protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
+        SelectStatementBuilder<T> builder = newSelectStatement(reader)
+                .append("SELECT ")
+                .appendIdentifier(columnName)
+                .append(" FROM ")
+                .appendIdentifier(name);
+        return ensureAtMostOneRow(builder, defaultValue);
     }
 
     public Object getObject(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getObject(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.objectReader());
     }
 
     public byte getByte(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getByte(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.byteReader(), (byte) 0);
     }
 
     public byte[] getBytes(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getBytes(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.bytesReader());
     }
 
     public int getInt(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getInt(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.intReader(), 0);
     }
 
     public long getLong(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getLong(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.longReader(), 0L);
     }
 
     public double getDouble(String column) {
-        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getDouble(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.doubleReader(), 0.0);
     }
 
     public boolean getBoolean(String column) {
-        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getBoolean(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.booleanReader(), false);
     }
 
     public String getString(String column) {
-
-        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getString(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.stringReader());
     }
 
     public java.util.Date getUtilDate(String column) {
@@ -410,39 +320,15 @@ public class Table {
     }
 
     public java.sql.Date getSqlDate(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getDate(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.dateReader());
     }
 
     public Time getTime(String column) {
-        String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getTime(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.timeReader());
     }
 
     public Timestamp getTimestamp(String column) {
-        final String sql = "SELECT " + quotationStrategy.quoted(column) + " FROM " + quotationStrategy.quoted(name);
-
-        return selectOne(sql, rs -> {
-            try {
-                return rs.getTimestamp(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error reading ResultSet", e);
-            }
-        });
+        return selectColumn(column, RowReader.timestampReader());
     }
 
     /**
@@ -464,7 +350,6 @@ public class Table {
     public void contentsMatchCsv(ResourceFactory csvResource, String... rowKey) {
         new CsvDataSet(this, new ValueConverter(), csvResource).matchContents(rowKey);
     }
-
 
     protected List<Column> toColumnsList(String... columns) {
         if (columns == null) {
@@ -489,6 +374,29 @@ public class Table {
         return subcolumns;
     }
 
+    private int columnIndex(String columnName) {
+        for (int i = 0; i < columns.size(); i++) {
+            if (columnName.equals(columns.get(i).getName())) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    protected <T> T ensureAtMostOneRow(SelectStatementBuilder<T> builder, T defaultValue) {
+
+        List<T> data = builder.select(2);
+        switch (data.size()) {
+            case 0:
+                return defaultValue;
+            case 1:
+                return data.get(0);
+            default:
+                throw new IllegalArgumentException("At most one row expected in the result");
+        }
+    }
+
     public static class Builder {
 
         private Table table;
@@ -503,11 +411,11 @@ public class Table {
         public Table build() {
 
             Objects.requireNonNull(table.channel);
-            String quoteSymbol = table.channel.getIdentifierQuote();
 
-            table.quotationStrategy = quotingSqlIdentifiers
-                    ? id -> quoteSymbol + Objects.requireNonNull(id) + quoteSymbol
-                    : id -> id;
+            String quoteSymbol = table.channel.getIdentifierQuote();
+            table.quotationStrategy = quotingSqlIdentifiers && quoteSymbol != null
+                    ? IdentifierQuotationStrategy.forQuoteSymbol(quoteSymbol)
+                    : IdentifierQuotationStrategy.noQuote();
 
             if (initColumnTypesFromDBMetadata) {
                 doInitColumnTypesFromDBMetadata();
@@ -550,19 +458,6 @@ public class Table {
             return this;
         }
 
-        /**
-         * Sets whether SQL identifiers should be quoted in the generated SQL using DB-specific quotation symbol.
-         * True by default.
-         *
-         * @param shouldQuote a flag indicating whether SQL identifiers should be surrounded in quotations.
-         * @return this builder instance.
-         * @since 0.14
-         */
-        public Builder quoteSqlIdentifiers(boolean shouldQuote) {
-            this.quotingSqlIdentifiers = shouldQuote;
-            return this;
-        }
-
         public Builder channel(DatabaseChannel channel) {
             table.channel = channel;
             return this;
@@ -576,6 +471,11 @@ public class Table {
             }
 
             table.columns = columns;
+            return this;
+        }
+
+        public Builder quoteSqlIdentifiers(boolean shouldQuote) {
+            this.quotingSqlIdentifiers = shouldQuote;
             return this;
         }
 

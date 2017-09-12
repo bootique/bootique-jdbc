@@ -53,7 +53,7 @@ public class TableMatcherIT {
 
         T1.insert(1, "y", "z");
         T1.insert(2, "a", "b");
-        matcher.eq("c2", "z").eq("c1", 1).assertHasRows(1);
+        matcher.eq("c3", "z").eq("c1", 1).assertHasRows(1);
     }
 
     @Test

@@ -27,5 +27,15 @@ class BinaryCondition {
         this.operator = operator;
     }
 
+    public String getColumn() {
+        return column;
+    }
 
+    public Object getValue() {
+        return value;
+    }
+
+    public Comparision getOperator() {
+        return operator;
+    }
 }

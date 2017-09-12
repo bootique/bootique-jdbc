@@ -3,7 +3,7 @@ package io.bootique.jdbc.test.matcher;
 import io.bootique.jdbc.test.Table;
 
 /**
- * An object that assists in making assertions about the data in a DB table.
+ * Assists in making assertions about the data in a DB table.
  *
  * @since 0.24
  */

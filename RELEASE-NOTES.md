@@ -5,6 +5,7 @@
 * #41 JdbcTestModule - replace 'contributeDataSourceListeners' with an extender
 * #42 Test API: Support for boolean values in CSV
 * #43 Test API: Generated SQL needs to print pretty String for byte[] and timestamps
+* #46 Test API: matcher API, support for key/value matching
 * #47 Test API: StatementBuilder API
 
 ## 0.15

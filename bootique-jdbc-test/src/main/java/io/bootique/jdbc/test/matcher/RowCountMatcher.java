@@ -65,11 +65,11 @@ public class RowCountMatcher {
         return builder;
     }
 
-    public void assertIsPresent() {
+    public void assertOneMatch() {
         assertHasRows(1);
     }
 
-    public void assertIsAbsent() {
+    public void assertNoMatch() {
         assertHasRows(0);
     }
 

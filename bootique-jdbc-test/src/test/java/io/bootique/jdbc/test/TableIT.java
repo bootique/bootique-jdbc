@@ -72,7 +72,7 @@ public class TableIT {
     @Test
     public void testInsertFromCsv_Empty() {
         T1.insertFromCsv(new ResourceFactory("classpath:io/bootique/jdbc/test/empty.csv"));
-        T1.matcher().assertIsAbsent();
+        T1.matcher().assertNoMatch();
     }
 
     @Test

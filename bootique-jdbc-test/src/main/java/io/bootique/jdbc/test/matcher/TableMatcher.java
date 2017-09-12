@@ -28,12 +28,12 @@ public class TableMatcher {
         new RowCountMatcher(table).assertHasRows(expectedRows);
     }
 
-    public void assertIsPresent() {
-        new RowCountMatcher(table).assertIsPresent();
+    public void assertOneMatch() {
+        new RowCountMatcher(table).assertOneMatch();
     }
 
-    public void assertIsAbsent() {
-        new RowCountMatcher(table).assertIsAbsent();
+    public void assertNoMatch() {
+        new RowCountMatcher(table).assertNoMatch();
     }
 
     public void assertMatchesCsv(String csvResource, String... keyColumns) {

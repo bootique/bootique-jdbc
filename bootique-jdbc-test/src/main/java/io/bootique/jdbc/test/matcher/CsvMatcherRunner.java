@@ -37,7 +37,7 @@ class CsvMatcherRunner {
     }
 
     private void assertNoData() {
-        table.matcher().assertIsAbsent();
+        table.matcher().assertNoMatch();
     }
 
     private void assertSizeMatches(CsvRecordSet referenceData, List<Object[]> tableData) {

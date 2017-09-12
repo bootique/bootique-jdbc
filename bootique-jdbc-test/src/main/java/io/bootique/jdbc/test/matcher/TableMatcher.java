@@ -1,6 +1,7 @@
 package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Table;
+import io.bootique.resource.ResourceFactory;
 
 /**
  * Assists in making assertions about the data in a DB table.
@@ -33,5 +34,13 @@ public class TableMatcher {
 
     public void assertIsAbsent() {
         new RowCountMatcher(table).assertIsAbsent();
+    }
+
+    public void assertMatchesCsv(String csvResource, String... keyColumns) {
+        assertMatchesCsv(new ResourceFactory(csvResource), keyColumns);
+    }
+
+    public void assertMatchesCsv(ResourceFactory csvResource, String... keyColumns) {
+        new CsvMatcher(table).referenceCsvResource(csvResource).rowKeyColumns(keyColumns).assertMatches();
     }
 }

@@ -50,6 +50,8 @@ public class RowCountMatcher {
             String separator = " WHERE ";
 
             for (BinaryCondition c : conditions) {
+
+                // TODO: use some kind of tree visitor to parse conditions?
                 builder.append(separator);
                 builder.appendIdentifier(c.getColumn())
                         .append(" ")

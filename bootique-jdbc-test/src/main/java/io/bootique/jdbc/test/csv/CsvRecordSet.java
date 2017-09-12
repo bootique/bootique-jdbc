@@ -27,6 +27,10 @@ public class CsvRecordSet {
         return records.size();
     }
 
+    public boolean isEmpty() {
+        return records.isEmpty();
+    }
+
     public Stream<Object[]> records() {
         return records.stream().map(this::getValues);
     }

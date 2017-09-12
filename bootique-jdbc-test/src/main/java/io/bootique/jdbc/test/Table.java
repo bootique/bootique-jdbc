@@ -262,6 +262,10 @@ public class Table {
         return builder.append(" FROM ").appendIdentifier(name);
     }
 
+    /**
+     * @return the number of rows in the table.
+     * @deprecated since 0.24 consider using <code>table.matcher().assertHasRows(i)</code>
+     */
     public int getRowCount() {
         return newSelectStatement(RowReader.intReader())
                 .append("SELECT COUNT(*) FROM ")
@@ -336,6 +340,7 @@ public class Table {
      * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
      *                    all row columns are used in comparision.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
      */
     public void contentsMatchCsv(String csvResource, String... rowKey) {
         contentsMatchCsv(new ResourceFactory(csvResource), rowKey);
@@ -346,6 +351,7 @@ public class Table {
      * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
      *                    all row columns are used in comparision.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
      */
     public void contentsMatchCsv(ResourceFactory csvResource, String... rowKey) {
         new CsvDataSet(this, new ValueConverter(), csvResource).matchContents(rowKey);

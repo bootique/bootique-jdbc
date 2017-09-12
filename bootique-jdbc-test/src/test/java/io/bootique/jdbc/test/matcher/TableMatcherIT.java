@@ -10,6 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 public class TableMatcherIT {
@@ -17,6 +18,8 @@ public class TableMatcherIT {
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
     private static Table T1;
+    private static Table T2;
+    private static Table T3;
 
     @Rule
     public TestDataManager dataManager = new TestDataManager(true, T1);
@@ -30,9 +33,13 @@ public class TableMatcherIT {
 
         DatabaseChannel channel = DatabaseChannel.get(runtime);
 
-        channel.update("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
+        channel.newExecStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
+        channel.newExecStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
+        channel.newExecStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
 
         T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").initColumnTypesFromDBMetadata().build();
+        T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").initColumnTypesFromDBMetadata().build();
+        T3 = channel.newTable("t3").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
     }
 
     @Test
@@ -71,6 +78,68 @@ public class TableMatcherIT {
 
         assertAssertionError(() -> matcher.eq("c2", "z").eq("c1", 2).assertHasRows(1),
                 "The matcher incorrectly assumed there was 1 row matching condition.");
+    }
+
+    @Test
+    public void testAssertMatchesCsv() {
+        TableMatcher matcher = new TableMatcher(T1);
+
+        T1.insertColumns("c1", "c2", "c3")
+                .values(2, "tt", "xyz")
+                .values(1, "", "abcd")
+                .exec();
+
+        matcher.assertMatchesCsv("classpath:io/bootique/jdbc/test/matcher/t1_ref.csv", "c1");
+    }
+
+    @Test
+    public void testAssertMatchesCsv_NoMatch() {
+
+        TableMatcher matcher = new TableMatcher(T1);
+
+        T1.insertColumns("c1", "c2", "c3")
+                .values(1, "tt", "xyz")
+                .values(2, "", "abcd")
+                .exec();
+
+        boolean succeeded;
+        try {
+            matcher.assertMatchesCsv("classpath:io/bootique/jdbc/test/matcher/t1_ref.csv", "c1");
+            succeeded = true;
+        } catch (AssertionError e) {
+            // expected
+            succeeded = false;
+        }
+
+        assertFalse("Must have failed - data sets do not match", succeeded);
+    }
+
+    @Test
+    public void testAssertMatchesCsv_Dates() {
+
+        TableMatcher matcher = new TableMatcher(T2);
+
+        T2.insertColumns("c1", "c2", "c3", "c4")
+                .values(3, null, "2018-01-09", "2018-01-10 14:00:01")
+                .values(1, null, "2016-01-09", "2016-01-10 10:00:00")
+                .values(2, null, "2017-01-09", "2017-01-10 13:00:01")
+                .exec();
+
+        matcher.assertMatchesCsv("classpath:io/bootique/jdbc/test/matcher/t2_ref.csv", "c1");
+    }
+
+    @Test
+    public void testAssertMatchesCsv_Binary() {
+
+        TableMatcher matcher = new TableMatcher(T3);
+
+        T3.insertColumns("c1", "c2")
+                .values(3, null)
+                .values(1, "abcd".getBytes())
+                .values(2, "kmln".getBytes())
+                .exec();
+
+        matcher.assertMatchesCsv("classpath:io/bootique/jdbc/test/matcher/t3_ref.csv", "c1");
     }
 
     private void assertAssertionError(Runnable test, String whenNoErrorMessage) {

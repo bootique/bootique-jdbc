@@ -22,6 +22,10 @@ public class ExecStatementBuilder extends StatementBuilder<ExecStatementBuilder>
         super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
     }
 
+    public int exec(String sql) {
+        return append(sql).exec();
+    }
+
     public int exec() {
 
         String sql = getSql();

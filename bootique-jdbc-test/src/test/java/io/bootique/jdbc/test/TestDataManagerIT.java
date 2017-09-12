@@ -28,8 +28,8 @@ public class TestDataManagerIT {
 
         DatabaseChannel channel = DatabaseChannel.get(testRuntime);
 
-        channel.update("CREATE TABLE \"t1\" (\"id\" INT NOT NULL PRIMARY KEY, \"name\" VARCHAR(10))");
-        channel.update("CREATE TABLE \"t2\" (\"id\" INT NOT NULL PRIMARY KEY, \"name\" VARCHAR(10), \"t1_id\" INT)");
+        channel.execStatement().exec("CREATE TABLE \"t1\" (\"id\" INT NOT NULL PRIMARY KEY, \"name\" VARCHAR(10))");
+        channel.execStatement().exec("CREATE TABLE \"t2\" (\"id\" INT NOT NULL PRIMARY KEY, \"name\" VARCHAR(10), \"t1_id\" INT)");
 
         T1 = channel.newTable("t1").columnNames("id", "name").build();
         T2 = channel.newTable("t2").columnNames("id", "name", "t1_id").build();

@@ -38,27 +38,27 @@ public class TestDataManagerIT {
     @Test
     public void test1() {
 
-        assertEquals(0, T1.getRowCount());
-        assertEquals(0, T2.getRowCount());
+        T1.matcher().assertNoMatches();
+        T2.matcher().assertNoMatches();
 
         T1.insert(1, "x");
         T2.insert(1, "x1", 1);
 
-        assertEquals(1, T1.getRowCount());
-        assertEquals(1, T2.getRowCount());
+        T1.matcher().assertOneMatch();
+        T2.matcher().assertOneMatch();
     }
 
     @Test
     public void test2() {
 
-        assertEquals(0, T1.getRowCount());
-        assertEquals(0, T2.getRowCount());
+        T1.matcher().assertNoMatches();
+        T2.matcher().assertNoMatches();
 
         T1.insert(2, "x");
         T2.insert(2, "x2", 2);
 
-        assertEquals(1, T1.getRowCount());
-        assertEquals(1, T2.getRowCount());
+        T1.matcher().assertOneMatch();
+        T2.matcher().assertOneMatch();
     }
 
 }

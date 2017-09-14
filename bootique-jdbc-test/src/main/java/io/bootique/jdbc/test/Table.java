@@ -154,7 +154,7 @@ public class Table {
      * @since 0.14
      */
     public Table insertFromCsv(ResourceFactory csvResource) {
-        new CsvDataSetLoader(this, new ValueConverter(), csvResource).read().insert();
+        new CsvDataSetLoader(this, new ValueConverter(), csvResource).load().persist();
         return this;
     }
 

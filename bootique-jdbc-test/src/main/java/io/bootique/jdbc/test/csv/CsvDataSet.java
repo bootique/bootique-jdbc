@@ -3,95 +3,59 @@ package io.bootique.jdbc.test.csv;
 import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.InsertBuilder;
 import io.bootique.jdbc.test.Table;
-import io.bootique.resource.ResourceFactory;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.StreamSupport;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-/**
- * @since 0.14
- */
 public class CsvDataSet {
 
     private Table table;
-    private ResourceFactory csv;
     private ValueConverter converter;
+    private List<Column> header;
+    private List<CSVRecord> records;
 
-    public CsvDataSet(Table table, ValueConverter converter, ResourceFactory csv) {
-        this.table = table;
-        this.csv = csv;
-        this.converter = converter;
+    public CsvDataSet(Table table, ValueConverter converter, List<Column> header, List<CSVRecord> records) {
+        this.header = Objects.requireNonNull(header);
+        this.records = Objects.requireNonNull(records);
+        this.converter = Objects.requireNonNull(converter);
+        this.table = Objects.requireNonNull(table);
     }
 
-    /**
-     * @param rowKeyColumns
-     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
-     */
-    @Deprecated
-    public void matchContents(String... rowKeyColumns) {
-        table.matcher().assertMatchesCsv(csv, rowKeyColumns);
+    public List<Column> getHeader() {
+        return header;
+    }
+
+    public int size() {
+        return records.size();
+    }
+
+    public boolean isEmpty() {
+        return records.isEmpty();
+    }
+
+    public Stream<Object[]> records() {
+        return records.stream().map(this::getValues);
+    }
+
+    Object[] getValues(CSVRecord record) {
+
+        Object[] values = new Object[record.size()];
+
+        int len = header.size();
+        for (int i = 0; i < len; i++) {
+            values[i] = converter.fromString(record.get(i), header.get(i));
+        }
+
+        return values;
     }
 
     public void insert() {
-
-        CsvRecordSet recordSet = read();
-        if (recordSet.size() != 0) {
-            InsertBuilder builder = table.insertColumns(recordSet.getHeader());
-            recordSet.records().forEach(row -> builder.values(row));
+        if (size() != 0) {
+            InsertBuilder builder = table.insertColumns(getHeader());
+            records().forEach(row -> builder.values(row));
             builder.exec();
-        }
-    }
-
-    public CsvRecordSet read() {
-
-        try (Reader csvReader = new InputStreamReader(csv.getUrl().openStream(), "UTF-8")) {
-            try (CSVParser parser = new CSVParser(csvReader, CSVFormat.DEFAULT, 0, 0)) {
-
-
-                Iterator<CSVRecord> it = parser.iterator();
-                if (!it.hasNext()) {
-                    return new CsvRecordSet(converter, Collections.emptyList(), Collections.emptyList());
-                }
-
-                CSVRecord headerRow = it.next();
-                List<Column> header = new ArrayList<>(headerRow.size());
-                for (String column : headerRow) {
-                    header.add(table.getColumn(column));
-                }
-
-                if (!it.hasNext()) {
-                    return new CsvRecordSet(converter, header, Collections.emptyList());
-                }
-
-                List<CSVRecord> records = new ArrayList<>();
-
-                StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                        .forEach(r -> {
-                            if (r.size() != header.size()) {
-                                throw new IllegalStateException("Row length "
-                                        + r.size()
-                                        + " is different from header length "
-                                        + header.size() + ".");
-                            }
-                            records.add(r);
-                        });
-
-                return new CsvRecordSet(converter, header, records);
-
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading CSV " + csv, e);
         }
     }
 }

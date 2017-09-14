@@ -1,6 +1,6 @@
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.csv.CsvDataSet;
+import io.bootique.jdbc.test.csv.CsvDataSetLoader;
 import io.bootique.jdbc.test.csv.ValueConverter;
 import io.bootique.jdbc.test.matcher.TableMatcher;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
@@ -154,7 +154,7 @@ public class Table {
      * @since 0.14
      */
     public Table insertFromCsv(ResourceFactory csvResource) {
-        new CsvDataSet(this, new ValueConverter(), csvResource).insert();
+        new CsvDataSetLoader(this, new ValueConverter(), csvResource).read().insert();
         return this;
     }
 
@@ -354,7 +354,7 @@ public class Table {
      * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
      */
     public void contentsMatchCsv(ResourceFactory csvResource, String... rowKey) {
-        new CsvDataSet(this, new ValueConverter(), csvResource).matchContents(rowKey);
+        matcher().assertMatchesCsv(csvResource, rowKey);
     }
 
     protected List<Column> toColumnsList(String... columns) {

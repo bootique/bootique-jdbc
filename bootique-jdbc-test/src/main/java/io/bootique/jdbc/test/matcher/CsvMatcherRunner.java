@@ -2,7 +2,7 @@ package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.csv.CsvRecordSet;
+import io.bootique.jdbc.test.csv.CsvDataSet;
 
 import java.sql.Types;
 import java.util.HashMap;
@@ -17,10 +17,10 @@ import static org.junit.Assert.*;
 class CsvMatcherRunner {
 
     private Table table;
-    private CsvRecordSet referenceData;
+    private CsvDataSet referenceData;
     private RowKeyFactory keyFactory;
 
-    public CsvMatcherRunner(Table table, CsvRecordSet referenceData, RowKeyFactory keyFactory) {
+    public CsvMatcherRunner(Table table, CsvDataSet referenceData, RowKeyFactory keyFactory) {
         this.table = table;
         this.referenceData = referenceData;
         this.keyFactory = keyFactory;
@@ -40,7 +40,7 @@ class CsvMatcherRunner {
         table.matcher().assertNoMatches();
     }
 
-    private void assertSizeMatches(CsvRecordSet referenceData, List<Object[]> tableData) {
+    private void assertSizeMatches(CsvDataSet referenceData, List<Object[]> tableData) {
         assertEquals("Reference data has " + referenceData.size() + " record(s). DB has " + tableData.size(),
                 referenceData.size(),
                 tableData.size());

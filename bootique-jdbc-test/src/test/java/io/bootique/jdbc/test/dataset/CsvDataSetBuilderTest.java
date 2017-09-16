@@ -42,9 +42,11 @@ public class CsvDataSetBuilderTest {
     public void testBuild() {
         TableDataSet ds = new CsvDataSetBuilder(table)
                 .columns("c2,c1")
-                .values("1,z")
-                .values("35,a")
-                .build();
+                .rows(
+                        "1,z",
+                        "35,\"a\""
+                ).build();
+
         assertEquals(2, ds.getHeader().size());
         assertEquals(2, ds.size());
 

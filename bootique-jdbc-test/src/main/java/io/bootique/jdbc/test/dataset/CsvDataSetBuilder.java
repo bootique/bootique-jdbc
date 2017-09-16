@@ -26,12 +26,24 @@ public class CsvDataSetBuilder {
         return this;
     }
 
+    /**
+     * Starts building a data set with the specified columns.
+     *
+     * @param csvString CSV string specifying DataSet columns.
+     * @return a builder for API-based DataSet.
+     */
     public CsvStringsDataSetBuilder columns(String csvString) {
         return new CsvStringsDataSetBuilder(table, csvString, valueConverter);
     }
 
-    public CsvStringsDataSetBuilder values(String csvString) {
-        return new CsvStringsDataSetBuilder(table, valueConverter).values(csvString);
+    /**
+     * Starts building a data set with columns matching the underlying table columns.
+     *
+     * @param csvStrings an array of String, each String representing a CSV row in the DataSet.
+     * @return a builder for API-based DataSet.
+     */
+    public CsvStringsDataSetBuilder rows(String... csvStrings) {
+        return new CsvStringsDataSetBuilder(table, valueConverter).rows(csvStrings);
     }
 
     public TableDataSet load(String csvResource) {

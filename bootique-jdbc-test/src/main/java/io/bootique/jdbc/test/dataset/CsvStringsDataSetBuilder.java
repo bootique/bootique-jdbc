@@ -37,8 +37,10 @@ public class CsvStringsDataSetBuilder {
         return this;
     }
 
-    public CsvStringsDataSetBuilder values(String csvString) {
-        data.append(csvString).append("\n");
+    public CsvStringsDataSetBuilder rows(String... csvStrings) {
+        for(String row: csvStrings) {
+            data.append(row).append("\n");
+        }
         return this;
     }
 

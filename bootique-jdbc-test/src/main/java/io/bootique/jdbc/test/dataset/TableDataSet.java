@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @since 0.24
  */
-public class TableDataSet {
+public class TableDataSet implements DataSet {
 
     private Table table;
     private List<Column> header;
@@ -47,6 +47,7 @@ public class TableDataSet {
     /**
      * Inserts data set records to the underlying DB table.
      */
+    @Override
     public void persist() {
         if (size() > 0) {
             InsertBuilder builder = table.insertColumns(getHeader());

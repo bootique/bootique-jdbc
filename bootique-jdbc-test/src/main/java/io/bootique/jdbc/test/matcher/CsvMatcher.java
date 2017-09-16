@@ -2,9 +2,7 @@ package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.csv.CsvDataSetLoader;
 import io.bootique.jdbc.test.dataset.TableDataSet;
-import io.bootique.jdbc.test.csv.ValueConverter;
 import io.bootique.resource.ResourceFactory;
 
 import java.util.Objects;
@@ -36,10 +34,9 @@ public class CsvMatcher {
 
         Objects.requireNonNull(referenceCsvResource);
 
-        TableDataSet refData = new CsvDataSetLoader(table, new ValueConverter(), referenceCsvResource).load();
-
-        RowKeyFactory keyFactory = createRowKeyFactory(refData, keyColumns);
-        new CsvMatcherRunner(table, refData, keyFactory).assertMatches();
+        TableDataSet refDataSet = table.csvDataSet().load(referenceCsvResource);
+        RowKeyFactory keyFactory = createRowKeyFactory(refDataSet, keyColumns);
+        new CsvMatcherRunner(table, refDataSet, keyFactory).assertMatches();
     }
 
     private RowKeyFactory createRowKeyFactory(TableDataSet refData, String... keyColumns) {

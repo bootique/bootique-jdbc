@@ -1,7 +1,8 @@
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.matcher.TableMatcher;
+import io.bootique.jdbc.test.dataset.TableDataSet;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.matcher.TableMatcher;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,4 +45,15 @@ public class TableTest {
         assertNotNull(m);
         assertSame(t, m.getTable());
     }
+
+    @Test
+    public void testCsvDataSet() {
+
+        Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
+
+        TableDataSet ds = t.csvDataSet().columns("c,b").build();
+        assertEquals(2, ds.getHeader().size());
+        assertEquals(0, ds.size());
+    }
+
 }

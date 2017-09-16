@@ -1,11 +1,10 @@
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.csv.CsvDataSetLoader;
-import io.bootique.jdbc.test.csv.ValueConverter;
-import io.bootique.jdbc.test.matcher.TableMatcher;
+import io.bootique.jdbc.test.dataset.CsvDataSetBuilder;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
+import io.bootique.jdbc.test.matcher.TableMatcher;
 import io.bootique.resource.ResourceFactory;
 
 import java.sql.Connection;
@@ -136,12 +135,24 @@ public class Table {
     }
 
     /**
+     * Returns a builder object to assemble a data set from CSV strings, or a CSV resource.
+     *
+     * @return a builder of a {@link io.bootique.jdbc.test.dataset.TableDataSet}.
+     * @since 0.24
+     */
+    public CsvDataSetBuilder csvDataSet() {
+        return new CsvDataSetBuilder(this);
+    }
+
+    /**
      * Inserts test data from the provided CSV resource.
      *
      * @param csvResource a resource that stores CSV data.
      * @return this table instance.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>csvDataSet().load(csvResource).persist()</code>
      */
+    @Deprecated
     public Table insertFromCsv(String csvResource) {
         return insertFromCsv(new ResourceFactory(csvResource));
     }
@@ -152,9 +163,11 @@ public class Table {
      * @param csvResource a resource that stores CSV data.
      * @return this table instance.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>csvDataSet().load(csvResource).persist()</code>
      */
+    @Deprecated
     public Table insertFromCsv(ResourceFactory csvResource) {
-        new CsvDataSetLoader(this, new ValueConverter(), csvResource).load().persist();
+        csvDataSet().load(csvResource).persist();
         return this;
     }
 
@@ -264,8 +277,9 @@ public class Table {
 
     /**
      * @return the number of rows in the table.
-     * @deprecated since 0.24 consider using <code>table.matcher().assertHasRows(i)</code>
+     * @deprecated since 0.24 consider using <code>table.matcher().assertMatches(i)</code>
      */
+    @Deprecated
     public int getRowCount() {
         return selectStatement(RowReader.intReader())
                 .append("SELECT COUNT(*) FROM ")

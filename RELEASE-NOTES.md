@@ -7,6 +7,7 @@
 * #43 Test API: Generated SQL needs to print pretty String for byte[] and timestamps
 * #46 Test API: matcher API, support for key/value matching
 * #47 Test API: StatementBuilder API
+* #53 Test API > DataSet API
 
 ## 0.15
 

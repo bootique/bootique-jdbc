@@ -2,7 +2,7 @@ package io.bootique.jdbc.test;
 
 import com.google.inject.Module;
 import io.bootique.BQModuleProvider;
-import io.bootique.jdbc.instrumented.InstrumentedJdbcModule;
+import io.bootique.jdbc.tomcat.instrumented.TomcatCPInstrumentedModule;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +19,6 @@ public class JdbcTestModuleProvider implements BQModuleProvider {
 
     @Override
     public Collection<Class<? extends Module>> overrides() {
-        return Collections.singleton(InstrumentedJdbcModule.class);
+        return Collections.singleton(TomcatCPInstrumentedModule.class);
     }
 }

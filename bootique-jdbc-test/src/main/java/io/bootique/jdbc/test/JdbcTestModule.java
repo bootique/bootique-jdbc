@@ -8,7 +8,6 @@ import com.google.inject.multibindings.Multibinder;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactoryFactory;
 import io.bootique.jdbc.test.derby.DerbyListener;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
@@ -16,6 +15,7 @@ import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
 import io.bootique.jdbc.tomcat.TomcatCPDataSourceFactory;
 import io.bootique.jdbc.tomcat.TomcatCPLazyDataSourceFactory;
+import io.bootique.jdbc.tomcat.instrumented.TomcatCPInstrumentedLazyDataSourceFactoryFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
@@ -73,7 +73,7 @@ public class JdbcTestModule extends ConfigModule {
                 "jdbc");
 
         TomcatCPLazyDataSourceFactory delegate =
-                new InstrumentedLazyDataSourceFactoryFactory(configs)
+                new TomcatCPInstrumentedLazyDataSourceFactoryFactory(configs)
                         .create(shutdownManager, bootLogger, metricRegistry);
 
         TestDataSourceFactory factory = new TestDataSourceFactory(delegate, dataSourceListeners, configs);

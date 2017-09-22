@@ -26,10 +26,11 @@
 
     <modules>
         <module>bootique-jdbc</module>
-        <module>bootique-jdbc-instrumented</module>
         <module>bootique-jdbc-test</module>
         <module>bootique-jdbc-tomcat</module>
         <module>bootique-jdbc-hikaricp</module>
+        <module>bootique-jdbc-tomcat-instrumented</module>
+        <module>bootique-jdbc-hikaricp-instrumented</module>
     </modules>
 
     <scm>

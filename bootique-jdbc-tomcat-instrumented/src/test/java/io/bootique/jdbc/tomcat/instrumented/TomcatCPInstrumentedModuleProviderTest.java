@@ -13,6 +13,11 @@ public class TomcatCPInstrumentedModuleProviderTest {
     }
 
     @Test
+    public void testMetadata() {
+        BQModuleProviderChecker.testMetadata(TomcatCPInstrumentedModuleProvider.class);
+    }
+
+    @Test
     public void testConfigPrefix() {
         assertEquals("jdbc", new TomcatCPInstrumentedModule().getConfixPrefix());
     }

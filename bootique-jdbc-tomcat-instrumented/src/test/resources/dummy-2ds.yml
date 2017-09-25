@@ -1,0 +1,13 @@
+jdbc:
+  ds1:
+    url: jdbc:derby:target/testdb;create=true
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    username: u1
+    password: supersecret1
+  ds2:
+    url: jdbc:derby:target/testdb;create=true
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    username: u2
+    password: supersecret2
+
+

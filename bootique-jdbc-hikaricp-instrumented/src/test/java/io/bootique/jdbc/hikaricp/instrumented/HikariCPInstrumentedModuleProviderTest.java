@@ -13,6 +13,11 @@ public class HikariCPInstrumentedModuleProviderTest {
     }
 
     @Test
+    public void testMetadata() {
+        BQModuleProviderChecker.testMetadata(HikariCPInstrumentedModuleProvider.class);
+    }
+
+    @Test
     public void testConfigPrefix() {
         assertEquals("jdbc", new HikariCPInstrumentedModule().getConfixPrefix());
     }

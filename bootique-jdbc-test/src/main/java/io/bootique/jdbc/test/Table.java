@@ -1,10 +1,10 @@
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.csv.CsvDataSet;
-import io.bootique.jdbc.test.csv.ValueConverter;
+import io.bootique.jdbc.test.dataset.CsvDataSetBuilder;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
+import io.bootique.jdbc.test.matcher.TableMatcher;
 import io.bootique.resource.ResourceFactory;
 
 import java.sql.Connection;
@@ -32,6 +32,7 @@ public class Table {
     protected String name;
     protected DatabaseChannel channel;
     protected List<Column> columns;
+    protected IdentifierQuotationStrategy quotationStrategy;
 
     public static Builder builder(DatabaseChannel channel, String name) {
         return new Builder().channel(channel).name(name);
@@ -43,6 +44,34 @@ public class Table {
 
     public DatabaseChannel getChannel() {
         return channel;
+    }
+
+    /**
+     * @return an internal IdentifierQuotationStrategy used to generate quoted SQL identifiers.
+     * @since 0.14
+     */
+    public IdentifierQuotationStrategy getQuotationStrategy() {
+        return quotationStrategy;
+    }
+
+    /**
+     * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
+     * using policies specified for this table.
+     * @since 0.24
+     */
+    public ExecStatementBuilder execStatement() {
+        return getChannel().execStatement().quoteIdentifiersWith(quotationStrategy);
+    }
+
+    /**
+     * @param rowReader a function that converts a ResultSet row into an object.
+     * @param <T>       the type of objects read by returned statement builder.
+     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
+     * PreparedStatement using policies specified for this table.
+     * @since 0.24
+     */
+    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
+        return getChannel().selectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
@@ -76,7 +105,7 @@ public class Table {
      * @since 0.15
      */
     public UpdateSetBuilder update() {
-        ExecStatementBuilder builder = channel.newExecStatement()
+        ExecStatementBuilder builder = execStatement()
                 .append("UPDATE ")
                 .appendIdentifier(name)
                 .append(" SET ");
@@ -85,7 +114,7 @@ public class Table {
     }
 
     public UpdateWhereBuilder delete() {
-        ExecStatementBuilder builder = channel.newExecStatement()
+        ExecStatementBuilder builder = execStatement()
                 .append("DELETE FROM ")
                 .appendIdentifier(name);
 
@@ -106,12 +135,24 @@ public class Table {
     }
 
     /**
+     * Returns a builder object to assemble a data set from CSV strings, or a CSV resource.
+     *
+     * @return a builder of a {@link io.bootique.jdbc.test.dataset.TableDataSet}.
+     * @since 0.24
+     */
+    public CsvDataSetBuilder csvDataSet() {
+        return new CsvDataSetBuilder(this);
+    }
+
+    /**
      * Inserts test data from the provided CSV resource.
      *
      * @param csvResource a resource that stores CSV data.
      * @return this table instance.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>csvDataSet().load(csvResource).persist()</code>
      */
+    @Deprecated
     public Table insertFromCsv(String csvResource) {
         return insertFromCsv(new ResourceFactory(csvResource));
     }
@@ -122,9 +163,11 @@ public class Table {
      * @param csvResource a resource that stores CSV data.
      * @return this table instance.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>csvDataSet().load(csvResource).persist()</code>
      */
+    @Deprecated
     public Table insertFromCsv(ResourceFactory csvResource) {
-        new CsvDataSet(this, new ValueConverter(), csvResource).insert();
+        csvDataSet().load(csvResource).persist();
         return this;
     }
 
@@ -142,7 +185,15 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(channel.newExecStatement(), name, columns);
+        return new InsertBuilder(execStatement(), name, columns);
+    }
+
+    /**
+     * @return a new instance of {@link TableMatcher} for this table that allows to make assertions about the table data.
+     * @since 0.24
+     */
+    public TableMatcher matcher() {
+        return new TableMatcher(this);
     }
 
     /**
@@ -208,8 +259,8 @@ public class Table {
             throw new IllegalArgumentException("No columns");
         }
 
-        SelectStatementBuilder<Object[]> builder = channel
-                .newSelectStatement(RowReader.arrayReader(columns.size()))
+        SelectStatementBuilder<Object[]> builder = this
+                .selectStatement(RowReader.arrayReader(columns.size()))
                 .append("SELECT ");
 
         for (int i = 0; i < columns.size(); i++) {
@@ -224,8 +275,13 @@ public class Table {
         return builder.append(" FROM ").appendIdentifier(name);
     }
 
+    /**
+     * @return the number of rows in the table.
+     * @deprecated since 0.24 consider using <code>table.matcher().assertMatches(i)</code>
+     */
+    @Deprecated
     public int getRowCount() {
-        return channel.newSelectStatement(RowReader.intReader())
+        return selectStatement(RowReader.intReader())
                 .append("SELECT COUNT(*) FROM ")
                 .appendIdentifier(name)
                 .select(1)
@@ -237,8 +293,7 @@ public class Table {
     }
 
     protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = channel
-                .newSelectStatement(reader)
+        SelectStatementBuilder<T> builder = selectStatement(reader)
                 .append("SELECT ")
                 .appendIdentifier(columnName)
                 .append(" FROM ")
@@ -299,6 +354,7 @@ public class Table {
      * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
      *                    all row columns are used in comparision.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
      */
     public void contentsMatchCsv(String csvResource, String... rowKey) {
         contentsMatchCsv(new ResourceFactory(csvResource), rowKey);
@@ -309,9 +365,10 @@ public class Table {
      * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
      *                    all row columns are used in comparision.
      * @since 0.14
+     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
      */
     public void contentsMatchCsv(ResourceFactory csvResource, String... rowKey) {
-        new CsvDataSet(this, new ValueConverter(), csvResource).matchContents(rowKey);
+        matcher().assertMatchesCsv(csvResource, rowKey);
     }
 
     protected List<Column> toColumnsList(String... columns) {
@@ -375,6 +432,11 @@ public class Table {
 
             Objects.requireNonNull(table.channel);
 
+            String quoteSymbol = table.channel.getIdentifierQuote();
+            table.quotationStrategy = quotingSqlIdentifiers && quoteSymbol != null
+                    ? IdentifierQuotationStrategy.forQuoteSymbol(quoteSymbol)
+                    : IdentifierQuotationStrategy.noQuote();
+
             if (initColumnTypesFromDBMetadata) {
                 doInitColumnTypesFromDBMetadata();
             }
@@ -429,6 +491,11 @@ public class Table {
             }
 
             table.columns = columns;
+            return this;
+        }
+
+        public Builder quoteSqlIdentifiers(boolean shouldQuote) {
+            this.quotingSqlIdentifiers = shouldQuote;
             return this;
         }
 

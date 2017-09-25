@@ -1,10 +1,13 @@
-package io.bootique.jdbc.test.csv;
+package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Column;
 import org.junit.Assert;
 
 import java.util.List;
 
+/**
+ * A factory of {@link RowKey} objects.
+ */
 public class RowKeyFactory {
 
     private int[] keyIndexes;

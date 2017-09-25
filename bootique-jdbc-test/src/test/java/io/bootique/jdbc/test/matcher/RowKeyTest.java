@@ -1,5 +1,6 @@
-package io.bootique.jdbc.test.csv;
+package io.bootique.jdbc.test.matcher;
 
+import io.bootique.jdbc.test.matcher.RowKey;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

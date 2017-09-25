@@ -28,12 +28,12 @@ public class DefaultDatabaseChannelIT {
     @Test
     public void testDefaultQuotesOn() {
         DefaultDatabaseChannel channel = loadChannel("classpath:io/bootique/jdbc/test/DefaultDatabaseChannel_QuoteIT.yml");
-        assertEquals("\"a\"", channel.getIdentifierQuotationStrategy().quoted("a"));
+        assertEquals("\"a\"", channel.getDefaultIdentifierQuotationStrategy().quoted("a"));
     }
 
     @Test
     public void testDefaultQuotesOff() {
         DefaultDatabaseChannel channel = loadChannel("classpath:io/bootique/jdbc/test/DefaultDatabaseChannel_NoQuoteIT.yml");
-        assertEquals("a", channel.getIdentifierQuotationStrategy().quoted("a"));
+        assertEquals("a", channel.getDefaultIdentifierQuotationStrategy().quoted("a"));
     }
 }

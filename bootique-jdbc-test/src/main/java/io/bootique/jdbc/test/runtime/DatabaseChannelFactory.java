@@ -3,13 +3,11 @@ package io.bootique.jdbc.test.runtime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.DefaultDatabaseChannel;
-import io.bootique.jdbc.test.IdentifierQuotationStrategy;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,22 +45,11 @@ public class DatabaseChannelFactory {
     protected DatabaseChannel createChannel(String dataSourceName) {
         DataSource dataSource = dataSourceFactory.forName(dataSourceName);
 
-
-        return new DefaultDatabaseChannel(dataSource, createQuotationStrategy(dataSource));
+        // even if no quoting is required by default, let's still pass a quotation symbol down to
+        // the channel, as tables may redefine the policy.
+        return new DefaultDatabaseChannel(dataSource, getIdentifierQuote(dataSource), quotingIdentifiers);
     }
 
-    private IdentifierQuotationStrategy createQuotationStrategy(DataSource dataSource) {
-        if (quotingIdentifiers) {
-
-            String identifierQuote = getIdentifierQuote(dataSource);
-
-            return identifierQuote != null
-                    ? id -> identifierQuote + Objects.requireNonNull(id) + identifierQuote
-                    : id -> id;
-        }
-
-        return id -> id;
-    }
 
     private String getIdentifierQuote(DataSource dataSource) {
         String identifierQuote;

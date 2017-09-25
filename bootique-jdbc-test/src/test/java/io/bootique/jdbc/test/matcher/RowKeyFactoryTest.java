@@ -1,4 +1,4 @@
-package io.bootique.jdbc.test.csv;
+package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Column;
 import org.junit.Before;

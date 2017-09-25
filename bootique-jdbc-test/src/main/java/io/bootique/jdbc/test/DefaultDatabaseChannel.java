@@ -29,23 +29,30 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
 
     protected boolean closed;
     protected DataSource dataSource;
+    protected String identifierQuote;
+    protected IdentifierQuotationStrategy defaultIdentifierQuotationStrategy;
     protected BindingValueToStringConverter valueToStringConverter;
     protected ObjectValueConverter objectValueConverter;
-    protected IdentifierQuotationStrategy identifierQuotationStrategy;
 
-    public DefaultDatabaseChannel(DataSource dataSource, IdentifierQuotationStrategy identifierQuotationStrategy) {
+    public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote, boolean defaultQuoteIdentifiers) {
         LOGGER.debug("Test DatabaseChannel opened...");
         this.dataSource = dataSource;
-        this.identifierQuotationStrategy = identifierQuotationStrategy;
+        this.identifierQuote = identifierQuote;
         this.valueToStringConverter = new BindingValueToStringConverter();
         this.objectValueConverter = new ObjectValueConverter();
+
+        this.defaultIdentifierQuotationStrategy = defaultQuoteIdentifiers
+                ? IdentifierQuotationStrategy.forQuoteSymbol(identifierQuote)
+                : IdentifierQuotationStrategy.noQuote();
     }
 
-    /**
-     * @return a strategy object that encloses SQL identifiers in quotations specific to a given DB.
-     */
-    IdentifierQuotationStrategy getIdentifierQuotationStrategy() {
-        return identifierQuotationStrategy;
+    @Override
+    public String getIdentifierQuote() {
+        return identifierQuote;
+    }
+
+    IdentifierQuotationStrategy getDefaultIdentifierQuotationStrategy() {
+        return defaultIdentifierQuotationStrategy;
     }
 
     @Override
@@ -162,22 +169,22 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     @Override
-    public ExecStatementBuilder newExecStatement() {
+    public ExecStatementBuilder execStatement() {
         return new ExecStatementBuilder(
                 this,
                 objectValueConverter,
                 valueToStringConverter,
-                identifierQuotationStrategy);
+                defaultIdentifierQuotationStrategy);
     }
 
     @Override
-    public <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader) {
+    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
         return new SelectStatementBuilder(
                 rowReader,
                 this,
                 objectValueConverter,
                 valueToStringConverter,
-                identifierQuotationStrategy);
+                defaultIdentifierQuotationStrategy);
     }
 
     /**

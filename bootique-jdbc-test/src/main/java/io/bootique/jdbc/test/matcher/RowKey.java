@@ -1,9 +1,12 @@
-package io.bootique.jdbc.test.csv;
+package io.bootique.jdbc.test.matcher;
 
 import java.util.Arrays;
 
 import static java.util.Arrays.asList;
 
+/**
+ * A key used to match rows in a tabular data set.
+ */
 public class RowKey {
 
     private Object[] key;

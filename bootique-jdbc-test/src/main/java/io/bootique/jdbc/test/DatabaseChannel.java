@@ -24,9 +24,15 @@ public interface DatabaseChannel {
         return runtime.getInstance(DatabaseChannelFactory.class).getChannel(dataSourceName);
     }
 
-    default Table.Builder newTable(String name) {
-        return Table.builder(this, name);
+    default Table.Builder newTable(String tableName) {
+        return Table.builder(this, tableName);
     }
+
+    /**
+     * @return DB-specific identifier quotation symbol.
+     * @since 0.14
+     */
+    String getIdentifierQuote();
 
     /**
      * @param sql
@@ -74,7 +80,7 @@ public interface DatabaseChannel {
      * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement.
      * @since 0.24
      */
-    ExecStatementBuilder newExecStatement();
+    ExecStatementBuilder execStatement();
 
     /**
      * @param rowReader a function that converts a ResultSet row into an object.
@@ -83,5 +89,5 @@ public interface DatabaseChannel {
      * PreparedStatement.
      * @since 0.24
      */
-    <T> SelectStatementBuilder<T> newSelectStatement(RowReader<T> rowReader);
+    <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader);
 }

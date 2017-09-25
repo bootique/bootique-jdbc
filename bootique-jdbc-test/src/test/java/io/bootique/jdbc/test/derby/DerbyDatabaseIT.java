@@ -37,7 +37,7 @@ public class DerbyDatabaseIT {
     @Test
     public void testDbOp1() {
 
-        channel.newExecStatement().append("CREATE TABLE A (ID int)").exec();
+        channel.execStatement().append("CREATE TABLE A (ID int)").exec();
 
         assertTrue(derbyDir.exists());
 
@@ -53,7 +53,7 @@ public class DerbyDatabaseIT {
 
         // second test, to ensure the DB was cleaned up...
 
-        channel.newExecStatement().append("CREATE TABLE B (ID int)").exec();
+        channel.execStatement().append("CREATE TABLE B (ID int)").exec();
 
         assertTrue(derbyDir.exists());
 

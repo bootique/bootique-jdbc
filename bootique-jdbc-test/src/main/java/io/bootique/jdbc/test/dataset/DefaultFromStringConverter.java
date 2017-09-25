@@ -1,4 +1,4 @@
-package io.bootique.jdbc.test.csv;
+package io.bootique.jdbc.test.dataset;
 
 import io.bootique.jdbc.test.Column;
 
@@ -13,11 +13,12 @@ import java.util.Base64;
 
 /**
  * Converts String values coming from CSV to Java value objects.
- *
- * @since 0.14
  */
-public class ValueConverter {
+public class DefaultFromStringConverter implements FromStringConverter {
 
+    static final FromStringConverter DEFAULT_CONVERTER = new DefaultFromStringConverter();
+
+    @Override
     public Object fromString(String value, Column column) {
 
         if (value == null) {

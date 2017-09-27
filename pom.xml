@@ -27,6 +27,7 @@
 		<module>bootique-jdbc</module>
 		<module>bootique-jdbc-instrumented</module>
 		<module>bootique-jdbc-test</module>
+		<module>bootique-jdbc-tomcat</module>
 	</modules>
 
 	<scm>

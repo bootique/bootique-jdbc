@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>io.bootique.modules.parent</groupId>
-		<artifactId>bootique-modules-parent</artifactId>
-		<version>0.7</version>
-	</parent>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.bootique.modules.parent</groupId>
+        <artifactId>bootique-modules-parent</artifactId>
+        <version>0.7</version>
+    </parent>
 
-	<groupId>io.bootique.jdbc</groupId>
-	<artifactId>bootique-jdbc-parent</artifactId>
-	<version>0.24-SNAPSHOT</version>
-	<packaging>pom</packaging>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-parent</artifactId>
+    <version>0.24-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-	<name>bootique-jdbc-parent: Parent of JDBC integration modules for Bootique</name>
-	<description>
-		Parent POM of JDBC and instrumented JDBC Bootique modules.
-	</description>
+    <name>bootique-jdbc-parent: Parent of JDBC integration modules for Bootique</name>
+    <description>
+        Parent POM of JDBC and instrumented JDBC Bootique modules.
+    </description>
 
-	<properties>
-		<bootique-version>${project.version}</bootique-version>
-		<bootique-metrics-version>${project.version}</bootique-metrics-version>
-	</properties>
+    <properties>
+        <bootique-version>${project.version}</bootique-version>
+        <bootique-metrics-version>${project.version}</bootique-metrics-version>
+    </properties>
 
-	<modules>
-		<module>bootique-jdbc</module>
-		<module>bootique-jdbc-instrumented</module>
-		<module>bootique-jdbc-test</module>
-	</modules>
+    <modules>
+        <module>bootique-jdbc</module>
+        <module>bootique-jdbc-instrumented</module>
+        <module>bootique-jdbc-test</module>
+        <module>bootique-jdbc-tomcat</module>
+        <module>bootique-jdbc-hikaricp</module>
+    </modules>
 
-	<scm>
+    <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jdbc</developerConnection>
         <url>https://github.com/bootique/bootique-jdbc</url>
         <tag>HEAD</tag>
@@ -43,48 +46,48 @@
         </repository>
     </distributionManagement>
 
-	<dependencyManagement>
+    <dependencyManagement>
 
-		<dependencies>
-			<dependency>
-				<groupId>io.bootique</groupId>
-				<artifactId>bootique</artifactId>
-				<version>${bootique-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.bootique</groupId>
-				<artifactId>bootique-test</artifactId>
-				<version>${bootique-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-simple</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.bootique</groupId>
+                <artifactId>bootique</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique</groupId>
+                <artifactId>bootique-test</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<!-- Optional profile used to sign artifacts -->
-	<profiles>
-		<profile>
-			<id>gpg</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+    <!-- Optional profile used to sign artifacts -->
+    <profiles>
+        <profile>
+            <id>gpg</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

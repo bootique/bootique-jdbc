@@ -1,4 +1,8 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.hikaricp;
+
+
+import com.zaxxer.hikari.HikariDataSource;
+import io.bootique.jdbc.DataSourceFactory;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -7,23 +11,16 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class LazyDataSourceFactory implements DataSourceFactory {
+public class HikariCPLazyDataSourceFactory implements DataSourceFactory {
 
-    private Map<String, TomcatDataSourceFactory> configs;
-    private ConcurrentMap<String, org.apache.tomcat.jdbc.pool.DataSource> dataSources;
+    private Map<String, HikariCPDataSourceFactory> configs;
+    private ConcurrentMap<String, HikariDataSource> dataSources;
 
-    public LazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs) {
+    public HikariCPLazyDataSourceFactory(Map<String, HikariCPDataSourceFactory> configs) {
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
     }
 
-    public void shutdown() {
-        dataSources.values().forEach(d -> d.close());
-    }
-
-    /**
-     * @since 0.6
-     */
     @Override
     public Collection<String> allNames() {
         return configs.keySet();
@@ -34,10 +31,14 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         return dataSources.computeIfAbsent(dataSourceName, name -> createDataSource(name));
     }
 
-    protected org.apache.tomcat.jdbc.pool.DataSource createDataSource(String name) {
+    @Override
+    public void shutdown() {
+        dataSources.values().forEach(d -> d.close());
+    }
+
+    protected HikariDataSource createDataSource(String name) {
         return configs.computeIfAbsent(name, n -> {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }).createDataSource();
     }
-
 }

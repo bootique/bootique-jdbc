@@ -8,14 +8,14 @@ import com.google.inject.multibindings.Multibinder;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.LazyDataSourceFactory;
-import io.bootique.jdbc.TomcatDataSourceFactory;
 import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactoryFactory;
 import io.bootique.jdbc.test.derby.DerbyListener;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
+import io.bootique.jdbc.tomcat.TomcatCPDataSourceFactory;
+import io.bootique.jdbc.tomcat.TomcatCPLazyDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
@@ -64,15 +64,15 @@ public class JdbcTestModule extends ConfigModule {
 
         // TODO: replace this with DI decoration of the base DataSourceFactory instead of repeating base module code
 
-        TypeRef<Map<String, TomcatDataSourceFactory>> typeRef = new TypeRef<Map<String, TomcatDataSourceFactory>>() {
+        TypeRef<Map<String, TomcatCPDataSourceFactory>> typeRef = new TypeRef<Map<String, TomcatCPDataSourceFactory>>() {
         };
 
-        Map<String, TomcatDataSourceFactory> configs = configFactory.config(
+        Map<String, TomcatCPDataSourceFactory> configs = configFactory.config(
                 typeRef,
                 // using overridden module config prefix
                 "jdbc");
 
-        LazyDataSourceFactory delegate =
+        TomcatCPLazyDataSourceFactory delegate =
                 new InstrumentedLazyDataSourceFactoryFactory(configs)
                         .create(shutdownManager, bootLogger, metricRegistry);
 

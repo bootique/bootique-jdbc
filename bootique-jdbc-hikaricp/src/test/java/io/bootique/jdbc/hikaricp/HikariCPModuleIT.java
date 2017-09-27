@@ -1,7 +1,8 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.hikaricp;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,8 +13,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class JdbcModuleIT {
-
+public class HikariCPModuleIT {
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();
 
@@ -36,7 +36,7 @@ public class JdbcModuleIT {
                     BQCoreModule.extend(b)
                             .setVar("BQ_JDBC_PARTIAL_PASSWORD", "p1")
                             .setVar("BQ_JDBC_FULLDS2_PASSWORD", "p2")
-                            .setVar("BQ_JDBC_FULLDSVARS_URL", "jdbc:dummy");
+                            .setVar("BQ_JDBC_FULLDSVARS_JDBCURL", "jdbc:dummy");
                 })
                 .createRuntime();
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);

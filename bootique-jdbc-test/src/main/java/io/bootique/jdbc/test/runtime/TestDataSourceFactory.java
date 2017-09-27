@@ -1,8 +1,8 @@
 package io.bootique.jdbc.test.runtime;
 
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.LazyDataSourceFactory;
-import io.bootique.jdbc.TomcatDataSourceFactory;
+import io.bootique.jdbc.tomcat.TomcatCPDataSourceFactory;
+import io.bootique.jdbc.tomcat.TomcatCPLazyDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -16,14 +16,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class TestDataSourceFactory implements DataSourceFactory {
 
-    private LazyDataSourceFactory delegate;
-    private Map<String, TomcatDataSourceFactory> configs;
+    private TomcatCPLazyDataSourceFactory delegate;
+    private Map<String, TomcatCPDataSourceFactory> configs;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
     private Collection<DataSourceListener> dataSourceListeners;
 
-    public TestDataSourceFactory(LazyDataSourceFactory delegate,
+    public TestDataSourceFactory(TomcatCPLazyDataSourceFactory delegate,
                                  Collection<DataSourceListener> dataSourceListeners,
-                                 Map<String, TomcatDataSourceFactory> configs) {
+                                 Map<String, TomcatCPDataSourceFactory> configs) {
         this.delegate = delegate;
         this.configs = configs;
         this.dataSourceListeners = dataSourceListeners;
@@ -64,7 +64,7 @@ public class TestDataSourceFactory implements DataSourceFactory {
     }
 
     protected Optional<String> getDbUrl(String configName) {
-        TomcatDataSourceFactory config = configs.getOrDefault(configName, new TomcatDataSourceFactory());
+        TomcatCPDataSourceFactory config = configs.getOrDefault(configName, new TomcatCPDataSourceFactory());
         return Optional.ofNullable(config.getUrl());
     }
 }

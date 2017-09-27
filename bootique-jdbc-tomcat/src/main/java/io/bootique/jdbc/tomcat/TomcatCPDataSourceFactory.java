@@ -1,9 +1,11 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import org.apache.tomcat.jdbc.pool.*;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
+import org.apache.tomcat.jdbc.pool.PoolConfiguration;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import javax.management.ObjectName;
 import java.sql.Connection;
@@ -11,11 +13,11 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
+ * @see DataSourceFactory#parsePoolProperties(Properties)
  * @since 0.13
  */
-@BQConfig("Pooling JDBC DataSource configuration.")
-public class TomcatDataSourceFactory {
+@BQConfig("Pooling Tomcat JDBC DataSource configuration.")
+public class TomcatCPDataSourceFactory {
 
     private int abandonWhenPercentageFull;
     private boolean alternateUsernameAllowed;
@@ -63,7 +65,7 @@ public class TomcatDataSourceFactory {
     private String validatorClassName;
     private long validationInterval;
 
-    public TomcatDataSourceFactory() {
+    public TomcatCPDataSourceFactory() {
         // defaults are copied from Tomcat PoolProperties.
         this.abandonWhenPercentageFull = 0;
         this.alternateUsernameAllowed = false;
@@ -99,12 +101,12 @@ public class TomcatDataSourceFactory {
         this.validationQueryTimeout = -1;
     }
 
-    public org.apache.tomcat.jdbc.pool.DataSource createDataSource() {
+    public DataSource createDataSource() {
 
         validate();
 
         PoolConfiguration poolConfig = toConfiguration();
-        org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(poolConfig);
+        DataSource dataSource = new DataSource(poolConfig);
 
         try {
             dataSource.createPool();

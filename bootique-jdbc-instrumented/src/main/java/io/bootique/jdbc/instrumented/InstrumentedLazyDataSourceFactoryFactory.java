@@ -1,8 +1,8 @@
 package io.bootique.jdbc.instrumented;
 
 import com.codahale.metrics.MetricRegistry;
-import io.bootique.jdbc.LazyDataSourceFactoryFactory;
-import io.bootique.jdbc.TomcatDataSourceFactory;
+import io.bootique.jdbc.tomcat.TomcatCPDataSourceFactory;
+import io.bootique.jdbc.tomcat.TomcatCPLazyDataSourceFactoryFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 
@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class InstrumentedLazyDataSourceFactoryFactory {
 
-    private Map<String, TomcatDataSourceFactory> configs;
+    private Map<String, TomcatCPDataSourceFactory> configs;
 
-    public InstrumentedLazyDataSourceFactoryFactory(Map<String, TomcatDataSourceFactory> configs) {
+    public InstrumentedLazyDataSourceFactoryFactory(Map<String, TomcatCPDataSourceFactory> configs) {
         this.configs = configs;
     }
 
@@ -22,7 +22,7 @@ public class InstrumentedLazyDataSourceFactoryFactory {
             MetricRegistry metricRegistry) {
 
         InstrumentedLazyDataSourceFactory factory = new InstrumentedLazyDataSourceFactory(
-                LazyDataSourceFactoryFactory.prunePartialConfigs(configs),
+                TomcatCPLazyDataSourceFactoryFactory.prunePartialConfigs(configs),
                 metricRegistry);
 
         shutdownManager.addShutdownHook(() -> {

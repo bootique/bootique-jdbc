@@ -24,7 +24,7 @@
 			<dependency>
 				<groupId>io.bootique.metrics</groupId>
 				<artifactId>bootique-metrics</artifactId>
-				<version>${bootique-metrics-version}</version>
+				<version>${bootique-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.derby</groupId>

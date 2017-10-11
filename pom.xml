@@ -20,7 +20,6 @@
 
 	<properties>
 		<bootique-version>${project.version}</bootique-version>
-		<bootique-metrics-version>${project.version}</bootique-metrics-version>
 	</properties>
 
 	<modules>

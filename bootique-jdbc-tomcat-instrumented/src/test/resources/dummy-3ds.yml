@@ -1,0 +1,11 @@
+jdbc:
+  ds1:
+    url: jdbc:dummy
+    username: u1
+    password: supersecret1
+  ds2:
+    url: jdbc:dummy
+  partialds3:
+    username: u2
+    password: supersecret2
+

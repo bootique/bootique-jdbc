@@ -1,0 +1,10 @@
+jdbc:
+  ds:
+    jdbcUrl: jdbc:derby:target/testdb;create=true
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    maxPoolSize: 2
+    minIdle: 1
+    username: u1
+    password: supersecret1
+
+

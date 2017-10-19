@@ -8,11 +8,11 @@
 		<version>0.25-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>bootique-jdbc</artifactId>
-	<packaging>jar</packaging>
+    <artifactId>bootique-jdbc</artifactId>
+    <packaging>jar</packaging>
 
-	<name>bootique-jdbc: JDBC DataSource itegration module for Bootique</name>
-	<description>Provides JDBC integration with Bootique</description>
+    <name>bootique-jdbc: JDBC DataSource integration module for Bootique</name>
+    <description>Provides JDBC integration with Bootique</description>
 
 	<properties>
 		<tomcat-version>8.0.30</tomcat-version>

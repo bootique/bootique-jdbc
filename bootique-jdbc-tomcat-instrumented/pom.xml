@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.bootique.jdbc</groupId>
         <artifactId>bootique-jdbc-parent</artifactId>
-        <version>0.24-SNAPSHOT</version>
+        <version>0.25-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -25,7 +25,7 @@
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics</artifactId>
-                <version>${bootique-metrics-version}</version>
+                <version>${bootique-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.derby</groupId>

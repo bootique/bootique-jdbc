@@ -8,20 +8,12 @@ import com.google.inject.multibindings.Multibinder;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.LazyDataSourceFactory;
-import io.bootique.jdbc.TomcatDataSourceFactory;
-import io.bootique.jdbc.instrumented.InstrumentedLazyDataSourceFactoryFactory;
+import io.bootique.jdbc.DataSourceListener;
+import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.test.derby.DerbyListener;
-import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
-import io.bootique.jdbc.test.runtime.TestDataSourceFactory;
 import io.bootique.log.BootLogger;
-import io.bootique.shutdown.ShutdownManager;
-import io.bootique.type.TypeRef;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @since 0.12
@@ -31,58 +23,19 @@ public class JdbcTestModule extends ConfigModule {
     /**
      * @param binder Guice DI binder.
      * @return DataSourceListener binder.
-     * @deprecated since 0.24 in favor of {@link #extend(Binder)}.
+     * @deprecated since 0.24 in favor of {@link JdbcModule#extend(Binder)}.
      */
     @Deprecated
     public static Multibinder<DataSourceListener> contributeDataSourceListeners(Binder binder) {
         return Multibinder.newSetBinder(binder, DataSourceListener.class);
     }
 
-    /**
-     * @param binder Guice DI binder.
-     * @return an instance of extender.
-     * @since 0.24
-     */
-    public static JdbcTestModuleExtender extend(Binder binder) {
-        return new JdbcTestModuleExtender(binder);
-    }
-
     @Override
     public void configure(Binder binder) {
 
         // for now we only support Derby...
-        JdbcTestModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
-    }
-
-    @Singleton
-    @Provides
-    DataSourceFactory provideDataSourceFactory(ConfigurationFactory configFactory,
-                                               BootLogger bootLogger,
-                                               MetricRegistry metricRegistry,
-                                               Set<DataSourceListener> dataSourceListeners,
-                                               ShutdownManager shutdownManager) {
-
-        // TODO: replace this with DI decoration of the base DataSourceFactory instead of repeating base module code
-
-        TypeRef<Map<String, TomcatDataSourceFactory>> typeRef = new TypeRef<Map<String, TomcatDataSourceFactory>>() {
-        };
-
-        Map<String, TomcatDataSourceFactory> configs = configFactory.config(
-                typeRef,
-                // using overridden module config prefix
-                "jdbc");
-
-        LazyDataSourceFactory delegate =
-                new InstrumentedLazyDataSourceFactoryFactory(configs)
-                        .create(shutdownManager, bootLogger, metricRegistry);
-
-        TestDataSourceFactory factory = new TestDataSourceFactory(delegate, dataSourceListeners, configs);
-        shutdownManager.addShutdownHook(() -> {
-            bootLogger.trace(() -> "shutting down TestDataSourceFactory...");
-            factory.shutdown();
-        });
-
-        return factory;
+        JdbcModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
+        JdbcModule.extend(binder).initAllExtensions().addDataSourceListener(MetricRegistryListener.class);
     }
 
     @Singleton
@@ -98,4 +51,12 @@ public class JdbcTestModule extends ConfigModule {
     DerbyListener provideDerbyLifecycleListener(BootLogger bootLogger) {
         return new DerbyListener(bootLogger);
     }
+
+
+    @Singleton
+    @Provides
+    MetricRegistryListener provideDerbyLifecycleListener(MetricRegistry metricRegistry) {
+        return new MetricRegistryListener(metricRegistry);
+    }
+
 }

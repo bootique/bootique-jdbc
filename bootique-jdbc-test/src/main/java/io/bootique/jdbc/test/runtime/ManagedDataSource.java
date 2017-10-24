@@ -5,6 +5,7 @@ import java.util.Optional;
 
 /**
  * @since 0.12
+ * @deprecated since 0.25
  */
 class ManagedDataSource {
 

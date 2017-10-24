@@ -1,6 +1,7 @@
 package io.bootique.jdbc.test.runtime;
 
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.LazyDataSourceFactory;
 import io.bootique.jdbc.TomcatDataSourceFactory;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * @since 0.12
+ * @deprecated since 0.25
  */
 public class TestDataSourceFactory implements DataSourceFactory {
 

@@ -1,9 +1,6 @@
 package io.bootique.jdbc;
 
-import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -11,7 +8,19 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 
     private Map<String, TomcatDataSourceFactory> configs;
     private ConcurrentMap<String, org.apache.tomcat.jdbc.pool.DataSource> dataSources;
+    private Collection<DataSourceListener> dataSourceListeners = Collections.emptyList();
 
+    public LazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs,
+                                 Set<DataSourceListener> dataSourceListeners) {
+        this.configs = Objects.requireNonNull(configs);
+        this.dataSources = new ConcurrentHashMap<>();
+        this.dataSourceListeners = dataSourceListeners;
+    }
+
+    /**
+     * @param configs
+     * @deprecated since 0.25
+     */
     public LazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs) {
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
@@ -19,6 +28,16 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 
     public void shutdown() {
         dataSources.values().forEach(d -> d.close());
+
+        // stop the DB after the DataSources were shutdown...
+        dataSources.forEach((name, dataSource) ->
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, Optional.of(dataSource.getUrl())))
+        );
+
+        // stop the DB after the DataSources were shutdown...
+        dataSources.forEach((name, dataSource) ->
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource))
+        );
     }
 
     /**
@@ -30,14 +49,31 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public DataSource forName(String dataSourceName) {
+    public javax.sql.DataSource forName(String dataSourceName) {
         return dataSources.computeIfAbsent(dataSourceName, name -> createDataSource(name));
     }
 
     protected org.apache.tomcat.jdbc.pool.DataSource createDataSource(String name) {
-        return configs.computeIfAbsent(name, n -> {
+
+        // prepare DB for startup before we trigger DS creation
+        Optional<String> url = getDbUrl(name);
+        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
+        //TODO: no dataSource to be modified on before event
+        //dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
+
+        org.apache.tomcat.jdbc.pool.DataSource dataSource = configs.computeIfAbsent(name, n -> {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }).createDataSource();
+
+        // this callback is normally used for schema loading...
+        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
+        dataSourceListeners.forEach(listener -> listener.afterStartup(name, dataSource));
+
+        return dataSource;
     }
 
+    protected Optional<String> getDbUrl(String configName) {
+        TomcatDataSourceFactory config = configs.getOrDefault(configName, new TomcatDataSourceFactory());
+        return Optional.ofNullable(config.getUrl());
+    }
 }

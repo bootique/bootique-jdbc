@@ -5,6 +5,7 @@ import io.bootique.shutdown.ShutdownManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class LazyDataSourceFactoryFactory {
 
@@ -28,8 +29,9 @@ public class LazyDataSourceFactoryFactory {
         return clean;
     }
 
-    public LazyDataSourceFactory create(ShutdownManager shutdownManager, BootLogger bootLogger) {
-        LazyDataSourceFactory factory = new LazyDataSourceFactory(prunePartialConfigs(configs));
+    public LazyDataSourceFactory create(ShutdownManager shutdownManager, BootLogger bootLogger,
+                                        Set<DataSourceListener> dataSourceListeners) {
+        LazyDataSourceFactory factory = new LazyDataSourceFactory(prunePartialConfigs(configs), dataSourceListeners);
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
             factory.shutdown();

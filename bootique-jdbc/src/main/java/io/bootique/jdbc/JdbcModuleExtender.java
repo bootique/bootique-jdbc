@@ -1,31 +1,30 @@
-package io.bootique.jdbc.test;
+package io.bootique.jdbc;
 
 import com.google.inject.Binder;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.ModuleExtender;
-import io.bootique.jdbc.DataSourceListener;
 
 /**
- * @since 0.24
+ * @since 0.25
  */
-public class JdbcTestModuleExtender extends ModuleExtender<JdbcTestModuleExtender> {
+public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
 
-    public JdbcTestModuleExtender(Binder binder) {
+    public JdbcModuleExtender(Binder binder) {
         super(binder);
     }
 
     @Override
-    public JdbcTestModuleExtender initAllExtensions() {
+    public JdbcModuleExtender initAllExtensions() {
         contributeDataSourceListeners();
         return this;
     }
 
-    public JdbcTestModuleExtender addDataSourceListener(DataSourceListener listener) {
+    public JdbcModuleExtender addDataSourceListener(DataSourceListener listener) {
         contributeDataSourceListeners().addBinding().toInstance(listener);
         return this;
     }
 
-    public JdbcTestModuleExtender addDataSourceListener(Class<? extends DataSourceListener> listenerType) {
+    public JdbcModuleExtender addDataSourceListener(Class<? extends DataSourceListener> listenerType) {
         contributeDataSourceListeners().addBinding().to(listenerType);
         return this;
     }

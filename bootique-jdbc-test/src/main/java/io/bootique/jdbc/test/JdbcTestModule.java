@@ -1,6 +1,5 @@
 package io.bootique.jdbc.test;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Binder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -30,12 +29,19 @@ public class JdbcTestModule extends ConfigModule {
         return Multibinder.newSetBinder(binder, DataSourceListener.class);
     }
 
+    /**
+     * @param binder Guice DI binder.
+     * @return an instance of extender.
+     * @since 0.24
+     */
+    public static JdbcTestModuleExtender extend(Binder binder) {
+        return new JdbcTestModuleExtender(binder);
+    }
+
     @Override
     public void configure(Binder binder) {
-
         // for now we only support Derby...
         JdbcModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
-        JdbcModule.extend(binder).initAllExtensions().addDataSourceListener(MetricRegistryListener.class);
     }
 
     @Singleton
@@ -50,13 +56,6 @@ public class JdbcTestModule extends ConfigModule {
     @Provides
     DerbyListener provideDerbyLifecycleListener(BootLogger bootLogger) {
         return new DerbyListener(bootLogger);
-    }
-
-
-    @Singleton
-    @Provides
-    MetricRegistryListener provideDerbyLifecycleListener(MetricRegistry metricRegistry) {
-        return new MetricRegistryListener(metricRegistry);
     }
 
 }

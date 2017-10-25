@@ -1,21 +1,19 @@
 package io.bootique.jdbc;
 
-import java.util.Optional;
+import javax.sql.DataSource;
 
 /**
  * A listener attached to {@link DataSourceFactory} that is notified about DataSource start and stop events.
  * Implementors are usually managing an in-memory database and would perform the needed steps to prepare and cleanup
  * such DB.
  *
- * @since 0.12
+ * @since 0.25
  */
 public interface DataSourceListener<T extends javax.sql.DataSource> {
 
-    /**
-     * @param name
-     * @param jdbcUrl
-     */
-    void beforeStartup(String name, Optional<String> jdbcUrl);
+    void beforeStartup(String name, String jdbcUrl);
+
+    void afterStartup(String name, T dataSource);
 
     /**
      * @param name
@@ -23,30 +21,14 @@ public interface DataSourceListener<T extends javax.sql.DataSource> {
      * @param dataSource
      * @deprecated since 0.25
      */
-    void afterStartup(String name, Optional<String> jdbcUrl, T dataSource);
+    void afterStartup(String name, String jdbcUrl, DataSource dataSource);
 
-    /**
-     * @param name
-     * @param dataSource
-     * @since 0.25
-     */
-    default void afterStartup(String name, T dataSource) {
-        //stub
-    }
+    void afterShutdown(String name, T dataSource);
 
     /**
      * @param name
      * @param jdbcUrl
      * @deprecated since 0.25
      */
-    void afterShutdown(String name, Optional<String> jdbcUrl);
-
-    /**
-     * @param name
-     * @param dataSource
-     * @since 0.25
-     */
-    default void afterShutdown(String name, T dataSource) {
-        //stub
-    }
+    void afterShutdown(String name, String jdbcUrl);
 }

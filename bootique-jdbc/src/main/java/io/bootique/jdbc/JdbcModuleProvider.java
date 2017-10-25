@@ -11,20 +11,20 @@ import java.util.Map;
 
 public class JdbcModuleProvider implements BQModuleProvider {
 
-	@Override
-	public Module module() {
-		return new JdbcModule();
-	}
+    @Override
+    public Module module() {
+        return new JdbcModule();
+    }
 
-	@Override
-	public Map<String, Type> configs() {
-		// TODO: config prefix is hardcoded. Refactor away from ConfigModule, and make provider
-		// generate config prefix, reusing it in metadata...
+    @Override
+    public Map<String, Type> configs() {
+        // TODO: config prefix is hardcoded. Refactor away from ConfigModule, and make provider
+        // generate config prefix, reusing it in metadata...
 
-		TypeRef<Map<String, TomcatDataSourceFactory>> type = new TypeRef<Map<String, TomcatDataSourceFactory>>() {
-		};
-		return Collections.singletonMap("jdbc", type.getType());
-	}
+        TypeRef<Map<String, TomcatDataSourceFactory>> type = new TypeRef<Map<String, TomcatDataSourceFactory>>() {
+        };
+        return Collections.singletonMap("jdbc", type.getType());
+    }
 
     @Override
     public BQModule.Builder moduleBuilder() {

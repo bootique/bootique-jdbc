@@ -31,7 +31,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 
         // stop the DB after the DataSources were shutdown...
         dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, Optional.of(dataSource.getUrl())))
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl()))
         );
 
         // stop the DB after the DataSources were shutdown...
@@ -56,7 +56,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     protected org.apache.tomcat.jdbc.pool.DataSource createDataSource(String name) {
 
         // prepare DB for startup before we trigger DS creation
-        Optional<String> url = getDbUrl(name);
+        String url = getDbUrl(name);
         dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
         //TODO: no dataSource to be modified on before event
         //dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
@@ -72,8 +72,8 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         return dataSource;
     }
 
-    protected Optional<String> getDbUrl(String configName) {
+    protected String getDbUrl(String configName) {
         TomcatDataSourceFactory config = configs.getOrDefault(configName, new TomcatDataSourceFactory());
-        return Optional.ofNullable(config.getUrl());
+        return config.getUrl();
     }
 }

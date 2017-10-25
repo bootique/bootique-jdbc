@@ -37,7 +37,7 @@ public class TestDataSourceFactory implements DataSourceFactory {
 
         // stop the DB after the DataSources were shutdown...
         dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl()))
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl().get()))
         );
     }
 
@@ -55,12 +55,12 @@ public class TestDataSourceFactory implements DataSourceFactory {
 
         // prepare DB for startup before we trigger DS creation
         Optional<String> url = getDbUrl(name);
-        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
+        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url.get()));
 
         DataSource dataSource = delegate.forName(name);
 
         // this callback is normally used for schema loading...
-        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
+        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url.get(), dataSource));
 
         return new ManagedDataSource(delegate.forName(name), url);
     }

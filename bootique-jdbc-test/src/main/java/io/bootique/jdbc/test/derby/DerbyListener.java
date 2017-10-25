@@ -1,10 +1,12 @@
 package io.bootique.jdbc.test.derby;
 
-import io.bootique.jdbc.DataSourceListener;
+import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.log.BootLogger;
 import org.junit.Assert;
 
+import javax.sql.DataSource;
 import java.io.File;
+import java.io.OutputStream;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -19,8 +21,13 @@ import static org.junit.Assert.fail;
  *
  * @since 0.12
  */
-public class DerbyListener implements DataSourceListener<org.apache.tomcat.jdbc.pool.DataSource> {
+public class DerbyListener implements DataSourceListener {
 
+    public static final OutputStream DEV_NULL = new OutputStream() {
+        @Override
+        public void write(int b) {
+        }
+    };
     private static final Pattern DERBY_URL_PATTERN = Pattern.compile("^jdbc:derby:([^;:]+)");
 
     private BootLogger bootLogger;
@@ -43,24 +50,15 @@ public class DerbyListener implements DataSourceListener<org.apache.tomcat.jdbc.
         });
     }
 
-    protected void deleteDir(File dir) {
-        if (dir.exists()) {
-
-            for (File f : dir.listFiles()) {
-                if (f.isFile()) {
-                    Assert.assertTrue(f.delete());
-                } else {
-                    deleteDir(f);
-                }
-            }
-
-            Assert.assertTrue(dir.delete());
-        }
+    @Override
+    public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+        // do nothing...
     }
 
     @Override
-    public void beforeStartup(String name, Optional<String> jdbcUrl) {
-        getDbDir(jdbcUrl).ifPresent(location -> {
+    public void beforeStartup(String name, String jdbcUrl) {
+
+        getDbDir(Optional.ofNullable(jdbcUrl)).ifPresent(location -> {
 
             bootLogger.stdout("Preparing Derby server at '" + location + "'...");
 
@@ -77,18 +75,9 @@ public class DerbyListener implements DataSourceListener<org.apache.tomcat.jdbc.
     }
 
     @Override
-    public void afterStartup(String name, Optional<String> jdbcUrl, org.apache.tomcat.jdbc.pool.DataSource dataSource) {
-        // do nothing
-    }
+    public void afterShutdown(String name, String jdbcUrl) {
 
-    @Override
-    public void afterShutdown(String name, Optional<String> jdbcUrl) {
-        // do nothing
-    }
-
-    @Override
-    public void afterShutdown(String name, org.apache.tomcat.jdbc.pool.DataSource dataSource) {
-        getDbDir(Optional.of(dataSource.getUrl())).ifPresent(location -> {
+        getDbDir(Optional.of(jdbcUrl)).ifPresent(location -> {
 
                     bootLogger.stdout("Stopping all JVM Derby servers...");
 
@@ -99,5 +88,20 @@ public class DerbyListener implements DataSourceListener<org.apache.tomcat.jdbc.
                     }
                 }
         );
+    }
+
+    protected void deleteDir(File dir) {
+        if (dir.exists()) {
+
+            for (File f : dir.listFiles()) {
+                if (f.isFile()) {
+                    Assert.assertTrue(f.delete());
+                } else {
+                    deleteDir(f);
+                }
+            }
+
+            Assert.assertTrue(dir.delete());
+        }
     }
 }

@@ -60,8 +60,8 @@ public class JdbcTestModuleExtender extends ModuleExtender<JdbcTestModuleExtende
      * @deprecated since 0.25 favor of {@link io.bootique.jdbc.JdbcModuleExtender#addDataSourceListener(Class)}
      */
     public JdbcTestModuleExtender addDataSourceListener(Class<? extends DataSourceListener> listenerType) {
-        contributeDataSourceListeners().addBinding().toProvider(DataSourceListenerProvider.class);
-//        contributeDataSourceListeners().addBinding().to(listenerType);
+        binder.getMembersInjector(DataSourceListenerProvider.class);
+        contributeDataSourceListeners().addBinding().toProvider(new DataSourceListenerProvider(listenerType));
 
         return this;
     }

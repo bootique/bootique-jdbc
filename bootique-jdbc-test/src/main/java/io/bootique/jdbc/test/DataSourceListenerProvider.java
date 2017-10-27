@@ -9,15 +9,19 @@ import javax.sql.DataSource;
 
 public class DataSourceListenerProvider implements Provider<io.bootique.jdbc.DataSourceListener> {
 
-    DataSourceListener listener;
-
     @Inject
-    public DataSourceListenerProvider(Injector injector) {
-        this.listener = injector.getInstance(listenerType);
+    private Injector injector;
+
+    private Class<? extends DataSourceListener> listenerType;
+
+    public DataSourceListenerProvider(Class<? extends DataSourceListener> listenerType) {
+        this.listenerType = listenerType;
     }
 
     @Override
     public io.bootique.jdbc.DataSourceListener get() {
+        final DataSourceListener listener = injector.getInstance(listenerType);
+
         return new DataSourceListenerAdapter() {
 
             @Override

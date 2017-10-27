@@ -41,7 +41,7 @@ public class JdbcTestModule extends ConfigModule {
     @Override
     public void configure(Binder binder) {
         // for now we only support Derby...
-        JdbcModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
+        JdbcTestModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
     }
 
     @Singleton

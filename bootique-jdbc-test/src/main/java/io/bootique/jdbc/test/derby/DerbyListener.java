@@ -51,11 +51,6 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
-        // do nothing...
-    }
-
-    @Override
     public void beforeStartup(String name, String jdbcUrl) {
 
         getDbDir(Optional.ofNullable(jdbcUrl)).ifPresent(location -> {
@@ -72,6 +67,11 @@ public class DerbyListener implements DataSourceListener {
                 fail("Failed to load Derby driver");
             }
         });
+    }
+
+    @Override
+    public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+        // do nothing...
     }
 
     @Override

@@ -10,15 +10,13 @@ import javax.sql.DataSource;
  * @since 0.12
  * @deprecated since 0.25 in favor of {@link io.bootique.jdbc.DataSourceListener}
  */
-public interface DataSourceListener extends io.bootique.jdbc.DataSourceListener {
+public interface DataSourceListener {
 
-    @Override
-    default void afterStartup(String name, DataSource dataSource) {
+    void beforeStartup(String name, String jdbcUrl);
 
-    }
+    void afterStartup(String name, String jdbcUrl, DataSource dataSource);
 
-    @Override
-    default void afterShutdown(String name, DataSource dataSource) {
-
-    }
+    void afterShutdown(String name, String jdbcUrl);
 }
+
+

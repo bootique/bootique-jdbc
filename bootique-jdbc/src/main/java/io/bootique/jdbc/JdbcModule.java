@@ -51,7 +51,7 @@ public class JdbcModule extends ConfigModule {
     @Singleton
     @Provides
     public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-                                              ShutdownManager shutdownManager, DataSourceListenerHolder holder) {
+                                              ShutdownManager shutdownManager, DataSourceListenersHolder holder) {
         Map<String, TomcatDataSourceFactory> configs = configFactory
                 .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
                 }, configPrefix);
@@ -60,7 +60,7 @@ public class JdbcModule extends ConfigModule {
         return new LazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, holder.value);
     }
 
-    static class DataSourceListenerHolder {
+    static class DataSourceListenersHolder {
         @Inject(optional = true)
         Set<DataSourceListener> value = new HashSet<>();
     }

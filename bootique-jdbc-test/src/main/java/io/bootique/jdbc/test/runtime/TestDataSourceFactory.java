@@ -37,8 +37,9 @@ public class TestDataSourceFactory implements DataSourceFactory {
 
         // stop the DB after the DataSources were shutdown...
         dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl().get()))
-        );
+                dataSourceListeners.forEach(listener ->
+                        listener.afterShutdown(name, dataSource.getUrl().get(), dataSource.getDataSource())));
+
     }
 
     @Override

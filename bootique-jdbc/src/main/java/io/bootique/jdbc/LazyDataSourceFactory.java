@@ -31,12 +31,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 
         // stop the DB after the DataSources were shutdown...
         dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl()))
-        );
-
-        // stop the DB after the DataSources were shutdown...
-        dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource))
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl(), dataSource))
         );
     }
 
@@ -58,7 +53,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         // prepare DB for startup before we trigger DS creation
         String url = getDbUrl(name);
         dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
-        //TODO: no dataSource to be modified on before event
+        //TODO: no dataSource to be modified on before event ?
         //dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
 
         org.apache.tomcat.jdbc.pool.DataSource dataSource = configs.computeIfAbsent(name, n -> {
@@ -67,7 +62,6 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 
         // this callback is normally used for schema loading...
         dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
-        dataSourceListeners.forEach(listener -> listener.afterStartup(name, dataSource));
 
         return dataSource;
     }

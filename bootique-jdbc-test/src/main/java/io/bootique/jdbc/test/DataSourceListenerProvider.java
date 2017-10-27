@@ -6,7 +6,13 @@ import com.google.inject.Provider;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
+/**
+ * Used to keep backward compatibility with 0.24 {@link JdbcTestModuleExtender#addDataSourceListener(Class)}
+ *
+ * @deprecated since 0.25
+ */
 public class DataSourceListenerProvider implements Provider<io.bootique.jdbc.DataSourceListener> {
 
     @Inject
@@ -22,27 +28,23 @@ public class DataSourceListenerProvider implements Provider<io.bootique.jdbc.Dat
     public io.bootique.jdbc.DataSourceListener get() {
         final DataSourceListener listener = injector.getInstance(listenerType);
 
-        return new DataSourceListenerAdapter() {
+        return new io.bootique.jdbc.DataSourceListener() {
 
             @Override
             public void beforeStartup(String name, String jdbcUrl) {
-                listener.beforeStartup(name, jdbcUrl);
+                listener.beforeStartup(name, Optional.ofNullable(jdbcUrl));
             }
 
             @Override
             public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
-                listener.afterStartup(name, jdbcUrl, dataSource);
+                listener.afterStartup(name, Optional.ofNullable(jdbcUrl), dataSource);
             }
 
             @Override
             public void afterShutdown(String name, String jdbcUrl, DataSource dataSource) {
-                listener.afterShutdown(name, jdbcUrl);
+                listener.afterShutdown(name, Optional.of(jdbcUrl));
             }
 
-            @Override
-            public void afterShutdown(String name, String jdbcUrl) {
-                listener.afterShutdown(name, jdbcUrl);
-            }
         };
     }
 }

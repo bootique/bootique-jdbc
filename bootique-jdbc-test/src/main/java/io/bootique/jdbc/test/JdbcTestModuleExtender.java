@@ -7,6 +7,7 @@ import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
 
 /**
@@ -30,26 +31,22 @@ public class JdbcTestModuleExtender extends ModuleExtender<JdbcTestModuleExtende
      * @deprecated since 0.25 in favor of {@link io.bootique.jdbc.JdbcModuleExtender#addDataSourceListener(io.bootique.jdbc.DataSourceListener)}
      */
     public JdbcTestModuleExtender addDataSourceListener(DataSourceListener listener) {
-        contributeDataSourceListeners().addBinding().toInstance(new DataSourceListenerAdapter() {
+        contributeDataSourceListeners().addBinding().toInstance(new io.bootique.jdbc.DataSourceListener() {
             @Override
             public void beforeStartup(String name, String jdbcUrl) {
-                listener.beforeStartup(name, jdbcUrl);
+                listener.beforeStartup(name, Optional.ofNullable(jdbcUrl));
             }
 
             @Override
             public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
-                listener.afterStartup(name, jdbcUrl, dataSource);
+                listener.afterStartup(name, Optional.ofNullable(jdbcUrl), dataSource);
             }
 
             @Override
             public void afterShutdown(String name, String jdbcUrl, DataSource dataSource) {
-                listener.afterShutdown(name, jdbcUrl);
+                listener.afterShutdown(name, Optional.of(jdbcUrl));
             }
 
-            @Override
-            public void afterShutdown(String name, String jdbcUrl) {
-                listener.afterShutdown(name, jdbcUrl);
-            }
         });
         return this;
     }
@@ -60,9 +57,7 @@ public class JdbcTestModuleExtender extends ModuleExtender<JdbcTestModuleExtende
      * @deprecated since 0.25 favor of {@link io.bootique.jdbc.JdbcModuleExtender#addDataSourceListener(Class)}
      */
     public JdbcTestModuleExtender addDataSourceListener(Class<? extends DataSourceListener> listenerType) {
-        binder.getMembersInjector(DataSourceListenerProvider.class);
         contributeDataSourceListeners().addBinding().toProvider(new DataSourceListenerProvider(listenerType));
-
         return this;
     }
 

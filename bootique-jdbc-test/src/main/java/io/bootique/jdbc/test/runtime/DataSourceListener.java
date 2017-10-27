@@ -1,9 +1,10 @@
 package io.bootique.jdbc.test.runtime;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
 /**
- * A listener attached to {@link TestDataSourceFactory} that is notified about DataSource start and stop events.
+ * A listener attached to {@link io.bootique.jdbc.DataSourceFactory} that is notified about DataSource start and stop events.
  * Implementors are usually managing an in-memory database and would perform the needed steps to prepare and cleanup
  * such DB.
  *
@@ -12,11 +13,12 @@ import javax.sql.DataSource;
  */
 public interface DataSourceListener {
 
-    void beforeStartup(String name, String jdbcUrl);
+    void beforeStartup(String name, Optional<String> jdbcUrl);
 
-    void afterStartup(String name, String jdbcUrl, DataSource dataSource);
+    void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource);
 
-    void afterShutdown(String name, String jdbcUrl);
+    void afterShutdown(String name, Optional<String> jdbcUrl);
 }
+
 
 

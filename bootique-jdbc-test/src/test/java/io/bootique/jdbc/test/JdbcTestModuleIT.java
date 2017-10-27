@@ -9,6 +9,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -23,8 +24,9 @@ public class JdbcTestModuleIT {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/test/dummy-ds.yml")
                 .autoLoadModules()
                 .module(binder -> {
-                    JdbcTestModule.extend(binder).addDataSourceListener(new TestDataSourceListener1());
-                    JdbcTestModule.extend(binder).addDataSourceListener(new TestDataSourceListener2());
+                    JdbcTestModule.extend(binder)
+                            .addDataSourceListener(new TestDataSourceListener1())
+                            .addDataSourceListener(new TestDataSourceListener2());
                 }).createRuntime();
 
 
@@ -43,8 +45,9 @@ public class JdbcTestModuleIT {
 
                     @Override
                     public void configure(Binder binder) {
-                        JdbcTestModule.extend(binder).addDataSourceListener(new TestDataSourceListener1());
-                        JdbcTestModule.extend(binder).addDataSourceListener(new TestDataSourceListener2());
+                        JdbcTestModule.extend(binder)
+                                .addDataSourceListener(TestDataSourceListener3.class)
+                                .addDataSourceListener(TestDataSourceListener4.class);
                     }
 
                     @Singleton
@@ -74,18 +77,19 @@ public class JdbcTestModuleIT {
         public TestDataSourceListener1() {
         }
 
+
         @Override
-        public void beforeStartup(String name, String jdbcUrl) {
+        public void beforeStartup(String name, Optional<String> jdbcUrl) {
 
         }
 
         @Override
-        public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
             System.out.print(name + "after started up!\n");
         }
 
         @Override
-        public void afterShutdown(String name, String jdbcUrl) {
+        public void afterShutdown(String name, Optional<String> jdbcUrl) {
 
         }
     }
@@ -95,18 +99,19 @@ public class JdbcTestModuleIT {
         public TestDataSourceListener2() {
         }
 
+
         @Override
-        public void beforeStartup(String name, String jdbcUrl) {
+        public void beforeStartup(String name, Optional<String> jdbcUrl) {
 
         }
 
         @Override
-        public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
             System.out.print(name + "after started up!\n");
         }
 
         @Override
-        public void afterShutdown(String name, String jdbcUrl) {
+        public void afterShutdown(String name, Optional<String> jdbcUrl) {
 
         }
     }
@@ -119,18 +124,19 @@ public class JdbcTestModuleIT {
             this.bootLogger = bootLogger;
         }
 
+
         @Override
-        public void beforeStartup(String name, String jdbcUrl) {
+        public void beforeStartup(String name, Optional<String> jdbcUrl) {
 
         }
 
         @Override
-        public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
             bootLogger.stdout(name + "after started up!\n");
         }
 
         @Override
-        public void afterShutdown(String name, String jdbcUrl) {
+        public void afterShutdown(String name, Optional<String> jdbcUrl) {
 
         }
     }
@@ -143,18 +149,19 @@ public class JdbcTestModuleIT {
             this.bootLogger = bootLogger;
         }
 
+
         @Override
-        public void beforeStartup(String name, String jdbcUrl) {
+        public void beforeStartup(String name, Optional<String> jdbcUrl) {
 
         }
 
         @Override
-        public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
             bootLogger.stdout(name + "after started up!\n");
         }
 
         @Override
-        public void afterShutdown(String name, String jdbcUrl) {
+        public void afterShutdown(String name, Optional<String> jdbcUrl) {
 
         }
     }

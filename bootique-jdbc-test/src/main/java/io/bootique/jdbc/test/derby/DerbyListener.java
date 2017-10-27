@@ -51,9 +51,9 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void beforeStartup(String name, String jdbcUrl) {
+    public void beforeStartup(String name, Optional<String> jdbcUrl) {
 
-        getDbDir(Optional.ofNullable(jdbcUrl)).ifPresent(location -> {
+        getDbDir(jdbcUrl).ifPresent(location -> {
 
             bootLogger.stdout("Preparing Derby server at '" + location + "'...");
 
@@ -70,14 +70,14 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+    public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
         // do nothing...
     }
 
     @Override
-    public void afterShutdown(String name, String jdbcUrl) {
+    public void afterShutdown(String name, Optional<String> jdbcUrl) {
 
-        getDbDir(Optional.of(jdbcUrl)).ifPresent(location -> {
+        getDbDir(jdbcUrl).ifPresent(location -> {
 
                     bootLogger.stdout("Stopping all JVM Derby servers...");
 

@@ -1,10 +1,10 @@
 package io.bootique.jdbc.instrumented.healthcheck;
 
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.ManagedDataSource;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
@@ -27,8 +27,8 @@ public class DataSourceHealthCheck implements HealthCheck {
     @Override
     public HealthCheckOutcome check() throws Exception {
 
-        ManagedDataSource ds = dataSourceFactory.forName(dataSourceName);
-        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds.getDataSource();
+        DataSource ds = dataSourceFactory.forName(dataSourceName);
+        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds;
         try (Connection c = tomcat.getConnection()) {
             return c.isValid(1)
                     ? HealthCheckOutcome.healthy()

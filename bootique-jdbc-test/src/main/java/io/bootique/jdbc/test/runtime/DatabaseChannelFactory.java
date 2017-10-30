@@ -1,7 +1,6 @@
 package io.bootique.jdbc.test.runtime;
 
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.ManagedDataSource;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.DefaultDatabaseChannel;
 
@@ -44,11 +43,11 @@ public class DatabaseChannelFactory {
     }
 
     protected DatabaseChannel createChannel(String dataSourceName) {
-        ManagedDataSource dataSource = dataSourceFactory.forName(dataSourceName);
+        DataSource dataSource = dataSourceFactory.forName(dataSourceName);
 
         // even if no quoting is required by default, let's still pass a quotation symbol down to
         // the channel, as tables may redefine the policy.
-        return new DefaultDatabaseChannel(dataSource.getDataSource(), getIdentifierQuote(dataSource.getDataSource()), quotingIdentifiers);
+        return new DefaultDatabaseChannel(dataSource, getIdentifierQuote(dataSource), quotingIdentifiers);
     }
 
 

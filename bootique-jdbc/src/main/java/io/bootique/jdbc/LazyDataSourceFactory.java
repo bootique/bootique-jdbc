@@ -44,8 +44,10 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public ManagedDataSource forName(String dataSourceName) {
-        return dataSources.computeIfAbsent(dataSourceName, name -> createDataSource(name));
+    public javax.sql.DataSource forName(String dataSourceName) {
+        ManagedDataSource managedDataSource = dataSources.computeIfAbsent(dataSourceName, name -> createDataSource(name));
+
+        return managedDataSource.getDataSource();
     }
 
     protected ManagedDataSource createDataSource(String name) {

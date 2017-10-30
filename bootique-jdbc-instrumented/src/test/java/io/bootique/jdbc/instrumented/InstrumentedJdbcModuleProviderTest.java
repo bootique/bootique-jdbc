@@ -14,6 +14,6 @@ public class InstrumentedJdbcModuleProviderTest {
 
 	@Test
 	public void testConfigPrefix() {
-		assertEquals("jdbc", new InstrumentedJdbcModule().getConfixPrefix());
+		assertEquals("jdbc", new InstrumentedJdbcModule().getConfigPrefix());
 	}
 }

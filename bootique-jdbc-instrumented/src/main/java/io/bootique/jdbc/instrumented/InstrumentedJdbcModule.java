@@ -26,7 +26,7 @@ public class InstrumentedJdbcModule extends ConfigModule {
         super(configPrefix);
     }
 
-    String getConfixPrefix() {
+    String getConfigPrefix() {
         return configPrefix;
     }
 

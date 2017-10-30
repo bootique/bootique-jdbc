@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public interface DataSourceFactory {
 
-    javax.sql.DataSource forName(String dataSourceName);
+    ManagedDataSource forName(String dataSourceName);
 
     /**
      * Returns the names of all configured DataSources. Each of these names can

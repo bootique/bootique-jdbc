@@ -1,7 +1,6 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Binder;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.BQCoreModule;
@@ -11,7 +10,6 @@ import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -37,6 +35,8 @@ public class JdbcModule extends ConfigModule {
 
         BQCoreModule.extend(binder)
                 .setLogLevel(org.apache.tomcat.jdbc.pool.PooledConnection.class.getName(), Level.OFF);
+
+        JdbcModule.extend(binder).initAllExtensions();
     }
 
     /**
@@ -51,18 +51,13 @@ public class JdbcModule extends ConfigModule {
     @Singleton
     @Provides
     public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-                                              ShutdownManager shutdownManager, DataSourceListenersHolder holder) {
+                                              ShutdownManager shutdownManager, Set<DataSourceListener> listeners) {
         Map<String, TomcatDataSourceFactory> configs = configFactory
                 .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
                 }, configPrefix);
 
         // TODO: figure out how to map LazyDataSourceFactoryFactory to config directly, bypassing configs map
-        return new LazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, holder.value);
-    }
-
-    static class DataSourceListenersHolder {
-        @Inject(optional = true)
-        Set<DataSourceListener> value = new HashSet<>();
+        return new LazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, listeners);
     }
 
 }

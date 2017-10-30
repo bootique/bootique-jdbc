@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 public class LazyDataSourceFactory implements DataSourceFactory {
 
     private Map<String, TomcatDataSourceFactory> configs;
-    private ConcurrentMap<String, org.apache.tomcat.jdbc.pool.DataSource> dataSources;
+    private ConcurrentMap<String, ManagedDataSource> dataSources;
     private Collection<DataSourceListener> dataSourceListeners = Collections.emptyList();
 
     public LazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs,
@@ -27,11 +27,11 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     public void shutdown() {
-        dataSources.values().forEach(d -> d.close());
+        dataSources.values().forEach(d -> d.shutdown());
 
         // stop the DB after the DataSources were shutdown...
         dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl(), dataSource))
+                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl(), dataSource.getDataSource()))
         );
     }
 
@@ -44,17 +44,15 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public javax.sql.DataSource forName(String dataSourceName) {
+    public ManagedDataSource forName(String dataSourceName) {
         return dataSources.computeIfAbsent(dataSourceName, name -> createDataSource(name));
     }
 
-    protected org.apache.tomcat.jdbc.pool.DataSource createDataSource(String name) {
+    protected ManagedDataSource createDataSource(String name) {
 
         // prepare DB for startup before we trigger DS creation
         String url = getDbUrl(name);
         dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
-        //TODO: no dataSource to be modified on before event ?
-        //dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
 
         org.apache.tomcat.jdbc.pool.DataSource dataSource = configs.computeIfAbsent(name, n -> {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
@@ -63,7 +61,9 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         // this callback is normally used for schema loading...
         dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
 
-        return dataSource;
+        return new ManagedDataSource(dataSource, dataSource.getUrl(), d -> {
+            dataSource.close();
+        });
     }
 
     protected String getDbUrl(String configName) {

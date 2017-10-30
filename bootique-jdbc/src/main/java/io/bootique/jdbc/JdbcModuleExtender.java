@@ -9,6 +9,8 @@ import io.bootique.ModuleExtender;
  */
 public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
 
+    private Multibinder<DataSourceListener> listeners;
+
     public JdbcModuleExtender(Binder binder) {
         super(binder);
     }
@@ -30,6 +32,6 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
     }
 
     private Multibinder<DataSourceListener> contributeDataSourceListeners() {
-        return newSet(DataSourceListener.class);
+        return listeners != null ? listeners : (listeners = newSet(DataSourceListener.class));
     }
 }

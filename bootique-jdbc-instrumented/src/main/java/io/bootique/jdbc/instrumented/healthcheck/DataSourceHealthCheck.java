@@ -1,6 +1,7 @@
 package io.bootique.jdbc.instrumented.healthcheck;
 
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.ManagedDataSource;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 
@@ -26,7 +27,9 @@ public class DataSourceHealthCheck implements HealthCheck {
     @Override
     public HealthCheckOutcome check() throws Exception {
 
-        try (Connection c = dataSourceFactory.forName(dataSourceName).getConnection()) {
+        ManagedDataSource ds = dataSourceFactory.forName(dataSourceName);
+        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds.getDataSource();
+        try (Connection c = tomcat.getConnection()) {
             return c.isValid(1)
                     ? HealthCheckOutcome.healthy()
                     : HealthCheckOutcome.unhealthy("Connection validation failed");

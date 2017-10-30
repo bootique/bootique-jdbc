@@ -1,4 +1,4 @@
-package io.bootique.jdbc.instrumented.healthcheck;
+package io.bootique.jdbc.tomcat.instrumented.healthcheck;
 
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.metrics.health.HealthCheck;

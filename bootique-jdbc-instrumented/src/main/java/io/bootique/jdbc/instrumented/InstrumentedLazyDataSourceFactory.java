@@ -13,8 +13,10 @@ public class InstrumentedLazyDataSourceFactory extends LazyDataSourceFactory {
 
     private MetricRegistry metricRegistry;
 
-    public InstrumentedLazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs,
-                                             MetricRegistry metricRegistry) {
+    public InstrumentedLazyDataSourceFactory(
+            Map<String, TomcatDataSourceFactory> configs,
+            MetricRegistry metricRegistry) {
+
         super(configs);
         this.metricRegistry = metricRegistry;
     }

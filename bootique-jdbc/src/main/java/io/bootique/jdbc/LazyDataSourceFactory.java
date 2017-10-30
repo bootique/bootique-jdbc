@@ -52,24 +52,15 @@ public class LazyDataSourceFactory implements DataSourceFactory {
 
     protected ManagedDataSource createDataSource(String name) {
 
-        // prepare DB for startup before we trigger DS creation
-        String url = getDbUrl(name);
-        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
-
-        org.apache.tomcat.jdbc.pool.DataSource dataSource = configs.computeIfAbsent(name, n -> {
+        TomcatDataSourceFactory factory = configs.computeIfAbsent(name, n -> {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
-        }).createDataSource();
+        });
 
-        // this callback is normally used for schema loading...
+        String url = factory.getUrl();
+        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
+        org.apache.tomcat.jdbc.pool.DataSource dataSource = factory.createDataSource();
         dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
 
-        return new ManagedDataSource(dataSource, dataSource.getUrl(), d -> {
-            dataSource.close();
-        });
-    }
-
-    protected String getDbUrl(String configName) {
-        TomcatDataSourceFactory config = configs.getOrDefault(configName, new TomcatDataSourceFactory());
-        return config.getUrl();
+        return new ManagedDataSource(dataSource, url, d -> dataSource.close());
     }
 }

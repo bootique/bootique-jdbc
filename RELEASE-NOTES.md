@@ -1,3 +1,7 @@
+## 0.25
+
+* #57 Replace modules overriding by listeners
+
 ## 0.24
 
 * #39 Change CSV date time format in tests to follow ISO-8601

@@ -7,13 +7,13 @@ import static org.junit.Assert.assertEquals;
 
 public class InstrumentedJdbcModuleProviderTest {
 
-	@Test
-	public void testPresentInJar() {
-		BQModuleProviderChecker.testPresentInJar(InstrumentedJdbcModuleProvider.class);
-	}
+    @Test
+    public void testPresentInJar() {
+        BQModuleProviderChecker.testPresentInJar(InstrumentedJdbcModuleProvider.class);
+    }
 
-	@Test
-	public void testConfigPrefix() {
-		assertEquals("jdbc", new InstrumentedJdbcModule().getConfigPrefix());
-	}
+    @Test
+    public void testConfigPrefix() {
+        assertEquals("jdbc", new InstrumentedJdbcModule().getConfigPrefix());
+    }
 }

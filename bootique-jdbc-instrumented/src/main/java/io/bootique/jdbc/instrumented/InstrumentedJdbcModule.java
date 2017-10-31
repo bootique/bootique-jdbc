@@ -5,18 +5,10 @@ import com.google.inject.Binder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
-import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.DataSourceListener;
-import io.bootique.jdbc.TomcatDataSourceFactory;
+import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheckGroup;
-import io.bootique.log.BootLogger;
 import io.bootique.metrics.MetricsModule;
-import io.bootique.shutdown.ShutdownManager;
-import io.bootique.type.TypeRef;
-
-import java.util.Map;
-import java.util.Set;
 
 public class InstrumentedJdbcModule extends ConfigModule {
 
@@ -35,28 +27,19 @@ public class InstrumentedJdbcModule extends ConfigModule {
     @Override
     public void configure(Binder binder) {
         MetricsModule.extend(binder).addHealthCheckGroup(DataSourceHealthCheckGroup.class);
-    }
 
-    @Singleton
-    @Provides
-    public DataSourceFactory createDataSourceFactory(ConfigurationFactory configFactory,
-                                                     BootLogger bootLogger,
-                                                     MetricRegistry metricRegistry,
-                                                     ShutdownManager shutdownManager,
-                                                     Set<DataSourceListener> dataSourceListeners) {
-
-        Map<String, TomcatDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, TomcatDataSourceFactory>>() {
-                }, configPrefix);
-
-        // TODO: figure out how to map LazyDataSourceFactoryFactory to config directly, bypassing configs map
-        return new InstrumentedLazyDataSourceFactoryFactory(configs)
-                .create(shutdownManager, bootLogger, metricRegistry, dataSourceListeners);
+        JdbcModule.extend(binder).addDataSourceListener(MetricsListener.class);
     }
 
     @Singleton
     @Provides
     DataSourceHealthCheckGroup provideDataSourceHealthCheckGroup(DataSourceFactory dataSourceFactory) {
         return new DataSourceHealthCheckGroup(dataSourceFactory);
+    }
+
+    @Singleton
+    @Provides
+    MetricsListener provideMetricsListener(MetricRegistry metricRegistry) {
+        return new MetricsListener(metricRegistry);
     }
 }

@@ -3,11 +3,13 @@ package io.bootique.jdbc.test;
 import io.bootique.BQRuntime;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class DefaultDatabaseChannelIT {
 
     @ClassRule

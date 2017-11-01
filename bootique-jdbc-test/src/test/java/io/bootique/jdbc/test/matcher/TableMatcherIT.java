@@ -7,12 +7,14 @@ import io.bootique.jdbc.test.TestDataManager;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+@Ignore
 public class TableMatcherIT {
 
     @ClassRule

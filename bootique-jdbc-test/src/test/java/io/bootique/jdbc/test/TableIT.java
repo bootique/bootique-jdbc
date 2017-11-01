@@ -4,6 +4,7 @@ import io.bootique.BQRuntime;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class TableIT {
 
     @ClassRule

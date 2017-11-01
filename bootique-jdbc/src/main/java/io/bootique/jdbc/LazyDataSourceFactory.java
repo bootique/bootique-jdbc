@@ -1,16 +1,20 @@
 package io.bootique.jdbc;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class LazyDataSourceFactory implements DataSourceFactory {
 
-    private Map<String, TomcatDataSourceFactory> configs;
+    private Map<String, ? extends CPDataSourceFactory> configs;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
     private Collection<DataSourceListener> dataSourceListeners = Collections.emptyList();
 
-    public LazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs,
+    public LazyDataSourceFactory(Map<String, CPDataSourceFactory> configs,
                                  Set<DataSourceListener> dataSourceListeners) {
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
@@ -21,7 +25,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
      * @param configs
      * @deprecated since 0.25
      */
-    public LazyDataSourceFactory(Map<String, TomcatDataSourceFactory> configs) {
+    public <T extends CPDataSourceFactory> LazyDataSourceFactory(Map<String, T> configs) {
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
     }
@@ -50,17 +54,16 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         return managedDataSource.getDataSource();
     }
 
-    protected ManagedDataSource createDataSource(String name) {
-
-        TomcatDataSourceFactory factory = configs.computeIfAbsent(name, n -> {
+    public ManagedDataSource createDataSource(String name) {
+        CPDataSourceFactory factory = configs.computeIfAbsent(name, n -> {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         });
 
         String url = factory.getUrl();
         dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
-        org.apache.tomcat.jdbc.pool.DataSource dataSource = factory.createDataSource();
-        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
+        ManagedDataSource dataSource = factory.createDataSource();
+        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource.getDataSource()));
 
-        return new ManagedDataSource(dataSource, url, d -> dataSource.close());
+        return dataSource;
     }
 }

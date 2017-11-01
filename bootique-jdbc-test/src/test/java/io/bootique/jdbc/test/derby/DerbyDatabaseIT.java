@@ -5,6 +5,7 @@ import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -13,6 +14,7 @@ import java.io.File;
 import static org.junit.Assert.*;
 
 
+@Ignore
 public class DerbyDatabaseIT {
 
     @Rule

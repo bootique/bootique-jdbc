@@ -14,17 +14,8 @@
 	<name>bootique-jdbc: JDBC DataSource itegration module for Bootique</name>
 	<description>Provides JDBC integration with Bootique</description>
 
-	<properties>
-		<tomcat-version>8.0.30</tomcat-version>
-	</properties>
-
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jdbc</artifactId>
-				<version>${tomcat-version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derby</artifactId>
@@ -60,11 +51,6 @@
 		<dependency>
 			<groupId>io.bootique</groupId>
 			<artifactId>bootique</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

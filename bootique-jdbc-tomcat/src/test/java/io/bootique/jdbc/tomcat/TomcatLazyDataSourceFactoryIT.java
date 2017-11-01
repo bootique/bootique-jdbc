@@ -1,5 +1,7 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
+import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.ManagedDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,7 +11,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class LazyDataSourceFactoryIT {
+public class TomcatLazyDataSourceFactoryIT {
 
     private static final String URL = "jdbc:derby:target/testdb;create=true";
     private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -33,12 +35,15 @@ public class LazyDataSourceFactoryIT {
     public void testCreateDataSource() throws Exception {
 
         LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);
+
         ManagedDataSource ds = factory.createDataSource("c1");
-        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds.getDataSource();
         assertNotNull(ds);
 
+        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds.getDataSource();
+        assertNotNull(tomcat);
+
         try {
-            assertEquals(URL, ds.getUrl());
+            assertEquals(URL, tomcat.getUrl());
             assertEquals(2, tomcat.getInitialSize());
         } finally {
             tomcat.close();
@@ -51,9 +56,12 @@ public class LazyDataSourceFactoryIT {
         derbyConfig.setDriverClassName(null);
 
         LazyDataSourceFactory factory = new LazyDataSourceFactory(configs);
+
         ManagedDataSource ds = factory.createDataSource("c1");
-        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds.getDataSource();
         assertNotNull(ds);
+
+        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds.getDataSource();
+        assertNotNull(tomcat);
 
         try {
             try (Connection c = tomcat.getConnection()) {

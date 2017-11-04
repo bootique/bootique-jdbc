@@ -1,6 +1,5 @@
 jdbc:
   TestDataManagerIT:
-    type: tomcat
     url: jdbc:derby:target/derby/CsvDataSetBuilderIT;create=true
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
     initialSize: 1

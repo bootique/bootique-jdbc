@@ -1,6 +1,7 @@
 package io.bootique.jdbc;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
 
@@ -9,6 +10,7 @@ import io.bootique.config.PolymorphicConfiguration;
  */
 @BQConfig
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeResolver(value = JdbcStdTypeResolverBuilder.class)
 public interface CPDataSourceFactory extends PolymorphicConfiguration {
 
     ManagedDataSource createDataSource();
@@ -16,4 +18,6 @@ public interface CPDataSourceFactory extends PolymorphicConfiguration {
     boolean isPartial();
 
     String getUrl();
+
+    String name();
 }

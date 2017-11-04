@@ -38,13 +38,12 @@ public class TomcatModuleIT {
                     BQCoreModule.extend(b)
                             .setVar("BQ_JDBC_PARTIAL_PASSWORD", "p1")
                             .setVar("BQ_JDBC_FULLDS2_PASSWORD", "p2")
-                            .setVar("BQ_JDBC_FULLDSVARS_URL", "jdbc:dummy")
-                            .setVar("BQ_JDBC_FULLDSVARS_TYPE", "tomcat");
+                            .setVar("BQ_JDBC_FULLDSVARS_URL", "jdbc:dummy");
                 })
                 .createRuntime();
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
-        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
     }
 }

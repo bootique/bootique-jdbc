@@ -1,9 +1,13 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import org.apache.tomcat.jdbc.pool.*;
+import io.bootique.jdbc.CPDataSourceFactory;
+import io.bootique.jdbc.ManagedDataSource;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
+import org.apache.tomcat.jdbc.pool.PoolConfiguration;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import javax.management.ObjectName;
 import java.sql.Connection;
@@ -14,8 +18,9 @@ import java.util.Properties;
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
  * @since 0.13
  */
-@BQConfig("Pooling JDBC DataSource configuration.")
-public class TomcatDataSourceFactory {
+@BQConfig("Pooling Tomcat JDBC DataSource configuration.")
+@JsonTypeName("tomcat")
+public class TomcatDataSourceFactory implements CPDataSourceFactory {
 
     private int abandonWhenPercentageFull;
     private boolean alternateUsernameAllowed;
@@ -99,7 +104,8 @@ public class TomcatDataSourceFactory {
         this.validationQueryTimeout = -1;
     }
 
-    public org.apache.tomcat.jdbc.pool.DataSource createDataSource() {
+    @Override
+    public ManagedDataSource createDataSource() {
 
         validate();
 
@@ -112,13 +118,16 @@ public class TomcatDataSourceFactory {
             throw new RuntimeException("Error creating DataSource", e);
         }
 
-        return dataSource;
+        return new ManagedDataSource(dataSource, dataSource.getUrl(), d -> {
+            dataSource.close();
+        });
     }
 
     protected void validate() {
         Objects.requireNonNull(url, "'url' property should not be null");
     }
 
+    @Override
     public boolean isPartial() {
         // should be manually aligned with #validate to avoid downstream errors.
         return url == null;
@@ -349,6 +358,7 @@ public class TomcatDataSourceFactory {
         this.url = url;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }

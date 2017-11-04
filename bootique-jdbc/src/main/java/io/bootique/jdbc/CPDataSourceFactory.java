@@ -18,6 +18,4 @@ public interface CPDataSourceFactory extends PolymorphicConfiguration {
     boolean isPartial();
 
     String getUrl();
-
-    String name();
 }

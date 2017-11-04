@@ -363,11 +363,6 @@ public class TomcatDataSourceFactory implements CPDataSourceFactory {
         return url;
     }
 
-    @Override
-    public String name() {
-        return getClass().getName();
-    }
-
     // a clone of org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
     protected PoolConfiguration toConfiguration() {
 

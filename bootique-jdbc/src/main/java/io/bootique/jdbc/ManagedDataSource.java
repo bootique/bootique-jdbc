@@ -11,13 +11,13 @@ public class ManagedDataSource {
     private String url;
     private Consumer<javax.sql.DataSource> shutdown;
 
-    ManagedDataSource(DataSource dataSource, String url, Consumer<javax.sql.DataSource> shutdown) {
+    public ManagedDataSource(DataSource dataSource, String url, Consumer<javax.sql.DataSource> shutdown) {
         this.dataSource = dataSource;
         this.url = url;
         this.shutdown = shutdown;
     }
 
-    public DataSource getDataSource() {
+    DataSource getDataSource() {
         return dataSource;
     }
 

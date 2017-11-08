@@ -9,17 +9,17 @@ import java.util.Set;
 
 public class LazyDataSourceFactoryFactory {
 
-    private Map<String, TomcatDataSourceFactory> configs;
+    private Map<String, CPDataSourceFactory> configs;
 
-    public LazyDataSourceFactoryFactory(Map<String, TomcatDataSourceFactory> configs) {
+    public LazyDataSourceFactoryFactory(Map<String, CPDataSourceFactory> configs) {
         this.configs = configs;
     }
 
     // addresses an issue when a config is created as a side effect of defining BQ_JDBC_XYZ_PASSWORD
     // shell var and such...
-    public static Map<String, TomcatDataSourceFactory> prunePartialConfigs(Map<String, TomcatDataSourceFactory> configs) {
+    public static Map<String, CPDataSourceFactory> prunePartialConfigs(Map<String, CPDataSourceFactory> configs) {
 
-        Map<String, TomcatDataSourceFactory> clean = new HashMap<>();
+        Map<String, CPDataSourceFactory> clean = new HashMap<>();
         configs.forEach((name, config) -> {
             if (!config.isPartial()) {
                 clean.put(name, config);

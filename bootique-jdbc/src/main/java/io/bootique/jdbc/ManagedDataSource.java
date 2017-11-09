@@ -11,7 +11,7 @@ public class ManagedDataSource {
     private String url;
     private Consumer<javax.sql.DataSource> shutdown;
 
-    ManagedDataSource(DataSource dataSource, String url, Consumer<javax.sql.DataSource> shutdown) {
+    public ManagedDataSource(DataSource dataSource, String url, Consumer<javax.sql.DataSource> shutdown) {
         this.dataSource = dataSource;
         this.url = url;
         this.shutdown = shutdown;
@@ -21,11 +21,11 @@ public class ManagedDataSource {
         return dataSource;
     }
 
-    String getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    void shutdown() {
+    public void shutdown() {
         shutdown.accept(dataSource);
     }
 }

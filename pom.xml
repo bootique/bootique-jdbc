@@ -23,11 +23,12 @@
         <bootique-version>${project.version}</bootique-version>
     </properties>
 
-    <modules>
-        <module>bootique-jdbc</module>
-        <module>bootique-jdbc-instrumented</module>
-        <module>bootique-jdbc-test</module>
-    </modules>
+	<modules>
+		<module>bootique-jdbc</module>
+		<module>bootique-jdbc-instrumented</module>
+		<module>bootique-jdbc-test</module>
+		<module>bootique-jdbc-tomcat</module>
+	</modules>
 
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jdbc</developerConnection>

@@ -21,11 +21,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jdbc</artifactId>
-				<version>${tomcat-version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derby</artifactId>
 				<version>10.12.1.1</version>
@@ -60,11 +55,6 @@
 		<dependency>
 			<groupId>io.bootique</groupId>
 			<artifactId>bootique</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

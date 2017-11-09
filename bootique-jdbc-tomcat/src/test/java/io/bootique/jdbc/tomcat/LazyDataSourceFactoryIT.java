@@ -1,5 +1,7 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
+import io.bootique.jdbc.LazyDataSourceFactory;
+import io.bootique.jdbc.ManagedDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -7,7 +9,9 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class LazyDataSourceFactoryIT {
 

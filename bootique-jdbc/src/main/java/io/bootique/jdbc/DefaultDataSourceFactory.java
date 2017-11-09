@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.inject.Inject;
@@ -64,6 +65,8 @@ public class DefaultDataSourceFactory implements CPDataSourceFactory {
 
         if (types.size() == 1) {
             try {
+                ((ObjectNode)jsonNode).put("type", "tomcat");
+
                 factory = mapper.readValue(
                         new TreeTraversingParser(jsonNode, mapper), jacksonType);
 

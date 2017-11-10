@@ -15,7 +15,7 @@ public class DefaultDataSourceFactoryDeserializer extends StdDeserializer<Defaul
 
     @Override
     public DefaultDataSourceFactory deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        JsonNode node = p.getCodec().readTree(p);
+        JsonNode node = p.readValueAsTree();
 
         return new DefaultDataSourceFactory(node);
     }

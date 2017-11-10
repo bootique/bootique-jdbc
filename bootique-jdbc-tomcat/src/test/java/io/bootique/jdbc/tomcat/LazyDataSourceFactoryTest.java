@@ -1,5 +1,6 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
+import io.bootique.jdbc.LazyDataSourceFactory;
 import org.junit.Test;
 
 import java.util.Collections;

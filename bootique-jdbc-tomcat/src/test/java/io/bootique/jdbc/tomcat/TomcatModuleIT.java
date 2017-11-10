@@ -1,7 +1,8 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.tomcat;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -13,13 +14,11 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class JdbcModuleIT {
-
+public class TomcatModuleIT {
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    @Ignore
     public void testPartialConfigsExcluded() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml").autoLoadModules().createRuntime();

@@ -1,7 +1,7 @@
 jdbc:
   fullds1:
     type: tomcat
-    url: jdbc:dummy
+    url: jdbc:derby:target/derby/DerbyDatabaseIT;create=true
     username: u1
     password: supersecret1
   fullds2:
@@ -11,4 +11,3 @@ jdbc:
     type: tomcat
     username: u2
     password: supersecret2
-

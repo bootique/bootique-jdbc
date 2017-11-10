@@ -3,7 +3,6 @@ package io.bootique.jdbc;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.test.junit.BQTestFactory;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -13,7 +12,6 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore
 public class JdbcModuleIT {
 
     @Rule

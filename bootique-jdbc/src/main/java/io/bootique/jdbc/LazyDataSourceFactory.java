@@ -1,5 +1,7 @@
 package io.bootique.jdbc;
 
+import com.google.inject.Injector;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -13,12 +15,14 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     private Map<String, ? extends CPDataSourceFactory> configs;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
     private Collection<DataSourceListener> dataSourceListeners = Collections.emptyList();
+    private Injector injector;
 
-    public LazyDataSourceFactory(Map<String, CPDataSourceFactory> configs,
-                                 Set<DataSourceListener> dataSourceListeners) {
+    public LazyDataSourceFactory(Map<String, CPDataSourceFactory> configs, Set<DataSourceListener> dataSourceListeners,
+                                 Injector injector) {
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
         this.dataSourceListeners = dataSourceListeners;
+        this.injector = injector;
     }
 
     /**
@@ -59,9 +63,8 @@ public class LazyDataSourceFactory implements DataSourceFactory {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         });
 
-        String url = factory.getUrl();
-        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
-        ManagedDataSource dataSource = factory.createDataSource();
+        ManagedDataSource dataSource = factory.createDataSource(name, injector, dataSourceListeners);
+        String url = dataSource.getUrl();
         dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource.getDataSource()));
 
         return dataSource;

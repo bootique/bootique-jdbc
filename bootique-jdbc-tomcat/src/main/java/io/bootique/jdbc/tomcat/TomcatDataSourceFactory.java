@@ -1,9 +1,10 @@
 package io.bootique.jdbc.tomcat;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.CPDataSourceFactory;
+import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.ManagedDataSource;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
@@ -11,6 +12,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import javax.management.ObjectName;
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -19,7 +21,6 @@ import java.util.Properties;
  * @since 0.13
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
-@JsonTypeName("tomcat")
 public class TomcatDataSourceFactory implements CPDataSourceFactory {
 
     private int abandonWhenPercentageFull;
@@ -105,8 +106,9 @@ public class TomcatDataSourceFactory implements CPDataSourceFactory {
     }
 
     @Override
-    public ManagedDataSource createDataSource() {
+    public ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> dataSourceListeners) {
 
+        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, this.getUrl()));
         validate();
 
         PoolConfiguration poolConfig = toConfiguration();
@@ -123,12 +125,6 @@ public class TomcatDataSourceFactory implements CPDataSourceFactory {
 
     protected void validate() {
         Objects.requireNonNull(url, "'url' property should not be null");
-    }
-
-    @Override
-    public boolean isPartial() {
-        // should be manually aligned with #validate to avoid downstream errors.
-        return url == null;
     }
 
     @BQConfigProperty
@@ -356,7 +352,6 @@ public class TomcatDataSourceFactory implements CPDataSourceFactory {
         this.url = url;
     }
 
-    @Override
     public String getUrl() {
         return url;
     }

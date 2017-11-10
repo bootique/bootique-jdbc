@@ -1,9 +1,9 @@
 jdbc:
   fullds1:
-    type: tomcat
+    class: io.bootique.jdbc.tomcat.TomcatDataSourceFactory
     url: jdbc:dummy
     username: u1
     password: supersecret1
   fullds2:
-    type: tomcat
+    class: io.bootique.jdbc.tomcat.TomcatDataSourceFactory
     url: jdbc:dummy

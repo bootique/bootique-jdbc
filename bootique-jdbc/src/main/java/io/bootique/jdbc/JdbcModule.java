@@ -1,6 +1,7 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Binder;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
@@ -38,13 +39,14 @@ public class JdbcModule extends ConfigModule {
     @Singleton
     @Provides
     public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-                                              ShutdownManager shutdownManager, Set<DataSourceListener> listeners) {
+                                              ShutdownManager shutdownManager, Set<DataSourceListener> listeners,
+                                              Injector injector) {
         Map<String, CPDataSourceFactory> configs = configFactory
                 .config(new TypeRef<Map<String, CPDataSourceFactory>>() {
                 }, configPrefix);
 
         // TODO: figure out how to map LazyDataSourceFactoryFactory to config directly, bypassing configs map
-        return new LazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, listeners);
+        return new LazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, listeners, injector);
     }
 
 }

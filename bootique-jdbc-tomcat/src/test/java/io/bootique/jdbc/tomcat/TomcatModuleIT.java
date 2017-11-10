@@ -4,7 +4,6 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -19,18 +18,17 @@ public class TomcatModuleIT {
     public final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testPartialConfigsExcluded() {
+    public void testPartialConfigsNotExcluded() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml").autoLoadModules().createRuntime();
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
-        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "partialds3")), names);
     }
 
     @Test
-    @Ignore
-    public void testPartialConfigsExcluded_Vars() {
+    public void testPartialConfigsNotExcluded_Vars() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")
                 .autoLoadModules()
@@ -44,6 +42,6 @@ public class TomcatModuleIT {
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
-        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "PARTIAL", "FULLDSVARS")), names);
     }
 }

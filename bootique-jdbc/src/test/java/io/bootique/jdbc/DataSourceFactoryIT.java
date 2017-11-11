@@ -2,6 +2,7 @@ package io.bootique.jdbc;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.BootiqueException;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +17,16 @@ public class DataSourceFactoryIT {
 
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();
+
+    @Test(expected = BootiqueException.class)
+    public void testForName_NoImpl() {
+
+        BQRuntime runtime = testFactory.app("-c", "classpath:DataSourceFactoryIT_notype.yml")
+                .autoLoadModules()
+                .createRuntime();
+
+        runtime.getInstance(DataSourceFactory.class).forName("ds1");
+    }
 
     @Test
     public void testAllNames_PartialConfigsExcluded() {

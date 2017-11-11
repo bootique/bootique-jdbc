@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.inject.Injector;
+import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
 import io.bootique.jackson.JacksonService;
 import io.bootique.meta.config.ConfigMapMetadata;
@@ -46,7 +47,7 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
         try {
             return mapper.readValue(new TreeTraversingParser(nodeWithType, mapper), jacksonType);
         } catch (IOException e) {
-            throw new RuntimeException("Deserialization of JDBC DataSource configuration failed.", e);
+            throw new BootiqueException(1, "Deserialization of JDBC DataSource configuration failed.", e);
         }
     }
 
@@ -86,8 +87,8 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
                 // 0 is unexpected, but still report it as no DataSource implementations....
             case 1:
                 // 1 means this class is the only implementor
-                throw new IllegalStateException("No 'bootique-jdbc' implementations found. " +
-                        "You will need to add one as an application dependency.");
+                throw new BootiqueException(1, "No concrete 'bootique-jdbc' implementations found. " +
+                        "You will need to add one (such as 'bootique-jdbc-tomcat', etc.) as an application dependency.");
             case 2:
 
                 for (ConfigMetadataNode n : subtypes) {
@@ -98,13 +99,13 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
                 break;
             default:
                 // > 2 means multiple implementors
-                throw new IllegalStateException("Multiple bootique-jdbc implementations found. Each JDBC DataSource " +
+                throw new BootiqueException(1, "Multiple bootique-jdbc implementations found. Each JDBC DataSource " +
                         "configuration must explicitly define \"type\" property.");
         }
 
         // should not get here under no circumstances ... if we did, likely bootique-jdbc code has diverged from the
         // assumptions in this method...
-        throw new IllegalStateException("Internal error: Unexpected configuration structure in 'bootique-jdbc'");
+        throw new BootiqueException(1, "Internal error: Unexpected configuration structure in 'bootique-jdbc'");
     }
 
     private ConfigMetadataNode moduleConfig(Injector injector) {
@@ -112,7 +113,7 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
         Collection<ConfigMetadataNode> configs = jdbcModule.getConfigs();
 
         if (configs.size() != 1) {
-            throw new IllegalStateException("Expected a single root config in JdbcModule. Found: " + configs.size());
+            throw new BootiqueException(1, "Expected a single root config in JdbcModule. Found: " + configs.size());
         }
 
         return configs.iterator().next();
@@ -129,6 +130,6 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
             }
         }
 
-        throw new IllegalStateException("JdbcModule is not present in runtime metadata");
+        throw new BootiqueException(1, "JdbcModule is not present in runtime metadata");
     }
 }

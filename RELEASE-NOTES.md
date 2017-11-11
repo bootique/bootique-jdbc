@@ -1,5 +1,6 @@
 ## 0.25
 
+* #48 Extract TomcatCP as a separate module
 * #57 Replace modules overriding by listeners
 
 ## 0.24

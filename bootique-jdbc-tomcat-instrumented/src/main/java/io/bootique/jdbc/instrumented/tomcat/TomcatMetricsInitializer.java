@@ -1,4 +1,4 @@
-package io.bootique.jdbc.instrumented;
+package io.bootique.jdbc.instrumented.tomcat;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
@@ -10,11 +10,11 @@ import javax.sql.DataSource;
 /**
  * @since 0.25
  */
-public class MetricsListener implements DataSourceListener {
+public class TomcatMetricsInitializer implements DataSourceListener {
 
     private MetricRegistry metricRegistry;
 
-    public MetricsListener(MetricRegistry metricRegistry) {
+    public TomcatMetricsInitializer(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
     }
 
@@ -38,11 +38,8 @@ public class MetricsListener implements DataSourceListener {
         ConnectionPool pool = tomcat.getPool();
 
         metricRegistry.register(MetricRegistry.name(getClass(), name, "active"), (Gauge<Integer>) () -> pool.getActive());
-
         metricRegistry.register(MetricRegistry.name(getClass(), name, "idle"), (Gauge<Integer>) () -> pool.getIdle());
-
         metricRegistry.register(MetricRegistry.name(getClass(), name, "waiting"), (Gauge<Integer>) () -> pool.getWaitCount());
-
         metricRegistry.register(MetricRegistry.name(getClass(), name, "size"), (Gauge<Integer>) () -> pool.getSize());
     }
 }

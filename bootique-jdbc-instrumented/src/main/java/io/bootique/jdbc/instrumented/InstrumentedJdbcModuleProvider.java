@@ -15,6 +15,6 @@ public class InstrumentedJdbcModuleProvider implements BQModuleProvider {
     public BQModule.Builder moduleBuilder() {
         return BQModuleProvider.super
                 .moduleBuilder()
-                .description("Extends JdbcModule with metrics support.");
+                .description("Add metrics and healthchecks support to JdbcModule.");
     }
 }

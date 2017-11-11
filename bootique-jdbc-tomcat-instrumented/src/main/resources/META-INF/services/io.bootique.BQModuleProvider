@@ -1,1 +1,1 @@
-io.bootique.jdbc.instrumented.InstrumentedJdbcModuleProvider
+io.bootique.jdbc.instrumented.tomcat.TomcatInstrumentedJdbcModuleProvider

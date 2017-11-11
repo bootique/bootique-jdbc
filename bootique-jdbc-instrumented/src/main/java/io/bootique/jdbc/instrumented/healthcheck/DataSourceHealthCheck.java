@@ -28,8 +28,7 @@ public class DataSourceHealthCheck implements HealthCheck {
     public HealthCheckOutcome check() throws Exception {
 
         DataSource ds = dataSourceFactory.forName(dataSourceName);
-        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) ds;
-        try (Connection c = tomcat.getConnection()) {
+        try (Connection c = ds.getConnection()) {
             return c.isValid(1)
                     ? HealthCheckOutcome.healthy()
                     : HealthCheckOutcome.unhealthy("Connection validation failed");

@@ -1,4 +1,4 @@
-package io.bootique.jdbc.instrumented;
+package io.bootique.jdbc.instrumented.tomcat;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Key;
@@ -13,9 +13,12 @@ import org.junit.Test;
 import javax.sql.DataSource;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class InstrumentedJdbcModuleIT {
+public class TomcatInstrumentedJdbcModuleIT {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
@@ -31,7 +34,7 @@ public class InstrumentedJdbcModuleIT {
 
         Set<DataSourceListener> set = runtime.getInstance(Key.get(typeLiteral));
         assertEquals(set.size(), 1);
-        assertTrue(set.iterator().next() instanceof MetricsListener);
+        assertTrue(set.iterator().next() instanceof TomcatMetricsInitializer);
     }
 
     @Test

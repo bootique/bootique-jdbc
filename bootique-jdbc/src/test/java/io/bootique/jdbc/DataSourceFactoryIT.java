@@ -4,6 +4,7 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
 import io.bootique.test.junit.BQTestFactory;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -29,6 +30,7 @@ public class DataSourceFactoryIT {
     }
 
     @Test
+    @Ignore
     public void testAllNames_PartialConfigsExcluded() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml").autoLoadModules().createRuntime();
@@ -37,10 +39,12 @@ public class DataSourceFactoryIT {
         Set<String> names = new HashSet<>(factory.allNames());
 
         // TODO: "partial*" should not be in this list
-        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "partialds3")), names);
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
     }
 
     @Test
+    @Deprecated
+    @Ignore
     public void testAllNames_PartialConfigsExcluded_Vars() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")
@@ -57,6 +61,6 @@ public class DataSourceFactoryIT {
         Set<String> names = new HashSet<>(factory.allNames());
 
         // TODO: "partial*" should not be in this list
-        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "PARTIAL", "FULLDSVARS")), names);
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
     }
 }

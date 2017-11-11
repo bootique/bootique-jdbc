@@ -13,8 +13,8 @@
     <artifactId>bootique-jdbc-tomcat</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-jdbc-tomcat</name>
-    <description>Provides Tomcat JDBC Connection Pool integration with Bootique</description>
+    <name>bootique-jdbc-tomcat: Tomcat JDBC connection pool integration with Bootique</name>
+    <description>Provides Tomcat JDBC connection pool integration with Bootique</description>
 
     <properties>
         <tomcat-version>8.0.30</tomcat-version>

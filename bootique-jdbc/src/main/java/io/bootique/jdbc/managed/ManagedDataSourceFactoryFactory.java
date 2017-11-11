@@ -5,6 +5,8 @@ import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
 
+import java.util.Optional;
+
 /**
  * Configuration factory for specific DataSource implementations.
  *
@@ -14,5 +16,7 @@ import io.bootique.config.PolymorphicConfiguration;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ManagedDataSourceFactoryFactoryProxy.class)
 public interface ManagedDataSourceFactoryFactory extends PolymorphicConfiguration {
 
-    ManagedDataSourceFactory create(Injector injector);
+    // TODO: Optional is returned to skip configs that were created due to stray BQ_ variables.
+    // Once we stop supporting vars based on naming conventions, we can replace Optional<T> with just T
+    Optional<ManagedDataSourceFactory> create(Injector injector);
 }

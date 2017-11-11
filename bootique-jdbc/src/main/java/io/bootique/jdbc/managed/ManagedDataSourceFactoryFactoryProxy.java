@@ -2,6 +2,7 @@ package io.bootique.jdbc.managed;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.inject.Injector;
 import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
+import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jdbc.jackson.ManagedDataSourceFactoryFactoryProxyDeserializer;
 import io.bootique.meta.config.ConfigMapMetadata;
@@ -22,6 +24,7 @@ import io.bootique.meta.module.ModulesMetadata;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Default implementation of {@link ManagedDataSourceFactoryFactory} that tries to dynamically detect a single concrete
@@ -40,7 +43,7 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
     }
 
     @Override
-    public ManagedDataSourceFactory create(Injector injector) {
+    public Optional<ManagedDataSourceFactory> create(Injector injector) {
         return createDataSourceFactory(injector).create(injector);
     }
 
@@ -50,6 +53,14 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
         JavaType jacksonType = TypeFactory.defaultInstance().constructType(delegateFactoryType.getType());
         ObjectMapper mapper = createObjectMapper(injector);
         JsonNode nodeWithType = jsonNodeWithType(delegateFactoryType.getTypeLabel());
+
+        // TODO: deprecated, should be removed once we stop supporting BQ_ vars...
+        // in other words this can be removed when a similar code is removed from JsonNodeConfigurationFactoryProvider
+        Environment environment = injector.getInstance(Environment.class);
+        if (!environment.frameworkVariables().isEmpty()) {
+            // switching to slower CI strategy for mapping properties...
+            mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        }
 
         try {
             return mapper.readValue(new TreeTraversingParser(nodeWithType, mapper), jacksonType);

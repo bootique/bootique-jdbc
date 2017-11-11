@@ -4,7 +4,6 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -80,7 +79,6 @@ public class TomcatJdbcModuleIT {
     // this test really belongs to the parent abstract module, but since we can't test parent without a concrete
     // implementation, it is moved here
     @Test
-    @Ignore
     public void testAllNames_PartialConfigsExcluded() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml")
@@ -98,7 +96,6 @@ public class TomcatJdbcModuleIT {
     // implementation, it is moved here
     @Test
     @Deprecated
-    @Ignore
     public void testAllNames_PartialConfigsExcluded_Vars() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")

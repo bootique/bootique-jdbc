@@ -13,6 +13,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 import javax.management.ObjectName;
 import java.sql.Connection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -108,12 +109,17 @@ public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceF
     }
 
     @Override
-    public ManagedDataSourceFactory create(Injector injector) {
+    public Optional<ManagedDataSourceFactory> create(Injector injector) {
 
-        validate();
+        // TODO: Optional is returned to skip configs that were created due to stray BQ_ variables.
+        // Once we stop supporting vars based on naming conventions, we can replace Optional<T> with just T
+        if(url == null) {
+            return Optional.empty();
+        }
 
         Supplier<javax.sql.DataSource> startup = () -> {
 
+            validate();
             PoolConfiguration poolConfig = toConfiguration();
             org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(poolConfig);
 
@@ -128,7 +134,7 @@ public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceF
 
         Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
 
-        return new ManagedDataSourceFactory(getUrl(), startup, shutdown);
+        return Optional.of(new ManagedDataSourceFactory(getUrl(), startup, shutdown));
     }
 
     protected void validate() {

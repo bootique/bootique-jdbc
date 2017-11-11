@@ -8,11 +8,11 @@
 		<version>0.25-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>bootique-jdbc-instrumented</artifactId>
+	<artifactId>bootique-jdbc-tomcat-instrumented</artifactId>
 	<packaging>jar</packaging>
 
-	<name>bootique-jdbc-instrumented: JDBC DataSource module for Bootique with metrics</name>
-	<description>Provides JDBC integration with Bootique, including metrics</description>
+	<name>bootique-jdbc-tomcat-instrumented: Tomcat DataSource module for Bootique with metrics</name>
+	<description>Provides  Tomcat DataSource integration with Bootique, including metrics</description>
 
 	<dependencyManagement>
 		<dependencies>

@@ -1,2 +1,2 @@
-io.bootique.jdbc.ManagedDataSourceFactory
-io.bootique.jdbc.DefaultManagedDataSourceFactory
+io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory
+io.bootique.jdbc.managed.ManagedDataSourceFactoryFactoryProxy

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.jdbc.ManagedDataSource;
-import io.bootique.jdbc.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
 @JsonTypeName("tomcat")
-public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory {
+public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceFactoryFactory {
 
     private int abandonWhenPercentageFull;
     private boolean alternateUsernameAllowed;
@@ -71,7 +71,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
     private String validatorClassName;
     private long validationInterval;
 
-    public TomcatManagedDataSourceFactory() {
+    public TomcatManagedDataSourceFactoryFactory() {
         // defaults are copied from Tomcat PoolProperties.
         this.abandonWhenPercentageFull = 0;
         this.alternateUsernameAllowed = false;
@@ -108,7 +108,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
     }
 
     @Override
-    public ManagedDataSource createDataSource(Injector injector) {
+    public ManagedDataSourceFactory create(Injector injector) {
 
         validate();
 
@@ -128,7 +128,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
 
         Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
 
-        return new ManagedDataSource(getUrl(), startup, shutdown);
+        return new ManagedDataSourceFactory(getUrl(), startup, shutdown);
     }
 
     protected void validate() {

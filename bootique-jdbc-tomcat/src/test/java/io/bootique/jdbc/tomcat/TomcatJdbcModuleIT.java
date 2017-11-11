@@ -1,14 +1,19 @@
 package io.bootique.jdbc.tomcat;
 
+import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -70,6 +75,47 @@ public class TomcatJdbcModuleIT {
         org.apache.tomcat.jdbc.pool.DataSource tomcatDS = (org.apache.tomcat.jdbc.pool.DataSource) ds;
 
         assertEquals("jdbc:derby:target/derby3;create=true", tomcatDS.getUrl());
+    }
+
+    // this test really belongs to the parent abstract module, but since we can't test parent without a concrete
+    // implementation, it is moved here
+    @Test
+    @Ignore
+    public void testAllNames_PartialConfigsExcluded() {
+
+        BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml")
+                .autoLoadModules()
+                .createRuntime();
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
+
+        Set<String> names = new HashSet<>(factory.allNames());
+
+        // TODO: "partial*" should not be in this list
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
+    }
+
+    // this test really belongs to the parent abstract module, but since we can't test parent without a concrete
+    // implementation, it is moved here
+    @Test
+    @Deprecated
+    @Ignore
+    public void testAllNames_PartialConfigsExcluded_Vars() {
+
+        BQRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")
+                .autoLoadModules()
+                .module(b -> {
+                    BQCoreModule.extend(b)
+                            .setVar("BQ_JDBC_PARTIAL_PASSWORD", "p1")
+                            .setVar("BQ_JDBC_FULLDS2_PASSWORD", "p2")
+                            .setVar("BQ_JDBC_FULLDSVARS_URL", "jdbc:dummy");
+                })
+                .createRuntime();
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
+
+        Set<String> names = new HashSet<>(factory.allNames());
+
+        // TODO: "partial*" should not be in this list
+        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
     }
 
 }

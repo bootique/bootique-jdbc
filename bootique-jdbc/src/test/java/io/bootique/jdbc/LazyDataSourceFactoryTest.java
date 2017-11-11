@@ -1,7 +1,6 @@
 package io.bootique.jdbc;
 
-import com.google.inject.Injector;
-import org.junit.Before;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -12,28 +11,21 @@ import static org.mockito.Mockito.mock;
 
 public class LazyDataSourceFactoryTest {
 
-    private Injector mockInjector;
-
-    @Before
-    public void before() {
-        mockInjector = mock(Injector.class);
-    }
-
 	@Test(expected = IllegalStateException.class)
 	public void testCreateManagedDataSource_NoConfig() {
 
-		LazyDataSourceFactory factory = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet(), mockInjector);
+		LazyDataSourceFactory factory = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet());
 		factory.createManagedDataSource("nosuchname");
 	}
 
 	@Test
 	public void testAllNames() {
-		LazyDataSourceFactory f1 = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet(), mockInjector);
+		LazyDataSourceFactory f1 = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet());
 		assertEquals(0, f1.allNames().size());
 
 		ManagedDataSourceFactory factory = mock(ManagedDataSourceFactory.class);
 
-		LazyDataSourceFactory f2 = new LazyDataSourceFactory(Collections.singletonMap("a", factory), Collections.emptySet(), mockInjector);
+		LazyDataSourceFactory f2 = new LazyDataSourceFactory(Collections.singletonMap("a", factory), Collections.emptySet());
 		assertEquals(1, f2.allNames().size());
 		assertTrue(f2.allNames().contains("a"));
 	}

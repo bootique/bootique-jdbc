@@ -1,48 +1,35 @@
 package io.bootique.jdbc;
 
-import com.google.inject.Injector;
+import io.bootique.jdbc.managed.ManagedDataSource;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class LazyDataSourceFactory implements DataSourceFactory {
 
-    private Map<String, ? extends ManagedDataSourceFactory> configs;
+    private Collection<DataSourceListener> listeners;
+    private Map<String, ManagedDataSourceFactory> dataSourceFactories;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
-    private Collection<DataSourceListener> dataSourceListeners;
-    private Injector injector;
 
     public LazyDataSourceFactory(
-            Map<String, ManagedDataSourceFactory> configs,
-            Set<DataSourceListener> dataSourceListeners,
-            Injector injector) {
+            Map<String, ManagedDataSourceFactory> dataSourceFactories,
+            Set<DataSourceListener> listeners) {
 
-        this.configs = Objects.requireNonNull(configs);
+        this.dataSourceFactories = dataSourceFactories;
         this.dataSources = new ConcurrentHashMap<>();
-        this.dataSourceListeners = dataSourceListeners;
-        this.injector = injector;
-    }
-
-    /**
-     * @param configs
-     * @deprecated since 0.25
-     */
-    public LazyDataSourceFactory(Map<String, ? extends ManagedDataSourceFactory> configs) {
-        this.configs = Objects.requireNonNull(configs);
-        this.dataSources = new ConcurrentHashMap<>();
+        this.listeners = listeners;
     }
 
     public void shutdown() {
-        dataSources.values().forEach(d -> d.shutdown());
+        dataSources.values().forEach(ds -> ds.shutdown());
 
-        // stop the DB after the DataSources were shutdown...
         dataSources.forEach((name, dataSource) ->
-                dataSourceListeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl(), dataSource.getDataSource()))
+                listeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl(), dataSource.getDataSource()))
         );
     }
 
@@ -51,7 +38,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
      */
     @Override
     public Collection<String> allNames() {
-        return configs.keySet();
+        return dataSourceFactories.keySet();
     }
 
     @Override
@@ -61,18 +48,17 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     protected ManagedDataSource createManagedDataSource(String name) {
-        ManagedDataSourceFactory factory = configs.get(name);
+        ManagedDataSourceFactory factory = dataSourceFactories.get(name);
         if (factory == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }
 
-        ManagedDataSource managedDataSource = factory.createDataSource(injector);
-        String url = managedDataSource.getUrl();
+        String url = factory.getUrl();
 
-        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
-        DataSource dataSource = managedDataSource.start();
-        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
+        listeners.forEach(listener -> listener.beforeStartup(name, url));
+        ManagedDataSource dataSource = factory.start();
+        listeners.forEach(listener -> listener.afterStartup(name, url, dataSource.getDataSource()));
 
-        return managedDataSource;
+        return dataSource;
     }
 }

@@ -1,4 +1,4 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.managed;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,6 +11,7 @@ import com.google.inject.Injector;
 import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
 import io.bootique.jackson.JacksonService;
+import io.bootique.jdbc.jackson.ManagedDataSourceFactoryFactoryProxyDeserializer;
 import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigMetadataVisitor;
@@ -22,22 +23,28 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Default implementation of {@link ManagedDataSourceFactoryFactory} that tries to dynamically detect a single concrete
+ * factory available at runtime, and them load configuration via it.
+ *
+ * @since 0.25
+ */
 @BQConfig("Default JDBC DataSource configuration.")
-@JsonDeserialize(using = DefaultDataSourceFactoryDeserializer.class)
-public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory {
+@JsonDeserialize(using = ManagedDataSourceFactoryFactoryProxyDeserializer.class)
+public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFactoryFactory {
 
     private JsonNode jsonNode;
 
-    public DefaultManagedDataSourceFactory(JsonNode jsonNode) {
+    public ManagedDataSourceFactoryFactoryProxy(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
     }
 
     @Override
-    public ManagedDataSource createDataSource(Injector injector) {
-        return createDataSourceFactory(injector).createDataSource(injector);
+    public ManagedDataSourceFactory create(Injector injector) {
+        return createDataSourceFactory(injector).create(injector);
     }
 
-    private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {
+    private ManagedDataSourceFactoryFactory createDataSourceFactory(Injector injector) {
 
         ConfigObjectMetadata delegateFactoryType = delegateFactoryType(injector);
         JavaType jacksonType = TypeFactory.defaultInstance().constructType(delegateFactoryType.getType());
@@ -92,7 +99,7 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
             case 2:
 
                 for (ConfigMetadataNode n : subtypes) {
-                    if (!n.getType().equals(DefaultManagedDataSourceFactory.class)) {
+                    if (!n.getType().equals(ManagedDataSourceFactoryFactoryProxy.class)) {
                         return (ConfigObjectMetadata) n;
                     }
                 }

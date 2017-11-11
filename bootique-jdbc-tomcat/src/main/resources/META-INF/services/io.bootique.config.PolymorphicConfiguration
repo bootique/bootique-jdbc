@@ -1,1 +1,1 @@
-io.bootique.jdbc.tomcat.TomcatManagedDataSourceFactory
+io.bootique.jdbc.tomcat.TomcatManagedDataSourceFactoryFactory

@@ -14,5 +14,5 @@ import java.util.Collection;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultManagedDataSourceFactory.class)
 public interface ManagedDataSourceFactory extends PolymorphicConfiguration {
 
-    ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> dataSourceListeners);
+    ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> listeners);
 }

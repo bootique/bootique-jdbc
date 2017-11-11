@@ -1,0 +1,2 @@
+io.bootique.jdbc.ManagedDataSourceFactory
+io.bootique.jdbc.DefaultManagedDataSourceFactory

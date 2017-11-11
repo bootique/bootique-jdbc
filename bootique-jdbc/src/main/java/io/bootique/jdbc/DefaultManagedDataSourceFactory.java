@@ -8,81 +8,127 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import io.bootique.annotation.BQConfig;
-import io.bootique.config.PolymorphicConfiguration;
-import io.bootique.config.TypesFactory;
 import io.bootique.jackson.JacksonService;
+import io.bootique.meta.config.ConfigMapMetadata;
+import io.bootique.meta.config.ConfigMetadataNode;
+import io.bootique.meta.config.ConfigMetadataVisitor;
+import io.bootique.meta.config.ConfigObjectMetadata;
+import io.bootique.meta.module.ModuleMetadata;
+import io.bootique.meta.module.ModulesMetadata;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
 
 @BQConfig("Default JDBC DataSource configuration.")
 @JsonDeserialize(using = DefaultDataSourceFactoryDeserializer.class)
 public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory {
 
     private JsonNode jsonNode;
-    private ManagedDataSourceFactory factory;
 
     public DefaultManagedDataSourceFactory(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
     }
 
     @Override
-    public ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> dataSourceListeners) {
-        if (factory == null) {
-            factory = createDataSourceFactory(injector);
-        }
-
-        return factory.createDataSource(name, injector, dataSourceListeners);
+    public ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> listeners) {
+        return createDataSourceFactory(injector).createDataSource(name, injector, listeners);
     }
 
     private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {
-        ObjectMapper mapper = injector.getInstance(JacksonService.class).newObjectMapper();
 
-        TypeLiteral<TypesFactory<PolymorphicConfiguration>> typesFactoryTypeLiteral = new TypeLiteral<TypesFactory<PolymorphicConfiguration>>() {
-        };
-        Collection<Class<? extends PolymorphicConfiguration>> types = injector.getProvider(Key.get(typesFactoryTypeLiteral)).get().getTypes();
-        TypeFactory typeFactory = TypeFactory.defaultInstance();
+        ConfigObjectMetadata delegateFactoryType = delegateFactoryType(injector);
+        JavaType jacksonType = TypeFactory.defaultInstance().constructType(delegateFactoryType.getType());
+        ObjectMapper mapper = createObjectMapper(injector);
+        JsonNode nodeWithType = jsonNodeWithType(delegateFactoryType.getTypeLabel());
 
-        JavaType jacksonType = typeFactory.constructType(types.iterator().next());
-
-        if (filterTypes(types) == 1) {
-            try {
-                JsonNode copy = jsonNode.deepCopy();
-                ((ObjectNode) copy).put("class", jacksonType.getRawClass().getName());
-
-                factory = mapper.readValue(
-                        new TreeTraversingParser(copy, mapper), jacksonType);
-
-                return factory;
-            } catch (IOException e) {
-                throw new RuntimeException("Deserialization of JDBC data source configuration failed.", e);
-            }
+        try {
+            return mapper.readValue(new TreeTraversingParser(nodeWithType, mapper), jacksonType);
+        } catch (IOException e) {
+            throw new RuntimeException("Deserialization of JDBC DataSource configuration failed.", e);
         }
-
-        throw new IllegalArgumentException("Ambiguous connection pools! JDBC data source configuration doesn't explicitly define \"type\" of CP.");
     }
 
-    /**
-     * Filters polymorphic types excluding not {@link ManagedDataSourceFactory}.
-     * Address issue with bq-jdbc-metrics providing polymorphic config for reporters.
-     *
-     * @param types to be filtered
-     * @return number of available connection pools
-     */
-    private int filterTypes(Collection<Class<? extends PolymorphicConfiguration>> types) {
-        List<Class<? extends PolymorphicConfiguration>> dataSourceFactories = new ArrayList<>();
+    private JsonNode jsonNodeWithType(String type) {
+        JsonNode copy = jsonNode.deepCopy();
+        ((ObjectNode) copy).put("type", type);
+        return copy;
+    }
 
-        for (Class<? extends PolymorphicConfiguration> configuration : types) {
-            if (ManagedDataSourceFactory.class.isAssignableFrom(configuration)) {
-                dataSourceFactories.add(configuration);
+    private ObjectMapper createObjectMapper(Injector injector) {
+        return injector.getInstance(JacksonService.class).newObjectMapper();
+    }
+
+    private ConfigObjectMetadata delegateFactoryType(Injector injector) {
+        ConfigMetadataNode moduleConfig = moduleConfig(injector);
+
+        ConfigObjectMetadata delegateFactoryType = moduleConfig.accept(new ConfigMetadataVisitor<ConfigObjectMetadata>() {
+
+            @Override
+            public ConfigObjectMetadata visitMapMetadata(ConfigMapMetadata metadata) {
+                return delegateFactoryType((ConfigObjectMetadata) metadata.getValuesType());
+            }
+        });
+
+        return Objects.requireNonNull(delegateFactoryType, "Can't find 'jdbc' configuration root");
+    }
+
+    private ConfigObjectMetadata delegateFactoryType(ConfigObjectMetadata factoryConfig) {
+
+        Collection<ConfigMetadataNode> subtypes = factoryConfig.getSubConfigs();
+
+        // will contain this class plus one or more concrete ManagedDataSourceFactory implementors. We can guess the
+        // default only if there's a single implementor.
+
+        switch (subtypes.size()) {
+            case 0:
+                // 0 is unexpected, but still report it as no DataSource implementations....
+            case 1:
+                // 1 means this class is the only implementor
+                throw new IllegalStateException("No 'bootique-jdbc' implementations found. " +
+                        "You will need to add one as an application dependency.");
+            case 2:
+
+                for (ConfigMetadataNode n : subtypes) {
+                    if (!n.getType().equals(DefaultManagedDataSourceFactory.class)) {
+                        return (ConfigObjectMetadata) n;
+                    }
+                }
+                break;
+            default:
+                // > 2 means multiple implementors
+                throw new IllegalStateException("Multiple bootique-jdbc implementations found. Each JDBC DataSource " +
+                        "configuration must explicitly define \"type\" property.");
+        }
+
+        // should not get here under no circumstances ... if we did, likely bootique-jdbc code has diverged from the
+        // assumptions in this method...
+        throw new IllegalStateException("Internal error: Unexpected configuration structure in 'bootique-jdbc'");
+    }
+
+    private ConfigMetadataNode moduleConfig(Injector injector) {
+        ModuleMetadata jdbcModule = moduleMetadata(injector);
+        Collection<ConfigMetadataNode> configs = jdbcModule.getConfigs();
+
+        if (configs.size() != 1) {
+            throw new IllegalStateException("Expected a single root config in JdbcModule. Found: " + configs.size());
+        }
+
+        return configs.iterator().next();
+    }
+
+    // TODO: should this lookup be implemented in the metadata API?
+
+    private ModuleMetadata moduleMetadata(Injector injector) {
+        ModulesMetadata modulesMetadata = injector.getProvider(ModulesMetadata.class).get();
+
+        for (ModuleMetadata md : modulesMetadata.getModules()) {
+            if ("JdbcModule".equals(md.getName())) {
+                return md;
             }
         }
 
-        return dataSourceFactories.size();
+        throw new IllegalStateException("JdbcModule is not present in runtime metadata");
     }
 }

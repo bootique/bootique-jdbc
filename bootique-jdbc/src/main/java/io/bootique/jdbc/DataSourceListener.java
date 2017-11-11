@@ -4,8 +4,6 @@ import javax.sql.DataSource;
 
 /**
  * A listener attached to {@link DataSourceFactory} that is notified about DataSource start and stop events.
- * Implementors are usually managing an in-memory database and would perform the needed steps to prepare and cleanup
- * such DB.
  *
  * @since 0.25
  */

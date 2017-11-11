@@ -1,5 +1,6 @@
 jdbc:
   derby2:
+    type: "tomcat"
     url: "jdbc:derby:target/derby2;create=true"
     initialSize: 3
     username: sa

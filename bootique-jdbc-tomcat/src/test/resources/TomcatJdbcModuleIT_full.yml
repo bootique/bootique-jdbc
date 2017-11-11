@@ -1,6 +1,10 @@
 jdbc:
   derby1:
+    type: "tomcat"
     url: "jdbc:derby:target/derby1;create=true"
     driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
-    initialSize: 2
+    initialSize: 0
+    maxActive: 6
+    minIdle: 1
+    maxIdle: 3
     username: sa

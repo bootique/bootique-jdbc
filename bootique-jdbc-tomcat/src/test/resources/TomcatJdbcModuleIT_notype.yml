@@ -1,0 +1,5 @@
+jdbc:
+  derby3:
+    url: "jdbc:derby:target/derby3;create=true"
+    driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
+    username: sa

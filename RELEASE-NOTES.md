@@ -2,6 +2,7 @@
 
 * #48 Extract Tomcat DataSource integration into a separate module
 * #57 Replace modules overriding by listeners
+* #62 Auto detection of an available connection pool
 
 ## 0.24
 

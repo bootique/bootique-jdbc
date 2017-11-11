@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.ManagedDataSource;
 import io.bootique.jdbc.ManagedDataSourceFactory;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
@@ -13,9 +12,10 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import javax.management.ObjectName;
 import java.sql.Connection;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
@@ -108,21 +108,27 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
     }
 
     @Override
-    public ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> dataSourceListeners) {
+    public ManagedDataSource createDataSource(Injector injector) {
 
-        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, this.getUrl()));
         validate();
 
-        PoolConfiguration poolConfig = toConfiguration();
-        org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(poolConfig);
+        Supplier<javax.sql.DataSource> startup = () -> {
 
-        try {
-            dataSource.createPool();
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating DataSource", e);
-        }
+            PoolConfiguration poolConfig = toConfiguration();
+            org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(poolConfig);
 
-        return new ManagedDataSource(dataSource, dataSource.getUrl(), d -> dataSource.close());
+            try {
+                dataSource.createPool();
+            } catch (Exception e) {
+                throw new RuntimeException("Error creating DataSource", e);
+            }
+
+            return dataSource;
+        };
+
+        Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
+
+        return new ManagedDataSource(getUrl(), startup, shutdown);
     }
 
     protected void validate() {

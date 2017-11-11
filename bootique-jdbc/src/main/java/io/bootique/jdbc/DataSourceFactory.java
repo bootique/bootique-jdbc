@@ -1,10 +1,11 @@
 package io.bootique.jdbc;
 
+import javax.sql.DataSource;
 import java.util.Collection;
 
 public interface DataSourceFactory {
 
-    javax.sql.DataSource forName(String dataSourceName);
+    DataSource forName(String dataSourceName);
 
     /**
      * Returns the names of all configured DataSources. Each of these names can

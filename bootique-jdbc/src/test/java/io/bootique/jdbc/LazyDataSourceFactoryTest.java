@@ -20,10 +20,10 @@ public class LazyDataSourceFactoryTest {
     }
 
 	@Test(expected = IllegalStateException.class)
-	public void testCreateDataSource_NoConfig() {
+	public void testCreateManagedDataSource_NoConfig() {
 
 		LazyDataSourceFactory factory = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet(), mockInjector);
-		factory.createDataSource("nosuchname");
+		factory.createManagedDataSource("nosuchname");
 	}
 
 	@Test

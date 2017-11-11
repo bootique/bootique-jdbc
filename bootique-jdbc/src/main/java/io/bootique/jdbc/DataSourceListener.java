@@ -9,9 +9,12 @@ import javax.sql.DataSource;
  */
 public interface DataSourceListener {
 
-    void beforeStartup(String name, String jdbcUrl);
+    default void beforeStartup(String name, String jdbcUrl) {
+    }
 
-    void afterStartup(String name, String jdbcUrl, DataSource dataSource);
+    default void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+    }
 
-    void afterShutdown(String name, String jdbcUrl, DataSource dataSource);
+    default void afterShutdown(String name, String jdbcUrl, DataSource dataSource) {
+    }
 }

@@ -2,6 +2,7 @@ package io.bootique.jdbc;
 
 import com.google.inject.Injector;
 
+import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -54,22 +55,24 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     @Override
-    public javax.sql.DataSource forName(String dataSourceName) {
-        ManagedDataSource managedDataSource = dataSources.computeIfAbsent(dataSourceName, name -> createDataSource(name));
-
+    public DataSource forName(String dataSourceName) {
+        ManagedDataSource managedDataSource = dataSources.computeIfAbsent(dataSourceName, this::createManagedDataSource);
         return managedDataSource.getDataSource();
     }
 
-    public ManagedDataSource createDataSource(String name) {
+    protected ManagedDataSource createManagedDataSource(String name) {
         ManagedDataSourceFactory factory = configs.get(name);
-        if(factory == null) {
+        if (factory == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }
 
-        ManagedDataSource dataSource = factory.createDataSource(name, injector, dataSourceListeners);
-        String url = dataSource.getUrl();
-        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource.getDataSource()));
+        ManagedDataSource managedDataSource = factory.createDataSource(injector);
+        String url = managedDataSource.getUrl();
 
-        return dataSource;
+        dataSourceListeners.forEach(listener -> listener.beforeStartup(name, url));
+        DataSource dataSource = managedDataSource.start();
+        dataSourceListeners.forEach(listener -> listener.afterStartup(name, url, dataSource));
+
+        return managedDataSource;
     }
 }

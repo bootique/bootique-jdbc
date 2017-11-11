@@ -5,8 +5,6 @@ import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
 
-import java.util.Collection;
-
 /**
  * @since 0.25
  */
@@ -14,5 +12,5 @@ import java.util.Collection;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultManagedDataSourceFactory.class)
 public interface ManagedDataSourceFactory extends PolymorphicConfiguration {
 
-    ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> listeners);
+    ManagedDataSource createDataSource(Injector injector);
 }

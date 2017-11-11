@@ -33,8 +33,8 @@ public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory
     }
 
     @Override
-    public ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> listeners) {
-        return createDataSourceFactory(injector).createDataSource(name, injector, listeners);
+    public ManagedDataSource createDataSource(Injector injector) {
+        return createDataSourceFactory(injector).createDataSource(injector);
     }
 
     private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {

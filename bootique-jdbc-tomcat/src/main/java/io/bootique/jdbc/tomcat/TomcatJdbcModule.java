@@ -1,20 +1,18 @@
 package io.bootique.jdbc.tomcat;
 
 import com.google.inject.Binder;
+import com.google.inject.Module;
 import io.bootique.BQCoreModule;
-import io.bootique.ConfigModule;
 
 import java.util.logging.Level;
 
-public class TomcatJdbcModule extends ConfigModule {
-
-    public TomcatJdbcModule(String configPrefix) {
-        super(configPrefix);
-    }
+/**
+ * @since 0.25
+ */
+public class TomcatJdbcModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-        super.configure(binder);
 
         // suppress Tomcat PooledConnection logger. It logs some absolutely benign stuff as WARN
         // per https://github.com/bootique/bootique-jdbc/issues/25

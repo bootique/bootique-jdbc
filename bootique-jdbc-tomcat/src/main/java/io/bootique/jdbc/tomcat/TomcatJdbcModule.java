@@ -3,6 +3,7 @@ package io.bootique.jdbc.tomcat;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.jdbc.JdbcModule;
 
 import java.util.logging.Level;
 
@@ -22,6 +23,8 @@ public class TomcatJdbcModule implements Module {
         // TODO: submit a patch to Tomcat to reduce this log level down...
         BQCoreModule.extend(binder)
                 .setLogLevel(org.apache.tomcat.jdbc.pool.PooledConnection.class.getName(), Level.OFF);
+
+        JdbcModule.extend(binder).addFactory(TomcatManagedDataSourceFactoryFactory.class);
     }
 }
 

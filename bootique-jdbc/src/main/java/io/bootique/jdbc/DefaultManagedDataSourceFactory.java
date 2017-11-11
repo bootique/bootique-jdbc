@@ -22,12 +22,12 @@ import java.util.List;
 
 @BQConfig("Default JDBC DataSource configuration.")
 @JsonDeserialize(using = DefaultDataSourceFactoryDeserializer.class)
-public class DefaultDataSourceFactory implements CPDataSourceFactory {
+public class DefaultManagedDataSourceFactory implements ManagedDataSourceFactory {
 
     private JsonNode jsonNode;
-    private CPDataSourceFactory factory;
+    private ManagedDataSourceFactory factory;
 
-    public DefaultDataSourceFactory(JsonNode jsonNode) {
+    public DefaultManagedDataSourceFactory(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
     }
 
@@ -40,7 +40,7 @@ public class DefaultDataSourceFactory implements CPDataSourceFactory {
         return factory.createDataSource(name, injector, dataSourceListeners);
     }
 
-    private CPDataSourceFactory createDataSourceFactory(Injector injector) {
+    private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {
         ObjectMapper mapper = injector.getInstance(JacksonService.class).newObjectMapper();
 
         TypeLiteral<TypesFactory<PolymorphicConfiguration>> typesFactoryTypeLiteral = new TypeLiteral<TypesFactory<PolymorphicConfiguration>>() {
@@ -68,7 +68,7 @@ public class DefaultDataSourceFactory implements CPDataSourceFactory {
     }
 
     /**
-     * Filters polymorphic types excluding not {@link CPDataSourceFactory}.
+     * Filters polymorphic types excluding not {@link ManagedDataSourceFactory}.
      * Address issue with bq-jdbc-metrics providing polymorphic config for reporters.
      *
      * @param types to be filtered
@@ -78,7 +78,7 @@ public class DefaultDataSourceFactory implements CPDataSourceFactory {
         List<Class<? extends PolymorphicConfiguration>> dataSourceFactories = new ArrayList<>();
 
         for (Class<? extends PolymorphicConfiguration> configuration : types) {
-            if (CPDataSourceFactory.class.isAssignableFrom(configuration)) {
+            if (ManagedDataSourceFactory.class.isAssignableFrom(configuration)) {
                 dataSourceFactories.add(configuration);
             }
         }

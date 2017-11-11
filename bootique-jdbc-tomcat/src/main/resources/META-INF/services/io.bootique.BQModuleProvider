@@ -1,1 +1,1 @@
-io.bootique.jdbc.tomcat.TomcatModuleProvider
+io.bootique.jdbc.tomcat.TomcatJdbcModuleProvider

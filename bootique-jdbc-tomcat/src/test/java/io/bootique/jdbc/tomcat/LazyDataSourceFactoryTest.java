@@ -22,7 +22,7 @@ public class LazyDataSourceFactoryTest {
 		LazyDataSourceFactory f1 = new LazyDataSourceFactory(new HashMap<>());
 		assertEquals(0, f1.allNames().size());
 
-		LazyDataSourceFactory f2 = new LazyDataSourceFactory(Collections.singletonMap("a", new TomcatDataSourceFactory()));
+		LazyDataSourceFactory f2 = new LazyDataSourceFactory(Collections.singletonMap("a", new TomcatManagedDataSourceFactory()));
 		assertEquals(1, f2.allNames().size());
 		assertTrue(f2.allNames().contains("a"));
 	}

@@ -9,11 +9,11 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
-public class TomcatModuleProvider implements BQModuleProvider {
+public class TomcatJdbcModuleProvider implements BQModuleProvider {
 
     @Override
     public Module module() {
-        return new TomcatModule("jdbc");
+        return new TomcatJdbcModule("jdbc");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TomcatModuleProvider implements BQModuleProvider {
         // TODO: config prefix is hardcoded. Refactor away from ConfigModule, and make provider
         // generate config prefix, reusing it in metadata...
 
-        TypeRef<Map<String, TomcatDataSourceFactory>> type = new TypeRef<Map<String, TomcatDataSourceFactory>>() {
+        TypeRef<Map<String, TomcatManagedDataSourceFactory>> type = new TypeRef<Map<String, TomcatManagedDataSourceFactory>>() {
         };
         return Collections.singletonMap("jdbc", type.getType());
     }

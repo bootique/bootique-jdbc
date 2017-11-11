@@ -10,9 +10,9 @@ import java.util.Collection;
 /**
  * @since 0.25
  */
-@BQConfig
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class", defaultImpl = DefaultDataSourceFactory.class)
-public interface CPDataSourceFactory extends PolymorphicConfiguration {
+@BQConfig("JDBC DataSource configuration.")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class", defaultImpl = DefaultManagedDataSourceFactory.class)
+public interface ManagedDataSourceFactory extends PolymorphicConfiguration {
 
     ManagedDataSource createDataSource(String name, Injector injector, Collection<DataSourceListener> dataSourceListeners);
 }

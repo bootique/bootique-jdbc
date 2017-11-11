@@ -3,7 +3,6 @@ package io.bootique.jdbc;
 import com.google.inject.Injector;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -12,13 +11,16 @@ import java.util.concurrent.ConcurrentMap;
 
 public class LazyDataSourceFactory implements DataSourceFactory {
 
-    private Map<String, ? extends CPDataSourceFactory> configs;
+    private Map<String, ? extends ManagedDataSourceFactory> configs;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
-    private Collection<DataSourceListener> dataSourceListeners = Collections.emptyList();
+    private Collection<DataSourceListener> dataSourceListeners;
     private Injector injector;
 
-    public LazyDataSourceFactory(Map<String, CPDataSourceFactory> configs, Set<DataSourceListener> dataSourceListeners,
-                                 Injector injector) {
+    public LazyDataSourceFactory(
+            Map<String, ManagedDataSourceFactory> configs,
+            Set<DataSourceListener> dataSourceListeners,
+            Injector injector) {
+
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
         this.dataSourceListeners = dataSourceListeners;
@@ -29,7 +31,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
      * @param configs
      * @deprecated since 0.25
      */
-    public LazyDataSourceFactory(Map<String, ? extends CPDataSourceFactory> configs) {
+    public LazyDataSourceFactory(Map<String, ? extends ManagedDataSourceFactory> configs) {
         this.configs = Objects.requireNonNull(configs);
         this.dataSources = new ConcurrentHashMap<>();
     }
@@ -59,7 +61,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     public ManagedDataSource createDataSource(String name) {
-        CPDataSourceFactory factory = configs.computeIfAbsent(name, n -> {
+        ManagedDataSourceFactory factory = configs.computeIfAbsent(name, n -> {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         });
 

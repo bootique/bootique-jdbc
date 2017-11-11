@@ -7,16 +7,16 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 
-public class DefaultDataSourceFactoryDeserializer extends StdDeserializer<DefaultDataSourceFactory> {
+public class DefaultDataSourceFactoryDeserializer extends StdDeserializer<DefaultManagedDataSourceFactory> {
 
     protected DefaultDataSourceFactoryDeserializer() {
-        super(DefaultDataSourceFactory.class);
+        super(DefaultManagedDataSourceFactory.class);
     }
 
     @Override
-    public DefaultDataSourceFactory deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public DefaultManagedDataSourceFactory deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.readValueAsTree();
 
-        return new DefaultDataSourceFactory(node);
+        return new DefaultManagedDataSourceFactory(node);
     }
 }

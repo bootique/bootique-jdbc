@@ -6,9 +6,9 @@ import io.bootique.ConfigModule;
 
 import java.util.logging.Level;
 
-public class TomcatModule extends ConfigModule {
+public class TomcatJdbcModule extends ConfigModule {
 
-    public TomcatModule(String configPrefix) {
+    public TomcatJdbcModule(String configPrefix) {
         super(configPrefix);
     }
 

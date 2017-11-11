@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class TomcatModuleIT {
+public class TomcatJdbcModuleIT {
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();
 

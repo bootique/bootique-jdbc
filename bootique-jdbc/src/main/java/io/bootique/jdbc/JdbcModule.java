@@ -22,11 +22,6 @@ public class JdbcModule extends ConfigModule {
         super(configPrefix);
     }
 
-    @Override
-    public void configure(Binder binder) {
-        JdbcModule.extend(binder).initAllExtensions();
-    }
-
     /**
      * @param binder Guice DI binder.
      * @return an instance of extender.
@@ -36,17 +31,30 @@ public class JdbcModule extends ConfigModule {
         return new JdbcModuleExtender(binder);
     }
 
-    @Singleton
-    @Provides
-    public DataSourceFactory createDataSource(ConfigurationFactory configFactory, BootLogger bootLogger,
-                                              ShutdownManager shutdownManager, Set<DataSourceListener> listeners,
-                                              Injector injector) {
-        Map<String, CPDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, CPDataSourceFactory>>() {
-                }, configPrefix);
-
-        // TODO: figure out how to map LazyDataSourceFactoryFactory to config directly, bypassing configs map
-        return new LazyDataSourceFactoryFactory(configs).create(shutdownManager, bootLogger, listeners, injector);
+    @Override
+    public void configure(Binder binder) {
+        JdbcModule.extend(binder).initAllExtensions();
     }
 
+    @Singleton
+    @Provides
+    public DataSourceFactory createDataSource(
+            ConfigurationFactory configFactory,
+            BootLogger bootLogger,
+            ShutdownManager shutdownManager,
+            Set<DataSourceListener> listeners,
+            Injector injector) {
+
+        Map<String, ManagedDataSourceFactory> configs = configFactory
+                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
+                }, configPrefix);
+
+        LazyDataSourceFactory factory = new LazyDataSourceFactory(configs, listeners, injector);
+        shutdownManager.addShutdownHook(() -> {
+            bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
+            factory.shutdown();
+        });
+
+        return factory;
+    }
 }

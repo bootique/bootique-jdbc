@@ -18,13 +18,13 @@ public class LazyDataSourceFactoryIT {
     private static final String URL = "jdbc:derby:target/testdb;create=true";
     private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
-    private Map<String, TomcatDataSourceFactory> configs;
-    private TomcatDataSourceFactory derbyConfig;
+    private Map<String, TomcatManagedDataSourceFactory> configs;
+    private TomcatManagedDataSourceFactory derbyConfig;
 
     @Before
     public void before() {
 
-        this.derbyConfig = new TomcatDataSourceFactory();
+        this.derbyConfig = new TomcatManagedDataSourceFactory();
         derbyConfig.setUrl(URL);
         derbyConfig.setInitialSize(2);
         derbyConfig.setDriverClassName(DRIVER);

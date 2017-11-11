@@ -12,23 +12,25 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class JdbcModuleIT {
+public class DataSourceFactoryIT {
 
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testPartialConfigsExcluded() {
+    public void testAllNames_PartialConfigsExcluded() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml").autoLoadModules().createRuntime();
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
+
+        // TODO: "partial*" should not be in this list
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "partialds3")), names);
     }
 
     @Test
-    public void testPartialConfigsExcluded_Vars() {
+    public void testAllNames_PartialConfigsExcluded_Vars() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:dummy-2ds.yml")
                 .autoLoadModules()
@@ -42,6 +44,8 @@ public class JdbcModuleIT {
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
+
+        // TODO: "partial*" should not be in this list
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "PARTIAL", "FULLDSVARS")), names);
     }
 }

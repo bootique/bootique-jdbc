@@ -3,7 +3,7 @@ package io.bootique.jdbc.tomcat;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.jdbc.CPDataSourceFactory;
+import io.bootique.jdbc.ManagedDataSourceFactory;
 import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.ManagedDataSource;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
@@ -21,7 +21,7 @@ import java.util.Properties;
  * @since 0.13
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
-public class TomcatDataSourceFactory implements CPDataSourceFactory {
+public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory {
 
     private int abandonWhenPercentageFull;
     private boolean alternateUsernameAllowed;
@@ -69,7 +69,7 @@ public class TomcatDataSourceFactory implements CPDataSourceFactory {
     private String validatorClassName;
     private long validationInterval;
 
-    public TomcatDataSourceFactory() {
+    public TomcatManagedDataSourceFactory() {
         // defaults are copied from Tomcat PoolProperties.
         this.abandonWhenPercentageFull = 0;
         this.alternateUsernameAllowed = false;

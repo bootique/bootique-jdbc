@@ -3,14 +3,14 @@ package io.bootique.jdbc.tomcat;
 import io.bootique.test.junit.BQModuleProviderChecker;
 import org.junit.Test;
 
-public class TomcatModuleProviderIT {
+public class TomcatJdbcModuleProviderIT {
     @Test
     public void testPresentInJar() {
-        BQModuleProviderChecker.testPresentInJar(TomcatModuleProvider.class);
+        BQModuleProviderChecker.testPresentInJar(TomcatJdbcModuleProvider.class);
     }
 
     @Test
     public void testMetadata() {
-        BQModuleProviderChecker.testMetadata(TomcatModuleProvider.class);
+        BQModuleProviderChecker.testMetadata(TomcatJdbcModuleProvider.class);
     }
 }

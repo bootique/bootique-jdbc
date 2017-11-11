@@ -1,0 +1,5 @@
+jdbc:
+  derby2:
+    url: "jdbc:derby:target/derby2;create=true"
+    initialSize: 3
+    username: sa

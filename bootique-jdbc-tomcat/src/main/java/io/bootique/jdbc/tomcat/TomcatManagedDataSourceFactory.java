@@ -1,11 +1,12 @@
 package io.bootique.jdbc.tomcat;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.jdbc.ManagedDataSourceFactory;
 import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.ManagedDataSource;
+import io.bootique.jdbc.ManagedDataSourceFactory;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -18,9 +19,10 @@ import java.util.Properties;
 
 /**
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
- * @since 0.13
+ * @since 0.25
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
+@JsonTypeName("tomcat")
 public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory {
 
     private int abandonWhenPercentageFull;
@@ -347,13 +349,13 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
         this.validationInterval = validationInterval;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     @BQConfigProperty
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
     }
 
     // a clone of org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)

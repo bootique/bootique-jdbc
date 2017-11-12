@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
 @JsonTypeName("tomcat")
-public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceFactoryFactory {
+public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory {
 
     private int abandonWhenPercentageFull;
     private boolean alternateUsernameAllowed;
@@ -72,7 +72,7 @@ public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceF
     private String validatorClassName;
     private long validationInterval;
 
-    public TomcatManagedDataSourceFactoryFactory() {
+    public TomcatManagedDataSourceFactory() {
         // defaults are copied from Tomcat PoolProperties.
         this.abandonWhenPercentageFull = 0;
         this.alternateUsernameAllowed = false;
@@ -109,7 +109,7 @@ public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceF
     }
 
     @Override
-    public Optional<ManagedDataSourceFactory> create(Injector injector) {
+    public Optional<ManagedDataSourceSupplier> create(Injector injector) {
 
         // TODO: Optional is returned to skip configs that were created due to stray BQ_ variables.
         // Once we stop supporting vars based on naming conventions, we can replace Optional<T> with just T
@@ -134,7 +134,7 @@ public class TomcatManagedDataSourceFactoryFactory implements ManagedDataSourceF
 
         Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
 
-        return Optional.of(new ManagedDataSourceFactory(getUrl(), startup, shutdown));
+        return Optional.of(new ManagedDataSourceSupplier(getUrl(), startup, shutdown));
     }
 
     protected void validate() {

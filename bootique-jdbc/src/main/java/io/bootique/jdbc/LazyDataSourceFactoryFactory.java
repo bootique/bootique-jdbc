@@ -1,8 +1,8 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Injector;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,9 +17,9 @@ import java.util.Set;
  */
 class LazyDataSourceFactoryFactory {
 
-    private Map<String, ManagedDataSourceFactoryFactory> configs;
+    private Map<String, ManagedDataSourceFactory> configs;
 
-    public LazyDataSourceFactoryFactory(Map<String, ManagedDataSourceFactoryFactory> configs) {
+    public LazyDataSourceFactoryFactory(Map<String, ManagedDataSourceFactory> configs) {
         this.configs = Objects.requireNonNull(configs);
     }
 
@@ -29,7 +29,7 @@ class LazyDataSourceFactoryFactory {
             return new LazyDataSourceFactory(Collections.emptyMap(), listeners);
         }
 
-        Map<String, ManagedDataSourceFactory> factories = new HashMap<>();
+        Map<String, ManagedDataSourceSupplier> factories = new HashMap<>();
         configs.forEach((n, ff) -> ff.create(injector).ifPresent(f -> factories.put(n, f)));
         return new LazyDataSourceFactory(factories, listeners);
     }

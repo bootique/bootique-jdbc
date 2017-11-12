@@ -6,7 +6,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
@@ -46,8 +46,8 @@ public class JdbcModule extends ConfigModule {
             Set<DataSourceListener> listeners,
             Injector injector) {
 
-        Map<String, ManagedDataSourceFactoryFactory> configs = configFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactoryFactory>>() {
+        Map<String, ManagedDataSourceFactory> configs = configFactory
+                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
                 }, configPrefix);
 
         LazyDataSourceFactory factory = new LazyDataSourceFactoryFactory(configs).create(injector, listeners);

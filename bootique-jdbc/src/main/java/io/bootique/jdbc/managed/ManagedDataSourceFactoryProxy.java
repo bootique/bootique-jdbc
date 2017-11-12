@@ -16,7 +16,7 @@ import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
 import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
-import io.bootique.jdbc.jackson.ManagedDataSourceFactoryFactoryProxyDeserializer;
+import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,29 +25,31 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Default implementation of {@link ManagedDataSourceFactoryFactory} that tries to dynamically detect a single concrete
- * factory available at runtime, and them load configuration via it.
+ * A default implementation of {@link ManagedDataSourceFactory} that is used when no explicit factory is specified for
+ * a given configuration. It looks for concrete factories in DI, and if there is one and only one such factory, uses it
+ * as a delegate for DataSource creation. If there are no such factories, or if there's more than one, an exception is
+ * thrown.
  *
  * @since 0.25
  */
 @BQConfig("Default JDBC DataSource configuration.")
-@JsonDeserialize(using = ManagedDataSourceFactoryFactoryProxyDeserializer.class)
-public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFactoryFactory {
+@JsonDeserialize(using = ManagedDataSourceFactoryProxyDeserializer.class)
+public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
 
     private JsonNode jsonNode;
 
-    public ManagedDataSourceFactoryFactoryProxy(JsonNode jsonNode) {
+    public ManagedDataSourceFactoryProxy(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
     }
 
     @Override
-    public Optional<ManagedDataSourceFactory> create(Injector injector) {
+    public Optional<ManagedDataSourceSupplier> create(Injector injector) {
         return createDataSourceFactory(injector).create(injector);
     }
 
-    private ManagedDataSourceFactoryFactory createDataSourceFactory(Injector injector) {
+    private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {
 
-        Class<? extends ManagedDataSourceFactoryFactory> factoryType = delegateFactoryType(injector);
+        Class<? extends ManagedDataSourceFactory> factoryType = delegateFactoryType(injector);
         JavaType jacksonType = TypeFactory.defaultInstance().constructType(factoryType);
         ObjectMapper mapper = createObjectMapper(injector);
         JsonNode nodeWithType = jsonNodeWithType(getTypeLabel(factoryType));
@@ -67,7 +69,7 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
         }
     }
 
-    private String getTypeLabel(Class<? extends ManagedDataSourceFactoryFactory> factoryType) {
+    private String getTypeLabel(Class<? extends ManagedDataSourceFactory> factoryType) {
 
         // TODO: see TODO in ConfigMetadataCompiler ... at least maybe create a public API for this in Bootique to
         // avoid parsing annotations inside the modules...
@@ -92,13 +94,13 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
         return injector.getInstance(JacksonService.class).newObjectMapper();
     }
 
-    private Class<? extends ManagedDataSourceFactoryFactory> delegateFactoryType(Injector injector) {
+    private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {
 
-        Key<Set<Class<? extends ManagedDataSourceFactoryFactory>>> setKey = Key
-                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactoryFactory>>>() {
+        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
+                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {
                 });
 
-        Set<Class<? extends ManagedDataSourceFactoryFactory>> set = injector
+        Set<Class<? extends ManagedDataSourceFactory>> set = injector
                 .getProvider(setKey)
                 .get();
 

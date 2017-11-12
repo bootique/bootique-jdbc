@@ -1,7 +1,7 @@
 package io.bootique.jdbc;
 
 import io.bootique.jdbc.managed.ManagedDataSource;
-import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -13,11 +13,11 @@ import java.util.concurrent.ConcurrentMap;
 public class LazyDataSourceFactory implements DataSourceFactory {
 
     private Collection<DataSourceListener> listeners;
-    private Map<String, ManagedDataSourceFactory> dataSourceFactories;
+    private Map<String, ManagedDataSourceSupplier> dataSourceFactories;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
 
     public LazyDataSourceFactory(
-            Map<String, ManagedDataSourceFactory> dataSourceFactories,
+            Map<String, ManagedDataSourceSupplier> dataSourceFactories,
             Set<DataSourceListener> listeners) {
 
         this.dataSourceFactories = dataSourceFactories;
@@ -48,7 +48,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     protected ManagedDataSource createManagedDataSource(String name) {
-        ManagedDataSourceFactory factory = dataSourceFactories.get(name);
+        ManagedDataSourceSupplier factory = dataSourceFactories.get(name);
         if (factory == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }

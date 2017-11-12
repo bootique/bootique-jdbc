@@ -1,36 +1,22 @@
 package io.bootique.jdbc.managed;
 
-import javax.sql.DataSource;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.inject.Injector;
+import io.bootique.annotation.BQConfig;
+import io.bootique.config.PolymorphicConfiguration;
+
+import java.util.Optional;
 
 /**
- * An implementation-specific factory of {@link ManagedDataSource}
+ * Configuration factory for specific DataSource implementations.
  *
  * @since 0.25
  */
-public class ManagedDataSourceFactory {
+@BQConfig("JDBC DataSource configuration.")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ManagedDataSourceFactoryProxy.class)
+public interface ManagedDataSourceFactory extends PolymorphicConfiguration {
 
-    private String url;
-    private Supplier<DataSource> startup;
-    private Consumer<DataSource> shutdown;
-
-    public ManagedDataSourceFactory(
-            String url,
-            Supplier<DataSource> startup,
-            Consumer<DataSource> shutdown) {
-
-        this.url = url;
-        this.startup = startup;
-        this.shutdown = shutdown;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public ManagedDataSource start() {
-        DataSource dataSource = startup.get();
-        return new ManagedDataSource(url, dataSource, shutdown);
-    }
+    // TODO: Optional is returned to skip configs that were created due to stray BQ_ variables.
+    // Once we stop supporting vars based on naming conventions, we can replace Optional<T> with just T
+    Optional<ManagedDataSourceSupplier> create(Injector injector);
 }

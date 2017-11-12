@@ -3,7 +3,7 @@ package io.bootique.jdbc;
 import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
-import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.type.TypeRef;
 
 import java.lang.reflect.Type;
@@ -29,7 +29,7 @@ public class  JdbcModuleProvider implements BQModuleProvider {
         // TODO: config prefix is hardcoded. Refactor away from ConfigModule, and make provider
         // generate config prefix, reusing it in metadata...
 
-        TypeRef<Map<String, ManagedDataSourceFactoryFactory>> type = new TypeRef<Map<String, ManagedDataSourceFactoryFactory>>() {
+        TypeRef<Map<String, ManagedDataSourceFactory>> type = new TypeRef<Map<String, ManagedDataSourceFactory>>() {
         };
         return Collections.singletonMap("jdbc", type.getType());
     }

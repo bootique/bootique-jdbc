@@ -5,19 +5,19 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.ModuleExtender;
-import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 
 /**
  * @since 0.25
  */
 public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
 
-    private static final Key<Class<? extends ManagedDataSourceFactoryFactory>> FACTORY_TYPE_KEY = Key
-            .get(new TypeLiteral<Class<? extends ManagedDataSourceFactoryFactory>>() {
+    private static final Key<Class<? extends ManagedDataSourceFactory>> FACTORY_TYPE_KEY = Key
+            .get(new TypeLiteral<Class<? extends ManagedDataSourceFactory>>() {
             });
 
     private Multibinder<DataSourceListener> listeners;
-    private Multibinder<Class<? extends ManagedDataSourceFactoryFactory>> factoryTypes;
+    private Multibinder<Class<? extends ManagedDataSourceFactory>> factoryTypes;
 
     public JdbcModuleExtender(Binder binder) {
         super(binder);
@@ -30,7 +30,7 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
         return this;
     }
 
-    public JdbcModuleExtender addFactoryType(Class<? extends ManagedDataSourceFactoryFactory> factoryType) {
+    public JdbcModuleExtender addFactoryType(Class<? extends ManagedDataSourceFactory> factoryType) {
         contributeFactoryTypes().addBinding().toInstance(factoryType);
         return this;
     }
@@ -49,7 +49,7 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
         return listeners != null ? listeners : (listeners = newSet(DataSourceListener.class));
     }
 
-    private Multibinder<Class<? extends ManagedDataSourceFactoryFactory>> contributeFactoryTypes() {
+    private Multibinder<Class<? extends ManagedDataSourceFactory>> contributeFactoryTypes() {
         return factoryTypes != null ? factoryTypes : (factoryTypes = newSet(FACTORY_TYPE_KEY));
     }
 }

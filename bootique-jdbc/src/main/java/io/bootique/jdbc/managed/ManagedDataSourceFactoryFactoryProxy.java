@@ -19,6 +19,8 @@ import io.bootique.jackson.JacksonService;
 import io.bootique.jdbc.jackson.ManagedDataSourceFactoryFactoryProxyDeserializer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -102,13 +104,17 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
 
         switch (factories.size()) {
             case 0:
-                throw new BootiqueException(1, "No concrete 'bootique-jdbc' implementations found. " +
+                throw new BootiqueException(1, "No concrete 'bootique-jdbc' implementation found. " +
                         "You will need to add one (such as 'bootique-jdbc-tomcat', etc.) as an application dependency.");
             case 1:
                 return factories.iterator().next();
             default:
+
+                List<String> labels = new ArrayList<>(factories.size());
+                factories.forEach(f -> labels.add(getTypeLabel(f)));
+
                 throw new BootiqueException(1, "Multiple bootique-jdbc implementations found. Each JDBC DataSource " +
-                        "configuration must explicitly define \"type\" property.");
+                        "configuration must explicitly define \"type\" property. Available types: " + labels);
         }
     }
 }

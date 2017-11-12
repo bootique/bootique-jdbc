@@ -55,14 +55,6 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
         ObjectMapper mapper = createObjectMapper(injector);
         JsonNode nodeWithType = jsonNodeWithType(getTypeLabel(factoryType));
 
-        // TODO: deprecated, should be removed once we stop supporting BQ_ vars...
-        // in other words this can be removed when a similar code is removed from JsonNodeConfigurationFactoryProvider
-        Environment environment = injector.getInstance(Environment.class);
-        if (!environment.frameworkVariables().isEmpty()) {
-            // switching to slower CI strategy for mapping properties...
-            mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        }
-
         try {
             return mapper.readValue(new TreeTraversingParser(nodeWithType, mapper), jacksonType);
         } catch (IOException e) {
@@ -92,7 +84,17 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     }
 
     private ObjectMapper createObjectMapper(Injector injector) {
-        return injector.getInstance(JacksonService.class).newObjectMapper();
+        ObjectMapper mapper = injector.getInstance(JacksonService.class).newObjectMapper();
+
+        // TODO: deprecated, should be removed once we stop supporting BQ_ vars...
+        // in other words this can be removed when a similar code is removed from JsonNodeConfigurationFactoryProvider
+        Environment environment = injector.getInstance(Environment.class);
+        if (!environment.frameworkVariables().isEmpty()) {
+            // switching to slower CI strategy for mapping properties...
+            mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        }
+
+        return mapper;
     }
 
     private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {

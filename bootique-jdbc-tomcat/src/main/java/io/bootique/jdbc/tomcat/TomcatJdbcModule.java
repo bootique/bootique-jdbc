@@ -24,7 +24,7 @@ public class TomcatJdbcModule implements Module {
         BQCoreModule.extend(binder)
                 .setLogLevel(org.apache.tomcat.jdbc.pool.PooledConnection.class.getName(), Level.OFF);
 
-        JdbcModule.extend(binder).addFactory(TomcatManagedDataSourceFactoryFactory.class);
+        JdbcModule.extend(binder).addFactoryType(TomcatManagedDataSourceFactoryFactory.class);
     }
 }
 

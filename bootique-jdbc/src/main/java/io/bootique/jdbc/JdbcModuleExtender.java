@@ -1,6 +1,8 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Binder;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.ModuleExtender;
 import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
@@ -10,8 +12,12 @@ import io.bootique.jdbc.managed.ManagedDataSourceFactoryFactory;
  */
 public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
 
+    private static final Key<Class<? extends ManagedDataSourceFactoryFactory>> FACTORY_TYPE_KEY = Key
+            .get(new TypeLiteral<Class<? extends ManagedDataSourceFactoryFactory>>() {
+            });
+
     private Multibinder<DataSourceListener> listeners;
-    private Multibinder<ManagedDataSourceFactoryFactory> factories;
+    private Multibinder<Class<? extends ManagedDataSourceFactoryFactory>> factoryTypes;
 
     public JdbcModuleExtender(Binder binder) {
         super(binder);
@@ -20,17 +26,12 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
     @Override
     public JdbcModuleExtender initAllExtensions() {
         contributeListeners();
-        contributeFactories();
+        contributeFactoryTypes();
         return this;
     }
 
-    public JdbcModuleExtender addFactory(ManagedDataSourceFactoryFactory factory) {
-        contributeFactories().addBinding().toInstance(factory);
-        return this;
-    }
-
-    public JdbcModuleExtender addFactory(Class<? extends ManagedDataSourceFactoryFactory> factoryType) {
-        contributeFactories().addBinding().to(factoryType);
+    public JdbcModuleExtender addFactoryType(Class<? extends ManagedDataSourceFactoryFactory> factoryType) {
+        contributeFactoryTypes().addBinding().toInstance(factoryType);
         return this;
     }
 
@@ -48,7 +49,7 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
         return listeners != null ? listeners : (listeners = newSet(DataSourceListener.class));
     }
 
-    private Multibinder<ManagedDataSourceFactoryFactory> contributeFactories() {
-        return factories != null ? factories : (factories = newSet(ManagedDataSourceFactoryFactory.class));
+    private Multibinder<Class<? extends ManagedDataSourceFactoryFactory>> contributeFactoryTypes() {
+        return factoryTypes != null ? factoryTypes : (factoryTypes = newSet(FACTORY_TYPE_KEY));
     }
 }

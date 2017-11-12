@@ -47,10 +47,10 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
 
     private ManagedDataSourceFactoryFactory createDataSourceFactory(Injector injector) {
 
-        ManagedDataSourceFactoryFactory delegateFactory = delegateFactory(injector);
-        JavaType jacksonType = TypeFactory.defaultInstance().constructType(delegateFactory.getClass());
+        Class<? extends ManagedDataSourceFactoryFactory> factoryType = delegateFactoryType(injector);
+        JavaType jacksonType = TypeFactory.defaultInstance().constructType(factoryType);
         ObjectMapper mapper = createObjectMapper(injector);
-        JsonNode nodeWithType = jsonNodeWithType(getTypeLabel(delegateFactory));
+        JsonNode nodeWithType = jsonNodeWithType(getTypeLabel(factoryType));
 
         // TODO: deprecated, should be removed once we stop supporting BQ_ vars...
         // in other words this can be removed when a similar code is removed from JsonNodeConfigurationFactoryProvider
@@ -67,15 +67,15 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
         }
     }
 
-    private String getTypeLabel(ManagedDataSourceFactoryFactory delegateFactory) {
+    private String getTypeLabel(Class<? extends ManagedDataSourceFactoryFactory> factoryType) {
 
         // TODO: see TODO in ConfigMetadataCompiler ... at least maybe create a public API for this in Bootique to
         // avoid parsing annotations inside the modules...
-        JsonTypeName typeName = delegateFactory.getClass().getAnnotation(JsonTypeName.class);
+        JsonTypeName typeName = factoryType.getAnnotation(JsonTypeName.class);
 
         if (typeName == null) {
             throw new BootiqueException(1, "Invalid ManagedDataSourceFactoryFactory:  "
-                    + delegateFactory.getClass().getName()
+                    + factoryType.getName()
                     + ". Not annotated with @JsonTypeName.");
         }
 
@@ -92,26 +92,29 @@ public class ManagedDataSourceFactoryFactoryProxy implements ManagedDataSourceFa
         return injector.getInstance(JacksonService.class).newObjectMapper();
     }
 
-    private ManagedDataSourceFactoryFactory delegateFactory(Injector injector) {
+    private Class<? extends ManagedDataSourceFactoryFactory> delegateFactoryType(Injector injector) {
 
-        Set<ManagedDataSourceFactoryFactory> factories = injector
-                .getProvider(Key.get(new TypeLiteral<Set<ManagedDataSourceFactoryFactory>>() {
-                }))
+        Key<Set<Class<? extends ManagedDataSourceFactoryFactory>>> setKey = Key
+                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactoryFactory>>>() {
+                });
+
+        Set<Class<? extends ManagedDataSourceFactoryFactory>> set = injector
+                .getProvider(setKey)
                 .get();
 
         // will contain this class plus one or more concrete ManagedDataSourceFactory implementors. We can guess the
         // default only if there's a single implementor.
 
-        switch (factories.size()) {
+        switch (set.size()) {
             case 0:
                 throw new BootiqueException(1, "No concrete 'bootique-jdbc' implementation found. " +
                         "You will need to add one (such as 'bootique-jdbc-tomcat', etc.) as an application dependency.");
             case 1:
-                return factories.iterator().next();
+                return set.iterator().next();
             default:
 
-                List<String> labels = new ArrayList<>(factories.size());
-                factories.forEach(f -> labels.add(getTypeLabel(f)));
+                List<String> labels = new ArrayList<>(set.size());
+                set.forEach(f -> labels.add(getTypeLabel(f)));
 
                 throw new BootiqueException(1, "Multiple bootique-jdbc implementations found. Each JDBC DataSource " +
                         "configuration must explicitly define \"type\" property. Available types: " + labels);

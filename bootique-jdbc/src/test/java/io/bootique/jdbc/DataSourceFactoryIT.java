@@ -12,9 +12,15 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -68,6 +74,34 @@ public class DataSourceFactoryIT {
         }
     }
 
+    @Test
+    public void testForName_ListenerLifecycle() {
+
+        TestListener listener = new TestListener();
+
+        BQRuntime runtime = testFactory.app("-c", "classpath:DataSourceFactoryIT_2ds.yml")
+                .autoLoadModules()
+                .module(b -> JdbcModule
+                        .extend(b)
+                        .addFactoryType(Factory1.class)
+                        .addDataSourceListener(listener))
+                .createRuntime();
+
+
+        listener.assertEmpty();
+        DataSource ds1 = runtime.getInstance(DataSourceFactory.class).forName("ds1");
+        listener.assertDSStartup("jdbc:dummy1", ds1, 1);
+
+        DataSource ds2 = runtime.getInstance(DataSourceFactory.class).forName("ds2");
+        listener.assertDSStartup("jdbc:dummy2", ds2, 2);
+
+        runtime.getInstance(DataSourceFactory.class).forName("ds2");
+        listener.assertDSStartup("jdbc:dummy2", ds2, 2);
+
+        runtime.shutdown();
+        listener.assertShutdown();
+    }
+
     @JsonTypeName("f1")
     public static class Factory1 implements ManagedDataSourceFactory {
 
@@ -103,6 +137,47 @@ public class DataSourceFactoryIT {
                     () -> mock(DataSource.class),
                     ds -> {
                     }));
+        }
+    }
+
+    private static class TestListener implements DataSourceListener {
+
+        List<String> beforeStartup = new ArrayList<>();
+        Map<String, DataSource> afterStartup = new HashMap<>();
+        Map<String, DataSource> afterShutdown = new HashMap<>();
+
+        void assertEmpty() {
+            assertTrue(beforeStartup.isEmpty());
+            assertTrue(afterStartup.isEmpty());
+            assertTrue(afterShutdown.isEmpty());
+        }
+
+        void assertDSStartup(String url, DataSource dataSource, int totalDataSources) {
+            assertEquals(totalDataSources, beforeStartup.size());
+            assertEquals(totalDataSources, afterStartup.size());
+            assertTrue(beforeStartup.contains(url));
+            assertSame(dataSource, afterStartup.get(url));
+            assertTrue(afterShutdown.isEmpty());
+        }
+
+        void assertShutdown() {
+            assertEquals(afterStartup.size(), afterShutdown.size());
+            assertEquals(afterStartup, afterShutdown);
+        }
+
+        @Override
+        public void beforeStartup(String name, String jdbcUrl) {
+            beforeStartup.add(jdbcUrl);
+        }
+
+        @Override
+        public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
+            afterStartup.put(jdbcUrl, dataSource);
+        }
+
+        @Override
+        public void afterShutdown(String name, String jdbcUrl, DataSource dataSource) {
+            afterShutdown.put(jdbcUrl, dataSource);
         }
     }
 }

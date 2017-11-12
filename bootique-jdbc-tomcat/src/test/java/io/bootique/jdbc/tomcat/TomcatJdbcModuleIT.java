@@ -76,8 +76,6 @@ public class TomcatJdbcModuleIT {
         assertEquals("jdbc:derby:target/derby3;create=true", tomcatDS.getUrl());
     }
 
-    // this test really belongs to the parent abstract module, but since we can't test parent without a concrete
-    // implementation, it is moved here
     @Test
     public void testAllNames_PartialConfigsExcluded() {
 
@@ -92,8 +90,6 @@ public class TomcatJdbcModuleIT {
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
     }
 
-    // this test really belongs to the parent abstract module, but since we can't test parent without a concrete
-    // implementation, it is moved here
     @Test
     @Deprecated
     public void testAllNames_PartialConfigsExcluded_Vars() {
@@ -114,5 +110,4 @@ public class TomcatJdbcModuleIT {
         // TODO: "partial*" should not be in this list
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
     }
-
 }

@@ -1,0 +1,5 @@
+jdbc:
+  ds1:
+    url: jdbc:dummy1
+  ds2:
+    url: jdbc:dummy2

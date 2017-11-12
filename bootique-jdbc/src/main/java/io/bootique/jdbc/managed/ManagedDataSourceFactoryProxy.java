@@ -119,8 +119,8 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
                 List<String> labels = new ArrayList<>(set.size());
                 set.forEach(f -> labels.add(getTypeLabel(f)));
 
-                throw new BootiqueException(1, "Multiple bootique-jdbc implementations found. Each JDBC DataSource " +
-                        "configuration must explicitly define \"type\" property. Available types: " + labels);
+                throw new BootiqueException(1, "More than one 'bootique-jdbc' implementation is found. There's no single default. " +
+                        "As a result each DataSource configuration must provide a 'type' property. Valid 'type' values: " + labels);
         }
     }
 }

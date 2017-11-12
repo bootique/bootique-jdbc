@@ -21,6 +21,10 @@ public class ManagedDataSourceFactoryProxyDeserializer extends StdDeserializer<M
 
     @Override
     public ManagedDataSourceFactoryProxy deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+
+        // TODO: how do we pass a "type" value down to ManagedDataSourceFactoryProxy? It is stripped from JsonNode by
+        // Jackson, so we can't distinguish missing "type" from invalid.
+
         JsonNode node = p.readValueAsTree();
 
         return new ManagedDataSourceFactoryProxy(node);

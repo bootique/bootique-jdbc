@@ -1,4 +1,3 @@
 jdbc:
   ds1:
     url: jdbc:dummy
-    username: u1

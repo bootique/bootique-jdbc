@@ -32,6 +32,7 @@ import java.util.Set;
  *
  * @since 0.25
  */
+// TODO: this is a generic class and most parts of it can be used in other abstract proxies... pull up to the core bootique module.
 @BQConfig("Default JDBC DataSource configuration.")
 @JsonDeserialize(using = ManagedDataSourceFactoryProxyDeserializer.class)
 public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
@@ -76,7 +77,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
         JsonTypeName typeName = factoryType.getAnnotation(JsonTypeName.class);
 
         if (typeName == null) {
-            throw new BootiqueException(1, "Invalid ManagedDataSourceFactoryFactory:  "
+            throw new BootiqueException(1, "Invalid ManagedDataSourceFactory:  "
                     + factoryType.getName()
                     + ". Not annotated with @JsonTypeName.");
         }

@@ -76,20 +76,7 @@ public class TomcatJdbcModuleIT {
         assertEquals("jdbc:derby:target/derby3;create=true", tomcatDS.getUrl());
     }
 
-    @Test
-    public void testAllNames_PartialConfigsExcluded() {
-
-        BQRuntime runtime = testFactory.app("-c", "classpath:dummy-3ds.yml")
-                .autoLoadModules()
-                .createRuntime();
-        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
-
-        Set<String> names = new HashSet<>(factory.allNames());
-
-        // TODO: "partial*" should not be in this list
-        assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2")), names);
-    }
-
+    // TODO: this functionality will no longer be needed when BQ_ vars support is removed
     @Test
     @Deprecated
     public void testAllNames_PartialConfigsExcluded_Vars() {
@@ -106,8 +93,6 @@ public class TomcatJdbcModuleIT {
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
         Set<String> names = new HashSet<>(factory.allNames());
-
-        // TODO: "partial*" should not be in this list
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
     }
 }

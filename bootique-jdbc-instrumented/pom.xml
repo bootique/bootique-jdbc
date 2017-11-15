@@ -14,27 +14,21 @@
 	<name>bootique-jdbc-instrumented: Abstract DataSource module for Bootique with metrics</name>
 	<description>Provides abstract DataSource module with metrics</description>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.bootique.jdbc</groupId>
-				<artifactId>bootique-jdbc</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.bootique.metrics</groupId>
-				<artifactId>bootique-metrics</artifactId>
-				<version>${bootique-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.derby</groupId>
-				<artifactId>derby</artifactId>
-				<version>10.12.1.1</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
+
+		<!-- Compile dependencies -->
+		<dependency>
+			<groupId>io.bootique.jdbc</groupId>
+			<artifactId>bootique-jdbc</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.bootique.metrics</groupId>
+			<artifactId>bootique-metrics-healthchecks</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- Unit test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -50,18 +44,6 @@
 			<groupId>io.bootique</groupId>
 			<artifactId>bootique-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- Compile dependencies -->
-		<dependency>
-			<groupId>io.bootique.jdbc</groupId>
-			<artifactId>bootique-jdbc</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.bootique.metrics</groupId>
-			<artifactId>bootique-metrics</artifactId>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

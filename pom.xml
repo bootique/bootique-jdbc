@@ -55,6 +55,16 @@
                 <version>${bootique-version}</version>
             </dependency>
             <dependency>
+                <groupId>io.bootique.metrics</groupId>
+                <artifactId>bootique-metrics</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.metrics</groupId>
+                <artifactId>bootique-metrics-healthchecks</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique-test</artifactId>
                 <version>${bootique-version}</version>

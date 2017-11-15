@@ -6,13 +6,13 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheckGroup;
-import io.bootique.metrics.MetricsModule;
+import io.bootique.metrics.health.HealthCheckModule;
 
 public class InstrumentedJdbcModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-        MetricsModule.extend(binder).addHealthCheckGroup(DataSourceHealthCheckGroup.class);
+        HealthCheckModule.extend(binder).addHealthCheckGroup(DataSourceHealthCheckGroup.class);
     }
 
     @Singleton

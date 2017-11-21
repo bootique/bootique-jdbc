@@ -27,8 +27,16 @@ public class DataSourceHealthCheckGroup implements HealthCheckGroup {
         Map<String, HealthCheck> checks = new HashMap<>();
 
         // TODO: namespacing module healthchecks..
-        dataSourceFactory.allNames().forEach(n -> checks.put(n, new DataSourceHealthCheck(dataSourceFactory, n)));
+        dataSourceFactory.allNames().forEach(n -> {
+            String hcName = healthCheckName(n);
+            checks.put(hcName, new DataSourceHealthCheck(dataSourceFactory, hcName));
+        });
 
         return checks;
+    }
+
+    // generate stable qualified name for the DataSource healthcheck
+    private String healthCheckName(String dataSourceName) {
+        return "bq.jdbc." + dataSourceName + ".canConnect";
     }
 }

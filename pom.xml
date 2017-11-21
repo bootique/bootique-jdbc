@@ -29,8 +29,9 @@
         <module>bootique-jdbc-instrumented</module>
 		<module>bootique-jdbc-tomcat</module>
         <module>bootique-jdbc-tomcat-instrumented</module>
+        <module>bootique-jdbc-hikaricp</module>
         <module>bootique-jdbc-test</module>
-	</modules>
+    </modules>
 
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jdbc</developerConnection>

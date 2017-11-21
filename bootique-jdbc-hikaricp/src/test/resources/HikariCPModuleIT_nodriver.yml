@@ -1,0 +1,6 @@
+jdbc:
+  derby2:
+    type: "hikari"
+    jdbcUrl: "jdbc:derby:target/derby2;create=true"
+    minimumIdle: 1
+    username: sa

@@ -1,0 +1,7 @@
+jdbc:
+  derby3:
+    jdbcUrl: "jdbc:derby:target/derby3;create=true"
+    driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
+    maximumPoolSize: 3
+    minimumIdle: 1
+    username: sa

@@ -30,8 +30,8 @@ public class DataSourceHealthCheck implements HealthCheck {
         DataSource ds = dataSourceFactory.forName(dataSourceName);
         try (Connection c = ds.getConnection()) {
             return c.isValid(1)
-                    ? HealthCheckOutcome.healthy()
-                    : HealthCheckOutcome.unhealthy("Connection validation failed");
+                    ? HealthCheckOutcome.critical()
+                    : HealthCheckOutcome.critical("Connection validation failed");
         }
     }
 }

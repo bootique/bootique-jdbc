@@ -35,6 +35,6 @@ public class DataSourceHealthCheckGroup implements HealthCheckGroup {
 
     // generate stable qualified name for the DataSource healthcheck
     private String healthCheckName(String dataSourceName) {
-        return "bq.jdbc.canConnect." + dataSourceName;
+        return "bq.jdbc." + dataSourceName + ".canConnect";
     }
 }

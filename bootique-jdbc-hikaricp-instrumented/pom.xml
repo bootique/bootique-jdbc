@@ -2,13 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>bootique-jdbc-parent</artifactId>
-        <groupId>io.bootique.jdbc</groupId>
-        <version>0.25-SNAPSHOT</version>
-        <relativePath>../bootique-jdbc/pom.xml</relativePath>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.bootique.jdbc</groupId>
+        <artifactId>bootique-jdbc-parent</artifactId>
+        <version>0.25-SNAPSHOT</version>
+    </parent>
 
     <artifactId>bootique-jdbc-hikaricp-instrumented</artifactId>
     <packaging>jar</packaging>

@@ -10,10 +10,10 @@
         <version>0.25-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bootique-jdbc-hikari</artifactId>
+    <artifactId>bootique-jdbc-hikaricp</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-jdbc-hikari: Hikari JDBC connection pool integration with Bootique</name>
+    <name>bootique-jdbc-hikaricp: Hikari JDBC connection pool integration with Bootique</name>
     <description>Provides Hikari JDBC connection pool integration with Bootique</description>
 
     <properties>

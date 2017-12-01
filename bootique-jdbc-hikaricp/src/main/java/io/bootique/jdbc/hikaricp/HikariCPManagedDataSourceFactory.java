@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -39,8 +37,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private static final long IDLE_TIMEOUT = MINUTES.toMillis(10);
     private static final long MAX_LIFETIME = MINUTES.toMillis(30);
 
-    // Properties changeable at runtime through the HikariConfigMXBean
-    //
     private volatile long connectionTimeout;
     private volatile long validationTimeout;
     private volatile long idleTimeout;
@@ -50,9 +46,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private volatile int minIdle;
     private volatile String username;
     private volatile String password;
-
-    // Properties NOT changeable at runtime
-    //
     private long initializationFailTimeout;
     private String catalog;
     private String connectionInitSql;
@@ -69,10 +62,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private boolean isIsolateInternalQueries;
     private boolean isRegisterMbeans;
     private boolean isAllowPoolSuspension;
-    private DataSource dataSource;
     private Properties dataSourceProperties;
-    private ThreadFactory threadFactory;
-    private ScheduledExecutorService scheduledExecutor;
 
     public HikariCPManagedDataSourceFactory() {
 
@@ -86,11 +76,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         idleTimeout = IDLE_TIMEOUT;
         initializationFailTimeout = 1;
         isAutoCommit = true;
-
-        String systemProp = System.getProperty("hikaricp.configurationFile");
-        if (systemProp != null) {
-            loadProperties(systemProp);
-        }
     }
 
     public HikariCPManagedDataSourceFactory(Properties properties) {
@@ -208,11 +193,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @BQConfigProperty
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @BQConfigProperty
     public void setDataSourceClassName(String className) {
         this.dataSourceClassName = className;
     }
@@ -307,11 +287,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @BQConfigProperty
-    public void setScheduledExecutor(ScheduledExecutorService executor) {
-        this.scheduledExecutor = executor;
-    }
-
-    @BQConfigProperty
     public void setSchema(String schema) {
         this.schema = schema;
     }
@@ -319,11 +294,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     @BQConfigProperty
     public void setTransactionIsolation(String isolationLevel) {
         this.transactionIsolationName = isolationLevel;
-    }
-
-    @BQConfigProperty
-    public void setThreadFactory(ThreadFactory threadFactory) {
-        this.threadFactory = threadFactory;
     }
 
     private void loadProperties(String propertyFileName) {
@@ -375,10 +345,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         hikariConfig.setIsolateInternalQueries(isIsolateInternalQueries);
         hikariConfig.setRegisterMbeans(isRegisterMbeans);
         hikariConfig.setAllowPoolSuspension(isAllowPoolSuspension);
-        hikariConfig.setDataSource(dataSource);
         hikariConfig.setDataSourceProperties(dataSourceProperties);
-        hikariConfig.setThreadFactory(threadFactory);
-        hikariConfig.setScheduledExecutor(scheduledExecutor);
 
         return hikariConfig;
     }

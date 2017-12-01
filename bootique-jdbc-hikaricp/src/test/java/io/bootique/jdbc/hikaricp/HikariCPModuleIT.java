@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -94,4 +95,43 @@ public class HikariCPModuleIT {
         Set<String> names = new HashSet<>(factory.allNames());
         assertEquals(new HashSet<>(Arrays.asList("fullds1", "fullds2", "FULLDSVARS")), names);
     }
+
+    @Test
+    public void testDataSource_FullConfig() throws SQLException {
+        BQRuntime runtime = testFactory.app("-c", "classpath:hikaricp-full.yml")
+                .autoLoadModules()
+                .createRuntime();
+
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("ds");
+        assertNotNull(ds);
+        assertTrue(ds instanceof HikariDataSource);
+
+        HikariDataSource hikariDS = (HikariDataSource) ds;
+
+        assertEquals(250, hikariDS.getConnectionTimeout());
+        assertEquals(250, hikariDS.getValidationTimeout());
+        assertEquals(20000, hikariDS.getIdleTimeout());
+        assertEquals(20000, hikariDS.getLeakDetectionThreshold());
+        assertEquals(50000, hikariDS.getMaxLifetime());
+        assertEquals(3, hikariDS.getMaximumPoolSize());
+        assertEquals(1, hikariDS.getMinimumIdle());
+        assertEquals("x", hikariDS.getUsername());
+        assertEquals("x", hikariDS.getPassword());
+        assertEquals(100, hikariDS.getInitializationFailTimeout());
+        assertEquals("test-catalog", hikariDS.getCatalog());
+        assertEquals("org.apache.derby.jdbc.EmbeddedDataSource", hikariDS.getDataSourceClassName());
+        assertEquals("jdbc:derby:;", hikariDS.getJdbcUrl());
+        assertEquals("test-pool", hikariDS.getPoolName());
+        assertEquals("TRANSACTION_SERIALIZABLE", hikariDS.getTransactionIsolation());
+        assertTrue(hikariDS.isAutoCommit());
+        assertFalse(hikariDS.isReadOnly());
+        assertFalse(hikariDS.isIsolateInternalQueries());
+        assertFalse(hikariDS.isRegisterMbeans());
+        assertFalse(hikariDS.isAllowPoolSuspension());
+
+        try (Connection c = hikariDS.getConnection()) {
+            assertEquals("jdbc:derby:target/derby", c.getMetaData().getURL());
+        }
+    }
+
 }

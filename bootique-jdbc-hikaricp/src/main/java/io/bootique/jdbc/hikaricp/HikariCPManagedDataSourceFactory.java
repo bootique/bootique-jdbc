@@ -78,16 +78,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         isAutoCommit = true;
     }
 
-    public HikariCPManagedDataSourceFactory(Properties properties) {
-        this();
-        PropertyElf.setTargetFromProperties(this, properties);
-    }
-
-    public HikariCPManagedDataSourceFactory(String propertyFileName) {
-        this();
-        loadProperties(propertyFileName);
-    }
-
     @Override
     public Optional<ManagedDataSourceSupplier> create(Injector injector) {
         if (jdbcUrl == null) {

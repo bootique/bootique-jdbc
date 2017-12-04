@@ -1,0 +1,19 @@
+jdbc:
+  derby4:
+    type: "hikari"
+    dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
+    jdbcUrl: "jdbc:derby:;"
+    minimumIdle: 1
+    maximumPoolSize: 3
+    dataSourceProperties:
+      databaseName: "target/derby4"
+      createDatabase: "create"
+  derby5:
+    type: "hikari"
+    driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
+    jdbcUrl: "jdbc:derby:;"
+    minimumIdle: 1
+    maximumPoolSize: 3
+    dataSourceProperties:
+      databaseName: "target/derby5"
+      create: "true"

@@ -1,8 +1,31 @@
 jdbc:
-  derby1:
+  ds1:
     type: "hikari"
-    jdbcUrl: "jdbc:derby:target/derby1;create=true"
-    driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
-    minimumIdle: 1
+    connectionTimeout: 250
+    validationTimeout: 250
+    idleTimeout: 20000
+    leakDetectionThreshold: 20000
+    maxLifetime: 50000
     maximumPoolSize: 3
-    username: sa
+    minimumIdle: 1
+    username: x
+    password: x
+    initializationFailTimeout: 100
+    catalog: "test-catalog"
+    connectionInitSql: "VALUES 1"
+    connectionTestQuery: "VALUES 1"
+    dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
+    jdbcUrl: "jdbc:derby:;"
+    poolName: "test-pool"
+    transactionIsolation: "TRANSACTION_SERIALIZABLE"
+    autoCommit: true
+    readOnly: false
+    readOnly: false
+    isolateInternalQueries: false
+    registerMbeans: false
+    allowPoolSuspension: false
+    dataSourceProperties:
+      databaseName: "target/ds1"
+      createDatabase: "create"
+
+

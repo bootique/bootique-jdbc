@@ -25,15 +25,15 @@ public class HikariCPDerbyIT {
 
     @Test
     public void testDerbyDataSource() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:derby-ds1.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds1 = runtime.getInstance(DataSourceFactory.class).forName("derby1");
-        assertNotNull(ds1);
-        assertTrue(ds1 instanceof HikariDataSource);
+        DataSource ds4 = runtime.getInstance(DataSourceFactory.class).forName("derby4");
+        assertNotNull(ds4);
+        assertTrue(ds4 instanceof HikariDataSource);
 
-        HikariDataSource hikariDS = (HikariDataSource) ds1;
+        HikariDataSource hikariDS = (HikariDataSource) ds4;
 
         assertEquals("org.apache.derby.jdbc.EmbeddedDataSource", hikariDS.getDataSourceClassName());
 
@@ -42,21 +42,21 @@ public class HikariCPDerbyIT {
         assertTrue(pool.getUnwrappedDataSource().getClass().isAssignableFrom(EmbeddedDataSource.class));
 
         try (Connection c = hikariDS.getConnection()) {
-            assertEquals("jdbc:derby:target/derby1", c.getMetaData().getURL());
+            assertEquals("jdbc:derby:target/derby4", c.getMetaData().getURL());
         }
     }
 
     @Test
     public void testDerbyDriverDataSource() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:derby-ds2.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds2 = runtime.getInstance(DataSourceFactory.class).forName("derby2");
-        assertNotNull(ds2);
-        assertTrue(ds2 instanceof HikariDataSource);
+        DataSource ds5 = runtime.getInstance(DataSourceFactory.class).forName("derby5");
+        assertNotNull(ds5);
+        assertTrue(ds5 instanceof HikariDataSource);
 
-        HikariDataSource hikariDS = (HikariDataSource) ds2;
+        HikariDataSource hikariDS = (HikariDataSource) ds5;
 
         assertEquals("org.apache.derby.jdbc.EmbeddedDriver", hikariDS.getDriverClassName());
 
@@ -71,14 +71,14 @@ public class HikariCPDerbyIT {
 
     @Test
     public void testDerbyDataSource_ConnectionAttributes() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:derby-ds-attrs.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds3 = runtime.getInstance(DataSourceFactory.class).forName("derby3");
-        assertNotNull(ds3);
+        DataSource ds6 = runtime.getInstance(DataSourceFactory.class).forName("derby6");
+        assertNotNull(ds6);
 
-        HikariDataSource hikariDS = (HikariDataSource) ds3;
+        HikariDataSource hikariDS = (HikariDataSource) ds6;
 
         try (Connection c = hikariDS.getConnection()) {
             assertEquals("jdbc:derby:", c.getMetaData().getURL());
@@ -87,17 +87,17 @@ public class HikariCPDerbyIT {
 
     @Test
     public void testDerbyDriver_ConnectionAttributes() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:derby-ds-attrs.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds4 = runtime.getInstance(DataSourceFactory.class).forName("derby4");
-        assertNotNull(ds4);
+        DataSource ds7 = runtime.getInstance(DataSourceFactory.class).forName("derby7");
+        assertNotNull(ds7);
 
-        HikariDataSource hikariDS = (HikariDataSource) ds4;
+        HikariDataSource hikariDS = (HikariDataSource) ds7;
 
         try (Connection c = hikariDS.getConnection()) {
-            assertEquals("jdbc:derby:target/derby4", c.getMetaData().getURL());
+            assertEquals("jdbc:derby:target/derby7", c.getMetaData().getURL());
         }
     }
 }

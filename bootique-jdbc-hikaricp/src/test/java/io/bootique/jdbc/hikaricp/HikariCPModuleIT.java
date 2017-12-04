@@ -28,7 +28,7 @@ public class HikariCPModuleIT {
     @Test
     public void testDataSource() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_full.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_ds.yml")
                 .autoLoadModules()
                 .createRuntime();
 
@@ -98,11 +98,11 @@ public class HikariCPModuleIT {
 
     @Test
     public void testDataSource_FullConfig() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:hikaricp-full.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_full.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("ds");
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("ds1");
         assertNotNull(ds);
         assertTrue(ds instanceof HikariDataSource);
 
@@ -130,7 +130,7 @@ public class HikariCPModuleIT {
         assertFalse(hikariDS.isAllowPoolSuspension());
 
         try (Connection c = hikariDS.getConnection()) {
-            assertEquals("jdbc:derby:target/derby", c.getMetaData().getURL());
+            assertEquals("jdbc:derby:target/ds1", c.getMetaData().getURL());
         }
     }
 

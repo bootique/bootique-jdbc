@@ -5,5 +5,3 @@ jdbc:
     password: supersecret1
   fullds2:
     jdbcUrl: jdbc:dummy
-
-

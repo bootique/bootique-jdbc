@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.util.PropertyElf;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
@@ -13,10 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -284,21 +279,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     @BQConfigProperty
     public void setTransactionIsolation(String isolationLevel) {
         this.transactionIsolationName = isolationLevel;
-    }
-
-    private void loadProperties(String propertyFileName) {
-        final File propFile = new File(propertyFileName);
-        try (final InputStream is = propFile.isFile() ? new FileInputStream(propFile) : this.getClass().getResourceAsStream(propertyFileName)) {
-            if (is != null) {
-                Properties props = new Properties();
-                props.load(is);
-                PropertyElf.setTargetFromProperties(this, props);
-            } else {
-                throw new IllegalArgumentException("Cannot find property file: " + propertyFileName);
-            }
-        } catch (IOException io) {
-            throw new RuntimeException("Failed to read property file", io);
-        }
     }
 
     protected HikariConfig toConfiguration() {

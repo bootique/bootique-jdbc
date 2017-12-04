@@ -57,11 +57,11 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private String poolName;
     private String schema;
     private String transactionIsolationName;
-    private boolean isAutoCommit;
-    private boolean isReadOnly;
-    private boolean isIsolateInternalQueries;
-    private boolean isRegisterMbeans;
-    private boolean isAllowPoolSuspension;
+    private boolean autoCommit;
+    private boolean readOnly;
+    private boolean isolateInternalQueries;
+    private boolean registerMbeans;
+    private boolean allowPoolSuspension;
     private Properties dataSourceProperties;
 
     public HikariCPManagedDataSourceFactory() {
@@ -75,7 +75,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         validationTimeout = VALIDATION_TIMEOUT;
         idleTimeout = IDLE_TIMEOUT;
         initializationFailTimeout = 1;
-        isAutoCommit = true;
+        autoCommit = true;
     }
 
     @Override
@@ -242,13 +242,13 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @BQConfigProperty
-    public void setAutoCommit(boolean isAutoCommit) {
-        this.isAutoCommit = isAutoCommit;
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
     }
 
     @BQConfigProperty
-    public void setAllowPoolSuspension(boolean isAllowPoolSuspension) {
-        this.isAllowPoolSuspension = isAllowPoolSuspension;
+    public void setAllowPoolSuspension(boolean allowPoolSuspension) {
+        this.allowPoolSuspension = allowPoolSuspension;
     }
 
     @BQConfigProperty
@@ -258,17 +258,17 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     @BQConfigProperty
     public void setIsolateInternalQueries(boolean isolate) {
-        this.isIsolateInternalQueries = isolate;
+        this.isolateInternalQueries = isolate;
     }
 
     @BQConfigProperty
     public void setReadOnly(boolean readOnly) {
-        this.isReadOnly = readOnly;
+        this.readOnly = readOnly;
     }
 
     @BQConfigProperty
     public void setRegisterMbeans(boolean register) {
-        this.isRegisterMbeans = register;
+        this.registerMbeans = register;
     }
 
     @BQConfigProperty
@@ -330,11 +330,11 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         hikariConfig.setPoolName(poolName);
         hikariConfig.setSchema(schema);
         hikariConfig.setTransactionIsolation(transactionIsolationName);
-        hikariConfig.setAutoCommit(isAutoCommit);
-        hikariConfig.setReadOnly(isReadOnly);
-        hikariConfig.setIsolateInternalQueries(isIsolateInternalQueries);
-        hikariConfig.setRegisterMbeans(isRegisterMbeans);
-        hikariConfig.setAllowPoolSuspension(isAllowPoolSuspension);
+        hikariConfig.setAutoCommit(autoCommit);
+        hikariConfig.setReadOnly(readOnly);
+        hikariConfig.setIsolateInternalQueries(isolateInternalQueries);
+        hikariConfig.setRegisterMbeans(registerMbeans);
+        hikariConfig.setAllowPoolSuspension(allowPoolSuspension);
         hikariConfig.setDataSourceProperties(dataSourceProperties);
 
         return hikariConfig;

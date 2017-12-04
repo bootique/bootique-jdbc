@@ -84,9 +84,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
             validate();
 
             HikariConfig hikariConfig = toConfiguration();
-            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-
-            return dataSource;
+            return new HikariDataSource(hikariConfig);
         };
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
@@ -194,37 +192,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     @BQConfigProperty
     public void setDriverClassName(String driverClassName) {
-        Class<?> driverClass = null;
-        ClassLoader threadContextClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            if (threadContextClassLoader != null) {
-                try {
-                    driverClass = threadContextClassLoader.loadClass(driverClassName);
-                    LOGGER.debug("Driver class {} found in Thread context class loader {}", driverClassName, threadContextClassLoader);
-                } catch (ClassNotFoundException e) {
-                    LOGGER.debug("Driver class {} not found in Thread context class loader {}, trying classloader {}",
-                            driverClassName, threadContextClassLoader, this.getClass().getClassLoader());
-                }
-            }
-
-            if (driverClass == null) {
-                driverClass = this.getClass().getClassLoader().loadClass(driverClassName);
-                LOGGER.debug("Driver class {} found in the HikariConfig class classloader {}", driverClassName, this.getClass().getClassLoader());
-            }
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("Failed to load driver class {} from HikariConfig class classloader {}", driverClassName, this.getClass().getClassLoader());
-        }
-
-        if (driverClass == null) {
-            throw new RuntimeException("Failed to load driver class " + driverClassName + " in either of HikariConfig class loader or Thread context classloader");
-        }
-
-        try {
-            driverClass.newInstance();
-            this.driverClassName = driverClassName;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to instantiate class " + driverClassName, e);
-        }
+        this.driverClassName = driverClassName;
     }
 
     public String getJdbcUrl() {

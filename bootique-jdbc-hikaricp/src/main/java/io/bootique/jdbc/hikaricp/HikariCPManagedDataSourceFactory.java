@@ -8,13 +8,13 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,8 +24,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @BQConfig("Pooling Hikari JDBC DataSource configuration.")
 @JsonTypeName("hikari")
 public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactory {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HikariCPManagedDataSourceFactory.class);
 
     private static final long CONNECTION_TIMEOUT = SECONDS.toMillis(30);
     private static final long VALIDATION_TIMEOUT = SECONDS.toMillis(5);
@@ -285,6 +283,22 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         hikariConfig.setAllowPoolSuspension(allowPoolSuspension);
         hikariConfig.setDataSourceProperties(dataSourceProperties);
 
+        // TODO: there may be more more than one Hikari pool. Would be cool to add the pool name to the thread name
+        hikariConfig.setThreadFactory(new HikariThreadFactory());
+
         return hikariConfig;
+    }
+
+    private static class HikariThreadFactory implements ThreadFactory {
+
+        private AtomicInteger counter = new AtomicInteger();
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setName("bootique-hikari-" + counter.getAndIncrement());
+            t.setDaemon(true);
+            return t;
+        }
     }
 }

@@ -1,0 +1,27 @@
+jdbc:
+  derby2:
+    type: "hikari-instrumented"
+    poolName: "test2"
+    minimumIdle: 1
+    maximumPoolSize: 10
+    username: x
+    password: sa
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    jdbcUrl: jdbc:derby:target/derby/derby2;create=true
+    health:
+      connectivityCheckTimeout: 250
+      expected99thPercentile: 10
+  derby3:
+    type: "hikari-instrumented"
+    poolName: "test3"
+    minimumIdle: 1
+    maximumPoolSize: 10
+    username: x
+    password: sa
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    jdbcUrl: jdbc:derby:target/derby/derby3;create=true
+    health:
+      connectivityCheckTimeout: 250
+      expected99thPercentile: 10
+
+

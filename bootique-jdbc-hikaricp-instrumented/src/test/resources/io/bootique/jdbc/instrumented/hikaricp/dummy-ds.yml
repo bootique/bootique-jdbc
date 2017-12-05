@@ -1,5 +1,6 @@
 jdbc:
   DerbyDatabaseIT:
+    type: "hikari-instrumented"
     connectionTimeout: 250
     minimumIdle: 1
     maximumPoolSize: 10

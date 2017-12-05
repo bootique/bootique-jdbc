@@ -232,6 +232,10 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.registerMbeans = register;
     }
 
+    public String getPoolName() {
+        return poolName;
+    }
+
     @BQConfigProperty
     public void setPoolName(String poolName) {
         this.poolName = poolName;

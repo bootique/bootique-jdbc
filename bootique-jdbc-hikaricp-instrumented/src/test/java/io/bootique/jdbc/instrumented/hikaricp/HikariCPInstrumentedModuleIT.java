@@ -37,6 +37,8 @@ public class HikariCPInstrumentedModuleIT {
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
 
+    private static final String checkFormat = new String("bq.jdbc.%s.canConnect");
+
     @Test
     public void testMetricsListener_Injected() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/dummy-ds.yml")
@@ -99,7 +101,7 @@ public class HikariCPInstrumentedModuleIT {
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck("derby1"));
+        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby1")));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 3);
@@ -120,7 +122,7 @@ public class HikariCPInstrumentedModuleIT {
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck("DerbyDatabaseIT"));
+        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "DerbyDatabaseIT")));
 
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
@@ -151,14 +153,14 @@ public class HikariCPInstrumentedModuleIT {
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck("derby2"));
+        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby2")));
 
         assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, CHECK_CATEGORY, CONNECTIVITY_CHECK)));
         assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, CHECK_CATEGORY, CONNECTION_99_PERCENT)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck("derby3"));
+        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby3")));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 6);

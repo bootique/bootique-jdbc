@@ -26,7 +26,6 @@ public class DataSourceHealthCheckGroup implements HealthCheckGroup {
 
         Map<String, HealthCheck> checks = new HashMap<>();
 
-        // TODO: namespacing module healthchecks..
         dataSourceFactory.allNames().forEach(n ->
                 checks.put(healthCheckName(n), new DataSourceHealthCheck(dataSourceFactory, n)));
 

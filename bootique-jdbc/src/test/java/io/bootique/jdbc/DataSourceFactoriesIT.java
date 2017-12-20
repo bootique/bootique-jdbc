@@ -193,7 +193,7 @@ public class DataSourceFactoriesIT {
         }
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
             return Optional.of(new ManagedDataSourceSupplier(
                     url,
                     () -> mock(DataSource.class),
@@ -237,7 +237,7 @@ public class DataSourceFactoriesIT {
         }
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
             return Optional.of(new ManagedDataSourceSupplier(
                     url,
                     () -> mock(DataSource.class),

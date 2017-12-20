@@ -34,4 +34,14 @@ public class DataSourceHealthCheck implements HealthCheck {
                     : HealthCheckOutcome.critical("Connection validation failed");
         }
     }
+
+    /**
+     * Generates stable qualified name for the {@link DataSourceHealthCheck}
+     *
+     * @param dataSourceName
+     * @return qualified name bq.jdbc.[dataSourceName].canConnect
+     */
+    public static String healthCheckName(String dataSourceName) {
+        return "bq.jdbc." + dataSourceName + ".canConnect";
+    }
 }

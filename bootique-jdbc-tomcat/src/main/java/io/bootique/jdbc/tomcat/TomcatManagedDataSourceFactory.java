@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -109,11 +109,11 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
     }
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
 
         // TODO: Optional is returned to skip configs that were created due to stray BQ_ variables.
         // Once we stop supporting vars based on naming conventions, we can replace Optional<T> with just T
-        if(url == null) {
+        if (url == null) {
             return Optional.empty();
         }
 

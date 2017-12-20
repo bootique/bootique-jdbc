@@ -39,4 +39,14 @@ public class ConnectivityCheck implements HealthCheck {
             return HealthCheckOutcome.critical(e);
         }
     }
+
+    /**
+     * Generates stable qualified name for the {@link ConnectivityCheck}
+     *
+     * @param dataSourceName
+     * @return qualified name bq.jdbc.[dataSourceName].connectivity
+     */
+    public static String healthCheckName(String dataSourceName) {
+        return "bq.jdbc." + dataSourceName + ".connectivity";
+    }
 }

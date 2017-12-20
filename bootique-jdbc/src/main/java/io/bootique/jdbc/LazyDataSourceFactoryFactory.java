@@ -30,7 +30,7 @@ class LazyDataSourceFactoryFactory {
         }
 
         Map<String, ManagedDataSourceSupplier> factories = new HashMap<>();
-        configs.forEach((n, ff) -> ff.create(injector).ifPresent(f -> factories.put(n, f)));
+        configs.forEach((n, ff) -> ff.create(n, injector).ifPresent(f -> factories.put(n, f)));
         return new LazyDataSourceFactory(factories, listeners);
     }
 }

@@ -3,6 +3,7 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.inject.Injector;
+import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
@@ -17,10 +18,6 @@ import static io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSou
 
 @BQConfig("Configures HikcariCP data source health checks.")
 public class HikariCPHealthCheckGroupFactory {
-
-    private static final String CONNECTIVITY_CHECK = "ConnectivityCheck";
-    private static final String CONNECTION_99_PERCENT = "Connection99Percent";
-
     private long connectivityCheckTimeout;
     private long expected99thPercentile;
 
@@ -46,19 +43,18 @@ public class HikariCPHealthCheckGroupFactory {
         this.expected99thPercentile = expected99thPercentile;
     }
 
-    public Map<String, HealthCheck> createHealthChecksMap(Injector injector, HikariPoolMXBean pool, String poolName) {
+    public Map<String, HealthCheck> createHealthChecksMap(HikariDataSource ds, String dataSourceName, Injector injector) {
+        HikariPoolMXBean pool = ds.getHikariPoolMXBean();
+        String poolName = ds.getPoolName();
 
         MetricRegistry registry = injector.getInstance(MetricRegistry.class);
 
-
         Map<String, HealthCheck> checks = new HashMap<>();
-        checks.put(MetricRegistry.name(poolName, METRIC_CATEGORY, CONNECTIVITY_CHECK),
-                createConnectivityCheck(pool));
+        checks.put(ConnectivityCheck.healthCheckName(dataSourceName), createConnectivityCheck(pool));
 
         HealthCheck expected99thPercentileCheck = createExpected99thPercentileCheck(registry, poolName);
         if (expected99thPercentileCheck != null) {
-            checks.put(MetricRegistry.name(poolName, METRIC_CATEGORY, CONNECTION_99_PERCENT), expected99thPercentileCheck
-            );
+            checks.put(Connection99PercentCheck.healthCheckName(dataSourceName), expected99thPercentileCheck);
         }
 
         return checks;

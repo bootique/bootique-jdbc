@@ -4,6 +4,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.Connection99PercentCheck;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.ConnectivityCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.test.junit.BQTestFactory;
@@ -23,11 +26,6 @@ public class HikariCPInstrumentedModuleIT {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
-
-    private static final String checkFormat = new String("bq.jdbc.%s.canConnect");
-
-    static final String CONNECTIVITY_CHECK = "ConnectivityCheck";
-    static final String CONNECTION_99_PERCENT = "Connection99Percent";
 
     static final String METRIC_CATEGORY = "pool";
     static final String METRIC_NAME_WAIT = "Wait";
@@ -73,18 +71,18 @@ public class HikariCPInstrumentedModuleIT {
 
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
-        HikariDataSource dataSource = (HikariDataSource) factory.forName("derby1");
+        String dataSourceName = "derby1";
+        HikariDataSource dataSource = (HikariDataSource) factory.forName(dataSourceName);
         assertNotNull(dataSource);
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
-        String poolName = dataSource.getPoolName();
 
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName, METRIC_CATEGORY, CONNECTIVITY_CHECK)));
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName, METRIC_CATEGORY, CONNECTION_99_PERCENT)));
+        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby1")));
+        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 3);
@@ -97,15 +95,16 @@ public class HikariCPInstrumentedModuleIT {
                 .createRuntime();
 
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
+        String dataSourceName = "DerbyDatabaseIT";
 
-        HikariDataSource dataSource = (HikariDataSource) factory.forName("DerbyDatabaseIT");
+        HikariDataSource dataSource = (HikariDataSource) factory.forName(dataSourceName);
         assertNotNull(dataSource);
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "DerbyDatabaseIT")));
+        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
 
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
@@ -120,33 +119,30 @@ public class HikariCPInstrumentedModuleIT {
                 .createRuntime();
 
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
-
-        HikariDataSource ds2 = (HikariDataSource) factory.forName("derby2");
+        String derby2 = "derby2", derby3 = "derby3";
+        HikariDataSource ds2 = (HikariDataSource) factory.forName(derby2);
         assertNotNull(ds2);
 
-        HikariDataSource ds3 = (HikariDataSource) factory.forName("derby3");
+        HikariDataSource ds3 = (HikariDataSource) factory.forName(derby3);
         assertNotNull(ds3);
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
-        String poolName2 = ds2.getPoolName();
-        String poolName3 = ds3.getPoolName();
 
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName2, METRIC_CATEGORY, CONNECTIVITY_CHECK)));
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName2, METRIC_CATEGORY, CONNECTION_99_PERCENT)));
+        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby2)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby2)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby2")));
+        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby2)));
 
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, METRIC_CATEGORY, CONNECTIVITY_CHECK)));
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, METRIC_CATEGORY, CONNECTION_99_PERCENT)));
+        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby3)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby3)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
-        assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby3")));
+        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby3)));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 6);
     }
 }
-

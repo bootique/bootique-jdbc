@@ -4,12 +4,11 @@ import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import io.bootique.ConfigModule;
-import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
-import io.bootique.type.TypeRef;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,20 +34,19 @@ public class JdbcModule extends ConfigModule {
     @Override
     public void configure(Binder binder) {
         JdbcModule.extend(binder).initAllExtensions();
+
+        binder.bind(new TypeLiteral<Map<String, ManagedDataSourceFactory>>() {
+        }).toProvider(ConfigsProvider.class);
     }
 
     @Singleton
     @Provides
     public DataSourceFactory createDataSource(
-            ConfigurationFactory configFactory,
+            Map<String, ManagedDataSourceFactory> configs,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
             Set<DataSourceListener> listeners,
             Injector injector) {
-
-        Map<String, ManagedDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
-                }, configPrefix);
 
         LazyDataSourceFactory factory = new LazyDataSourceFactoryFactory(configs).create(injector, listeners);
         shutdownManager.addShutdownHook(() -> {

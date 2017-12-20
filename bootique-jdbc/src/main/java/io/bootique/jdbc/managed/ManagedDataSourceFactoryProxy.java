@@ -45,8 +45,8 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     }
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(Injector injector) {
-        return createDataSourceFactory(injector).create(injector);
+    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
+        return createDataSourceFactory(injector).create(dataSourceName, injector);
     }
 
     private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {

@@ -33,7 +33,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     private HikariCPHealthCheckGroupFactory health;
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
 
         if (getJdbcUrl() == null) {
             return Optional.empty();
@@ -46,8 +46,8 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
             HikariConfig hikariConfig = toConfiguration();
             HikariDataSource ds = new HikariDataSource(hikariConfig);
 
-            this.addMetrics(injector, ds);
-            this.addHealthChecks(injector, ds);
+            this.addMetrics(ds, injector);
+            this.addHealthChecks(ds, dataSourceName, injector);
 
             return ds;
         };
@@ -62,15 +62,15 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
         this.health = health;
     }
 
-    private void addHealthChecks(Injector injector, HikariDataSource ds) {
+    private void addHealthChecks(HikariDataSource ds, String dataSourceName, Injector injector) {
         HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
 
         if (health != null) {
-            group.getHealthChecks().putAll(health.createHealthChecksMap(injector, ds.getHikariPoolMXBean(), ds.getPoolName()));
+            group.getHealthChecks().putAll(health.createHealthChecksMap(ds, dataSourceName, injector));
         }
     }
 
-    private void addMetrics(Injector injector, HikariDataSource ds) {
+    private void addMetrics(HikariDataSource ds, Injector injector) {
         MetricRegistry registry = injector.getInstance(MetricRegistry.class);
 
         addWaitTimer(registry, ds);

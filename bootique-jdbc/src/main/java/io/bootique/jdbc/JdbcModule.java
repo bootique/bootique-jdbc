@@ -6,7 +6,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.jdbc.managed.Configs;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
@@ -41,28 +40,22 @@ public class JdbcModule extends ConfigModule {
     @Singleton
     @Provides
     public DataSourceFactory createDataSource(
-            Configs configs,
+            ConfigurationFactory configFactory,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
             Set<DataSourceListener> listeners,
             Injector injector) {
 
-        LazyDataSourceFactory factory = new LazyDataSourceFactoryFactory(configs.getConfigs()).create(injector, listeners);
+        Map<String, ManagedDataSourceFactory> configs = configFactory
+                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
+                }, configPrefix);
+
+        LazyDataSourceFactory factory = new LazyDataSourceFactoryFactory(configs).create(injector, listeners);
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
             factory.shutdown();
         });
 
         return factory;
-    }
-
-    @Singleton
-    @Provides
-    public Configs createConfigs(ConfigurationFactory configFactory) {
-        Map<String, ManagedDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
-                }, configPrefix);
-
-        return new Configs(configs);
     }
 }

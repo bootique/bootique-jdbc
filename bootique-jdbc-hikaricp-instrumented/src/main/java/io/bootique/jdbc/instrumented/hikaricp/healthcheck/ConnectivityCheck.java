@@ -1,8 +1,7 @@
 package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
-import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 import com.zaxxer.hikari.pool.HikariPool;
-import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 
@@ -15,14 +14,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConnectivityCheck implements HealthCheck {
 
-    private final DataSourceFactory dataSourceFactory;
-    private final String dataSourceName;
-
+    private final HikariPoolMXBean pool;
     private final long connectivityCheckTimeout;
 
-    ConnectivityCheck(final DataSourceFactory dataSourceFactory, final String dataSourceName, final long connectivityCheckTimeout) {
-        this.dataSourceFactory = dataSourceFactory;
-        this.dataSourceName = dataSourceName;
+    ConnectivityCheck(final HikariPoolMXBean pool, final long connectivityCheckTimeout) {
+        this.pool = pool;
         this.connectivityCheckTimeout = (connectivityCheckTimeout > 0 && connectivityCheckTimeout != Integer.MAX_VALUE ? connectivityCheckTimeout : TimeUnit.SECONDS.toMillis(10));
     }
 
@@ -36,9 +32,8 @@ public class ConnectivityCheck implements HealthCheck {
      */
     @Override
     public HealthCheckOutcome check() throws Exception {
-        HikariDataSource ds = (HikariDataSource) dataSourceFactory.forName(dataSourceName);
 
-        try (Connection connection = ((HikariPool) ds.getHikariPoolMXBean()).getConnection(connectivityCheckTimeout)) {
+        try (Connection connection = ((HikariPool) pool).getConnection(connectivityCheckTimeout)) {
             return HealthCheckOutcome.ok();
         } catch (SQLException e) {
             return HealthCheckOutcome.critical(e);

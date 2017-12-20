@@ -1,8 +1,8 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Injector;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 
 import java.util.Collections;
 import java.util.HashMap;

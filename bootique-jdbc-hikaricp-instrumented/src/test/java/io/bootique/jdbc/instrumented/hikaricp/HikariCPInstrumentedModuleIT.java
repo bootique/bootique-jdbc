@@ -1,12 +1,9 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.DataSourceListener;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.test.junit.BQTestFactory;
@@ -17,17 +14,7 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer.METRIC_CATEGORY;
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer.METRIC_NAME_ACTIVE_CONNECTIONS;
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer.METRIC_NAME_IDLE_CONNECTIONS;
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer.METRIC_NAME_PENDING_CONNECTIONS;
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer.METRIC_NAME_TOTAL_CONNECTIONS;
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer.METRIC_NAME_WAIT;
-import static io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroupFactory.CHECK_CATEGORY;
-import static io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroupFactory.CONNECTION_99_PERCENT;
-import static io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroupFactory.CONNECTIVITY_CHECK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -39,19 +26,15 @@ public class HikariCPInstrumentedModuleIT {
 
     private static final String checkFormat = new String("bq.jdbc.%s.canConnect");
 
-    @Test
-    public void testMetricsListener_Injected() {
-        BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/dummy-ds.yml")
-                .autoLoadModules()
-                .createRuntime();
+    static final String CONNECTIVITY_CHECK = "ConnectivityCheck";
+    static final String CONNECTION_99_PERCENT = "Connection99Percent";
 
-        TypeLiteral<Set<DataSourceListener>> typeLiteral = new TypeLiteral<Set<DataSourceListener>>() {
-        };
-
-        Set<DataSourceListener> set = runtime.getInstance(Key.get(typeLiteral));
-        assertEquals(set.size(), 1);
-        assertTrue(set.iterator().next() instanceof HikariCPMetricsInitializer);
-    }
+    static final String METRIC_CATEGORY = "pool";
+    static final String METRIC_NAME_WAIT = "Wait";
+    static final String METRIC_NAME_TOTAL_CONNECTIONS = "TotalConnections";
+    static final String METRIC_NAME_IDLE_CONNECTIONS = "IdleConnections";
+    static final String METRIC_NAME_ACTIVE_CONNECTIONS = "ActiveConnections";
+    static final String METRIC_NAME_PENDING_CONNECTIONS = "PendingConnections";
 
     @Test
     public void testMetrics_TurnedOn() {
@@ -96,8 +79,8 @@ public class HikariCPInstrumentedModuleIT {
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
         String poolName = dataSource.getPoolName();
 
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName, CHECK_CATEGORY, CONNECTIVITY_CHECK)));
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName, CHECK_CATEGORY, CONNECTION_99_PERCENT)));
+        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName, METRIC_CATEGORY, CONNECTIVITY_CHECK)));
+        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName, METRIC_CATEGORY, CONNECTION_99_PERCENT)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
@@ -148,15 +131,15 @@ public class HikariCPInstrumentedModuleIT {
         String poolName2 = ds2.getPoolName();
         String poolName3 = ds3.getPoolName();
 
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName2, CHECK_CATEGORY, CONNECTIVITY_CHECK)));
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName2, CHECK_CATEGORY, CONNECTION_99_PERCENT)));
+        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName2, METRIC_CATEGORY, CONNECTIVITY_CHECK)));
+        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName2, METRIC_CATEGORY, CONNECTION_99_PERCENT)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */
         assertTrue(registry.containsHealthCheck(String.format(checkFormat, "derby2")));
 
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, CHECK_CATEGORY, CONNECTIVITY_CHECK)));
-        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, CHECK_CATEGORY, CONNECTION_99_PERCENT)));
+        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, METRIC_CATEGORY, CONNECTIVITY_CHECK)));
+        assertTrue(registry.containsHealthCheck(MetricRegistry.name(poolName3, METRIC_CATEGORY, CONNECTION_99_PERCENT)));
         /**
          * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
          */

@@ -20,6 +20,7 @@ import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -99,14 +100,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
 
     private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {
 
-        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
-                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {
-                });
-
-        Set<Class<? extends ManagedDataSourceFactory>> set = injector
-                .getProvider(setKey)
-                .get();
-
+        Set<Class<? extends ManagedDataSourceFactory>> set = collapseSet(injector);
         // will contain this class plus one or more concrete ManagedDataSourceFactory implementors. We can guess the
         // default only if there's a single implementor.
 
@@ -124,5 +118,31 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
                 throw new BootiqueException(1, "More than one 'bootique-jdbc' implementation is found. There's no single default. " +
                         "As a result each DataSource configuration must provide a 'type' property. Valid 'type' values: " + labels);
         }
+    }
+
+    /**
+     * Reduces set of {@link ManagedDataSourceFactory} implementors,
+     * so that the child is chosen as a default if the hierarchy is linear.
+     *
+     * @param injector
+     * @return set of {@link ManagedDataSourceFactory}
+     */
+    private Set<Class<? extends ManagedDataSourceFactory>> collapseSet(Injector injector) {
+        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
+                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {
+                });
+
+        Set<Class<? extends ManagedDataSourceFactory>> set = injector
+                .getProvider(setKey)
+                .get();
+
+        Set<Class<? extends ManagedDataSourceFactory>> collapsedSet = new HashSet<>(set);
+        for (Class<? extends ManagedDataSourceFactory> factory : set) {
+            if (factory.getSuperclass() != Object.class) {
+                collapsedSet.remove(factory.getSuperclass());
+            }
+        }
+
+        return collapsedSet;
     }
 }

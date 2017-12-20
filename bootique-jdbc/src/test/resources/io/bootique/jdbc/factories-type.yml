@@ -1,0 +1,7 @@
+jdbc:
+  ds1:
+    type: "x33"
+    url: jdbc:dummy1
+  ds2:
+    type: "y2"
+    url: jdbc:dummy2

@@ -6,6 +6,7 @@
 * #57 Replace modules overriding by listeners
 * #62 Auto detection of an available connection pool  
 * #66 Rename healthcheck labels
+* #72 Improve auto detection of an available connection pool
 
 ## 0.24
 

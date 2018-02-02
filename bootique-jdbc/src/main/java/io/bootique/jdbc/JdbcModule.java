@@ -4,11 +4,12 @@ import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import io.bootique.ConfigModule;
+import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
+import io.bootique.type.TypeRef;
 
 import java.util.Map;
 import java.util.Set;
@@ -34,14 +35,11 @@ public class JdbcModule extends ConfigModule {
     @Override
     public void configure(Binder binder) {
         JdbcModule.extend(binder).initAllExtensions();
-
-        binder.bind(new TypeLiteral<Map<String, ManagedDataSourceFactory>>() {
-        }).toProvider(ConfigsProvider.class);
     }
 
     @Singleton
     @Provides
-    public DataSourceFactory createDataSource(
+    DataSourceFactory createDataSource(
             Map<String, ManagedDataSourceFactory> configs,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
@@ -55,5 +53,15 @@ public class JdbcModule extends ConfigModule {
         });
 
         return factory;
+    }
+
+    @Singleton
+    @Provides
+    Map<String, ManagedDataSourceFactory> provideDataSourceFactories(ConfigurationFactory configurationFactory) {
+        Map<String, ManagedDataSourceFactory> configs = configurationFactory
+                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
+                }, "jdbc");
+
+        return configs;
     }
 }

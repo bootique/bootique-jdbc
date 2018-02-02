@@ -1,4 +1,4 @@
-package io.bootique.jdbc;
+package io.bootique.jdbc.managed;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
@@ -6,9 +6,8 @@ import com.google.inject.ProvisionException;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceFactoryProxy;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.JdbcModule;
 import io.bootique.test.junit.BQTestFactory;
 import io.bootique.type.TypeRef;
 import org.junit.Rule;
@@ -23,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-public class DataSourceFactoriesIT {
+public class ManagedDataSourceFactoryProxyIT {
 
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();

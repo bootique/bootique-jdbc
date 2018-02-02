@@ -44,6 +44,17 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
         this.jsonNode = jsonNode;
     }
 
+    // Reduces passed set to the leaves in the inheritance hierarchy that have no subclasses
+    static Set<Class<? extends ManagedDataSourceFactory>> leafFactories(Set<Class<? extends ManagedDataSourceFactory>> allFactories) {
+
+        Set<Class<? extends ManagedDataSourceFactory>> leafFactories = new HashSet<>(allFactories);
+        for (Class<? extends ManagedDataSourceFactory> factory : allFactories) {
+            leafFactories.remove(factory.getSuperclass());
+        }
+
+        return leafFactories;
+    }
+
     @Override
     public Optional<ManagedDataSourceSupplier> create(Injector injector) {
         return createDataSourceFactory(injector).create(injector);
@@ -124,16 +135,5 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
                 throw new BootiqueException(1, "More than one 'bootique-jdbc' implementation is found. There's no single default. " +
                         "As a result each DataSource configuration must provide a 'type' property. Valid 'type' values: " + labels);
         }
-    }
-
-    // Reduces a set of ManagedDataSourceFactory implementors to the leaves in the inheritance hierarchy...
-    private Set<Class<? extends ManagedDataSourceFactory>> leafFactories(Set<Class<? extends ManagedDataSourceFactory>> allFactories) {
-
-        Set<Class<? extends ManagedDataSourceFactory>> leafFactories = new HashSet<>(allFactories);
-        for (Class<? extends ManagedDataSourceFactory> factory : allFactories) {
-            leafFactories.remove(factory.getSuperclass());
-        }
-
-        return leafFactories;
     }
 }

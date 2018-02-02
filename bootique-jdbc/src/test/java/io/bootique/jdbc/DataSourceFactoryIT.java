@@ -33,7 +33,7 @@ public class DataSourceFactoryIT {
     @Test
     public void testForName_NoImpl() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:DataSourceFactoryIT_notype.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_notype.yml")
                 .autoLoadModules()
                 .createRuntime();
 
@@ -48,7 +48,7 @@ public class DataSourceFactoryIT {
     @Test
     public void testForName_SingleImpl() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:DataSourceFactoryIT_notype.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_notype.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b).addFactoryType(Factory1.class))
                 .createRuntime();
@@ -61,7 +61,7 @@ public class DataSourceFactoryIT {
     @Test
     public void testForName_MultiImpl() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:DataSourceFactoryIT_notype.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_notype.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b).addFactoryType(Factory1.class).addFactoryType(Factory2.class))
                 .createRuntime();
@@ -79,7 +79,7 @@ public class DataSourceFactoryIT {
 
         TestListener listener = new TestListener();
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:DataSourceFactoryIT_2ds.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_2ds.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule
                         .extend(b)

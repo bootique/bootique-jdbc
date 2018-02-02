@@ -65,6 +65,13 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     private void addHealthChecks(HikariDataSource ds, String dataSourceName, Injector injector) {
         if (health != null) {
             HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
+
+            // TODO: we are mutating an injectable object here (HikariCPHealthCheckGroup).
+
+            // The rest of the design ensures lazy initialization as confirmed by HikariCPInstrumentedModuleIT,
+            // so HikariCPHealthCheckGroup is not consumed until fully initialized. Still dirty, but no easy
+            // workaround.
+
             group.getHealthChecks().putAll(health.createHealthChecksMap(ds, dataSourceName, injector));
         }
     }

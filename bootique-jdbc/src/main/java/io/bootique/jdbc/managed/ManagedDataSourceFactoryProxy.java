@@ -131,9 +131,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
 
         Set<Class<? extends ManagedDataSourceFactory>> leafFactories = new HashSet<>(allFactories);
         for (Class<? extends ManagedDataSourceFactory> factory : allFactories) {
-            if (factory.getSuperclass() != Object.class) {
-                leafFactories.remove(factory.getSuperclass());
-            }
+            leafFactories.remove(factory.getSuperclass());
         }
 
         return leafFactories;

@@ -63,9 +63,8 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     }
 
     private void addHealthChecks(HikariDataSource ds, String dataSourceName, Injector injector) {
-        HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
-
         if (health != null) {
+            HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
             group.getHealthChecks().putAll(health.createHealthChecksMap(ds, dataSourceName, injector));
         }
     }

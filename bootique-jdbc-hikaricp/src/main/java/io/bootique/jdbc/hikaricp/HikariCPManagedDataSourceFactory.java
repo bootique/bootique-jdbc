@@ -72,7 +72,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
         if (jdbcUrl == null) {
             return Optional.empty();
         }
@@ -230,6 +230,10 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     @BQConfigProperty
     public void setRegisterMbeans(boolean register) {
         this.registerMbeans = register;
+    }
+
+    public String getPoolName() {
+        return poolName;
     }
 
     @BQConfigProperty

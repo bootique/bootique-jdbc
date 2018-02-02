@@ -1,8 +1,8 @@
 package io.bootique.jdbc;
 
 import com.google.inject.Injector;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ class LazyDataSourceFactoryFactory {
         }
 
         Map<String, ManagedDataSourceSupplier> factories = new HashMap<>();
-        configs.forEach((n, ff) -> ff.create(injector).ifPresent(f -> factories.put(n, f)));
+        configs.forEach((n, ff) -> ff.create(n, injector).ifPresent(f -> factories.put(n, f)));
         return new LazyDataSourceFactory(factories, listeners);
     }
 }

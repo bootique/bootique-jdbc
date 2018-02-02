@@ -100,9 +100,15 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
 
     private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {
 
-        Set<Class<? extends ManagedDataSourceFactory>> set = collapseSet(injector);
-        // will contain this class plus one or more concrete ManagedDataSourceFactory implementors. We can guess the
-        // default only if there's a single implementor.
+        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
+                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {
+                });
+
+        Set<Class<? extends ManagedDataSourceFactory>> allFactories = injector.getProvider(setKey).get();
+
+        // the resulting set should contain this class plus one or more concrete ManagedDataSourceFactory implementors.
+        // We can guess the default only if there's a single implementor.
+        Set<Class<? extends ManagedDataSourceFactory>> set = leafFactories(allFactories);
 
         switch (set.size()) {
             case 0:
@@ -120,29 +126,16 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
         }
     }
 
-    /**
-     * Reduces set of {@link ManagedDataSourceFactory} implementors,
-     * so that the child is chosen as a default if the hierarchy is linear.
-     *
-     * @param injector
-     * @return set of {@link ManagedDataSourceFactory}
-     */
-    private Set<Class<? extends ManagedDataSourceFactory>> collapseSet(Injector injector) {
-        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
-                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {
-                });
+    // Reduces a set of ManagedDataSourceFactory implementors to the leaves in the inheritance hierarchy...
+    private Set<Class<? extends ManagedDataSourceFactory>> leafFactories(Set<Class<? extends ManagedDataSourceFactory>> allFactories) {
 
-        Set<Class<? extends ManagedDataSourceFactory>> set = injector
-                .getProvider(setKey)
-                .get();
-
-        Set<Class<? extends ManagedDataSourceFactory>> collapsedSet = new HashSet<>(set);
-        for (Class<? extends ManagedDataSourceFactory> factory : set) {
+        Set<Class<? extends ManagedDataSourceFactory>> leafFactories = new HashSet<>(allFactories);
+        for (Class<? extends ManagedDataSourceFactory> factory : allFactories) {
             if (factory.getSuperclass() != Object.class) {
-                collapsedSet.remove(factory.getSuperclass());
+                leafFactories.remove(factory.getSuperclass());
             }
         }
 
-        return collapsedSet;
+        return leafFactories;
     }
 }

@@ -42,7 +42,7 @@ public class ManagedDataSourceFactoryProxyTest {
     public static class X1 implements ManagedDataSourceFactory {
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
             return Optional.empty();
         }
     }
@@ -68,8 +68,9 @@ public class ManagedDataSourceFactoryProxyTest {
     }
 
     public static class Y1 extends Superclass0 implements ManagedDataSourceFactory {
+
         @Override
-        public Optional<ManagedDataSourceSupplier> create(Injector injector) {
+        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
             return Optional.empty();
         }
     }

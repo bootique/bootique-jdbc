@@ -3,6 +3,10 @@ package io.bootique.jdbc.tomcat;
 import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
+import io.bootique.jdbc.JdbcModuleProvider;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @since 0.25
@@ -19,5 +23,10 @@ public class TomcatJdbcModuleProvider implements BQModuleProvider {
         return BQModuleProvider.super
                 .moduleBuilder()
                 .description("Integrates Tomcat DataSource implementation.");
+    }
+
+    @Override
+    public Collection<BQModuleProvider> dependencies() {
+        return Collections.singletonList(new JdbcModuleProvider());
     }
 }

@@ -5,11 +5,10 @@ import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.instrumented.InstrumentedJdbcModule;
 import io.bootique.metrics.MetricsModule;
 import io.bootique.test.junit.BQModuleProviderChecker;
+import io.bootique.test.junit.BQRuntimeChecker;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
-
-import static com.google.common.collect.ImmutableList.of;
 
 public class HikariCPInstrumentedModuleProviderTest {
 
@@ -24,10 +23,10 @@ public class HikariCPInstrumentedModuleProviderTest {
     @Test
     public void testModuleDeclaresDependencies() {
         final BQRuntime bqRuntime = testFactory.app().module(new HikariCPInstrumentedModuleProvider()).createRuntime();
-        BQModuleProviderChecker.testModulesLoaded(bqRuntime, of(
+        BQRuntimeChecker.testModulesLoaded(bqRuntime,
                 InstrumentedJdbcModule.class,
                 MetricsModule.class,
                 JdbcModule.class
-        ));
+        );
     }
 }

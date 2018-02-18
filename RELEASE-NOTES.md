@@ -8,6 +8,7 @@
 * #66 Rename healthcheck labels
 * #69 Add bq-jdbc-hikaricp-instrumented module
 * #72 Improve auto detection of an available connection pool
+* #74 Upgrade to bootique-modules-parent 0.8 
 
 ## 0.24
 

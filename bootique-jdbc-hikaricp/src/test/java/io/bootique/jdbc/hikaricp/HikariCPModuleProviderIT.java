@@ -14,8 +14,8 @@ public class HikariCPModuleProviderIT {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testPresentInJar() {
-        BQModuleProviderChecker.testPresentInJar(HikariCPModuleProvider.class);
+    public void testAutoLoadable() {
+        BQModuleProviderChecker.testAutoLoadable(HikariCPModuleProvider.class);
     }
 
     @Test

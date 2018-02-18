@@ -5,8 +5,8 @@ import org.junit.Test;
 
 public class JdbcModuleProviderIT {
     @Test
-    public void testPresentInJar() {
-        BQModuleProviderChecker.testPresentInJar(JdbcModuleProvider.class);
+    public void testAutoLoadable() {
+        BQModuleProviderChecker.testAutoLoadable(JdbcModuleProvider.class);
     }
 
     @Test

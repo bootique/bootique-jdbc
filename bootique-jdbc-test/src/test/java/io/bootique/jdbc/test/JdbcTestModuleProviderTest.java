@@ -15,7 +15,7 @@ public class JdbcTestModuleProviderTest {
 
     @Test
     public void testAutoLoadable() {
-        BQModuleProviderChecker.testPresentInJar(JdbcTestModuleProvider.class);
+        BQModuleProviderChecker.testAutoLoadable(JdbcTestModuleProvider.class);
     }
 
     @Test

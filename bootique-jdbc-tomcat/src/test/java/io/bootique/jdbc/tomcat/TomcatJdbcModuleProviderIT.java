@@ -14,8 +14,8 @@ public class TomcatJdbcModuleProviderIT {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testPresentInJar() {
-        BQModuleProviderChecker.testPresentInJar(TomcatJdbcModuleProvider.class);
+    public void testAutoLoadable() {
+        BQModuleProviderChecker.testAutoLoadable(TomcatJdbcModuleProvider.class);
     }
 
     @Test

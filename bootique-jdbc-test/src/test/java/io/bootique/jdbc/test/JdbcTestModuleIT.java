@@ -1,6 +1,11 @@
 package io.bootique.jdbc.test;
 
-import com.google.inject.*;
+import com.google.inject.Binder;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.test.runtime.DataSourceListener;
 import io.bootique.log.BootLogger;

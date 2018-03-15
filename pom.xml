@@ -10,7 +10,7 @@
 
     <groupId>io.bootique.jdbc</groupId>
     <artifactId>bootique-jdbc-parent</artifactId>
-    <version>0.26-SNAPSHOT</version>
+    <version>0.25-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>bootique-jdbc-parent: Parent of JDBC integration modules for Bootique</name>

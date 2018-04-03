@@ -63,65 +63,6 @@ public class TableIT {
     }
 
     @Test
-    @Deprecated
-    public void testContentsMatchCsv() {
-
-        T1.insertColumns("c1", "c2", "c3")
-                .values(2, "tt", "xyz")
-                .values(1, "", "abcd")
-                .exec();
-
-        T1.contentsMatchCsv("classpath:io/bootique/jdbc/test/t1.csv", "c1");
-    }
-
-    @Test
-    @Deprecated
-    public void testContentsMatchCsv_NoMatch() {
-
-        T1.insertColumns("c1", "c2", "c3")
-                .values(1, "tt", "xyz")
-                .values(2, "", "abcd")
-                .exec();
-
-        boolean succeeded;
-        try {
-            T1.contentsMatchCsv("classpath:io/bootique/jdbc/test/t1.csv", "c1");
-            succeeded = true;
-        } catch (AssertionError e) {
-            // expected
-            succeeded = false;
-        }
-
-        assertFalse("Must have failed - data sets do not match", succeeded);
-    }
-
-    @Test
-    @Deprecated
-    public void testContentsMatchCsv_Dates() {
-
-        T2.insertColumns("c1", "c2", "c3", "c4")
-                .values(3, null, "2018-01-09", "2018-01-10 14:00:01")
-                .values(1, null, "2016-01-09", "2016-01-10 10:00:00")
-                .values(2, null, "2017-01-09", "2017-01-10 13:00:01")
-                .exec();
-
-        T2.contentsMatchCsv("classpath:io/bootique/jdbc/test/t2.csv", "c1");
-    }
-
-    @Test
-    @Deprecated
-    public void testContentsMatchCsv_Binary() {
-
-        T3.insertColumns("c1", "c2")
-                .values(3, null)
-                .values(1, "abcd".getBytes())
-                .values(2, "kmln".getBytes())
-                .exec();
-
-        T3.contentsMatchCsv("classpath:io/bootique/jdbc/test/t3.csv", "c1");
-    }
-
-    @Test
     public void testInsertDateTimeColumns() {
         T2.insertColumns("c1", "c2", "c3", "c4")
                 .values(1, null, LocalDate.parse("2018-01-09"), LocalDateTime.parse("2018-01-10T04:00:01"))

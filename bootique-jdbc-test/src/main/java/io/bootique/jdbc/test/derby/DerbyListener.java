@@ -1,6 +1,6 @@
 package io.bootique.jdbc.test.derby;
 
-import io.bootique.jdbc.test.runtime.DataSourceListener;
+import io.bootique.jdbc.DataSourceListener;
 import io.bootique.log.BootLogger;
 import org.junit.Assert;
 
@@ -51,9 +51,9 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void beforeStartup(String name, Optional<String> jdbcUrl) {
+    public void beforeStartup(String name, String jdbcUrl) {
 
-        getDbDir(jdbcUrl).ifPresent(location -> {
+        getDbDir(Optional.ofNullable(jdbcUrl)).ifPresent(location -> {
 
             bootLogger.stdout("Preparing Derby server at '" + location + "'...");
 
@@ -70,14 +70,9 @@ public class DerbyListener implements DataSourceListener {
     }
 
     @Override
-    public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
-        // do nothing...
-    }
+    public void afterShutdown(String name, String jdbcUrl, DataSource dataSource) {
 
-    @Override
-    public void afterShutdown(String name, Optional<String> jdbcUrl) {
-
-        getDbDir(jdbcUrl).ifPresent(location -> {
+        getDbDir(Optional.ofNullable(jdbcUrl)).ifPresent(location -> {
 
                     bootLogger.stdout("Stopping all JVM Derby servers...");
 

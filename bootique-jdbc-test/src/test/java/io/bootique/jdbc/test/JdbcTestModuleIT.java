@@ -7,14 +7,14 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import io.bootique.BQRuntime;
-import io.bootique.jdbc.test.runtime.DataSourceListener;
+import io.bootique.jdbc.DataSourceListener;
+import io.bootique.jdbc.JdbcModule;
 import io.bootique.log.BootLogger;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +29,7 @@ public class JdbcTestModuleIT {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/test/dummy-ds.yml")
                 .autoLoadModules()
                 .module(binder -> {
-                    JdbcTestModule.extend(binder)
+                    JdbcModule.extend(binder)
                             .addDataSourceListener(new TestDataSourceListener1())
                             .addDataSourceListener(new TestDataSourceListener2());
                 }).createRuntime();
@@ -50,7 +50,7 @@ public class JdbcTestModuleIT {
 
                     @Override
                     public void configure(Binder binder) {
-                        JdbcTestModule.extend(binder)
+                        JdbcModule.extend(binder)
                                 .addDataSourceListener(TestDataSourceListener3.class)
                                 .addDataSourceListener(TestDataSourceListener4.class);
                     }
@@ -58,13 +58,13 @@ public class JdbcTestModuleIT {
                     @Singleton
                     @Provides
                     TestDataSourceListener3 provideListener3(BootLogger bootLogger) {
-                        return new TestDataSourceListener3(bootLogger);
+                        return new TestDataSourceListener3();
                     }
 
                     @Singleton
                     @Provides
                     TestDataSourceListener4 provideListener4(BootLogger bootLogger) {
-                        return new TestDataSourceListener4(bootLogger);
+                        return new TestDataSourceListener4();
                     }
 
                 }).createRuntime();
@@ -84,90 +84,18 @@ public class JdbcTestModuleIT {
 
 
         @Override
-        public void beforeStartup(String name, Optional<String> jdbcUrl) {
-
-        }
-
-        @Override
-        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
+        public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
             System.out.print(name + "after started up!\n");
         }
 
-        @Override
-        public void afterShutdown(String name, Optional<String> jdbcUrl) {
-
-        }
     }
 
     static class TestDataSourceListener2 implements DataSourceListener {
-
-        public TestDataSourceListener2() {
-        }
-
-
-        @Override
-        public void beforeStartup(String name, Optional<String> jdbcUrl) {
-
-        }
-
-        @Override
-        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
-            System.out.print(name + "after started up!\n");
-        }
-
-        @Override
-        public void afterShutdown(String name, Optional<String> jdbcUrl) {
-
-        }
     }
 
     static class TestDataSourceListener3 implements DataSourceListener {
-
-        private BootLogger bootLogger;
-
-        public TestDataSourceListener3(BootLogger bootLogger) {
-            this.bootLogger = bootLogger;
-        }
-
-
-        @Override
-        public void beforeStartup(String name, Optional<String> jdbcUrl) {
-
-        }
-
-        @Override
-        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
-            bootLogger.stdout(name + "after started up!\n");
-        }
-
-        @Override
-        public void afterShutdown(String name, Optional<String> jdbcUrl) {
-
-        }
     }
 
     static class TestDataSourceListener4 implements DataSourceListener {
-
-        private BootLogger bootLogger;
-
-        public TestDataSourceListener4(BootLogger bootLogger) {
-            this.bootLogger = bootLogger;
-        }
-
-
-        @Override
-        public void beforeStartup(String name, Optional<String> jdbcUrl) {
-
-        }
-
-        @Override
-        public void afterStartup(String name, Optional<String> jdbcUrl, DataSource dataSource) {
-            bootLogger.stdout(name + "after started up!\n");
-        }
-
-        @Override
-        public void afterShutdown(String name, Optional<String> jdbcUrl) {
-
-        }
     }
 }

@@ -5,7 +5,6 @@ import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import io.bootique.jdbc.test.matcher.TableMatcher;
-import io.bootique.resource.ResourceFactory;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -144,33 +143,6 @@ public class Table {
         return new CsvDataSetBuilder(this);
     }
 
-    /**
-     * Inserts test data from the provided CSV resource.
-     *
-     * @param csvResource a resource that stores CSV data.
-     * @return this table instance.
-     * @since 0.14
-     * @deprecated since 0.24 in favor of <code>csvDataSet().load(csvResource).persist()</code>
-     */
-    @Deprecated
-    public Table insertFromCsv(String csvResource) {
-        return insertFromCsv(new ResourceFactory(csvResource));
-    }
-
-    /**
-     * Inserts test data from the provided CSV resource.
-     *
-     * @param csvResource a resource that stores CSV data.
-     * @return this table instance.
-     * @since 0.14
-     * @deprecated since 0.24 in favor of <code>csvDataSet().load(csvResource).persist()</code>
-     */
-    @Deprecated
-    public Table insertFromCsv(ResourceFactory csvResource) {
-        csvDataSet().load(csvResource).persist();
-        return this;
-    }
-
     public Table insert(Object... values) {
         insertColumns(columns).values(values).exec();
         return this;
@@ -275,19 +247,6 @@ public class Table {
         return builder.append(" FROM ").appendIdentifier(name);
     }
 
-    /**
-     * @return the number of rows in the table.
-     * @deprecated since 0.24 consider using <code>table.matcher().assertMatches(i)</code>
-     */
-    @Deprecated
-    public int getRowCount() {
-        return selectStatement(RowReader.intReader())
-                .append("SELECT COUNT(*) FROM ")
-                .appendIdentifier(name)
-                .select(1)
-                .get(0);
-    }
-
     protected <T> T selectColumn(String columnName, RowReader<T> reader) {
         return selectColumn(columnName, reader, null);
     }
@@ -347,28 +306,6 @@ public class Table {
 
     public Timestamp getTimestamp(String column) {
         return selectColumn(column, RowReader.timestampReader());
-    }
-
-    /**
-     * @param csvResource a CSV resource to use in data comparisons.
-     * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
-     *                    all row columns are used in comparision.
-     * @since 0.14
-     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
-     */
-    public void contentsMatchCsv(String csvResource, String... rowKey) {
-        contentsMatchCsv(new ResourceFactory(csvResource), rowKey);
-    }
-
-    /**
-     * @param csvResource a CSV resource to use in data comparisons.
-     * @param rowKey      An array of columns that uniquely identify a row. Each column must be present in CSV. By default
-     *                    all row columns are used in comparision.
-     * @since 0.14
-     * @deprecated since 0.24 in favor of <code>table.matcher().assertMatchesCsv(..)</code>
-     */
-    public void contentsMatchCsv(ResourceFactory csvResource, String... rowKey) {
-        matcher().assertMatchesCsv(csvResource, rowKey);
     }
 
     protected List<Column> toColumnsList(String... columns) {

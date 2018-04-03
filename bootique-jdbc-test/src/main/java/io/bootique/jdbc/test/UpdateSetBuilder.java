@@ -13,14 +13,6 @@ public class UpdateSetBuilder {
 
     /**
      * @return the number of updated records.
-     * @deprecated since 0.24 in favor for {@link #exec()}.
-     */
-    public int execute() {
-        return builder.exec();
-    }
-
-    /**
-     * @return the number of updated records.
      * @since 0.24
      */
     public int exec() {

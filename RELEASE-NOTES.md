@@ -1,3 +1,7 @@
+## 0.26
+
+* #75 Cleaning up APIs deprecated since <= 0.25
+
 ## 0.25
 
 * #48 Extract Tomcat DataSource integration into a separate module

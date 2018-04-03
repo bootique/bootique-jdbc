@@ -3,7 +3,6 @@ package io.bootique.jdbc.managed;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,7 +13,6 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
-import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 
@@ -96,17 +94,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     }
 
     private ObjectMapper createObjectMapper(Injector injector) {
-        ObjectMapper mapper = injector.getInstance(JacksonService.class).newObjectMapper();
-
-        // TODO: deprecated, should be removed once we stop supporting BQ_ vars...
-        // in other words this can be removed when a similar code is removed from JsonNodeConfigurationFactoryProvider
-        Environment environment = injector.getInstance(Environment.class);
-        if (!environment.frameworkVariables().isEmpty()) {
-            // switching to slower CI strategy for mapping properties...
-            mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        }
-
-        return mapper;
+        return injector.getInstance(JacksonService.class).newObjectMapper();
     }
 
     private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {

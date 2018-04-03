@@ -43,9 +43,9 @@ public class DerbyDatabaseIT {
 
         Table a = channel.newTable("A").columnNames("ID").build();
 
-        assertEquals(0, a.getRowCount());
+        a.matcher().assertNoMatches();
         a.insert(5).insert(6);
-        assertEquals(2, a.getRowCount());
+        a.matcher().assertMatches(2);
     }
 
     @Test
@@ -59,8 +59,8 @@ public class DerbyDatabaseIT {
 
         Table b = channel.newTable("B").columnNames("ID").build();
 
-        assertEquals(0, b.getRowCount());
+        b.matcher().assertNoMatches();
         b.insert(5).insert(6);
-        assertEquals(2, b.getRowCount());
+        b.matcher().assertMatches(2);
     }
 }

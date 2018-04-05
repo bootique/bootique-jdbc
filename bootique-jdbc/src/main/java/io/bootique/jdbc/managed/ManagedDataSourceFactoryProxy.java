@@ -1,13 +1,11 @@
 package io.bootique.jdbc.managed;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -16,7 +14,6 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,36 +58,25 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     private ManagedDataSourceFactory createDataSourceFactory(Injector injector) {
 
         Class<? extends ManagedDataSourceFactory> factoryType = delegateFactoryType(injector);
-        JavaType jacksonType = TypeFactory.defaultInstance().constructType(factoryType);
         ObjectMapper mapper = createObjectMapper(injector);
-        JsonNode nodeWithType = jsonNodeWithType(getTypeLabel(factoryType));
+
+        // Disables all annotations to prevent the following exception:
+        // "Class io.bootique.jdbc.managed.ManagedDataSourceFactoryProxy not subtype of [simple type, class com.foo.MyFactory]"
+        // This should work, as we already know the subclass to instantiate. But this will ignore any custom deserializers
+        // on factories, which seems like a minor limitation.
+
+        mapper.disable(MapperFeature.USE_ANNOTATIONS);
+
+        ManagedDataSourceFactory factory;
 
         try {
-            return mapper.readValue(new TreeTraversingParser(nodeWithType, mapper), jacksonType);
-        } catch (IOException e) {
+            factory = factoryType.newInstance();
+            mapper.readerForUpdating(factory).readValue(new TreeTraversingParser(jsonNode, mapper), factoryType);
+        } catch (Exception e) {
             throw new BootiqueException(1, "Deserialization of JDBC DataSource configuration failed.", e);
         }
-    }
 
-    private String getTypeLabel(Class<? extends ManagedDataSourceFactory> factoryType) {
-
-        // TODO: see TODO in ConfigMetadataCompiler ... at least maybe create a public API for this in Bootique to
-        // avoid parsing annotations inside the modules...
-        JsonTypeName typeName = factoryType.getAnnotation(JsonTypeName.class);
-
-        if (typeName == null) {
-            throw new BootiqueException(1, "Invalid ManagedDataSourceFactory:  "
-                    + factoryType.getName()
-                    + ". Not annotated with @JsonTypeName.");
-        }
-
-        return typeName.value();
-    }
-
-    private JsonNode jsonNodeWithType(String type) {
-        JsonNode copy = jsonNode.deepCopy();
-        ((ObjectNode) copy).put("type", type);
-        return copy;
+        return factory;
     }
 
     private ObjectMapper createObjectMapper(Injector injector) {
@@ -123,5 +109,20 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
                 throw new BootiqueException(1, "More than one 'bootique-jdbc' implementation is found. There's no single default. " +
                         "As a result each DataSource configuration must provide a 'type' property. Valid 'type' values: " + labels);
         }
+    }
+
+    private String getTypeLabel(Class<? extends ManagedDataSourceFactory> factoryType) {
+
+        // TODO: see TODO in ConfigMetadataCompiler ... at least maybe create a public API for this in Bootique to
+        // avoid parsing annotations inside the modules...
+        JsonTypeName typeName = factoryType.getAnnotation(JsonTypeName.class);
+
+        if (typeName == null) {
+            throw new BootiqueException(1, "Invalid ManagedDataSourceFactory:  "
+                    + factoryType.getName()
+                    + ". Not annotated with @JsonTypeName.");
+        }
+
+        return typeName.value();
     }
 }

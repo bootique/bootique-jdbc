@@ -2,6 +2,7 @@
 
 * #75 Cleaning up APIs deprecated since <= 0.25
 * #76 Update Jackson to 2.9.5
+* #78 Hikari pool defaults
 
 ## 0.25
 

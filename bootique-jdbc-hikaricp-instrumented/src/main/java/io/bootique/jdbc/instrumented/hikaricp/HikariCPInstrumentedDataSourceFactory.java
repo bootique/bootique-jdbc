@@ -35,7 +35,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     @Override
     public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
 
-        if (getUrl() == null) {
+        if (getJdbcUrl() == null) {
             return Optional.empty();
         }
 
@@ -54,7 +54,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return Optional.of(new ManagedDataSourceSupplier(getUrl(), startup, shutdown));
+        return Optional.of(new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown));
     }
 
     @BQConfigProperty

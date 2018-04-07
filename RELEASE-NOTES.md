@@ -2,11 +2,9 @@
 
 * #75 Cleaning up APIs deprecated since <= 0.25
 * #76 Update Jackson to 2.9.5
-* #77 HikariCP - rename inconsistent config properties
 
 ## 0.25
 
-* #34 Add support for HikariCP
 * #48 Extract Tomcat DataSource integration into a separate module
 * #51 Add HikariCP as a separate module
 * #56 Make bq-jdbc polymorphic

@@ -46,7 +46,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private String dataSourceClassName;
     private String dataSourceJndiName;
     private String driverClassName;
-    private String url;
+    private String jdbcUrl;
     private String poolName;
     private String schema;
     private String transactionIsolationName;
@@ -73,7 +73,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     @Override
     public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-        if (url == null) {
+        if (jdbcUrl == null) {
             return Optional.empty();
         }
 
@@ -87,11 +87,11 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return Optional.of(new ManagedDataSourceSupplier(url, startup, shutdown));
+        return Optional.of(new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown));
     }
 
     protected void validate() {
-        Objects.requireNonNull(url, "'url' property should not be null");
+        Objects.requireNonNull(jdbcUrl, "'jdbcUrl' property should not be null");
     }
 
     @BQConfigProperty
@@ -123,29 +123,16 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.maxLifetime = maxLifetimeMs;
     }
 
-    @BQConfigProperty("Deprecated. Use 'maxPoolSize'.")
-    @Deprecated
-    public void setMaximumPoolSize(int maxPoolSize) {
-        setMaxPoolSize(maxPoolSize);
-    }
-
     @BQConfigProperty
-    public void setMaxPoolSize(int maxPoolSize) {
+    public void setMaximumPoolSize(int maxPoolSize) {
         if (maxPoolSize < 1) {
             throw new IllegalArgumentException("maxPoolSize cannot be less than 1");
         }
         this.maxPoolSize = maxPoolSize;
     }
 
-    @BQConfigProperty("Deprecated. Use 'minIdle'.")
-    @Deprecated
-    public void setMinimumIdle(int minIdle) {
-        setMinIdle(minIdle);
-    }
-
     @BQConfigProperty
-    public void setMinIdle(int minIdle) {
-
+    public void setMinimumIdle(int minIdle) {
         if (minIdle < 0) {
             throw new IllegalArgumentException("minimumIdle cannot be negative");
         }
@@ -206,19 +193,13 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.driverClassName = driverClassName;
     }
 
-    public String getUrl() {
-        return url;
+    public String getJdbcUrl() {
+        return jdbcUrl;
     }
 
     @BQConfigProperty
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @BQConfigProperty("Deprecated. Use 'url' property.")
-    @Deprecated
     public void setJdbcUrl(String jdbcUrl) {
-        setUrl(jdbcUrl);
+        this.jdbcUrl = jdbcUrl;
     }
 
     @BQConfigProperty
@@ -295,7 +276,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
             hikariConfig.setDriverClassName(driverClassName);
         }
 
-        hikariConfig.setJdbcUrl(url);
+        hikariConfig.setJdbcUrl(jdbcUrl);
         hikariConfig.setPoolName(poolName);
         hikariConfig.setSchema(schema);
         hikariConfig.setTransactionIsolation(transactionIsolationName);

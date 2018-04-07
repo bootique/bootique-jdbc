@@ -2,12 +2,12 @@ jdbc:
   derby1:
     type: "hikari-instrumented"
     poolName: "test-derby-1"
-    minIdle: 1
-    maxPoolSize: 10
+    minimumIdle: 1
+    maximumPoolSize: 10
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    url: jdbc:derby:target/derby/derby1;create=true
+    jdbcUrl: jdbc:derby:target/derby/derby1;create=true
     health:
       connectivityCheckTimeout: 250
       expected99thPercentile: 10

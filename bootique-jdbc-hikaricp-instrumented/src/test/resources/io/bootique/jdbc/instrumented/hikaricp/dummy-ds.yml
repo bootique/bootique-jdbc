@@ -2,9 +2,9 @@ jdbc:
   DerbyDatabaseIT:
     type: "hikari-instrumented"
     connectionTimeout: 250
-    minIdle: 1
-    maxPoolSize: 10
+    minimumIdle: 1
+    maximumPoolSize: 10
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    url: jdbc:derby:target/derby/DerbyDatabaseIT;create=true
+    jdbcUrl: jdbc:derby:target/derby/DerbyDatabaseIT;create=true

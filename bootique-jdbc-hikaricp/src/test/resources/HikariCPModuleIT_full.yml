@@ -6,8 +6,8 @@ jdbc:
     idleTimeout: 20000
     leakDetectionThreshold: 20000
     maxLifetime: 50000
-    maxPoolSize: 3
-    minIdle: 1
+    maximumPoolSize: 3
+    minimumIdle: 1
     username: x
     password: x
     initializationFailTimeout: 100
@@ -15,7 +15,7 @@ jdbc:
     connectionInitSql: "VALUES 1"
     connectionTestQuery: "VALUES 1"
     dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
-    url: "jdbc:derby:;"
+    jdbcUrl: "jdbc:derby:;"
     poolName: "test-pool"
     transactionIsolation: "TRANSACTION_SERIALIZABLE"
     autoCommit: true

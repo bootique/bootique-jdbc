@@ -1,8 +1,8 @@
 jdbc:
   derby1:
     type: "hikari"
-    url: "jdbc:derby:target/derby1;create=true"
+    jdbcUrl: "jdbc:derby:target/derby1;create=true"
     driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
-    minIdle: 1
-    maxPoolSize: 3
+    minimumIdle: 1
+    maximumPoolSize: 3
     username: sa

@@ -15,7 +15,7 @@ jdbc:
     connectionInitSql: "VALUES 1"
     connectionTestQuery: "VALUES 1"
     dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
-    jdbcUrl: "jdbc:derby:;"
+    url: "jdbc:derby:;"
     poolName: "test-pool"
     transactionIsolation: "TRANSACTION_SERIALIZABLE"
     autoCommit: true

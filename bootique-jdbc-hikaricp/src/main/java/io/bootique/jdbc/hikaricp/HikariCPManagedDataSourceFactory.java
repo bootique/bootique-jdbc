@@ -46,7 +46,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private String dataSourceClassName;
     private String dataSourceJndiName;
     private String driverClassName;
-    private String jdbcUrl;
+    private String url;
     private String poolName;
     private String schema;
     private String transactionIsolationName;
@@ -73,7 +73,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     @Override
     public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-        if (jdbcUrl == null) {
+        if (url == null) {
             return Optional.empty();
         }
 
@@ -87,11 +87,11 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return Optional.of(new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown));
+        return Optional.of(new ManagedDataSourceSupplier(url, startup, shutdown));
     }
 
     protected void validate() {
-        Objects.requireNonNull(jdbcUrl, "'jdbcUrl' property should not be null");
+        Objects.requireNonNull(url, "'url' property should not be null");
     }
 
     @BQConfigProperty
@@ -193,13 +193,19 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.driverClassName = driverClassName;
     }
 
-    public String getJdbcUrl() {
-        return jdbcUrl;
+    public String getUrl() {
+        return url;
+    }
+
+    @BQConfigProperty("Deprecated. Use 'url' property.")
+    @Deprecated
+    public void setJdbcUrl(String jdbcUrl) {
+        setUrl(jdbcUrl);
     }
 
     @BQConfigProperty
-    public void setJdbcUrl(String jdbcUrl) {
-        this.jdbcUrl = jdbcUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @BQConfigProperty
@@ -276,7 +282,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
             hikariConfig.setDriverClassName(driverClassName);
         }
 
-        hikariConfig.setJdbcUrl(jdbcUrl);
+        hikariConfig.setJdbcUrl(url);
         hikariConfig.setPoolName(poolName);
         hikariConfig.setSchema(schema);
         hikariConfig.setTransactionIsolation(transactionIsolationName);

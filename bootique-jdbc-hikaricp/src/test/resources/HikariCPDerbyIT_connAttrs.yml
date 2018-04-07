@@ -2,7 +2,7 @@ jdbc:
   derby6:
     type: "hikari"
     driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
-    jdbcUrl: "jdbc:derby:;"
+    url: "jdbc:derby:;"
     minimumIdle: 1
     maximumPoolSize: 3
     username: "x"
@@ -12,7 +12,7 @@ jdbc:
   derby7:
     type: "hikari"
     dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
-    jdbcUrl: "jdbc:derby:;"
+    url: "jdbc:derby:;"
     minimumIdle: 1
     maximumPoolSize: 3
     dataSourceProperties:

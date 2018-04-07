@@ -7,7 +7,7 @@ jdbc:
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: jdbc:derby:target/derby/derby2;create=true
+    url: jdbc:derby:target/derby/derby2;create=true
     health:
       connectivityCheckTimeout: 250
       expected99thPercentile: 10
@@ -19,7 +19,7 @@ jdbc:
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: jdbc:derby:target/derby/derby3;create=true
+    url: jdbc:derby:target/derby/derby3;create=true
     health:
       connectivityCheckTimeout: 250
       expected99thPercentile: 10

@@ -1,7 +1,7 @@
 jdbc:
   fullds1:
-    jdbcUrl: jdbc:dummy
+    url: jdbc:dummy
     username: u1
     password: supersecret1
   fullds2:
-    jdbcUrl: jdbc:dummy
+    url: jdbc:dummy

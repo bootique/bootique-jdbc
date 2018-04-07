@@ -1,7 +1,7 @@
 jdbc:
   derby2:
     type: "hikari"
-    jdbcUrl: "jdbc:derby:target/derby2;create=true"
+    url: "jdbc:derby:target/derby2;create=true"
     minimumIdle: 1
     maximumPoolSize: 3
     username: sa

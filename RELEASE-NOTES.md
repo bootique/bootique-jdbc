@@ -5,6 +5,7 @@
 
 ## 0.25
 
+* #34 Add support for HikariCP
 * #48 Extract Tomcat DataSource integration into a separate module
 * #51 Add HikariCP as a separate module
 * #56 Make bq-jdbc polymorphic

@@ -61,8 +61,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         dataSourceProperties = new Properties();
 
-        minIdle = -1;
-        maxPoolSize = -1;
+        minIdle = 10;
+        maxPoolSize = 100;
         maxLifetime = MAX_LIFETIME;
         connectionTimeout = CONNECTION_TIMEOUT;
         validationTimeout = VALIDATION_TIMEOUT;

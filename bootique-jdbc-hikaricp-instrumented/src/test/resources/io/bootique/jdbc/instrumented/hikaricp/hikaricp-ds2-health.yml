@@ -2,8 +2,8 @@ jdbc:
   derby2:
     type: "hikari-instrumented"
     poolName: "test2"
-    minimumIdle: 1
-    maximumPoolSize: 10
+    minIdle: 1
+    maxPoolSize: 10
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
@@ -14,8 +14,8 @@ jdbc:
   derby3:
     type: "hikari-instrumented"
     poolName: "test3"
-    minimumIdle: 1
-    maximumPoolSize: 10
+    minIdle: 1
+    maxPoolSize: 10
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver

@@ -2,6 +2,7 @@
 
 * #75 Cleaning up APIs deprecated since <= 0.25
 * #76 Update Jackson to 2.9.5
+* #77 HickariCP - rename inconsistent config properties
 
 ## 0.25
 

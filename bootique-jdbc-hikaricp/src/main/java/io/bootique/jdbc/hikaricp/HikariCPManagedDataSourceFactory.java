@@ -123,16 +123,29 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.maxLifetime = maxLifetimeMs;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Deprecated. Use 'maxPoolSize'.")
+    @Deprecated
     public void setMaximumPoolSize(int maxPoolSize) {
+        setMaxPoolSize(maxPoolSize);
+    }
+
+    @BQConfigProperty
+    public void setMaxPoolSize(int maxPoolSize) {
         if (maxPoolSize < 1) {
             throw new IllegalArgumentException("maxPoolSize cannot be less than 1");
         }
         this.maxPoolSize = maxPoolSize;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Deprecated. Use 'minIdle'.")
+    @Deprecated
     public void setMinimumIdle(int minIdle) {
+        setMinIdle(minIdle);
+    }
+
+    @BQConfigProperty
+    public void setMinIdle(int minIdle) {
+
         if (minIdle < 0) {
             throw new IllegalArgumentException("minimumIdle cannot be negative");
         }
@@ -197,15 +210,15 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         return url;
     }
 
+    @BQConfigProperty
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @BQConfigProperty("Deprecated. Use 'url' property.")
     @Deprecated
     public void setJdbcUrl(String jdbcUrl) {
         setUrl(jdbcUrl);
-    }
-
-    @BQConfigProperty
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     @BQConfigProperty

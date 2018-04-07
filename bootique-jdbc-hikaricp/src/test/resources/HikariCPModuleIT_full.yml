@@ -6,8 +6,8 @@ jdbc:
     idleTimeout: 20000
     leakDetectionThreshold: 20000
     maxLifetime: 50000
-    maximumPoolSize: 3
-    minimumIdle: 1
+    maxPoolSize: 3
+    minIdle: 1
     username: x
     password: x
     initializationFailTimeout: 100

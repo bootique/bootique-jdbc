@@ -3,8 +3,8 @@ jdbc:
     type: "hikari"
     driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
     url: "jdbc:derby:;"
-    minimumIdle: 1
-    maximumPoolSize: 3
+    minIdle: 1
+    maxPoolSize: 3
     username: "x"
     dataSourceProperties:
       databaseName: "target/derby6"
@@ -13,8 +13,8 @@ jdbc:
     type: "hikari"
     dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
     url: "jdbc:derby:;"
-    minimumIdle: 1
-    maximumPoolSize: 3
+    minIdle: 1
+    maxPoolSize: 3
     dataSourceProperties:
       databaseName: "target/derby7"
       connectionAttributes: "create=true"

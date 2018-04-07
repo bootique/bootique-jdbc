@@ -35,8 +35,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private volatile long idleTimeout;
     private volatile long leakDetectionThreshold;
     private volatile long maxLifetime;
-    private volatile int maxPoolSize;
-    private volatile int minIdle;
+    private volatile int maximumPoolSize;
+    private volatile int minimumIdle;
     private volatile String username;
     private volatile String password;
     private long initializationFailTimeout;
@@ -61,8 +61,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         dataSourceProperties = new Properties();
 
-        minIdle = 10;
-        maxPoolSize = 100;
+        minimumIdle = 10;
+        maximumPoolSize = 100;
         maxLifetime = MAX_LIFETIME;
         connectionTimeout = CONNECTION_TIMEOUT;
         validationTimeout = VALIDATION_TIMEOUT;
@@ -126,17 +126,17 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     @BQConfigProperty
     public void setMaximumPoolSize(int maxPoolSize) {
         if (maxPoolSize < 1) {
-            throw new IllegalArgumentException("maxPoolSize cannot be less than 1");
+            throw new IllegalArgumentException("'maximumPoolSize' cannot be less than 1");
         }
-        this.maxPoolSize = maxPoolSize;
+        this.maximumPoolSize = maxPoolSize;
     }
 
     @BQConfigProperty
     public void setMinimumIdle(int minIdle) {
         if (minIdle < 0) {
-            throw new IllegalArgumentException("minimumIdle cannot be negative");
+            throw new IllegalArgumentException("'minimumIdle' cannot be negative");
         }
-        this.minIdle = minIdle;
+        this.minimumIdle = minIdle;
     }
 
     @BQConfigProperty
@@ -152,7 +152,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     @BQConfigProperty
     public void setValidationTimeout(long validationTimeoutMs) {
         if (validationTimeoutMs < 250) {
-            throw new IllegalArgumentException("validationTimeout cannot be less than 250ms");
+            throw new IllegalArgumentException("'validationTimeout' cannot be less than 250ms");
         }
 
         this.validationTimeout = validationTimeoutMs;
@@ -260,8 +260,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         hikariConfig.setIdleTimeout(idleTimeout);
         hikariConfig.setLeakDetectionThreshold(leakDetectionThreshold);
         hikariConfig.setMaxLifetime(maxLifetime);
-        hikariConfig.setMaximumPoolSize(maxPoolSize);
-        hikariConfig.setMinimumIdle(minIdle);
+        hikariConfig.setMaximumPoolSize(maximumPoolSize);
+        hikariConfig.setMinimumIdle(minimumIdle);
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
 

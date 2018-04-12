@@ -16,20 +16,17 @@ import java.util.SortedMap;
 import static io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory.METRIC_CATEGORY;
 import static io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory.METRIC_NAME_WAIT;
 
-@BQConfig("Configures HikcariCP data source health checks.")
+@BQConfig("Configures HikariCP data source health checks.")
 public class HikariCPHealthCheckGroupFactory {
+
     private long connectivityCheckTimeout;
     private long expected99thPercentile;
-
-    public HikariCPHealthCheckGroupFactory() {
-
-    }
 
     public long getConnectivityCheckTimeout() {
         return connectivityCheckTimeout;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("Specifies a timeout for connectivity check.")
     public void setConnectivityCheckTimeout(long connectivityCheckTimeout) {
         this.connectivityCheckTimeout = connectivityCheckTimeout;
     }
@@ -38,7 +35,8 @@ public class HikariCPHealthCheckGroupFactory {
         return expected99thPercentile;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("A health check would succeed if on average, 99% of all calls to getConnection() obtain a " +
+            "Connection within a number of milliseconds specified here. ")
     public void setExpected99thPercentile(long expected99thPercentile) {
         this.expected99thPercentile = expected99thPercentile;
     }

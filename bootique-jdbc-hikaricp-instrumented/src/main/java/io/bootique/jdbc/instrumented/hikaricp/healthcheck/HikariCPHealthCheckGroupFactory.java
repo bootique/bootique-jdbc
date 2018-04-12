@@ -2,19 +2,20 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.inject.Injector;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory;
 import io.bootique.metrics.health.HealthCheck;
+import io.bootique.metrics.health.check.ValueRange;
+import io.bootique.metrics.health.check.ValueRangeCheck;
 
+import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
-
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory.METRIC_CATEGORY;
-import static io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory.METRIC_NAME_WAIT;
+import java.util.function.Supplier;
 
 @BQConfig("Configures HikariCP data source health checks.")
 public class HikariCPHealthCheckGroupFactory {
@@ -41,38 +42,69 @@ public class HikariCPHealthCheckGroupFactory {
         this.expected99thPercentile = expected99thPercentile;
     }
 
-    public Map<String, HealthCheck> createHealthChecksMap(HikariDataSource ds, String dataSourceName, Injector injector) {
+    public Map<String, HealthCheck> createHealthChecksMap(MetricRegistry registry, HikariDataSource ds, String dataSourceName) {
         HikariPoolMXBean pool = ds.getHikariPoolMXBean();
-        String poolName = ds.getPoolName();
 
-        MetricRegistry registry = injector.getInstance(MetricRegistry.class);
-
-        Map<String, HealthCheck> checks = new HashMap<>();
+        Map<String, HealthCheck> checks = new HashMap<>(3);
         checks.put(ConnectivityCheck.healthCheckName(dataSourceName), createConnectivityCheck(pool));
-
-        HealthCheck expected99thPercentileCheck = createExpected99thPercentileCheck(registry, poolName);
-        if (expected99thPercentileCheck != null) {
-            checks.put(Connection99PercentCheck.healthCheckName(dataSourceName), expected99thPercentileCheck);
-        }
+        checks.put(Connection99PercentCheck.healthCheckName(dataSourceName), createConnection99PercentCheck(registry, ds.getPoolName()));
 
         return checks;
     }
 
-    private HealthCheck createExpected99thPercentileCheck(MetricRegistry registry, String poolName) {
-        if (registry != null && expected99thPercentile > 0) {
-            SortedMap<String, Timer> timers = registry.getTimers((name, metric) ->
-                    name.equals(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_WAIT)));
-
-            if (!timers.isEmpty()) {
-                final Timer timer = timers.entrySet().iterator().next().getValue();
-                return new Connection99PercentCheck(timer, expected99thPercentile);
-            }
-        }
-
-        return null;
+    private HealthCheck createConnection99PercentCheck(MetricRegistry registry, String poolName) {
+        Supplier<Duration> deferredTimer = connection99PercentSupplier(registry, poolName);
+        ValueRange<Duration> range = getConnection99PercentThresholds();
+        return new ValueRangeCheck<>(range, deferredTimer);
     }
 
     private HealthCheck createConnectivityCheck(HikariPoolMXBean pool) {
         return new ConnectivityCheck(pool, connectivityCheckTimeout);
+    }
+
+    private ValueRange<Duration> getConnection99PercentThresholds() {
+
+        // TODO: migrate to a ValueRangeFactory and add WARNING threshold
+        if (expected99thPercentile > 0) {
+            return ValueRange.builder(Duration.class)
+                    .min(Duration.ZERO)
+                    .critical(Duration.ofMillis(expected99thPercentile))
+                    .build();
+        }
+
+        // default range
+        return ValueRange.builder(Duration.class)
+                .min(Duration.ZERO)
+                .critical(Duration.ofMillis(1000))
+                .build();
+    }
+
+    private Supplier<Duration> connection99PercentSupplier(MetricRegistry registry, String poolName) {
+
+        String metricName = MetricRegistry.name(poolName,
+                HikariCPInstrumentedDataSourceFactory.METRIC_CATEGORY,
+                HikariCPInstrumentedDataSourceFactory.METRIC_NAME_WAIT);
+
+        // using deferred timer resolving to allow health checks against the system with misconfigured metrics,
+        // or Hikari not yet up during health check creation
+        return () -> readConnection99Percent(registry, metricName);
+    }
+
+    private Duration readConnection99Percent(MetricRegistry registry, String metricName) {
+        long ms = (long) findTimer(registry, metricName).getSnapshot().get99thPercentile();
+        return Duration.ofMillis(ms);
+    }
+
+    private Timer findTimer(MetricRegistry registry, String name) {
+
+        Collection<Timer> timers = registry.getTimers((n, m) -> name.equals(n)).values();
+        switch (timers.size()) {
+            case 0:
+                throw new IllegalArgumentException("Timer not found: " + name);
+            case 1:
+                return timers.iterator().next();
+            default:
+                throw new IllegalArgumentException("More than one Timer matching the name: " + name);
+        }
     }
 }

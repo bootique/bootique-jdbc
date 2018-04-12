@@ -25,6 +25,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
 
     public static final String METRIC_CATEGORY = "pool";
     public static final String METRIC_NAME_WAIT = "Wait";
+
     static final String METRIC_NAME_TOTAL_CONNECTIONS = "TotalConnections";
     static final String METRIC_NAME_IDLE_CONNECTIONS = "IdleConnections";
     static final String METRIC_NAME_ACTIVE_CONNECTIONS = "ActiveConnections";
@@ -63,17 +64,19 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     }
 
     private void addHealthChecks(HikariDataSource ds, String dataSourceName, Injector injector) {
-        if (health != null) {
-            HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
 
-            // TODO: we are mutating an injectable object here (HikariCPHealthCheckGroup).
+        HikariCPHealthCheckGroupFactory factory = this.health != null ? this.health : new HikariCPHealthCheckGroupFactory();
 
-            // The rest of the design ensures lazy initialization as confirmed by HikariCPInstrumentedModuleIT,
-            // so HikariCPHealthCheckGroup is not consumed until fully initialized. Still dirty, but no easy
-            // workaround.
+        MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
+        HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
 
-            group.getHealthChecks().putAll(health.createHealthChecksMap(ds, dataSourceName, injector));
-        }
+        // TODO: we are mutating an injectable object here (HikariCPHealthCheckGroup).
+
+        // The rest of the design ensures lazy initialization as confirmed by HikariCPInstrumentedModuleIT,
+        // so HikariCPHealthCheckGroup is not consumed until fully initialized. Still dirty, but no easy
+        // workaround.
+
+        group.getHealthChecks().putAll(factory.createHealthChecksMap(metricRegistry, ds, dataSourceName));
     }
 
     private void addMetrics(HikariDataSource ds, Injector injector) {

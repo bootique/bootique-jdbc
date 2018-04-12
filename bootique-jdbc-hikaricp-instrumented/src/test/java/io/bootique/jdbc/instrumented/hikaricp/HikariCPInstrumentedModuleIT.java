@@ -14,7 +14,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -24,9 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 public class HikariCPInstrumentedModuleIT {
 
-    @ClassRule
-    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
-
     static final String METRIC_CATEGORY = "pool";
     static final String METRIC_NAME_WAIT = "Wait";
     static final String METRIC_NAME_TOTAL_CONNECTIONS = "TotalConnections";
@@ -34,8 +30,11 @@ public class HikariCPInstrumentedModuleIT {
     static final String METRIC_NAME_ACTIVE_CONNECTIONS = "ActiveConnections";
     static final String METRIC_NAME_PENDING_CONNECTIONS = "PendingConnections";
 
+    @ClassRule
+    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+
     @Test
-    public void testMetrics_TurnedOn() {
+    public void testMetrics() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds-health.yml")
                 .autoLoadModules()
                 .createRuntime();
@@ -64,83 +63,72 @@ public class HikariCPInstrumentedModuleIT {
     }
 
     @Test
-    public void testHealthChecks_TurnedOn() {
+    public void testHealthChecks() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds-health.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
-
         String dataSourceName = "derby1";
-        HikariDataSource dataSource = (HikariDataSource) factory.forName(dataSourceName);
-        assertNotNull(dataSource);
+
+        // trigger DataSource creation
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
+        factory.forName(dataSourceName);
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
+
+        Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
+        assertEquals(3, results.size());
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
-        /**
-         * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
-         */
-        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
-
-        Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
-        assertEquals(results.size(), 3);
+        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
     }
 
     @Test
-    public void testHealthChecks_HealthNoParam_ChecksTurnedOff() {
-        BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/dummy-ds.yml")
+    public void testHealthChecks_Implicit() {
+        BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds-nohealth.yml")
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
         String dataSourceName = "DerbyDatabaseIT";
 
-        HikariDataSource dataSource = (HikariDataSource) factory.forName(dataSourceName);
-        assertNotNull(dataSource);
+        // trigger DataSource creation...
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
+        factory.forName(dataSourceName);
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
-        /**
-         * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
-         */
-        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
-
-
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
-        assertEquals(results.size(), 1);
+        assertEquals(3, results.size());
+
+        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
     }
 
     @Test
-    public void testHealthChecksMultipleDs() throws SQLException {
+    public void testHealthChecksMultipleDs() {
 
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds2-health.yml")
                 .autoLoadModules()
                 .createRuntime();
 
+        String derby2 = "derby2";
+        String derby3 = "derby3";
+
+        // trigger DataSource creation
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
-        String derby2 = "derby2", derby3 = "derby3";
-        HikariDataSource ds2 = (HikariDataSource) factory.forName(derby2);
-        assertNotNull(ds2);
-
-        HikariDataSource ds3 = (HikariDataSource) factory.forName(derby3);
-        assertNotNull(ds3);
-
+        factory.forName(derby2);
+        factory.forName(derby3);
+        
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby2)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby2)));
-        /**
-         * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
-         */
-        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby2)));
+        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby2)));
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby3)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby3)));
-        /**
-         * embedded health check {@link io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck}
-         */
-        assertTrue(registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby3)));
+        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby3)));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 6);

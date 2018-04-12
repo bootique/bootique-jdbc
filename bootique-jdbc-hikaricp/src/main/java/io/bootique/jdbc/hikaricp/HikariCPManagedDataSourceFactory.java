@@ -30,32 +30,33 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private static final long IDLE_TIMEOUT = MINUTES.toMillis(10);
     private static final long MAX_LIFETIME = MINUTES.toMillis(30);
 
-    private volatile long connectionTimeout;
-    private volatile long validationTimeout;
-    private volatile long idleTimeout;
-    private volatile long leakDetectionThreshold;
-    private volatile long maxLifetime;
-    private volatile int maximumPoolSize;
-    private volatile int minimumIdle;
-    private volatile String username;
-    private volatile String password;
-    private long initializationFailTimeout;
+    private boolean allowPoolSuspension;
+    private boolean autoCommit;
     private String catalog;
     private String connectionInitSql;
     private String connectionTestQuery;
+    private long connectionTimeout;
     private String dataSourceClassName;
     private String dataSourceJndiName;
+    private Properties dataSourceProperties;
     private String driverClassName;
+    private long idleTimeout;
+    private long initializationFailTimeout;
+    private boolean isolateInternalQueries;
     private String jdbcUrl;
+    private long leakDetectionThreshold;
+    private long maxLifetime;
+    private int maximumPoolSize;
+    private int minimumIdle;
+    private String password;
     private String poolName;
     private String schema;
     private String transactionIsolationName;
-    private boolean autoCommit;
     private boolean readOnly;
-    private boolean isolateInternalQueries;
     private boolean registerMbeans;
-    private boolean allowPoolSuspension;
-    private Properties dataSourceProperties;
+    private String username;
+    private long validationTimeout;
+
 
     public HikariCPManagedDataSourceFactory() {
 

@@ -14,7 +14,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class HikariCPHealthCheckGroupFactoryIT {
+public class HikariCPHealthCheckFactoryIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
@@ -38,7 +38,7 @@ public class HikariCPHealthCheckGroupFactoryIT {
         assertEquals(3, results.size());
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
-        assertTrue(registry.containsHealthCheck(Connection99PctCheckFactory.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
         assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
     }
 
@@ -61,7 +61,7 @@ public class HikariCPHealthCheckGroupFactoryIT {
 
         assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
-        assertTrue(registry.containsHealthCheck(Connection99PctCheckFactory.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
     }
 
     @Test
@@ -83,11 +83,11 @@ public class HikariCPHealthCheckGroupFactoryIT {
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby2)));
-        assertTrue(registry.containsHealthCheck(Connection99PctCheckFactory.healthCheckName(derby2)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby2)));
         assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby2)));
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby3)));
-        assertTrue(registry.containsHealthCheck(Connection99PctCheckFactory.healthCheckName(derby3)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby3)));
         assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby3)));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();

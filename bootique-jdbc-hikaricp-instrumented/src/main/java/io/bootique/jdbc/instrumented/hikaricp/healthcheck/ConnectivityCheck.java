@@ -12,14 +12,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * HikariCP "aliveness" standard check
  */
-class ConnectivityCheck implements HealthCheck {
+public class ConnectivityCheck implements HealthCheck {
 
     private final HikariPoolMXBean pool;
     private final long connectivityCheckTimeout;
 
-    ConnectivityCheck(final HikariPoolMXBean pool, final long connectivityCheckTimeout) {
+    public ConnectivityCheck(final HikariPoolMXBean pool, final long connectivityCheckTimeout) {
         this.pool = pool;
-        this.connectivityCheckTimeout = (connectivityCheckTimeout > 0 && connectivityCheckTimeout != Integer.MAX_VALUE ? connectivityCheckTimeout : TimeUnit.SECONDS.toMillis(10));
+        this.connectivityCheckTimeout = connectivityCheckTimeout > 0 && connectivityCheckTimeout != Integer.MAX_VALUE
+                ? connectivityCheckTimeout
+                : TimeUnit.SECONDS.toMillis(10);
     }
 
     /**
@@ -28,7 +30,7 @@ class ConnectivityCheck implements HealthCheck {
      * @param dataSourceName
      * @return qualified name bq.jdbc.[dataSourceName].connectivity
      */
-    static String healthCheckName(String dataSourceName) {
+    public static String healthCheckName(String dataSourceName) {
         return "bq.jdbc." + dataSourceName + ".connectivity";
     }
 

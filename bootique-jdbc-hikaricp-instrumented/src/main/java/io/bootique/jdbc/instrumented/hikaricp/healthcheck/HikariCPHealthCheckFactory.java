@@ -10,8 +10,8 @@ import io.bootique.metrics.health.HealthCheck;
 import java.util.HashMap;
 import java.util.Map;
 
-@BQConfig("Configures HikariCP data source health checks.")
-public class HikariCPHealthCheckGroupFactory {
+@BQConfig("Configures health checks for a Hikari DataSource.")
+public class HikariCPHealthCheckFactory {
 
     private long connectivityCheckTimeout;
     private long expected99thPercentile;
@@ -32,8 +32,7 @@ public class HikariCPHealthCheckGroupFactory {
 
         Map<String, HealthCheck> checks = new HashMap<>(3);
         checks.put(ConnectivityCheck.healthCheckName(dataSourceName), createConnectivityCheck(pool));
-
-        checks.put(Connection99PctCheckFactory.healthCheckName(dataSourceName),
+        checks.put(Connection99PercentCheck.healthCheckName(dataSourceName),
                 new Connection99PctCheckFactory(expected99thPercentile).createHealthCheck(registry, ds.getPoolName()));
 
         return checks;

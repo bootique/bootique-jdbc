@@ -5,7 +5,6 @@ import com.codahale.metrics.Timer;
 import io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.check.ValueRange;
-import io.bootique.metrics.health.check.ValueRangeCheck;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -22,20 +21,10 @@ class Connection99PctCheckFactory {
         this.criticalThresholdMs = criticalThresholdMs;
     }
 
-    /**
-     * Generates stable qualified name for the "connection99Percent" check.
-     *
-     * @param dataSourceName
-     * @return qualified name bq.jdbc.[dataSourceName].connection99Percent
-     */
-    static String healthCheckName(String dataSourceName) {
-        return "bq.jdbc." + dataSourceName + ".connection99Percent";
-    }
-
     HealthCheck createHealthCheck(MetricRegistry registry, String poolName) {
         Supplier<Duration> deferredTimer = connection99PercentSupplier(registry, poolName);
         ValueRange<Duration> range = getConnection99PercentThresholds();
-        return new ValueRangeCheck<>(range, deferredTimer);
+        return new Connection99PercentCheck(range, deferredTimer);
     }
 
     private ValueRange<Duration> getConnection99PercentThresholds() {

@@ -3,6 +3,7 @@
 * #75 Cleaning up APIs deprecated since <= 0.25
 * #76 Update Jackson to 2.9.5
 * #78 Hikari pool defaults
+* #79 Hikari healthchecks are not loaded in HeartbeatFactory
 * #80 Hikari healthchecks are not activated if "jdbc.ds.health" config is absent
 
 ## 0.25

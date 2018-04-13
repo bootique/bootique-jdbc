@@ -1,6 +1,5 @@
 package io.bootique.jdbc.instrumented.healthcheck;
 
-import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 
@@ -14,21 +13,16 @@ import java.sql.Connection;
  */
 public class DataSourceHealthCheck implements HealthCheck {
 
-    private DataSourceFactory dataSourceFactory;
-    private String dataSourceName;
+    private DataSource dataSource;
 
-    public DataSourceHealthCheck(DataSourceFactory dataSourceFactory, String dataSourceName) {
-        // storing both the factory and the name instead of the DataSource to avoid premature
-        // triggering of DataSource creation.
-        this.dataSourceFactory = dataSourceFactory;
-        this.dataSourceName = dataSourceName;
+    public DataSourceHealthCheck(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public HealthCheckOutcome check() throws Exception {
 
-        DataSource ds = dataSourceFactory.forName(dataSourceName);
-        try (Connection c = ds.getConnection()) {
+        try (Connection c = dataSource.getConnection()) {
             return c.isValid(1)
                     ? HealthCheckOutcome.ok()
                     : HealthCheckOutcome.critical("Connection validation failed");

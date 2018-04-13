@@ -8,6 +8,7 @@ import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckGroup;
+import io.bootique.metrics.health.check.DeferredHealthCheck;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +37,10 @@ public class HikariCPHealthCheckFactory {
         Map<String, HealthCheck> checks = new HashMap<>(3);
 
         checks.put(ConnectivityCheck.healthCheckName(dataSourceName),
-                new ActivatablelHealthCheck(createConnectivityCheck(dsf, dataSourceName)));
+                new DeferredHealthCheck(createConnectivityCheck(dsf, dataSourceName)));
 
         checks.put(Connection99PercentCheck.healthCheckName(dataSourceName),
-                new ActivatablelHealthCheck(createConnection99PercentCheck(registry, dsf, dataSourceName)));
+                new DeferredHealthCheck(createConnection99PercentCheck(registry, dsf, dataSourceName)));
 
         return () -> checks;
     }

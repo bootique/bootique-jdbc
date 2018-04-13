@@ -20,14 +20,15 @@ import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class HikariCPInstrumentedModule_HeartbeatIT {
 
@@ -35,16 +36,10 @@ public class HikariCPInstrumentedModule_HeartbeatIT {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testHeartbeat() throws InterruptedException {
+    public void testHeartbeat() {
 
-        CountDownLatch untilFirstHeartbeat = new CountDownLatch(1);
-
-        Map<String, HealthCheckOutcome> result = new HashMap<>();
-
-        HeartbeatListener listener = r -> {
-            result.putAll(r);
-            untilFirstHeartbeat.countDown();
-        };
+        HeartbeatTester tester = new HeartbeatTester();
+        HeartbeatListener listener = tester::addResult;
 
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/HikariCPInstrumentedModule_HeartbeatIT.yml")
@@ -55,25 +50,55 @@ public class HikariCPInstrumentedModule_HeartbeatIT {
 
         runtime.run();
 
+        // make sure we don't trigger DS creation by running heartbeat
+        tester.assertNext(HealthCheckStatus.UNKNOWN);
+        assertFalse(runtime.getInstance(DataSourceFactory.class).isStarted("db"));
+
         // trigger DataSource creation
         runtime.getInstance(DataSourceFactory.class).forName("db");
+        tester.assertNext(HealthCheckStatus.OK);
+    }
 
-        assertTrue("No heartbeat", untilFirstHeartbeat.await(2, TimeUnit.SECONDS));
+    static class HeartbeatTester {
 
-        HealthCheckOutcome hikariConnectivity = result.get(ConnectivityCheck.healthCheckName("db"));
-        HealthCheckOutcome hikari99Pct = result.get(Connection99PercentCheck.healthCheckName("db"));
-        HealthCheckOutcome commonConnectivity = result.get(DataSourceHealthCheck.healthCheckName("db"));
+        private volatile Map<String, HealthCheckOutcome> lastResult;
+        private volatile CountDownLatch untilFirstHeartbeat = new CountDownLatch(1);
 
-        assertNotNull("No common connectivity check", commonConnectivity);
-        assertEquals(HealthCheckStatus.OK, commonConnectivity.getStatus());
+        void addResult(Map<String, HealthCheckOutcome> result) {
+            this.lastResult = result;
+            this.untilFirstHeartbeat.countDown();
+        }
 
-        assertNotNull("No Hikari connectivity check", hikariConnectivity);
-        assertEquals(HealthCheckStatus.OK, hikariConnectivity.getStatus());
+        void assertNext(HealthCheckStatus expectedStatus) {
 
-        assertNotNull("No Hikari 99 connectivity percentile check", hikari99Pct);
-        assertEquals(HealthCheckStatus.OK, hikari99Pct.getStatus());
+            this.untilFirstHeartbeat = new CountDownLatch(1);
 
-        assertEquals(3, result.size());
+            try {
+                assertTrue("No heartbeat", untilFirstHeartbeat.await(2, TimeUnit.SECONDS));
+            } catch (InterruptedException e) {
+                fail("interrupted: " + e.getMessage());
+            }
+
+            Map<String, HealthCheckOutcome> lastResult = this.lastResult;
+
+            assertNotNull(lastResult);
+            assertResult(expectedStatus, lastResult);
+        }
+
+        private void assertResult(HealthCheckStatus expectedStatus, Map<String, HealthCheckOutcome> result) {
+            HealthCheckOutcome hikariConnectivity = result.get(ConnectivityCheck.healthCheckName("db"));
+            HealthCheckOutcome hikari99Pct = result.get(Connection99PercentCheck.healthCheckName("db"));
+            HealthCheckOutcome commonConnectivity = result.get(DataSourceHealthCheck.healthCheckName("db"));
+
+            assertNotNull("No common connectivity check", commonConnectivity);
+            assertNotNull("No Hikari connectivity check", hikariConnectivity);
+            assertNotNull("No Hikari 99 connectivity percentile check", hikari99Pct);
+            assertEquals(3, result.size());
+
+            assertEquals(expectedStatus, commonConnectivity.getStatus());
+            assertEquals(expectedStatus, hikariConnectivity.getStatus());
+            assertEquals(expectedStatus, hikari99Pct.getStatus());
+        }
     }
 
     static class TestHeartbeatCommand implements Command {

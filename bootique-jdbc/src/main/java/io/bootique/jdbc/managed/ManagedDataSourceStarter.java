@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * An object that can create and start {@link ManagedDataSource} on demand. Also provides access to common DataSource
+ * An object that can create and start a {@link ManagedDataSource} on demand. Also provides access to common DataSource
  * metadata, namely its JDBC URL.
  *
  * @since 0.25

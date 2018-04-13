@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -112,12 +111,12 @@ public class DataSourceFactoryIT {
         }
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-            return Optional.of(new ManagedDataSourceSupplier(
+        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+            return new ManagedDataSourceSupplier(
                     url,
                     () -> mock(DataSource.class),
                     ds -> {
-                    }));
+                    });
         }
     }
 
@@ -131,12 +130,12 @@ public class DataSourceFactoryIT {
         }
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-            return Optional.of(new ManagedDataSourceSupplier(
+        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+            return new ManagedDataSourceSupplier(
                     url,
                     () -> mock(DataSource.class),
                     ds -> {
-                    }));
+                    });
         }
     }
 

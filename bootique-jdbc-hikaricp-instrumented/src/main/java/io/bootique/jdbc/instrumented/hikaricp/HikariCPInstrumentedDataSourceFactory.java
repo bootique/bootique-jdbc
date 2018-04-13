@@ -15,7 +15,6 @@ import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGro
 import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 
 import javax.sql.DataSource;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -34,11 +33,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     private HikariCPHealthCheckGroupFactory health;
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-
-        if (getJdbcUrl() == null) {
-            return Optional.empty();
-        }
+    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
 
         Supplier<DataSource> startup = () -> {
 
@@ -55,7 +50,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return Optional.of(new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown));
+        return new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown);
     }
 
     @BQConfigProperty

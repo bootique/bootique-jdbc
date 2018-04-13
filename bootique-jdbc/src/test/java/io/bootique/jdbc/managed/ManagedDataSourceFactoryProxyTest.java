@@ -4,12 +4,12 @@ import com.google.inject.Injector;
 import org.junit.Test;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class ManagedDataSourceFactoryProxyTest {
 
@@ -42,8 +42,8 @@ public class ManagedDataSourceFactoryProxyTest {
     public static class X1 implements ManagedDataSourceFactory {
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-            return Optional.empty();
+        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+            return mock(ManagedDataSourceSupplier.class);
         }
     }
 
@@ -70,8 +70,8 @@ public class ManagedDataSourceFactoryProxyTest {
     public static class Y1 extends Superclass0 implements ManagedDataSourceFactory {
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-            return Optional.empty();
+        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+            return mock(ManagedDataSourceSupplier.class);
         }
     }
 

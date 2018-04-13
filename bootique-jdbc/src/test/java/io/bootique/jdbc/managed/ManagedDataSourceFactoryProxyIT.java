@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -192,12 +191,12 @@ public class ManagedDataSourceFactoryProxyIT {
         }
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-            return Optional.of(new ManagedDataSourceSupplier(
+        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+            return new ManagedDataSourceSupplier(
                     url,
                     () -> mock(DataSource.class),
                     ds -> {
-                    }));
+                    });
         }
     }
 
@@ -236,12 +235,12 @@ public class ManagedDataSourceFactoryProxyIT {
         }
 
         @Override
-        public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-            return Optional.of(new ManagedDataSourceSupplier(
+        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+            return new ManagedDataSourceSupplier(
                     url,
                     () -> mock(DataSource.class),
                     ds -> {
-                    }));
+                    });
         }
     }
 

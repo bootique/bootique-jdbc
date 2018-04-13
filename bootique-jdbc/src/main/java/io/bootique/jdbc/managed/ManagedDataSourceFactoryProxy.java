@@ -17,7 +17,6 @@ import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -51,7 +50,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     }
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
         return createDataSourceFactory(injector).create(dataSourceName, injector);
     }
 

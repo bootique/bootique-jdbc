@@ -11,7 +11,6 @@ import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 
 import javax.sql.DataSource;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -73,10 +72,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @Override
-    public Optional<ManagedDataSourceSupplier> create(String dataSourceName, Injector injector) {
-        if (jdbcUrl == null) {
-            return Optional.empty();
-        }
+    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
 
         Supplier<DataSource> startup = () -> {
 
@@ -88,7 +84,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return Optional.of(new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown));
+        return new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown);
     }
 
     protected void validate() {

@@ -47,6 +47,12 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         return managedDataSource.getDataSource();
     }
 
+    @Override
+    public boolean isStarted(String dataSourceName) {
+        // should we throw on "starters" missing this key?
+        return dataSources.containsKey(dataSourceName);
+    }
+
     protected ManagedDataSource createManagedDataSource(String name) {
         ManagedDataSourceStarter starter = starters.get(name);
         if (starter == null) {

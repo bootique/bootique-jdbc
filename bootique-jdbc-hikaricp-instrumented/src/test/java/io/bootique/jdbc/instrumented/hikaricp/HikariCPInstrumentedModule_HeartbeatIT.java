@@ -95,9 +95,9 @@ public class HikariCPInstrumentedModule_HeartbeatIT {
             assertNotNull("No Hikari 99 connectivity percentile check", hikari99Pct);
             assertEquals(3, result.size());
 
-            assertEquals(expectedStatus, commonConnectivity.getStatus());
-            assertEquals(expectedStatus, hikariConnectivity.getStatus());
-            assertEquals(expectedStatus, hikari99Pct.getStatus());
+            assertEquals("Unexpected common connectivity check result", expectedStatus, commonConnectivity.getStatus());
+            assertEquals("Unexpected Hikari connectivity check result",expectedStatus, hikariConnectivity.getStatus());
+            assertEquals("Unexpected Hikari 99 connectivity percentile check result",expectedStatus, hikari99Pct.getStatus());
         }
     }
 

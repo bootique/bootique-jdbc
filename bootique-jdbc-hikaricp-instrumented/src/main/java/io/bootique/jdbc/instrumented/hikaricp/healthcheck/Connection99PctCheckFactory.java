@@ -40,7 +40,7 @@ class Connection99PctCheckFactory {
         // default range
         return ValueRange.builder(Duration.class)
                 .min(Duration.ZERO)
-                .critical(Duration.ofMillis(1000))
+                .critical(Duration.ofSeconds(5))
                 .build();
     }
 

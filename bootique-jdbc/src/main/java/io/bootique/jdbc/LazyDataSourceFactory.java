@@ -13,15 +13,15 @@ import java.util.concurrent.ConcurrentMap;
 public class LazyDataSourceFactory implements DataSourceFactory {
 
     private Collection<DataSourceListener> listeners;
-    private Map<String, ManagedDataSourceSupplier> dataSourceFactories;
+    private Map<String, ManagedDataSourceSupplier> suppliers;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
 
     public LazyDataSourceFactory(
-            Map<String, ManagedDataSourceSupplier> dataSourceFactories,
+            Map<String, ManagedDataSourceSupplier> suppliers,
             Set<DataSourceListener> listeners) {
 
-        this.dataSourceFactories = dataSourceFactories;
         this.dataSources = new ConcurrentHashMap<>();
+        this.suppliers = suppliers;
         this.listeners = listeners;
     }
 
@@ -38,7 +38,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
      */
     @Override
     public Collection<String> allNames() {
-        return dataSourceFactories.keySet();
+        return suppliers.keySet();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     protected ManagedDataSource createManagedDataSource(String name) {
-        ManagedDataSourceSupplier supplier = dataSourceFactories.get(name);
+        ManagedDataSourceSupplier supplier = suppliers.get(name);
         if (supplier == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }

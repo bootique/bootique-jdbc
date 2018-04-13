@@ -7,10 +7,12 @@ import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,13 +42,12 @@ public class JdbcModule extends ConfigModule {
     @Singleton
     @Provides
     DataSourceFactory createDataSource(
-            Map<String, ManagedDataSourceFactory> configs,
+            Map<String, ManagedDataSourceSupplier> suppliers,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
-            Set<DataSourceListener> listeners,
-            Injector injector) {
+            Set<DataSourceListener> listeners) {
 
-        LazyDataSourceFactory factory = new LazyDataSourceFactoryFactory(configs).create(injector, listeners);
+        LazyDataSourceFactory factory = new LazyDataSourceFactory(suppliers, listeners);
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
             factory.shutdown();
@@ -57,11 +58,17 @@ public class JdbcModule extends ConfigModule {
 
     @Singleton
     @Provides
-    Map<String, ManagedDataSourceFactory> provideDataSourceFactories(ConfigurationFactory configurationFactory) {
+    Map<String, ManagedDataSourceSupplier> provideDataSourceSuppliers(
+            ConfigurationFactory configurationFactory,
+            Injector injector) {
+
         Map<String, ManagedDataSourceFactory> configs = configurationFactory
                 .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
                 }, "jdbc");
 
-        return configs;
+        Map<String, ManagedDataSourceSupplier> suppliers = new HashMap<>();
+        configs.forEach((n, mdsf) -> suppliers.put(n, mdsf.create(n, injector)));
+
+        return suppliers;
     }
 }

@@ -29,8 +29,8 @@ class LazyDataSourceFactoryFactory {
             return new LazyDataSourceFactory(Collections.emptyMap(), listeners);
         }
 
-        Map<String, ManagedDataSourceSupplier> factories = new HashMap<>();
-        configs.forEach((n, ff) -> factories.put(n, ff.create(n, injector)));
-        return new LazyDataSourceFactory(factories, listeners);
+        Map<String, ManagedDataSourceSupplier> suppliers = new HashMap<>();
+        configs.forEach((n, mdsf) -> suppliers.put(n, mdsf.create(n, injector)));
+        return new LazyDataSourceFactory(suppliers, listeners);
     }
 }

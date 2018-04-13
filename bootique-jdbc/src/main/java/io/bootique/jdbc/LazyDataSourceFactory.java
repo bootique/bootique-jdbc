@@ -48,15 +48,15 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     protected ManagedDataSource createManagedDataSource(String name) {
-        ManagedDataSourceSupplier factory = dataSourceFactories.get(name);
-        if (factory == null) {
+        ManagedDataSourceSupplier supplier = dataSourceFactories.get(name);
+        if (supplier == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }
 
-        String url = factory.getUrl();
+        String url = supplier.getUrl();
 
         listeners.forEach(listener -> listener.beforeStartup(name, url));
-        ManagedDataSource dataSource = factory.start();
+        ManagedDataSource dataSource = supplier.start();
         listeners.forEach(listener -> listener.afterStartup(name, url, dataSource.getDataSource()));
 
         return dataSource;

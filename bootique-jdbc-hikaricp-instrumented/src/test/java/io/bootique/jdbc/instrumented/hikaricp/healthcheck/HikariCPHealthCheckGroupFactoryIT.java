@@ -21,7 +21,8 @@ public class HikariCPHealthCheckGroupFactoryIT {
 
     @Test
     public void testHealthChecks() {
-        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds-health.yml")
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds-health.yml")
                 .autoLoadModules()
                 .createRuntime();
 
@@ -43,7 +44,8 @@ public class HikariCPHealthCheckGroupFactoryIT {
 
     @Test
     public void testHealthChecks_Implicit() {
-        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds-nohealth.yml")
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds-nohealth.yml")
                 .autoLoadModules()
                 .createRuntime();
 
@@ -65,7 +67,8 @@ public class HikariCPHealthCheckGroupFactoryIT {
     @Test
     public void testHealthChecksMultipleDs() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/hikaricp-ds2-health.yml")
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds2-health.yml")
                 .autoLoadModules()
                 .createRuntime();
 

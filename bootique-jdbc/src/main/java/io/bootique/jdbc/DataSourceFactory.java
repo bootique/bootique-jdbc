@@ -2,6 +2,7 @@ package io.bootique.jdbc;
 
 import javax.sql.DataSource;
 import java.util.Collection;
+import java.util.Optional;
 
 public interface DataSourceFactory {
 
@@ -32,4 +33,14 @@ public interface DataSourceFactory {
      * @since 0.26
      */
     boolean isStarted(String dataSourceName);
+
+    /**
+     * @param dataSourceName symbolic name of the DataSource we are interested in.
+     * @return an optional DataSource for a given name. Will be an empty Optional if the DataSource for that name is
+     * not yet started.
+     * @since 0.26
+     */
+    default Optional<DataSource> forNameIfStarted(String dataSourceName) {
+        return isStarted(dataSourceName) ? Optional.of(forName(dataSourceName)) : Optional.empty();
+    }
 }

@@ -9,10 +9,12 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckFactory;
-import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroup;
+import io.bootique.jdbc.instrumented.hikaricp.managed.InstrumentedManagedDataSourceStarter;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
+import io.bootique.metrics.health.HealthCheckGroup;
 
 import javax.sql.DataSource;
 import java.util.function.Consumer;
@@ -42,15 +44,18 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
             HikariConfig hikariConfig = toConfiguration();
             HikariDataSource ds = new HikariDataSource(hikariConfig);
 
+            // TODO: switch metrics init to DataSourceListener
             this.addMetrics(ds, injector);
-            this.addHealthChecks(ds, dataSourceName, injector);
 
             return ds;
         };
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return new ManagedDataSourceStarter(getJdbcUrl(), startup, shutdown);
+        MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
+        DataSourceFactory dataSourceFactory = injector.getInstance(DataSourceFactory.class);
+        HealthCheckGroup healthChecks = dataSourceHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
+        return new InstrumentedManagedDataSourceStarter(getJdbcUrl(), startup, shutdown, healthChecks);
     }
 
     @BQConfigProperty
@@ -58,20 +63,10 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
         this.health = health;
     }
 
-    private void addHealthChecks(HikariDataSource ds, String dataSourceName, Injector injector) {
+    private HealthCheckGroup dataSourceHealthChecks(MetricRegistry metricRegistry, DataSourceFactory dataSourceFactory, String dataSourceName) {
 
         HikariCPHealthCheckFactory factory = this.health != null ? this.health : new HikariCPHealthCheckFactory();
-
-        MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
-        HikariCPHealthCheckGroup group = injector.getInstance(HikariCPHealthCheckGroup.class);
-
-        // TODO: we are mutating an injectable object here (HikariCPHealthCheckGroup).
-
-        // The rest of the design ensures lazy initialization as confirmed by HikariCPInstrumentedModuleIT,
-        // so HikariCPHealthCheckGroup is not consumed until fully initialized. Still dirty, but no easy
-        // workaround.
-
-        group.getHealthChecks().putAll(factory.createHealthChecksMap(metricRegistry, ds, dataSourceName));
+        return factory.createHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
     }
 
     private void addMetrics(HikariDataSource ds, Injector injector) {

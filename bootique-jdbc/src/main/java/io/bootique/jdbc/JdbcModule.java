@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
@@ -42,12 +42,12 @@ public class JdbcModule extends ConfigModule {
     @Singleton
     @Provides
     DataSourceFactory createDataSource(
-            Map<String, ManagedDataSourceSupplier> suppliers,
+            Map<String, ManagedDataSourceStarter> starters,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
             Set<DataSourceListener> listeners) {
 
-        LazyDataSourceFactory factory = new LazyDataSourceFactory(suppliers, listeners);
+        LazyDataSourceFactory factory = new LazyDataSourceFactory(starters, listeners);
         shutdownManager.addShutdownHook(() -> {
             bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
             factory.shutdown();
@@ -58,7 +58,7 @@ public class JdbcModule extends ConfigModule {
 
     @Singleton
     @Provides
-    Map<String, ManagedDataSourceSupplier> provideDataSourceSuppliers(
+    Map<String, ManagedDataSourceStarter> provideDataSourceStarters(
             ConfigurationFactory configurationFactory,
             Injector injector) {
 
@@ -66,9 +66,9 @@ public class JdbcModule extends ConfigModule {
                 .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
                 }, "jdbc");
 
-        Map<String, ManagedDataSourceSupplier> suppliers = new HashMap<>();
-        configs.forEach((n, mdsf) -> suppliers.put(n, mdsf.create(n, injector)));
+        Map<String, ManagedDataSourceStarter> starters = new HashMap<>();
+        configs.forEach((n, mdsf) -> starters.put(n, mdsf.create(n, injector)));
 
-        return suppliers;
+        return starters;
     }
 }

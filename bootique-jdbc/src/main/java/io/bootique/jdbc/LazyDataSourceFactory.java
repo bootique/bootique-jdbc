@@ -1,7 +1,7 @@
 package io.bootique.jdbc;
 
 import io.bootique.jdbc.managed.ManagedDataSource;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -13,15 +13,15 @@ import java.util.concurrent.ConcurrentMap;
 public class LazyDataSourceFactory implements DataSourceFactory {
 
     private Collection<DataSourceListener> listeners;
-    private Map<String, ManagedDataSourceSupplier> suppliers;
+    private Map<String, ManagedDataSourceStarter> starters;
     private ConcurrentMap<String, ManagedDataSource> dataSources;
 
     public LazyDataSourceFactory(
-            Map<String, ManagedDataSourceSupplier> suppliers,
+            Map<String, ManagedDataSourceStarter> starters,
             Set<DataSourceListener> listeners) {
 
         this.dataSources = new ConcurrentHashMap<>();
-        this.suppliers = suppliers;
+        this.starters = starters;
         this.listeners = listeners;
     }
 
@@ -38,7 +38,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
      */
     @Override
     public Collection<String> allNames() {
-        return suppliers.keySet();
+        return starters.keySet();
     }
 
     @Override
@@ -48,15 +48,15 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     protected ManagedDataSource createManagedDataSource(String name) {
-        ManagedDataSourceSupplier supplier = suppliers.get(name);
-        if (supplier == null) {
+        ManagedDataSourceStarter starter = starters.get(name);
+        if (starter == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }
 
-        String url = supplier.getUrl();
+        String url = starter.getUrl();
 
         listeners.forEach(listener -> listener.beforeStartup(name, url));
-        ManagedDataSource dataSource = supplier.start();
+        ManagedDataSource dataSource = starter.start();
         listeners.forEach(listener -> listener.afterStartup(name, url, dataSource.getDataSource()));
 
         return dataSource;

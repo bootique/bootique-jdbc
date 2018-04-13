@@ -50,7 +50,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     }
 
     @Override
-    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
         return createDataSourceFactory(injector).create(dataSourceName, injector);
     }
 

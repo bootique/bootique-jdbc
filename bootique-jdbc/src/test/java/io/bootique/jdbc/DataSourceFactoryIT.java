@@ -6,7 +6,7 @@ import com.google.inject.ProvisionException;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,8 +111,8 @@ public class DataSourceFactoryIT {
         }
 
         @Override
-        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
-            return new ManagedDataSourceSupplier(
+        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+            return new ManagedDataSourceStarter(
                     url,
                     () -> mock(DataSource.class),
                     ds -> {
@@ -130,8 +130,8 @@ public class DataSourceFactoryIT {
         }
 
         @Override
-        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
-            return new ManagedDataSourceSupplier(
+        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+            return new ManagedDataSourceStarter(
                     url,
                     () -> mock(DataSource.class),
                     ds -> {

@@ -14,5 +14,5 @@ import io.bootique.config.PolymorphicConfiguration;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ManagedDataSourceFactoryProxy.class)
 public interface ManagedDataSourceFactory extends PolymorphicConfiguration {
 
-    ManagedDataSourceSupplier create(String dataSourceName, Injector injector);
+    ManagedDataSourceStarter create(String dataSourceName, Injector injector);
 }

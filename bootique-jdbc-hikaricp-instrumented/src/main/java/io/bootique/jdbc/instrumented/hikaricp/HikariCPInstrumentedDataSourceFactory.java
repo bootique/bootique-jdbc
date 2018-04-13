@@ -12,7 +12,7 @@ import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckFactory;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroup;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 
 import javax.sql.DataSource;
 import java.util.function.Consumer;
@@ -33,7 +33,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     private HikariCPHealthCheckFactory health;
 
     @Override
-    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
         Supplier<DataSource> startup = () -> {
 
@@ -50,7 +50,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown);
+        return new ManagedDataSourceStarter(getJdbcUrl(), startup, shutdown);
     }
 
     @BQConfigProperty

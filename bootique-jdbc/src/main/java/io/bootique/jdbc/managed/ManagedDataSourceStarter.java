@@ -5,18 +5,18 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * An implementation-specific preconfigured "supplier" that can create {@link ManagedDataSource} on demand. It also
- * provides access to common DataSource metadata, namely its JDBC URL.
+ * An object that can create and start {@link ManagedDataSource} on demand. Also provides access to common DataSource
+ * metadata, namely its JDBC URL.
  *
  * @since 0.25
  */
-public class ManagedDataSourceSupplier {
+public class ManagedDataSourceStarter {
 
     private String url;
     private Supplier<DataSource> startup;
     private Consumer<DataSource> shutdown;
 
-    public ManagedDataSourceSupplier(
+    public ManagedDataSourceStarter(
             String url,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {

@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -108,7 +108,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
     }
 
     @Override
-    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
         Supplier<javax.sql.DataSource> startup = () -> {
 
@@ -127,7 +127,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
 
         Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
 
-        return new ManagedDataSourceSupplier(getUrl(), startup, shutdown);
+        return new ManagedDataSourceStarter(getUrl(), startup, shutdown);
     }
 
     protected void validate() {

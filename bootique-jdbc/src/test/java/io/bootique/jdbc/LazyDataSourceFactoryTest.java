@@ -1,6 +1,6 @@
 package io.bootique.jdbc;
 
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class LazyDataSourceFactoryTest {
 		LazyDataSourceFactory f1 = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet());
 		assertEquals(0, f1.allNames().size());
 
-		ManagedDataSourceSupplier factory = mock(ManagedDataSourceSupplier.class);
+		ManagedDataSourceStarter factory = mock(ManagedDataSourceStarter.class);
 
 		LazyDataSourceFactory f2 = new LazyDataSourceFactory(Collections.singletonMap("a", factory), Collections.emptySet());
 		assertEquals(1, f2.allNames().size());

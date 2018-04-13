@@ -42,8 +42,8 @@ public class ManagedDataSourceFactoryProxyTest {
     public static class X1 implements ManagedDataSourceFactory {
 
         @Override
-        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
-            return mock(ManagedDataSourceSupplier.class);
+        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+            return mock(ManagedDataSourceStarter.class);
         }
     }
 
@@ -70,8 +70,8 @@ public class ManagedDataSourceFactoryProxyTest {
     public static class Y1 extends Superclass0 implements ManagedDataSourceFactory {
 
         @Override
-        public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
-            return mock(ManagedDataSourceSupplier.class);
+        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+            return mock(ManagedDataSourceStarter.class);
         }
     }
 

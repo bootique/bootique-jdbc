@@ -7,7 +7,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-import io.bootique.jdbc.managed.ManagedDataSourceSupplier;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 
 import javax.sql.DataSource;
 import java.util.Objects;
@@ -72,7 +72,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @Override
-    public ManagedDataSourceSupplier create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
         Supplier<DataSource> startup = () -> {
 
@@ -84,7 +84,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
 
-        return new ManagedDataSourceSupplier(getJdbcUrl(), startup, shutdown);
+        return new ManagedDataSourceStarter(getJdbcUrl(), startup, shutdown);
     }
 
     protected void validate() {

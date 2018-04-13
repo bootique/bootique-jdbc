@@ -1,0 +1,12 @@
+jdbc:
+  db:
+    driverClassName: org.apache.derby.jdbc.EmbeddedDriver
+    jdbcUrl: jdbc:derby:target/derby/HikariCPInstrumentedModule_HeartbeatIT;create=true
+    username: sa
+
+heartbeat:
+  initialDelayMs: 3
+  fixedDelayMs: 100
+  threadPoolSize: 2
+  healthCheckTimeoutMs: 2000
+

@@ -5,6 +5,7 @@
 * #78 Hikari pool defaults
 * #79 Hikari healthchecks are not loaded in HeartbeatFactory
 * #80 Hikari healthchecks are not activated if "jdbc.ds.health" config is absent
+* #82 Move generic DataSourceHealthCheck to Tomcat, remove "bootique-jdbc-instrumented"
 
 ## 0.25
 

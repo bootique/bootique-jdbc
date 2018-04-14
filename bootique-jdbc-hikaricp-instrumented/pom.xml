@@ -17,17 +17,17 @@
         <dependencies>
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-instrumented</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-hikaricp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics</artifactId>
+                <version>${bootique-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique.metrics</groupId>
+                <artifactId>bootique-metrics-healthchecks</artifactId>
                 <version>${bootique-version}</version>
             </dependency>
         </dependencies>
@@ -37,17 +37,17 @@
         <!-- Compile dependencies -->
         <dependency>
             <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-instrumented</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
             <artifactId>bootique-jdbc-hikaricp</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.bootique.metrics</groupId>
             <artifactId>bootique-metrics</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.metrics</groupId>
+            <artifactId>bootique-metrics-healthchecks</artifactId>
             <scope>compile</scope>
         </dependency>
 

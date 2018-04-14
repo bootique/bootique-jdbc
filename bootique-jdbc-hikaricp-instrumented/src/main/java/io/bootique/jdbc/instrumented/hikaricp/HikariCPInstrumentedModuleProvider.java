@@ -4,8 +4,8 @@ import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.jdbc.hikaricp.HikariCPModuleProvider;
-import io.bootique.jdbc.instrumented.InstrumentedJdbcModuleProvider;
 import io.bootique.metrics.MetricsModuleProvider;
+import io.bootique.metrics.health.HealthCheckModuleProvider;
 
 import java.util.Collection;
 
@@ -29,8 +29,8 @@ public class HikariCPInstrumentedModuleProvider implements BQModuleProvider {
     public Collection<BQModuleProvider> dependencies() {
         return asList(
                 new HikariCPModuleProvider(),
-                new InstrumentedJdbcModuleProvider(),
-                new MetricsModuleProvider()
+                new MetricsModuleProvider(),
+                new HealthCheckModuleProvider()
         );
     }
 }

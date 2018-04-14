@@ -2,7 +2,6 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.test.junit.BQTestFactory;
@@ -35,11 +34,10 @@ public class HikariCPHealthCheckFactoryIT {
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
-        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
     }
 
     @Test
@@ -57,9 +55,8 @@ public class HikariCPHealthCheckFactoryIT {
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
 
-        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(dataSourceName)));
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
     }
@@ -84,13 +81,11 @@ public class HikariCPHealthCheckFactoryIT {
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby2)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby2)));
-        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby2)));
 
         assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby3)));
         assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby3)));
-        assertTrue("common DataSourceHealthCheck is not found", registry.containsHealthCheck(DataSourceHealthCheck.healthCheckName(derby3)));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
-        assertEquals(results.size(), 6);
+        assertEquals(results.size(), 4);
     }
 }

@@ -2,8 +2,8 @@ package io.bootique.jdbc.instrumented.hikaricp;
 
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.JdbcModule;
-import io.bootique.jdbc.instrumented.InstrumentedJdbcModule;
 import io.bootique.metrics.MetricsModule;
+import io.bootique.metrics.health.HealthCheckModule;
 import io.bootique.test.junit.BQModuleProviderChecker;
 import io.bootique.test.junit.BQRuntimeChecker;
 import io.bootique.test.junit.BQTestFactory;
@@ -24,7 +24,7 @@ public class HikariCPInstrumentedModuleProviderTest {
     public void testModuleDeclaresDependencies() {
         final BQRuntime bqRuntime = testFactory.app().module(new HikariCPInstrumentedModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime,
-                InstrumentedJdbcModule.class,
+                HealthCheckModule.class,
                 MetricsModule.class,
                 JdbcModule.class
         );

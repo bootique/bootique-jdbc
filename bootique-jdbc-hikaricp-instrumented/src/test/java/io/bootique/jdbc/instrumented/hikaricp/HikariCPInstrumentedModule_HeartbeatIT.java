@@ -8,7 +8,6 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.instrumented.healthcheck.DataSourceHealthCheck;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.Connection99PercentCheck;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.ConnectivityCheck;
 import io.bootique.metrics.health.HealthCheckModule;
@@ -86,18 +85,15 @@ public class HikariCPInstrumentedModule_HeartbeatIT {
         }
 
         private void assertResult(HealthCheckStatus expectedStatus, Map<String, HealthCheckOutcome> result) {
-            HealthCheckOutcome hikariConnectivity = result.get(ConnectivityCheck.healthCheckName("db"));
-            HealthCheckOutcome hikari99Pct = result.get(Connection99PercentCheck.healthCheckName("db"));
-            HealthCheckOutcome commonConnectivity = result.get(DataSourceHealthCheck.healthCheckName("db"));
+            HealthCheckOutcome connectivity = result.get(ConnectivityCheck.healthCheckName("db"));
+            HealthCheckOutcome connectivity99Pct = result.get(Connection99PercentCheck.healthCheckName("db"));
 
-            assertNotNull("No common connectivity check", commonConnectivity);
-            assertNotNull("No Hikari connectivity check", hikariConnectivity);
-            assertNotNull("No Hikari 99 connectivity percentile check", hikari99Pct);
-            assertEquals(3, result.size());
+            assertNotNull("No connectivity check", connectivity);
+            assertNotNull("No 99 connectivity percentile check", connectivity99Pct);
+            assertEquals(2, result.size());
 
-            assertEquals("Unexpected common connectivity check result", expectedStatus, commonConnectivity.getStatus());
-            assertEquals("Unexpected Hikari connectivity check result",expectedStatus, hikariConnectivity.getStatus());
-            assertEquals("Unexpected Hikari 99 connectivity percentile check result",expectedStatus, hikari99Pct.getStatus());
+            assertEquals("Unexpected connectivity check result",expectedStatus, connectivity.getStatus());
+            assertEquals("Unexpected 99 connectivity percentile check result",expectedStatus, connectivity99Pct.getStatus());
         }
     }
 

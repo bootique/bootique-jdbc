@@ -22,9 +22,9 @@ class Connection99PctCheckFactory {
     }
 
     HealthCheck createHealthCheck(MetricRegistry registry, String poolName) {
-        Supplier<Duration> deferredTimer = connection99PercentSupplier(registry, poolName);
+        Supplier<Duration> timerReader = connection99PercentSupplier(registry, poolName);
         ValueRange<Duration> range = getConnection99PercentThresholds();
-        return new Connection99PercentCheck(range, deferredTimer);
+        return new Connection99PercentCheck(range, timerReader);
     }
 
     private ValueRange<Duration> getConnection99PercentThresholds() {
@@ -50,8 +50,6 @@ class Connection99PctCheckFactory {
                 HikariCPInstrumentedDataSourceFactory.METRIC_CATEGORY,
                 HikariCPInstrumentedDataSourceFactory.METRIC_NAME_WAIT);
 
-        // using deferred timer resolving to allow health checks against the system with misconfigured metrics,
-        // or Hikari not yet up during health check creation
         return () -> readConnection99Percent(registry, metricName);
     }
 

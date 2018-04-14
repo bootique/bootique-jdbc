@@ -17,15 +17,15 @@ public class ConnectivityCheck implements HealthCheck {
     private final HikariPoolMXBean pool;
     private final long connectivityCheckTimeout;
 
-    public ConnectivityCheck(final HikariPoolMXBean pool, final long connectivityCheckTimeout) {
+    public ConnectivityCheck(HikariPoolMXBean pool, long connectivityCheckTimeout) {
         this.pool = pool;
-        this.connectivityCheckTimeout = connectivityCheckTimeout > 0 && connectivityCheckTimeout != Integer.MAX_VALUE
+        this.connectivityCheckTimeout = connectivityCheckTimeout > 0 && connectivityCheckTimeout < Integer.MAX_VALUE
                 ? connectivityCheckTimeout
                 : TimeUnit.SECONDS.toMillis(10);
     }
 
     /**
-     * Generates stable qualified name for the {@link ConnectivityCheck}
+     * Generates a stable qualified name for the {@link ConnectivityCheck}
      *
      * @param dataSourceName
      * @return qualified name bq.jdbc.[dataSourceName].connectivity

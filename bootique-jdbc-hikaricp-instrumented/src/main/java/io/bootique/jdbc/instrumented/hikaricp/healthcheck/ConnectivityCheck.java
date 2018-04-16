@@ -11,6 +11,7 @@ import io.bootique.value.Duration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.function.Function;
 
 /**
  * HikariCP "aliveness" standard check
@@ -45,20 +46,19 @@ public class ConnectivityCheck implements HealthCheck {
     @Override
     public HealthCheckOutcome check() {
 
-        HealthCheckOutcome warningOutcome = checkThreshold(ThresholdType.WARNING);
+        HealthCheckOutcome warningOutcome = checkThreshold(ThresholdType.WARNING, e -> HealthCheckOutcome.warning(e));
 
         switch (warningOutcome.getStatus()) {
             case WARNING:
                 return warningOutcome;
-            // this is a case of WARNING threshold messing...
             case UNKNOWN:
-                return checkThreshold(ThresholdType.CRITICAL);
+                return checkThreshold(ThresholdType.CRITICAL, e -> HealthCheckOutcome.critical(e));
         }
 
         return HealthCheckOutcome.ok();
     }
-    
-    protected HealthCheckOutcome checkThreshold(ThresholdType type) {
+
+    protected HealthCheckOutcome checkThreshold(ThresholdType type, Function<SQLException, HealthCheckOutcome> onFailure) {
 
         Threshold<Duration> threshold = timeoutThresholds.getThreshold(type);
         if (threshold == null) {
@@ -70,7 +70,7 @@ public class ConnectivityCheck implements HealthCheck {
         try (Connection connection = ((HikariPool) pool).getConnection(timeout)) {
             return HealthCheckOutcome.ok();
         } catch (SQLException e) {
-            return HealthCheckOutcome.critical(e);
+            return onFailure.apply(e);
         }
     }
 }

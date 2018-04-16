@@ -9,8 +9,11 @@ jdbc:
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
     jdbcUrl: jdbc:derby:target/derby/derby2;create=true
     health:
-      connectivityCheckTimeout: 250
-      expected99thPercentile: 10
+      connectivity:
+        critical: 250ms
+      connection99Percent:
+        warning: 10ms
+        critical: 500ms
   derby3:
     type: "hikari-instrumented"
     poolName: "test3"
@@ -21,7 +24,11 @@ jdbc:
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
     jdbcUrl: jdbc:derby:target/derby/derby3;create=true
     health:
-      connectivityCheckTimeout: 250
-      expected99thPercentile: 10
+      connectivity:
+        critical: 250ms
+      connection99Percent:
+        warning: 10ms
+        critical: 500ms
+
 
 

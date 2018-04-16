@@ -9,5 +9,8 @@ jdbc:
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
     jdbcUrl: jdbc:derby:target/derby/derby1;create=true
     health:
-      connectivityCheckTimeout: 250
-      expected99thPercentile: 10
+      connectivity:
+        critical: 250ms
+      connection99Percent:
+        warning: 10ms
+        critical: 500ms

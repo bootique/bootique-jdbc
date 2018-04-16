@@ -3,7 +3,7 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 import io.bootique.metrics.health.check.ValueRange;
 import io.bootique.metrics.health.check.ValueRangeCheck;
 
-import java.time.Duration;
+import io.bootique.value.Duration;
 import java.util.function.Supplier;
 
 /**
@@ -21,7 +21,7 @@ public class Connection99PercentCheck extends ValueRangeCheck<Duration> {
     /**
      * Generates stable qualified name for the "connection99Percent" check.
      *
-     * @param dataSourceName
+     * @param dataSourceName Bootique configuration name of the data source being checked.
      * @return qualified name bq.jdbc.[dataSourceName].connection99Percent
      */
     public static String healthCheckName(String dataSourceName) {

@@ -4,10 +4,13 @@ import com.zaxxer.hikari.HikariPoolMXBean;
 import com.zaxxer.hikari.pool.HikariPool;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
+import io.bootique.metrics.health.check.Threshold;
+import io.bootique.metrics.health.check.ThresholdType;
+import io.bootique.metrics.health.check.ValueRange;
+import io.bootique.value.Duration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * HikariCP "aliveness" standard check
@@ -15,19 +18,17 @@ import java.util.concurrent.TimeUnit;
 public class ConnectivityCheck implements HealthCheck {
 
     private final HikariPoolMXBean pool;
-    private final long connectivityCheckTimeout;
+    private final ValueRange<Duration> timeoutThresholds;
 
-    public ConnectivityCheck(HikariPoolMXBean pool, long connectivityCheckTimeout) {
+    public ConnectivityCheck(HikariPoolMXBean pool, ValueRange<Duration> timeoutThresholds) {
         this.pool = pool;
-        this.connectivityCheckTimeout = connectivityCheckTimeout > 0 && connectivityCheckTimeout < Integer.MAX_VALUE
-                ? connectivityCheckTimeout
-                : TimeUnit.SECONDS.toMillis(10);
+        this.timeoutThresholds = timeoutThresholds;
     }
 
     /**
      * Generates a stable qualified name for the {@link ConnectivityCheck}
      *
-     * @param dataSourceName
+     * @param dataSourceName Bootique configuration name of the data source being checked.
      * @return qualified name bq.jdbc.[dataSourceName].connectivity
      */
     public static String healthCheckName(String dataSourceName) {
@@ -44,7 +45,29 @@ public class ConnectivityCheck implements HealthCheck {
     @Override
     public HealthCheckOutcome check() {
 
-        try (Connection connection = ((HikariPool) pool).getConnection(connectivityCheckTimeout)) {
+        HealthCheckOutcome warningOutcome = checkThreshold(ThresholdType.WARNING);
+
+        switch (warningOutcome.getStatus()) {
+            case WARNING:
+                return warningOutcome;
+            // this is a case of WARNING threshold messing...
+            case UNKNOWN:
+                return checkThreshold(ThresholdType.CRITICAL);
+        }
+
+        return HealthCheckOutcome.ok();
+    }
+    
+    protected HealthCheckOutcome checkThreshold(ThresholdType type) {
+
+        Threshold<Duration> threshold = timeoutThresholds.getThreshold(type);
+        if (threshold == null) {
+            return HealthCheckOutcome.unknown();
+        }
+
+        long timeout = threshold.getValue().getDuration().toMillis();
+
+        try (Connection connection = ((HikariPool) pool).getConnection(timeout)) {
             return HealthCheckOutcome.ok();
         } catch (SQLException e) {
             return HealthCheckOutcome.critical(e);

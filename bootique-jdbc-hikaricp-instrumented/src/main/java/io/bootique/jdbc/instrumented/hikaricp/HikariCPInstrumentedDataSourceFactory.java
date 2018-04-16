@@ -11,7 +11,7 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory;
-import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckFactory;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroupFactory;
 import io.bootique.jdbc.instrumented.hikaricp.managed.InstrumentedManagedDataSourceStarter;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.health.HealthCheckGroup;
@@ -32,7 +32,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     static final String METRIC_NAME_ACTIVE_CONNECTIONS = "ActiveConnections";
     static final String METRIC_NAME_PENDING_CONNECTIONS = "PendingConnections";
 
-    private HikariCPHealthCheckFactory health;
+    private HikariCPHealthCheckGroupFactory health;
 
     @Override
     public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
@@ -59,14 +59,14 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     }
 
     @BQConfigProperty
-    public void setHealth(HikariCPHealthCheckFactory health) {
+    public void setHealth(HikariCPHealthCheckGroupFactory health) {
         this.health = health;
     }
 
     private HealthCheckGroup dataSourceHealthChecks(MetricRegistry metricRegistry, DataSourceFactory dataSourceFactory, String dataSourceName) {
 
-        HikariCPHealthCheckFactory factory = this.health != null ? this.health : new HikariCPHealthCheckFactory();
-        return factory.createHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
+        HikariCPHealthCheckGroupFactory factory = this.health != null ? this.health : new HikariCPHealthCheckGroupFactory();
+        return factory.createHealthCheckGroup(metricRegistry, dataSourceFactory, dataSourceName);
     }
 
     private void addMetrics(HikariDataSource ds, Injector injector) {

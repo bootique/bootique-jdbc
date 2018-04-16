@@ -46,13 +46,13 @@ public class ConnectivityCheck implements HealthCheck {
     @Override
     public HealthCheckOutcome check() {
 
-        HealthCheckOutcome warningOutcome = checkThreshold(ThresholdType.WARNING, e -> HealthCheckOutcome.warning(e));
+        HealthCheckOutcome warningOutcome = checkThreshold(ThresholdType.WARNING, HealthCheckOutcome::warning);
 
         switch (warningOutcome.getStatus()) {
             case WARNING:
                 return warningOutcome;
             case UNKNOWN:
-                return checkThreshold(ThresholdType.CRITICAL, e -> HealthCheckOutcome.critical(e));
+                return checkThreshold(ThresholdType.CRITICAL, HealthCheckOutcome::critical);
         }
 
         return HealthCheckOutcome.ok();

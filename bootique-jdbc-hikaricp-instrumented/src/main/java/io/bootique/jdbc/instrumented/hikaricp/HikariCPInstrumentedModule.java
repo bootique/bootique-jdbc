@@ -1,5 +1,6 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -15,9 +16,8 @@ public class HikariCPInstrumentedModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-
         JdbcModule.extend(binder).addFactoryType(HikariCPInstrumentedDataSourceFactory.class);
-
+        JdbcModule.extend(binder).addDataSourceListener(HikariCPMetricsInitializer.class);
         HealthCheckModule.extend(binder).addHealthCheckGroup(HikariCPHealthCheckGroup.class);
     }
 
@@ -25,5 +25,11 @@ public class HikariCPInstrumentedModule implements Module {
     @Provides
     HikariCPHealthCheckGroup provideHealthCheckGroup(Map<String, ManagedDataSourceStarter> starters) {
         return new HikariCPHealthCheckGroup(starters);
+    }
+
+    @Singleton
+    @Provides
+    HikariCPMetricsInitializer provideMetricsInitializer(MetricRegistry metricRegistry) {
+        return  new HikariCPMetricsInitializer(metricRegistry);
     }
 }

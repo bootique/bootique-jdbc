@@ -2,11 +2,10 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import io.bootique.jdbc.instrumented.hikaricp.HikariCPInstrumentedDataSourceFactory;
+import io.bootique.jdbc.instrumented.hikaricp.HikariCPMetricsInitializer;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.check.DurationRangeFactory;
 import io.bootique.metrics.health.check.ValueRange;
-
 import io.bootique.value.Duration;
 
 import java.util.Collection;
@@ -43,11 +42,7 @@ class Connection99PercentCheckFactory {
     }
 
     private Supplier<Duration> getTimerReader(MetricRegistry registry, String poolName) {
-
-        String metricName = MetricRegistry.name(poolName,
-                HikariCPInstrumentedDataSourceFactory.METRIC_CATEGORY,
-                HikariCPInstrumentedDataSourceFactory.METRIC_NAME_WAIT);
-
+        String metricName = HikariCPMetricsInitializer.waitTimerMetricName(poolName);
         return () -> readConnection99Percent(registry, metricName);
     }
 

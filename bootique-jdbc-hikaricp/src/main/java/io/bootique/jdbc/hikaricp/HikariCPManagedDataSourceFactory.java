@@ -75,14 +75,19 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
         Supplier<DataSource> startup = () -> {
-
             validate();
-
-            HikariConfig hikariConfig = toConfiguration();
-            return new HikariDataSource(hikariConfig);
+            return new HikariDataSource(toConfiguration());
         };
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
+        return create(dataSourceName, injector, startup, shutdown);
+    }
+
+    protected ManagedDataSourceStarter create(
+            String dataSourceName,
+            Injector injector,
+            Supplier<DataSource> startup,
+            Consumer<DataSource> shutdown) {
 
         return new ManagedDataSourceStarter(getJdbcUrl(), startup, shutdown);
     }

@@ -1,6 +1,6 @@
 jdbc:
-  derby3:
-    jdbcUrl: "jdbc:derby:target/derby3;create=true"
+  derby:
+    jdbcUrl: "jdbc:derby:target/HikariCPModuleIT_notype;create=true"
     driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
     maximumPoolSize: 3
     minimumIdle: 1

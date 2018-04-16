@@ -1,5 +1,5 @@
 jdbc:
-  ds1:
+  derby:
     type: "hikari"
     connectionTimeout: 250
     validationTimeout: 250
@@ -15,7 +15,7 @@ jdbc:
     connectionInitSql: "VALUES 1"
     connectionTestQuery: "VALUES 1"
     dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
-    jdbcUrl: "jdbc:derby:;"
+    jdbcUrl: "jdbc:derby:target/HikariCPModuleIT_full;"
     poolName: "test-pool"
     transactionIsolation: "TRANSACTION_SERIALIZABLE"
     autoCommit: true

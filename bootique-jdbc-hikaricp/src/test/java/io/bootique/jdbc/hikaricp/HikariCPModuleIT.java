@@ -28,13 +28,13 @@ public class HikariCPModuleIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby1");
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
         assertTrue(ds instanceof HikariDataSource);
 
         HikariDataSource hikariDS = (HikariDataSource) ds;
 
-        assertEquals("jdbc:derby:target/derby1;create=true", hikariDS.getJdbcUrl());
+        assertEquals("jdbc:derby:target/HikariCPModuleIT_ds;create=true", hikariDS.getJdbcUrl());
         assertEquals("sa", hikariDS.getUsername());
         assertEquals(1, hikariDS.getMinimumIdle());
         assertEquals(3, hikariDS.getMaximumPoolSize());
@@ -47,7 +47,7 @@ public class HikariCPModuleIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby2");
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
         assertTrue(ds instanceof HikariDataSource);
 
@@ -63,13 +63,13 @@ public class HikariCPModuleIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby3");
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
         assertTrue(ds instanceof HikariDataSource);
 
         HikariDataSource hikariDS = (HikariDataSource) ds;
 
-        assertEquals("jdbc:derby:target/derby3;create=true", hikariDS.getJdbcUrl());
+        assertEquals("jdbc:derby:target/HikariCPModuleIT_notype;create=true", hikariDS.getJdbcUrl());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class HikariCPModuleIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("ds1");
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
         assertTrue(ds instanceof HikariDataSource);
 
@@ -96,7 +96,7 @@ public class HikariCPModuleIT {
         assertEquals(100, hikariDS.getInitializationFailTimeout());
         assertEquals("test-catalog", hikariDS.getCatalog());
         assertEquals("org.apache.derby.jdbc.EmbeddedDataSource", hikariDS.getDataSourceClassName());
-        assertEquals("jdbc:derby:;", hikariDS.getJdbcUrl());
+        assertEquals("jdbc:derby:target/HikariCPModuleIT_full;", hikariDS.getJdbcUrl());
         assertEquals("test-pool", hikariDS.getPoolName());
         assertEquals("TRANSACTION_SERIALIZABLE", hikariDS.getTransactionIsolation());
         assertTrue(hikariDS.isAutoCommit());

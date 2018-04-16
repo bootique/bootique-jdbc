@@ -21,7 +21,7 @@ public class HikariCPHealthCheckGroupFactoryIT {
     @Test
     public void testHealthChecks() {
         BQRuntime runtime = testFactory
-                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds-health.yml")
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/HikariCPHealthCheckGroupFactoryIT1.yml")
                 .autoLoadModules()
                 .createRuntime();
 
@@ -41,31 +41,10 @@ public class HikariCPHealthCheckGroupFactoryIT {
     }
 
     @Test
-    public void testHealthChecks_Implicit() {
-        BQRuntime runtime = testFactory
-                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds-nohealth.yml")
-                .autoLoadModules()
-                .createRuntime();
-
-        String dataSourceName = "DerbyDatabaseIT";
-
-        // trigger DataSource creation...
-        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
-        factory.forName(dataSourceName);
-
-        HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
-        Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
-        assertEquals(2, results.size());
-
-        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
-        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
-    }
-
-    @Test
     public void testHealthChecksMultipleDs() {
 
         BQRuntime runtime = testFactory
-                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds2-health.yml")
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/HikariCPHealthCheckGroupFactoryIT2.yml")
                 .autoLoadModules()
                 .createRuntime();
 
@@ -88,4 +67,27 @@ public class HikariCPHealthCheckGroupFactoryIT {
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 4);
     }
+
+    @Test
+    public void testHealthChecks_Implicit() {
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/HikariCPHealthCheckGroupFactoryIT_no_health.yml")
+                .autoLoadModules()
+                .createRuntime();
+
+        String dataSourceName = "DerbyDatabaseIT";
+
+        // trigger DataSource creation...
+        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
+        factory.forName(dataSourceName);
+
+        HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
+        Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
+        assertEquals(2, results.size());
+
+        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
+    }
+
+
 }

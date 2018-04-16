@@ -29,7 +29,8 @@ public class HikariCPInstrumentedModule_MetricsIT {
 
     @Test
     public void testMetrics() {
-        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/ds-health.yml")
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/HikariCPInstrumentedModule_MetricsIT.yml")
                 .autoLoadModules()
                 .createRuntime();
 

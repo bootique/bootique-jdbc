@@ -52,8 +52,8 @@ public class Connection99PercentCheckIT {
         data = (HealthCheckData<Duration>) outcome.getData().get();
         assertNotNull(data);
 
-        // note that timer resolution on MacOS is milliseconds, so it is often reported as zero...
-        // as a result we can't effectively test the data
+        // note that the underlying metric is rounded to milliseconds, so it is often == 0.
+        // as a result we can't effectively test the metric payload...
         // assertTrue(data.getValue().getDuration().toMillis() > 0);
 
         // shutdown Derby

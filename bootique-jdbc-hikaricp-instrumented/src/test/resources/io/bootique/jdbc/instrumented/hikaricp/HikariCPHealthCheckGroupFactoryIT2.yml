@@ -22,7 +22,7 @@ jdbc:
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: jdbc:derby:target/derby/derby3;create=true
+    jdbcUrl: "jdbc:derby:target/derby/derby3;create=true"
     health:
       connectivity:
         critical: 250ms

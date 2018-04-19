@@ -47,7 +47,7 @@ public class Connection99PercentCheckIT {
         }
 
         outcome = registry.runHealthCheck(Connection99PercentCheck.healthCheckName("db"));
-        assertEquals(HealthCheckStatus.OK, outcome.getStatus());
+        assertEquals(outcome.getMessage(), HealthCheckStatus.OK, outcome.getStatus());
 
         data = (HealthCheckData<Duration>) outcome.getData().get();
         assertNotNull(data);

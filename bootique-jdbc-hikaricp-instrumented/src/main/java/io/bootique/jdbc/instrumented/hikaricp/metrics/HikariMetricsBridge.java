@@ -18,7 +18,7 @@ public class HikariMetricsBridge implements IMetricsTracker {
     private static final String METRIC_CATEGORY = "pool";
 
     private final String poolName;
-    private final Timer connectionObtainTimer;
+    private final Timer connectionWaitTimer;
     private final Histogram connectionUsage;
     private final Histogram connectionCreation;
     private final Meter connectionTimeoutMeter;
@@ -27,8 +27,9 @@ public class HikariMetricsBridge implements IMetricsTracker {
     public HikariMetricsBridge(final String poolName, final PoolStats poolStats, final MetricRegistry registry) {
         this.poolName = poolName;
         this.registry = registry;
-        this.connectionObtainTimer = registry.timer(waitMetric(poolName));
-        this.connectionUsage = registry.histogram(usageMetric(poolName));
+
+        this.connectionWaitTimer = registry.timer(connectionWaitMetric(poolName));
+        this.connectionUsage = registry.histogram(connectionUsageMetric(poolName));
         this.connectionCreation = registry.histogram(connectionCreationMetric(poolName));
         this.connectionTimeoutMeter = registry.meter(connectionTimeoutRateMetric(poolName));
 
@@ -38,11 +39,11 @@ public class HikariMetricsBridge implements IMetricsTracker {
         registry.register(pendingConnectionsMetric(poolName), (Gauge<Integer>) () -> poolStats.getPendingThreads());
     }
 
-    public static String waitMetric(String poolName) {
+    public static String connectionWaitMetric(String poolName) {
         return MetricRegistry.name(poolName, METRIC_CATEGORY, "Wait");
     }
 
-    public static String usageMetric(String poolName) {
+    public static String connectionUsageMetric(String poolName) {
         return MetricRegistry.name(poolName, METRIC_CATEGORY, "Usage");
     }
 
@@ -72,8 +73,8 @@ public class HikariMetricsBridge implements IMetricsTracker {
 
     @Override
     public void close() {
-        registry.remove(waitMetric(poolName));
-        registry.remove(usageMetric(poolName));
+        registry.remove(connectionWaitMetric(poolName));
+        registry.remove(connectionUsageMetric(poolName));
         registry.remove(connectionCreationMetric(poolName));
         registry.remove(connectionTimeoutRateMetric(poolName));
         registry.remove(totalConnectionsMetric(poolName));
@@ -84,7 +85,7 @@ public class HikariMetricsBridge implements IMetricsTracker {
 
     @Override
     public void recordConnectionAcquiredNanos(final long elapsedAcquiredNanos) {
-        connectionObtainTimer.update(elapsedAcquiredNanos, TimeUnit.NANOSECONDS);
+        connectionWaitTimer.update(elapsedAcquiredNanos, TimeUnit.NANOSECONDS);
     }
 
     @Override

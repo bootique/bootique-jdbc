@@ -39,7 +39,7 @@ public class HikariCPMetricsInitializerIT {
 
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
         assertEquals(1, metricRegistry.getTimers().size());
-        assertEquals(MetricRegistry.name(HikariMetricsBridge.waitMetric(poolName)),
+        assertEquals(MetricRegistry.name(HikariMetricsBridge.connectionWaitMetric(poolName)),
                 metricRegistry.getTimers().firstKey());
 
         assertEquals(4, metricRegistry.getGauges().size());

@@ -70,7 +70,7 @@ public class MetricsIT {
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("db");
         String poolName = ((HikariDataSource) ds).getPoolName();
 
-        Histogram usage = registry.getHistograms().get(HikariMetricsBridge.usageMetric(poolName));
+        Histogram usage = registry.getHistograms().get(HikariMetricsBridge.connectionUsageMetric(poolName));
         assertNotNull(usage);
         assertEquals(0., usage.getSnapshot().get99thPercentile(), 0.001);
 

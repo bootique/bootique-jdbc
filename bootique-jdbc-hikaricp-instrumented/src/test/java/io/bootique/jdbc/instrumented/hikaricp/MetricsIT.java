@@ -38,7 +38,7 @@ public class MetricsIT {
         String poolName = ((HikariDataSource) ds).getPoolName();
 
         // wait for the metrics to be initialized...
-        Gauge<Integer> activeConnections = registry.getGauges().get(HikariMetricsBridge.activeConnectionsMetricName(poolName));
+        Gauge<Integer> activeConnections = registry.getGauges().get(HikariMetricsBridge.activeConnectionsMetric(poolName));
 
         assertNotNull(registry.getGauges().keySet() + "", activeConnections);
         assertEquals(Integer.valueOf(0), activeConnections.getValue());
@@ -70,7 +70,7 @@ public class MetricsIT {
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("db");
         String poolName = ((HikariDataSource) ds).getPoolName();
 
-        Histogram usage = registry.getHistograms().get(HikariMetricsBridge.usageMetricName(poolName));
+        Histogram usage = registry.getHistograms().get(HikariMetricsBridge.usageMetric(poolName));
         assertNotNull(usage);
         assertEquals(0., usage.getSnapshot().get99thPercentile(), 0.001);
 

@@ -39,15 +39,15 @@ public class HikariCPMetricsInitializerIT {
 
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
         assertEquals(1, metricRegistry.getTimers().size());
-        assertEquals(MetricRegistry.name(HikariMetricsBridge.waitMetricName(poolName)),
+        assertEquals(MetricRegistry.name(HikariMetricsBridge.waitMetric(poolName)),
                 metricRegistry.getTimers().firstKey());
 
         assertEquals(4, metricRegistry.getGauges().size());
         assertEquals(new HashSet<String>() {{
-            add(HikariMetricsBridge.totalConnectionsMetricName(poolName));
-            add(HikariMetricsBridge.idleConnectionsMetricName(poolName));
-            add(HikariMetricsBridge.activeConnectionsMetricName(poolName));
-            add(HikariMetricsBridge.pendingConnectionsMetricName(poolName));
+            add(HikariMetricsBridge.totalConnectionsMetric(poolName));
+            add(HikariMetricsBridge.idleConnectionsMetric(poolName));
+            add(HikariMetricsBridge.activeConnectionsMetric(poolName));
+            add(HikariMetricsBridge.pendingConnectionsMetric(poolName));
         }}, metricRegistry.getGauges().keySet());
     }
 }

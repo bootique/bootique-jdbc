@@ -42,7 +42,7 @@ class Connection99PercentCheckFactory {
     }
 
     private Supplier<Duration> getTimerReader(MetricRegistry registry, String poolName) {
-        String metricName = HikariMetricsBridge.waitMetricName(poolName);
+        String metricName = HikariMetricsBridge.waitMetric(poolName);
         return () -> readConnection99Percent(registry, metricName);
     }
 

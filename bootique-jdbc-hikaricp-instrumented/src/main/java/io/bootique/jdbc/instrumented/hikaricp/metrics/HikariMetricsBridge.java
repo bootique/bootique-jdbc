@@ -16,14 +16,6 @@ import java.util.concurrent.TimeUnit;
 public class HikariMetricsBridge implements IMetricsTracker {
 
     private static final String METRIC_CATEGORY = "pool";
-    private static final String METRIC_NAME_WAIT = "Wait";
-    private static final String METRIC_NAME_USAGE = "Usage";
-    private static final String METRIC_NAME_CONNECT = "ConnectionCreation";
-    private static final String METRIC_NAME_TIMEOUT_RATE = "ConnectionTimeoutRate";
-    private static final String METRIC_NAME_TOTAL_CONNECTIONS = "TotalConnections";
-    private static final String METRIC_NAME_IDLE_CONNECTIONS = "IdleConnections";
-    private static final String METRIC_NAME_ACTIVE_CONNECTIONS = "ActiveConnections";
-    private static final String METRIC_NAME_PENDING_CONNECTIONS = "PendingConnections";
 
     private final String poolName;
     private final Timer connectionObtainTimer;
@@ -37,8 +29,8 @@ public class HikariMetricsBridge implements IMetricsTracker {
         this.registry = registry;
         this.connectionObtainTimer = registry.timer(waitMetricName(poolName));
         this.connectionUsage = registry.histogram(usageMetricName(poolName));
-        this.connectionCreation = registry.histogram(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_CONNECT));
-        this.connectionTimeoutMeter = registry.meter(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_TIMEOUT_RATE));
+        this.connectionCreation = registry.histogram(connectionCreationMetricName(poolName));
+        this.connectionTimeoutMeter = registry.meter(connectionTimeoutRateMetricName(poolName));
 
         registry.register(totalConnectionsMetricName(poolName), (Gauge<Integer>) () -> poolStats.getTotalConnections());
         registry.register(idleConnectionsMetricName(poolName), (Gauge<Integer>) () -> poolStats.getIdleConnections());
@@ -47,35 +39,43 @@ public class HikariMetricsBridge implements IMetricsTracker {
     }
 
     public static String waitMetricName(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_WAIT);
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "Wait");
     }
 
     public static String usageMetricName(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_USAGE);
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "Usage");
+    }
+
+    public static String connectionCreationMetricName(String poolName) {
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "ConnectionCreation");
+    }
+
+    public static String connectionTimeoutRateMetricName(String poolName) {
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "ConnectionTimeoutRate");
     }
 
     public static String activeConnectionsMetricName(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_ACTIVE_CONNECTIONS);
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "ActiveConnections");
     }
 
     public static String totalConnectionsMetricName(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_TOTAL_CONNECTIONS);
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "TotalConnections");
     }
 
     public static String idleConnectionsMetricName(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_IDLE_CONNECTIONS);
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "IdleConnections");
     }
 
     public static String pendingConnectionsMetricName(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_PENDING_CONNECTIONS);
+        return MetricRegistry.name(poolName, METRIC_CATEGORY, "PendingConnections");
     }
 
     @Override
     public void close() {
         registry.remove(waitMetricName(poolName));
         registry.remove(usageMetricName(poolName));
-        registry.remove(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_CONNECT));
-        registry.remove(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_TIMEOUT_RATE));
+        registry.remove(connectionCreationMetricName(poolName));
+        registry.remove(connectionTimeoutRateMetricName(poolName));
         registry.remove(totalConnectionsMetricName(poolName));
         registry.remove(idleConnectionsMetricName(poolName));
         registry.remove(activeConnectionsMetricName(poolName));

@@ -48,7 +48,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private int maximumPoolSize;
     private int minimumIdle;
     private String password;
-    private String poolName;
     private String schema;
     private String transactionIsolationName;
     private boolean readOnly;
@@ -76,7 +75,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         Supplier<DataSource> startup = () -> {
             validate();
-            return new HikariDataSource(toConfiguration());
+            return new HikariDataSource(toConfiguration(dataSourceName));
         };
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
@@ -234,15 +233,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.registerMbeans = register;
     }
 
-    public String getPoolName() {
-        return poolName;
-    }
-
-    @BQConfigProperty
-    public void setPoolName(String poolName) {
-        this.poolName = poolName;
-    }
-
     @BQConfigProperty
     public void setSchema(String schema) {
         this.schema = schema;
@@ -253,9 +243,11 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.transactionIsolationName = isolationLevel;
     }
 
-    protected HikariConfig toConfiguration() {
+    protected HikariConfig toConfiguration(String dataSourceName) {
 
         HikariConfig hikariConfig = new HikariConfig();
+
+        hikariConfig.setPoolName(dataSourceName);
 
         hikariConfig.setConnectionTimeout(connectionTimeout);
         hikariConfig.setValidationTimeout(validationTimeout);
@@ -279,7 +271,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         }
 
         hikariConfig.setJdbcUrl(jdbcUrl);
-        hikariConfig.setPoolName(poolName);
         hikariConfig.setSchema(schema);
         hikariConfig.setTransactionIsolation(transactionIsolationName);
         hikariConfig.setAutoCommit(autoCommit);

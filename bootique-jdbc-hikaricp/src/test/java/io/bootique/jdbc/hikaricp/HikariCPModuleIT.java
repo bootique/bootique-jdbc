@@ -38,6 +38,9 @@ public class HikariCPModuleIT {
         assertEquals("sa", hikariDS.getUsername());
         assertEquals(1, hikariDS.getMinimumIdle());
         assertEquals(3, hikariDS.getMaximumPoolSize());
+
+        assertEquals("Hikari pool name must be the same as Bootique DataSource name",
+                "derby", hikariDS.getPoolName());
     }
 
     @Test
@@ -97,7 +100,6 @@ public class HikariCPModuleIT {
         assertEquals("test-catalog", hikariDS.getCatalog());
         assertEquals("org.apache.derby.jdbc.EmbeddedDataSource", hikariDS.getDataSourceClassName());
         assertEquals("jdbc:derby:target/HikariCPModuleIT_full;", hikariDS.getJdbcUrl());
-        assertEquals("test-pool", hikariDS.getPoolName());
         assertEquals("TRANSACTION_SERIALIZABLE", hikariDS.getTransactionIsolation());
         assertTrue(hikariDS.isAutoCommit());
         assertFalse(hikariDS.isReadOnly());

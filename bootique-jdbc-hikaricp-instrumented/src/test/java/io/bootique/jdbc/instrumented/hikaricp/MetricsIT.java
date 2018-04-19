@@ -3,7 +3,6 @@ package io.bootique.jdbc.instrumented.hikaricp;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
-import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
@@ -33,12 +32,12 @@ public class MetricsIT {
                 .autoLoadModules()
                 .createRuntime();
 
+        String dsName = "db";
         MetricRegistry registry = runtime.getInstance(MetricRegistry.class);
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("db");
-        String poolName = ((HikariDataSource) ds).getPoolName();
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName(dsName);
 
         // wait for the metrics to be initialized...
-        Gauge<Integer> activeConnections = registry.getGauges().get(HikariMetricsBridge.activeConnectionsMetric(poolName));
+        Gauge<Integer> activeConnections = registry.getGauges().get(HikariMetricsBridge.activeConnectionsMetric(dsName));
 
         assertNotNull(registry.getGauges().keySet() + "", activeConnections);
         assertEquals(Integer.valueOf(0), activeConnections.getValue());
@@ -66,11 +65,12 @@ public class MetricsIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        MetricRegistry registry = runtime.getInstance(MetricRegistry.class);
-        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("db");
-        String poolName = ((HikariDataSource) ds).getPoolName();
+        String dsName = "db";
 
-        Histogram usage = registry.getHistograms().get(HikariMetricsBridge.connectionUsageMetric(poolName));
+        MetricRegistry registry = runtime.getInstance(MetricRegistry.class);
+        DataSource ds = runtime.getInstance(DataSourceFactory.class).forName(dsName);
+
+        Histogram usage = registry.getHistograms().get(HikariMetricsBridge.connectionUsageMetric(dsName));
         assertNotNull(usage);
         assertEquals(0., usage.getSnapshot().get99thPercentile(), 0.001);
 

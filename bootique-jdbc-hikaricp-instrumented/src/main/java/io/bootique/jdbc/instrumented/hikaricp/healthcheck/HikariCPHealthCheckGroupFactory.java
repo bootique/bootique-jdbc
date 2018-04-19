@@ -67,6 +67,6 @@ public class HikariCPHealthCheckGroupFactory {
                         .forNameIfStarted(dataSourceName)
                         .map(ds -> (HikariDataSource) ds)
                         .map(ds -> new Connection99PercentCheckFactory(connection99Percent, ClockSource.getSourceTimeUnit())
-                                .createHealthCheck(registry, ds.getPoolName()));
+                                .createHealthCheck(registry, dataSourceName));
     }
 }

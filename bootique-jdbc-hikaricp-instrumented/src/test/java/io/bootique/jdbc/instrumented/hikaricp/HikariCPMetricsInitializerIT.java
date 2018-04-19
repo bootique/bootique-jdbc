@@ -28,26 +28,24 @@ public class HikariCPMetricsInitializerIT {
                 .autoLoadModules()
                 .createRuntime();
 
+        String dsName = "db";
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
-        DataSource ds = factory.forName("derby1");
+        DataSource ds = factory.forName(dsName);
         assertNotNull(ds);
         assertTrue(ds instanceof HikariDataSource);
 
-        HikariDataSource hikariDS = (HikariDataSource) ds;
-        String poolName = hikariDS.getPoolName();
-
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
         assertEquals(1, metricRegistry.getTimers().size());
-        assertEquals(MetricRegistry.name(HikariMetricsBridge.connectionWaitMetric(poolName)),
+        assertEquals(MetricRegistry.name(HikariMetricsBridge.connectionWaitMetric(dsName)),
                 metricRegistry.getTimers().firstKey());
 
         assertEquals(4, metricRegistry.getGauges().size());
         assertEquals(new HashSet<String>() {{
-            add(HikariMetricsBridge.totalConnectionsMetric(poolName));
-            add(HikariMetricsBridge.idleConnectionsMetric(poolName));
-            add(HikariMetricsBridge.activeConnectionsMetric(poolName));
-            add(HikariMetricsBridge.pendingConnectionsMetric(poolName));
+            add(HikariMetricsBridge.totalConnectionsMetric(dsName));
+            add(HikariMetricsBridge.idleConnectionsMetric(dsName));
+            add(HikariMetricsBridge.activeConnectionsMetric(dsName));
+            add(HikariMetricsBridge.pendingConnectionsMetric(dsName));
         }}, metricRegistry.getGauges().keySet());
     }
 }

@@ -1,7 +1,6 @@
 jdbc:
-  derby1:
+  db:
     type: "hikari-instrumented"
-    poolName: "test-derby-1"
     minimumIdle: 1
     maximumPoolSize: 10
     username: x

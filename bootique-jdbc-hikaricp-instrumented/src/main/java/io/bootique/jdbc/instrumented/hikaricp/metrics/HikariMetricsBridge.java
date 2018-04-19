@@ -17,70 +17,70 @@ public class HikariMetricsBridge implements IMetricsTracker {
 
     private static final String METRIC_CATEGORY = "pool";
 
-    private final String poolName;
+    private final String dataSourceName;
     private final Timer connectionWaitTimer;
     private final Histogram connectionUsage;
     private final Histogram connectionCreation;
     private final Meter connectionTimeoutMeter;
     private final MetricRegistry registry;
 
-    public HikariMetricsBridge(final String poolName, final PoolStats poolStats, final MetricRegistry registry) {
-        this.poolName = poolName;
+    public HikariMetricsBridge(String dataSourceName, PoolStats poolStats, MetricRegistry registry) {
+        this.dataSourceName = dataSourceName;
         this.registry = registry;
 
-        this.connectionWaitTimer = registry.timer(connectionWaitMetric(poolName));
-        this.connectionUsage = registry.histogram(connectionUsageMetric(poolName));
-        this.connectionCreation = registry.histogram(connectionCreationMetric(poolName));
-        this.connectionTimeoutMeter = registry.meter(connectionTimeoutRateMetric(poolName));
+        this.connectionWaitTimer = registry.timer(connectionWaitMetric(dataSourceName));
+        this.connectionUsage = registry.histogram(connectionUsageMetric(dataSourceName));
+        this.connectionCreation = registry.histogram(connectionCreationMetric(dataSourceName));
+        this.connectionTimeoutMeter = registry.meter(connectionTimeoutRateMetric(dataSourceName));
 
-        registry.register(totalConnectionsMetric(poolName), (Gauge<Integer>) () -> poolStats.getTotalConnections());
-        registry.register(idleConnectionsMetric(poolName), (Gauge<Integer>) () -> poolStats.getIdleConnections());
-        registry.register(activeConnectionsMetric(poolName), (Gauge<Integer>) () -> poolStats.getActiveConnections());
-        registry.register(pendingConnectionsMetric(poolName), (Gauge<Integer>) () -> poolStats.getPendingThreads());
+        registry.register(totalConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getTotalConnections());
+        registry.register(idleConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getIdleConnections());
+        registry.register(activeConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getActiveConnections());
+        registry.register(pendingConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getPendingThreads());
     }
 
-    public static String connectionWaitMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "Wait");
+    public static String connectionWaitMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "Wait");
     }
 
-    public static String connectionUsageMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "Usage");
+    public static String connectionUsageMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "Usage");
     }
 
-    public static String connectionCreationMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "ConnectionCreation");
+    public static String connectionCreationMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "ConnectionCreation");
     }
 
-    public static String connectionTimeoutRateMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "ConnectionTimeoutRate");
+    public static String connectionTimeoutRateMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "ConnectionTimeoutRate");
     }
 
-    public static String activeConnectionsMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "ActiveConnections");
+    public static String activeConnectionsMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "ActiveConnections");
     }
 
-    public static String totalConnectionsMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "TotalConnections");
+    public static String totalConnectionsMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "TotalConnections");
     }
 
-    public static String idleConnectionsMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "IdleConnections");
+    public static String idleConnectionsMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "IdleConnections");
     }
 
-    public static String pendingConnectionsMetric(String poolName) {
-        return MetricRegistry.name(poolName, METRIC_CATEGORY, "PendingConnections");
+    public static String pendingConnectionsMetric(String dataSourceName) {
+        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "PendingConnections");
     }
 
     @Override
     public void close() {
-        registry.remove(connectionWaitMetric(poolName));
-        registry.remove(connectionUsageMetric(poolName));
-        registry.remove(connectionCreationMetric(poolName));
-        registry.remove(connectionTimeoutRateMetric(poolName));
-        registry.remove(totalConnectionsMetric(poolName));
-        registry.remove(idleConnectionsMetric(poolName));
-        registry.remove(activeConnectionsMetric(poolName));
-        registry.remove(pendingConnectionsMetric(poolName));
+        registry.remove(connectionWaitMetric(dataSourceName));
+        registry.remove(connectionUsageMetric(dataSourceName));
+        registry.remove(connectionCreationMetric(dataSourceName));
+        registry.remove(connectionTimeoutRateMetric(dataSourceName));
+        registry.remove(totalConnectionsMetric(dataSourceName));
+        registry.remove(idleConnectionsMetric(dataSourceName));
+        registry.remove(activeConnectionsMetric(dataSourceName));
+        registry.remove(pendingConnectionsMetric(dataSourceName));
     }
 
     @Override

@@ -25,8 +25,8 @@ class Connection99PercentCheckFactory {
         this.timerUnit = timerUnit;
     }
 
-    HealthCheck createHealthCheck(MetricRegistry registry, String poolName) {
-        Supplier<Duration> timerReader = getTimerReader(registry, poolName);
+    HealthCheck createHealthCheck(MetricRegistry registry, String dataSourceName) {
+        Supplier<Duration> timerReader = getTimerReader(registry, dataSourceName);
         ValueRange<Duration> range = getRange();
         return new Connection99PercentCheck(range, timerReader);
     }
@@ -44,8 +44,8 @@ class Connection99PercentCheckFactory {
                 .build();
     }
 
-    private Supplier<Duration> getTimerReader(MetricRegistry registry, String poolName) {
-        String metricName = HikariMetricsBridge.connectionWaitMetric(poolName);
+    private Supplier<Duration> getTimerReader(MetricRegistry registry, String dataSourceName) {
+        String metricName = HikariMetricsBridge.connectionWaitMetric(dataSourceName);
         return () -> readConnection99Percent(registry, metricName);
     }
 

@@ -16,7 +16,6 @@ jdbc:
     connectionTestQuery: "VALUES 1"
     dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
     jdbcUrl: "jdbc:derby:target/HikariCPModuleIT_full;"
-    poolName: "test-pool"
     transactionIsolation: "TRANSACTION_SERIALIZABLE"
     autoCommit: true
     readOnly: false

@@ -8,6 +8,7 @@
 * #81 Revisit the names and formats of Hikari health check configuration
 * #82 Move generic DataSourceHealthCheck to Tomcat, remove "bootique-jdbc-instrumented"
 * #83 Hikari instrumented - wait timer is not registered
+* #84 Name Hikari pools after Bootique config names
 
 ## 0.25
 

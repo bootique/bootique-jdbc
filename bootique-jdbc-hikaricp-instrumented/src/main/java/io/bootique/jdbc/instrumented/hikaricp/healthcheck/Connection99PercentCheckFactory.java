@@ -9,6 +9,7 @@ import io.bootique.metrics.health.check.ValueRange;
 import io.bootique.value.Duration;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
@@ -17,9 +18,11 @@ import java.util.function.Supplier;
 class Connection99PercentCheckFactory {
 
     private DurationRangeFactory thresholdsFactory;
+    private TimeUnit timerUnit;
 
-    public Connection99PercentCheckFactory(DurationRangeFactory thresholdsFactory) {
+    public Connection99PercentCheckFactory(DurationRangeFactory thresholdsFactory, TimeUnit timerUnit) {
         this.thresholdsFactory = thresholdsFactory;
+        this.timerUnit = timerUnit;
     }
 
     HealthCheck createHealthCheck(MetricRegistry registry, String poolName) {
@@ -47,8 +50,13 @@ class Connection99PercentCheckFactory {
     }
 
     private Duration readConnection99Percent(MetricRegistry registry, String metricName) {
-        long ms = (long) findTimer(registry, metricName).getSnapshot().get99thPercentile();
-        return new Duration(ms);
+        // With Hikari the same app may report time in either ms or ns depending on platform, so we have to
+        // dynamically convert our measurements to ms via the Hikari-provided timer unit...
+
+        long msOrNano = (long) findTimer(registry, metricName).getSnapshot().get99thPercentile();
+
+        // do we care to report nanosecond???
+        return new Duration(timerUnit.toMillis(msOrNano));
     }
 
     private Timer findTimer(MetricRegistry registry, String name) {

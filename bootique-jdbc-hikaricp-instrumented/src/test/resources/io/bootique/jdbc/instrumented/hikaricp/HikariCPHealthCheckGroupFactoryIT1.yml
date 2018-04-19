@@ -7,7 +7,7 @@ jdbc:
     username: x
     password: sa
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: jdbc:derby:target/derby/HikariCPHealthCheckGroupFactoryIT1;create=true
+    jdbcUrl: "jdbc:derby:target/derby/HikariCPHealthCheckGroupFactoryIT1;create=true"
     health:
       connectivity:
         critical: 250ms

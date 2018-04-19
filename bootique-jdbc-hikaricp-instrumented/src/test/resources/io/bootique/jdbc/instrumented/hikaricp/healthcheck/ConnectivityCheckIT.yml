@@ -1,5 +1,5 @@
 jdbc:
   db:
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: jdbc:derby:target/derby/ConnectivityCheckIT;create=true
+    jdbcUrl: "jdbc:derby:target/derby/ConnectivityCheckIT;create=true"
     username: sa

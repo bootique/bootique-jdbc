@@ -1,7 +1,7 @@
 jdbc:
   db:
     driverClassName: org.apache.derby.jdbc.EmbeddedDriver
-    jdbcUrl: jdbc:derby:target/derby/HikariCPInstrumentedModule_HeartbeatIT;create=true
+    jdbcUrl: "jdbc:derby:target/derby/HikariCPInstrumentedModule_HeartbeatIT;create=true"
     username: sa
 
 heartbeat:

@@ -23,7 +23,12 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     private HikariCPHealthCheckGroupFactory health;
 
     @Override
-    protected ManagedDataSourceStarter create(String dataSourceName, Injector injector, Supplier<DataSource> startup, Consumer<DataSource> shutdown) {
+    protected ManagedDataSourceStarter create(
+            String dataSourceName,
+            Injector injector,
+            Supplier<DataSource> startup,
+            Consumer<DataSource> shutdown) {
+
         MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
         DataSourceFactory dataSourceFactory = injector.getInstance(DataSourceFactory.class);
         HealthCheckGroup healthChecks = dataSourceHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
@@ -36,7 +41,10 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
         this.health = health;
     }
 
-    private HealthCheckGroup dataSourceHealthChecks(MetricRegistry metricRegistry, DataSourceFactory dataSourceFactory, String dataSourceName) {
+    private HealthCheckGroup dataSourceHealthChecks(
+            MetricRegistry metricRegistry,
+            DataSourceFactory dataSourceFactory,
+            String dataSourceName) {
 
         HikariCPHealthCheckGroupFactory factory = this.health != null ? this.health : new HikariCPHealthCheckGroupFactory();
         return factory.createHealthCheckGroup(metricRegistry, dataSourceFactory, dataSourceName);

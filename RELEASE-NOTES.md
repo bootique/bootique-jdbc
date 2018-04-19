@@ -7,6 +7,7 @@
 * #80 Hikari healthchecks are not activated if "jdbc.ds.health" config is absent
 * #81 Revisit the names and formats of Hikari health check configuration
 * #82 Move generic DataSourceHealthCheck to Tomcat, remove "bootique-jdbc-instrumented"
+* #83 Hikari instrumented - wait timer is not registered
 
 ## 0.25
 

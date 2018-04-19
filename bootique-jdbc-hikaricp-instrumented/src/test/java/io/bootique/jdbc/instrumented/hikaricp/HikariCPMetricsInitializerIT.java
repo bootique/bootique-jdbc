@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,15 +39,15 @@ public class HikariCPMetricsInitializerIT {
 
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
         assertEquals(1, metricRegistry.getTimers().size());
-        assertEquals(MetricRegistry.name(HikariCPMetricsInitializer.waitTimerMetricName(poolName)),
+        assertEquals(MetricRegistry.name(HikariMetricsBridge.waitMetricName(poolName)),
                 metricRegistry.getTimers().firstKey());
 
         assertEquals(4, metricRegistry.getGauges().size());
         assertEquals(new HashSet<String>() {{
-            add(MetricRegistry.name(poolName, HikariCPMetricsInitializer.METRIC_CATEGORY, HikariCPMetricsInitializer.METRIC_NAME_TOTAL_CONNECTIONS));
-            add(MetricRegistry.name(poolName, HikariCPMetricsInitializer.METRIC_CATEGORY, HikariCPMetricsInitializer.METRIC_NAME_IDLE_CONNECTIONS));
-            add(MetricRegistry.name(poolName, HikariCPMetricsInitializer.METRIC_CATEGORY, HikariCPMetricsInitializer.METRIC_NAME_ACTIVE_CONNECTIONS));
-            add(MetricRegistry.name(poolName, HikariCPMetricsInitializer.METRIC_CATEGORY, HikariCPMetricsInitializer.METRIC_NAME_PENDING_CONNECTIONS));
+            add(HikariMetricsBridge.totalConnectionsMetricName(poolName));
+            add(HikariMetricsBridge.idleConnectionsMetricName(poolName));
+            add(HikariMetricsBridge.activeConnectionsMetricName(poolName));
+            add(HikariMetricsBridge.pendingConnectionsMetricName(poolName));
         }}, metricRegistry.getGauges().keySet());
     }
 }

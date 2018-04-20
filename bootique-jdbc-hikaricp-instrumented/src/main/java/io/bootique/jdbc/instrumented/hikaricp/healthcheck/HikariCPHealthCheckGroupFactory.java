@@ -2,7 +2,6 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import com.codahale.metrics.MetricRegistry;
 import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.util.ClockSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
@@ -66,7 +65,7 @@ public class HikariCPHealthCheckGroupFactory {
                 dataSourceFactory
                         .forNameIfStarted(dataSourceName)
                         .map(ds -> (HikariDataSource) ds)
-                        .map(ds -> new Connection99PercentCheckFactory(connection99Percent, ClockSource.getSourceTimeUnit())
+                        .map(ds -> new Connection99PercentCheckFactory(connection99Percent)
                                 .createHealthCheck(registry, dataSourceName));
     }
 }

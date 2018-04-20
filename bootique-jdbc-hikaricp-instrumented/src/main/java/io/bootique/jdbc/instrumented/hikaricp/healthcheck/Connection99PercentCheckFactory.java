@@ -18,11 +18,9 @@ import java.util.function.Supplier;
 class Connection99PercentCheckFactory {
 
     private DurationRangeFactory thresholdsFactory;
-    private TimeUnit timerUnit;
 
-    public Connection99PercentCheckFactory(DurationRangeFactory thresholdsFactory, TimeUnit timerUnit) {
+    public Connection99PercentCheckFactory(DurationRangeFactory thresholdsFactory) {
         this.thresholdsFactory = thresholdsFactory;
-        this.timerUnit = timerUnit;
     }
 
     HealthCheck createHealthCheck(MetricRegistry registry, String dataSourceName) {
@@ -50,13 +48,10 @@ class Connection99PercentCheckFactory {
     }
 
     private Duration readConnection99Percent(MetricRegistry registry, String metricName) {
-        // With Hikari the same app may report time in either ms or ns depending on platform, so we have to
-        // dynamically convert our measurements to ms via the Hikari-provided timer unit...
+        long nano = (long) findTimer(registry, metricName).getSnapshot().get99thPercentile();
 
-        long msOrNano = (long) findTimer(registry, metricName).getSnapshot().get99thPercentile();
-
-        // do we care to report nanosecond???
-        return new Duration(timerUnit.toMillis(msOrNano));
+        // intentionally losing precision here... Do we care to report nanoseconds??
+        return new Duration(TimeUnit.NANOSECONDS.toMillis(nano));
     }
 
     private Timer findTimer(MetricRegistry registry, String name) {

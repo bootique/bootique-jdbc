@@ -47,7 +47,7 @@ public class HikariMetricsBridge implements IMetricsTracker {
     }
 
     public static String connectionCreationMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "cnnection-creation");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "connection-creation");
     }
 
     public static String connectionTimeoutRateMetric(String dataSourceName) {

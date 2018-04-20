@@ -5,6 +5,7 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.metrics.PoolStats;
 
@@ -14,8 +15,6 @@ import java.util.concurrent.TimeUnit;
  * @since 0.26
  */
 public class HikariMetricsBridge implements IMetricsTracker {
-
-    private static final String METRIC_CATEGORY = "pool";
 
     private final String dataSourceName;
     private final Timer connectionWaitTimer;
@@ -40,35 +39,35 @@ public class HikariMetricsBridge implements IMetricsTracker {
     }
 
     public static String connectionWaitMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "Wait");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "wait");
     }
 
     public static String connectionUsageMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "Usage");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "usage");
     }
 
     public static String connectionCreationMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "ConnectionCreation");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "cnnection-creation");
     }
 
     public static String connectionTimeoutRateMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "ConnectionTimeoutRate");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "connection-timeout-rate");
     }
 
     public static String activeConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "ActiveConnections");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "active-connections");
     }
 
     public static String totalConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "TotalConnections");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "total-connections");
     }
 
     public static String idleConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "IdleConnections");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "idle-connections");
     }
 
     public static String pendingConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(dataSourceName, METRIC_CATEGORY, "PendingConnections");
+        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "pending-connections");
     }
 
     @Override

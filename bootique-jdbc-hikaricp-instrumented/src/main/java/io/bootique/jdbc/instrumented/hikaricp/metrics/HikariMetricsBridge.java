@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class HikariMetricsBridge implements IMetricsTracker {
 
+    private static final MetricNaming METRIC_NAMING = MetricNaming.forModule(JdbcHikariCPInstrumentedModule.class);
+
     private final String dataSourceName;
     private final Timer connectionWaitTimer;
     private final Histogram connectionUsage;
@@ -40,35 +42,35 @@ public class HikariMetricsBridge implements IMetricsTracker {
     }
 
     public static String connectionWaitMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "Wait");
+        return METRIC_NAMING.name("Pool", dataSourceName, "Wait");
     }
 
     public static String connectionUsageMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "Usage");
+        return METRIC_NAMING.name("Pool", dataSourceName, "Usage");
     }
 
     public static String connectionCreationMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "ConnectionCreation");
+        return METRIC_NAMING.name("Pool", dataSourceName, "ConnectionCreation");
     }
 
     public static String connectionTimeoutRateMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "ConnectionTimeoutRate");
+        return METRIC_NAMING.name("Pool", dataSourceName, "ConnectionTimeoutRate");
     }
 
     public static String activeConnectionsMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "ActiveConnections");
+        return METRIC_NAMING.name("Pool", dataSourceName, "ActiveConnections");
     }
 
     public static String totalConnectionsMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "TotalConnections");
+        return METRIC_NAMING.name("Pool", dataSourceName, "TotalConnections");
     }
 
     public static String idleConnectionsMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "IdleConnections");
+        return METRIC_NAMING.name("Pool", dataSourceName, "IdleConnections");
     }
 
     public static String pendingConnectionsMetric(String dataSourceName) {
-        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "PendingConnections");
+        return METRIC_NAMING.name("Pool", dataSourceName, "PendingConnections");
     }
 
     @Override

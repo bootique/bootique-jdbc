@@ -5,7 +5,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import io.bootique.jdbc.JdbcModule;
 
-public class HikariCPModule implements Module {
+public class JdbcHikariCPModule implements Module {
 
     @Override
     public void configure(Binder binder) {

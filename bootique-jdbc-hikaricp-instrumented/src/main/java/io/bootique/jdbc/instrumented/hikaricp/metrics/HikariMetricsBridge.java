@@ -5,9 +5,10 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.metrics.IMetricsTracker;
 import com.zaxxer.hikari.metrics.PoolStats;
+import io.bootique.jdbc.instrumented.hikaricp.JdbcHikariCPInstrumentedModule;
+import io.bootique.metrics.MetricNaming;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,35 +40,35 @@ public class HikariMetricsBridge implements IMetricsTracker {
     }
 
     public static String connectionWaitMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "wait");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "Wait");
     }
 
     public static String connectionUsageMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "usage");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "Usage");
     }
 
     public static String connectionCreationMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "connection-creation");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "ConnectionCreation");
     }
 
     public static String connectionTimeoutRateMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "connection-timeout-rate");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "ConnectionTimeoutRate");
     }
 
     public static String activeConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "active-connections");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "ActiveConnections");
     }
 
     public static String totalConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "total-connections");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "TotalConnections");
     }
 
     public static String idleConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "idle-connections");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "IdleConnections");
     }
 
     public static String pendingConnectionsMetric(String dataSourceName) {
-        return MetricRegistry.name(HikariDataSource.class, dataSourceName, "pending-connections");
+        return MetricNaming.name(JdbcHikariCPInstrumentedModule.class, "Pool", dataSourceName, "PendingConnections");
     }
 
     @Override

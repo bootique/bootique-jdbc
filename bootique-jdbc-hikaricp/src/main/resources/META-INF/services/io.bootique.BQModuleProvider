@@ -1,1 +1,1 @@
-io.bootique.jdbc.hikaricp.HikariCPModuleProvider
+io.bootique.jdbc.hikaricp.JdbcHikariCPModuleProvider

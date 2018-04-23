@@ -1,4 +1,4 @@
-package io.bootique.jdbc.tomcat;
+package io.bootique.jdbc.hikaricp;
 
 import com.google.inject.Module;
 import io.bootique.BQModule;
@@ -8,21 +8,18 @@ import io.bootique.jdbc.JdbcModuleProvider;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @since 0.25
- */
-public class TomcatJdbcModuleProvider implements BQModuleProvider {
+public class JdbcHikariCPModuleProvider implements BQModuleProvider {
 
     @Override
     public Module module() {
-        return new TomcatJdbcModule();
+        return new JdbcHikariCPModule();
     }
 
     @Override
     public BQModule.Builder moduleBuilder() {
         return BQModuleProvider.super
                 .moduleBuilder()
-                .description("Integrates Tomcat DataSource implementation.");
+                .description("Integrates HikariCP DataSource implementation.");
     }
 
     @Override

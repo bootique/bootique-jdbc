@@ -16,7 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class HikariCPModuleIT {
+public class JdbcHikariCPModuleIT {
 
     @Rule
     public final BQTestFactory testFactory = new BQTestFactory();

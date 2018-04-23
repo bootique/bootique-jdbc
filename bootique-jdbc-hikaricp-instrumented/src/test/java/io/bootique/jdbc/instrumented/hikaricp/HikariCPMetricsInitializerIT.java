@@ -11,7 +11,9 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.util.HashSet;
+import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -40,12 +42,12 @@ public class HikariCPMetricsInitializerIT {
         assertEquals(MetricRegistry.name(HikariMetricsBridge.connectionWaitMetric(dsName)),
                 metricRegistry.getTimers().firstKey());
 
-        assertEquals(4, metricRegistry.getGauges().size());
-        assertEquals(new HashSet<String>() {{
-            add(HikariMetricsBridge.totalConnectionsMetric(dsName));
-            add(HikariMetricsBridge.idleConnectionsMetric(dsName));
-            add(HikariMetricsBridge.activeConnectionsMetric(dsName));
-            add(HikariMetricsBridge.pendingConnectionsMetric(dsName));
-        }}, metricRegistry.getGauges().keySet());
+        Set<String> expected = new HashSet<>(asList(
+                "bq.JdbcHikariCP.Pool.db.ActiveConnections",
+                "bq.JdbcHikariCP.Pool.db.IdleConnections",
+                "bq.JdbcHikariCP.Pool.db.PendingConnections",
+                "bq.JdbcHikariCP.Pool.db.TotalConnections"));
+
+        assertEquals(expected, metricRegistry.getGauges().keySet());
     }
 }

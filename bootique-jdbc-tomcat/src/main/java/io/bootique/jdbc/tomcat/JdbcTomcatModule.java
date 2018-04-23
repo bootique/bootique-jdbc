@@ -10,7 +10,7 @@ import java.util.logging.Level;
 /**
  * @since 0.25
  */
-public class TomcatJdbcModule implements Module {
+public class JdbcTomcatModule implements Module {
 
     @Override
     public void configure(Binder binder) {

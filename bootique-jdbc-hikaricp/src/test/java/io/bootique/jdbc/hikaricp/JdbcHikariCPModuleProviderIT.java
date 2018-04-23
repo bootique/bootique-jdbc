@@ -8,24 +8,24 @@ import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class HikariCPModuleProviderIT {
+public class JdbcHikariCPModuleProviderIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testAutoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(HikariCPModuleProvider.class);
+        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPModuleProvider.class);
     }
 
     @Test
     public void testMetadata() {
-        BQModuleProviderChecker.testMetadata(HikariCPModuleProvider.class);
+        BQModuleProviderChecker.testMetadata(JdbcHikariCPModuleProvider.class);
     }
 
     @Test
     public void testModuleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().module(new HikariCPModuleProvider()).createRuntime();
+        final BQRuntime bqRuntime = testFactory.app().module(new JdbcHikariCPModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime, JdbcModule.class);
     }
 }

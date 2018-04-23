@@ -11,14 +11,15 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.sql.DataSource;
+import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TomcatInstrumentedJdbcModuleIT {
+public class JdbcTomcatInstrumentedModuleIT {
 
     @ClassRule
     public static BQTestFactory TEST_FACTORY = new BQTestFactory();
@@ -49,6 +50,13 @@ public class TomcatInstrumentedJdbcModuleIT {
         assertNotNull(dataSource);
 
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
-        assertNotEquals(metricRegistry.getGauges().size(), 0);
+
+        Set<String> expected = new HashSet<>(asList(
+                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.ActiveConnections",
+                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.IdleConnections",
+                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.PendingConnections",
+                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.Size"));
+
+        assertEquals(expected, metricRegistry.getGauges().keySet());
     }
 }

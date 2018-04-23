@@ -10,7 +10,7 @@ import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.instrumented.tomcat.healthcheck.DataSourceHealthCheckGroup;
 import io.bootique.metrics.health.HealthCheckModule;
 
-public class TomcatInstrumentedJdbcModule implements Module {
+public class JdbcTomcatInstrumentedModule implements Module {
 
     @Override
     public void configure(Binder binder) {

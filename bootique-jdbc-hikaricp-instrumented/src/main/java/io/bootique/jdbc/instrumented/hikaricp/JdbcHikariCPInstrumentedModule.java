@@ -12,7 +12,7 @@ import io.bootique.metrics.health.HealthCheckModule;
 
 import java.util.Map;
 
-public class HikariCPInstrumentedModule implements Module {
+public class JdbcHikariCPInstrumentedModule implements Module {
 
     @Override
     public void configure(Binder binder) {

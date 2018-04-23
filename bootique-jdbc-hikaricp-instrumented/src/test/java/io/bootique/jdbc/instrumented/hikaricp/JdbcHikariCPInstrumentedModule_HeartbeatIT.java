@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class HikariCPInstrumentedModule_HeartbeatIT {
+public class JdbcHikariCPInstrumentedModule_HeartbeatIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();

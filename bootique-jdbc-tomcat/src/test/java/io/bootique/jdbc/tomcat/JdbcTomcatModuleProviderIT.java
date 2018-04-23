@@ -8,26 +8,26 @@ import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class TomcatJdbcModuleProviderIT {
+public class JdbcTomcatModuleProviderIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testAutoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(TomcatJdbcModuleProvider.class);
+        BQModuleProviderChecker.testAutoLoadable(JdbcTomcatModuleProvider.class);
     }
 
     @Test
     public void testMetadata() {
-        BQModuleProviderChecker.testMetadata(TomcatJdbcModuleProvider.class);
+        BQModuleProviderChecker.testMetadata(JdbcTomcatModuleProvider.class);
     }
 
     @Test
     public void testModuleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().module(new TomcatJdbcModuleProvider()).createRuntime();
+        final BQRuntime bqRuntime = testFactory.app().module(new JdbcTomcatModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime,
-                TomcatJdbcModule.class,
+                JdbcTomcatModule.class,
                 JdbcModule.class
         );
     }

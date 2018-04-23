@@ -10,6 +10,7 @@
 * #83 Hikari instrumented - wait timer is not registered
 * #84 Name Hikari pools after Bootique config names
 * #85 Align Hikari metrics names with other Bootique metrics
+* #86 Metrics renaming to follow naming convention
 
 ## 0.25
 

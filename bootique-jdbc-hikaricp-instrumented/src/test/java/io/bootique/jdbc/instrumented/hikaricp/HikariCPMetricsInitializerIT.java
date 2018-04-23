@@ -1,21 +1,17 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
 import com.codahale.metrics.MetricRegistry;
-import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class HikariCPMetricsInitializerIT {
 
@@ -29,18 +25,12 @@ public class HikariCPMetricsInitializerIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        String dsName = "db";
-        DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
-
-        DataSource ds = factory.forName(dsName);
-        assertNotNull(ds);
-        assertTrue(ds instanceof HikariDataSource);
-
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
 
-        Set<String> expectedTimers = new HashSet<>(asList("bq.JdbcHikariCP.Pool.db.Wait"));
+        // fault DataSource to init metrics
+        runtime.getInstance(DataSourceFactory.class).forName("db");
 
-        assertEquals(1, metricRegistry.getTimers().size());
+        Set<String> expectedTimers = new HashSet<>(asList("bq.JdbcHikariCP.Pool.db.Wait"));
         assertEquals(expectedTimers, metricRegistry.getTimers().keySet());
 
         Set<String> expectedGauges = new HashSet<>(asList(

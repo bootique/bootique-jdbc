@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,16 +37,18 @@ public class HikariCPMetricsInitializerIT {
         assertTrue(ds instanceof HikariDataSource);
 
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
-        assertEquals(1, metricRegistry.getTimers().size());
-        assertEquals(MetricRegistry.name(HikariMetricsBridge.connectionWaitMetric(dsName)),
-                metricRegistry.getTimers().firstKey());
 
-        Set<String> expected = new HashSet<>(asList(
+        Set<String> expectedTimers = new HashSet<>(asList("bq.JdbcHikariCP.Pool.db.Wait"));
+
+        assertEquals(1, metricRegistry.getTimers().size());
+        assertEquals(expectedTimers, metricRegistry.getTimers().keySet());
+
+        Set<String> expectedGauges = new HashSet<>(asList(
                 "bq.JdbcHikariCP.Pool.db.ActiveConnections",
                 "bq.JdbcHikariCP.Pool.db.IdleConnections",
                 "bq.JdbcHikariCP.Pool.db.PendingConnections",
                 "bq.JdbcHikariCP.Pool.db.TotalConnections"));
 
-        assertEquals(expected, metricRegistry.getGauges().keySet());
+        assertEquals(expectedGauges, metricRegistry.getGauges().keySet());
     }
 }

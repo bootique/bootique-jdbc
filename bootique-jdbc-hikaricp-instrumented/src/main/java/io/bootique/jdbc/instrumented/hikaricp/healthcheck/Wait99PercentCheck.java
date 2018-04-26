@@ -12,9 +12,9 @@ import java.util.function.Supplier;
  *
  * @since 0.25
  */
-public class Connection99PercentCheck extends ValueRangeCheck<Duration> {
+public class Wait99PercentCheck extends ValueRangeCheck<Duration> {
 
-    public Connection99PercentCheck(ValueRange<Duration> range, Supplier<Duration> valueSupplier) {
+    public Wait99PercentCheck(ValueRange<Duration> range, Supplier<Duration> valueSupplier) {
         super(range, valueSupplier);
     }
 

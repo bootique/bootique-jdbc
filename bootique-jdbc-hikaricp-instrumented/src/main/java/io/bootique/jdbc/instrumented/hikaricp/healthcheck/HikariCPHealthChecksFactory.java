@@ -36,10 +36,10 @@ public class HikariCPHealthChecksFactory {
 
         Map<String, HealthCheck> checks = new HashMap<>(3);
 
-        checks.put(ConnectivityCheck.healthCheckName(dataSourceName),
+        checks.put(HikariCPConnectivityCheck.healthCheckName(dataSourceName),
                 new DeferredHealthCheck(createConnectivityCheck(dsf, dataSourceName)));
 
-        checks.put(Connection99PercentCheck.healthCheckName(dataSourceName),
+        checks.put(Wait99PercentCheck.healthCheckName(dataSourceName),
                 new DeferredHealthCheck(createConnection99PercentCheck(registry, dsf, dataSourceName)));
 
         return () -> checks;
@@ -53,7 +53,7 @@ public class HikariCPHealthChecksFactory {
                 dataSourceFactory
                         .forNameIfStarted(dataSourceName)
                         .map(ds -> (HikariDataSource) ds)
-                        .map(ds -> new ConnectivityCheckFactory(connectivity).createHealthCheck(ds));
+                        .map(ds -> new HikariCPConnectivityCheckFactory(connectivity).createHealthCheck(ds));
     }
 
     private Supplier<Optional<HealthCheck>> createConnection99PercentCheck(
@@ -65,7 +65,7 @@ public class HikariCPHealthChecksFactory {
                 dataSourceFactory
                         .forNameIfStarted(dataSourceName)
                         .map(ds -> (HikariDataSource) ds)
-                        .map(ds -> new Connection99PercentCheckFactory(connection99Percent)
+                        .map(ds -> new Wait99PercentCheckFactory(connection99Percent)
                                 .createHealthCheck(registry, dataSourceName));
     }
 }

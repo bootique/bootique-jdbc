@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConnectivityCheckIT {
+public class HikariCPConnectivityCheckIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
@@ -30,12 +30,12 @@ public class ConnectivityCheckIT {
         runtime.getInstance(DataSourceFactory.class).forName("db");
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
-        HealthCheckOutcome beforeShutdown = registry.runHealthCheck(ConnectivityCheck.healthCheckName("db"));
+        HealthCheckOutcome beforeShutdown = registry.runHealthCheck(HikariCPConnectivityCheck.healthCheckName("db"));
         assertEquals(HealthCheckStatus.OK, beforeShutdown.getStatus());
 
         shutdownDerby();
 
-        HealthCheckOutcome afterShutdown = registry.runHealthCheck(ConnectivityCheck.healthCheckName("db"));
+        HealthCheckOutcome afterShutdown = registry.runHealthCheck(HikariCPConnectivityCheck.healthCheckName("db"));
         assertEquals(HealthCheckStatus.CRITICAL, afterShutdown.getStatus());
     }
 

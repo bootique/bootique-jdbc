@@ -15,18 +15,18 @@ import java.util.function.Supplier;
 /**
  * @since 0.26
  */
-class Connection99PercentCheckFactory {
+class Wait99PercentCheckFactory {
 
     private DurationRangeFactory thresholdsFactory;
 
-    public Connection99PercentCheckFactory(DurationRangeFactory thresholdsFactory) {
+    public Wait99PercentCheckFactory(DurationRangeFactory thresholdsFactory) {
         this.thresholdsFactory = thresholdsFactory;
     }
 
     HealthCheck createHealthCheck(MetricRegistry registry, String dataSourceName) {
         Supplier<Duration> timerReader = getTimerReader(registry, dataSourceName);
         ValueRange<Duration> range = getRange();
-        return new Connection99PercentCheck(range, timerReader);
+        return new Wait99PercentCheck(range, timerReader);
     }
 
     private ValueRange<Duration> getRange() {

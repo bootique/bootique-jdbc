@@ -36,8 +36,8 @@ public class HikariCPHealthChecksFactoryIT {
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(2, results.size());
 
-        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
-        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(HikariCPConnectivityCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Wait99PercentCheck.healthCheckName(dataSourceName)));
     }
 
     @Test
@@ -58,11 +58,11 @@ public class HikariCPHealthChecksFactoryIT {
 
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
 
-        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby2)));
-        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby2)));
+        assertTrue(registry.containsHealthCheck(HikariCPConnectivityCheck.healthCheckName(derby2)));
+        assertTrue(registry.containsHealthCheck(Wait99PercentCheck.healthCheckName(derby2)));
 
-        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(derby3)));
-        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(derby3)));
+        assertTrue(registry.containsHealthCheck(HikariCPConnectivityCheck.healthCheckName(derby3)));
+        assertTrue(registry.containsHealthCheck(Wait99PercentCheck.healthCheckName(derby3)));
 
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(results.size(), 4);
@@ -85,8 +85,8 @@ public class HikariCPHealthChecksFactoryIT {
         Map<String, HealthCheckOutcome> results = registry.runHealthChecks();
         assertEquals(2, results.size());
 
-        assertTrue(registry.containsHealthCheck(ConnectivityCheck.healthCheckName(dataSourceName)));
-        assertTrue(registry.containsHealthCheck(Connection99PercentCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(HikariCPConnectivityCheck.healthCheckName(dataSourceName)));
+        assertTrue(registry.containsHealthCheck(Wait99PercentCheck.healthCheckName(dataSourceName)));
     }
 
 

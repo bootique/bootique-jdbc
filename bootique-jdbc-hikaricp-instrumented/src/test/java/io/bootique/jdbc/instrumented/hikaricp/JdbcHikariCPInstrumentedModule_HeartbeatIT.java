@@ -8,8 +8,8 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.instrumented.hikaricp.healthcheck.Connection99PercentCheck;
-import io.bootique.jdbc.instrumented.hikaricp.healthcheck.ConnectivityCheck;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.Wait99PercentCheck;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPConnectivityCheck;
 import io.bootique.metrics.health.HealthCheckModule;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckStatus;
@@ -88,8 +88,8 @@ public class JdbcHikariCPInstrumentedModule_HeartbeatIT {
         }
 
         private void assertResult(HealthCheckStatus expectedStatus, Map<String, HealthCheckOutcome> result) {
-            HealthCheckOutcome connectivity = result.get(ConnectivityCheck.healthCheckName("db"));
-            HealthCheckOutcome connectivity99Pct = result.get(Connection99PercentCheck.healthCheckName("db"));
+            HealthCheckOutcome connectivity = result.get(HikariCPConnectivityCheck.healthCheckName("db"));
+            HealthCheckOutcome connectivity99Pct = result.get(Wait99PercentCheck.healthCheckName("db"));
 
             assertNotNull("No connectivity check", connectivity);
             assertNotNull("No 99 connectivity percentile check", connectivity99Pct);

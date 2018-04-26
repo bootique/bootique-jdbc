@@ -11,11 +11,11 @@ import java.sql.Connection;
  *
  * @since 0.12
  */
-public class TomcatDataSourceHealthCheck implements HealthCheck {
+public class TomcatConnectivityCheck implements HealthCheck {
 
     private DataSource dataSource;
 
-    public TomcatDataSourceHealthCheck(DataSource dataSource) {
+    public TomcatConnectivityCheck(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -30,7 +30,7 @@ public class TomcatDataSourceHealthCheck implements HealthCheck {
     }
 
     /**
-     * Generates stable qualified name for the {@link TomcatDataSourceHealthCheck}
+     * Generates stable qualified name for the {@link TomcatConnectivityCheck}
      *
      * @param dataSourceName
      * @return qualified name bq.jdbc.[dataSourceName].canConnect

@@ -16,18 +16,18 @@ import java.util.function.Function;
 /**
  * HikariCP "aliveness" standard check
  */
-public class ConnectivityCheck implements HealthCheck {
+public class HikariCPConnectivityCheck implements HealthCheck {
 
     private final HikariPoolMXBean pool;
     private final ValueRange<Duration> timeoutThresholds;
 
-    public ConnectivityCheck(HikariPoolMXBean pool, ValueRange<Duration> timeoutThresholds) {
+    public HikariCPConnectivityCheck(HikariPoolMXBean pool, ValueRange<Duration> timeoutThresholds) {
         this.pool = pool;
         this.timeoutThresholds = timeoutThresholds;
     }
 
     /**
-     * Generates a stable qualified name for the {@link ConnectivityCheck}
+     * Generates a stable qualified name for the {@link HikariCPConnectivityCheck}
      *
      * @param dataSourceName Bootique configuration name of the data source being checked.
      * @return qualified name bq.jdbc.[dataSourceName].connectivity

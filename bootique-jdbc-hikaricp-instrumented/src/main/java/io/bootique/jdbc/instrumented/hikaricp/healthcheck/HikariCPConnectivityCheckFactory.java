@@ -7,18 +7,18 @@ import io.bootique.metrics.health.check.DurationRangeFactory;
 import io.bootique.metrics.health.check.ValueRange;
 import io.bootique.value.Duration;
 
-class ConnectivityCheckFactory {
+class HikariCPConnectivityCheckFactory {
 
     private DurationRangeFactory thresholdsFactory;
 
-    ConnectivityCheckFactory(DurationRangeFactory thresholdsFactory) {
+    HikariCPConnectivityCheckFactory(DurationRangeFactory thresholdsFactory) {
         this.thresholdsFactory = thresholdsFactory;
     }
 
     HealthCheck createHealthCheck(HikariDataSource ds) {
         HikariPoolMXBean pool = ds.getHikariPoolMXBean();
         ValueRange<Duration> range = getRange();
-        return new ConnectivityCheck(pool, range);
+        return new HikariCPConnectivityCheck(pool, range);
     }
 
     private ValueRange<Duration> getRange() {

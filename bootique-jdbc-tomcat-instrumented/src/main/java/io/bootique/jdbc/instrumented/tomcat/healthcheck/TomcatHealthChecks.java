@@ -30,7 +30,7 @@ public class TomcatHealthChecks implements HealthCheckGroup {
         Map<String, HealthCheck> checks = new HashMap<>();
 
         dataSourceFactory.allNames().forEach(n ->
-                checks.put(TomcatDataSourceHealthCheck.healthCheckName(n), new DeferredHealthCheck(createConnectivityCheck(n)))
+                checks.put(TomcatConnectivityCheck.healthCheckName(n), new DeferredHealthCheck(createConnectivityCheck(n)))
         );
 
         return checks;
@@ -40,7 +40,7 @@ public class TomcatHealthChecks implements HealthCheckGroup {
         return () ->
                 dataSourceFactory
                         .forNameIfStarted(dataSourceName)
-                        .map(ds -> new TomcatDataSourceHealthCheck(ds));
+                        .map(ds -> new TomcatConnectivityCheck(ds));
     }
 
 }

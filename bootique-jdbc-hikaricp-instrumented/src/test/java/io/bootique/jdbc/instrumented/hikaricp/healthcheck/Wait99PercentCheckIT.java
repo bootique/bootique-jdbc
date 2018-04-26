@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class Connection99PercentCheckIT {
+public class Wait99PercentCheckIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
@@ -35,7 +35,7 @@ public class Connection99PercentCheckIT {
         HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("db");
 
-        HealthCheckOutcome outcome = registry.runHealthCheck(Connection99PercentCheck.healthCheckName("db"));
+        HealthCheckOutcome outcome = registry.runHealthCheck(Wait99PercentCheck.healthCheckName("db"));
         assertEquals(HealthCheckStatus.OK, outcome.getStatus());
         HealthCheckData<Duration> data = (HealthCheckData<Duration>) outcome.getData().get();
         assertTrue(data.getValue().getDuration().toMillis() == 0);
@@ -46,7 +46,7 @@ public class Connection99PercentCheckIT {
             }
         }
 
-        outcome = registry.runHealthCheck(Connection99PercentCheck.healthCheckName("db"));
+        outcome = registry.runHealthCheck(Wait99PercentCheck.healthCheckName("db"));
         assertEquals(outcome.getMessage(), HealthCheckStatus.OK, outcome.getStatus());
 
         data = (HealthCheckData<Duration>) outcome.getData().get();
@@ -59,7 +59,7 @@ public class Connection99PercentCheckIT {
         // shutdown Derby
         shutdownDerby();
 
-        outcome = registry.runHealthCheck(ConnectivityCheck.healthCheckName("db"));
+        outcome = registry.runHealthCheck(HikariCPConnectivityCheck.healthCheckName("db"));
         assertEquals(HealthCheckStatus.CRITICAL, outcome.getStatus());
     }
 

@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.function.Function;
 
 /**
- * HikariCP "aliveness" standard check
+ * HikariCP standard "aliveness" check.
  */
 public class HikariCPConnectivityCheck implements HealthCheck {
 

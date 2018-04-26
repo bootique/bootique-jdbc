@@ -9,13 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A container of HikariCP-specific health checks.
+ * A container of HikariCP-specific health checks. Delegates health check creation to the underlying set of
+ * {@link ManagedDataSourceStarter}'s.
  */
-public class HikariCPHealthCheckGroup implements HealthCheckGroup {
+public class HikariCPHealthChecks implements HealthCheckGroup {
 
     private Map<String, ManagedDataSourceStarter> starters;
 
-    public HikariCPHealthCheckGroup(Map<String, ManagedDataSourceStarter> starters) {
+    public HikariCPHealthChecks(Map<String, ManagedDataSourceStarter> starters) {
         this.starters = starters;
     }
 

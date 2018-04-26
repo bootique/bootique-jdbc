@@ -14,13 +14,13 @@ import java.util.function.Supplier;
  * Generates individual healthchecks for a {@link io.bootique.jdbc.DataSourceFactory} DataSources. It is important to
  * report DataSource health individually.
  *
- * @since 0.12
+ * @since 0.26
  */
-public class DataSourceHealthCheckGroup implements HealthCheckGroup {
+public class TomcatHealthChecks implements HealthCheckGroup {
 
     private DataSourceFactory dataSourceFactory;
 
-    public DataSourceHealthCheckGroup(DataSourceFactory dataSourceFactory) {
+    public TomcatHealthChecks(DataSourceFactory dataSourceFactory) {
         this.dataSourceFactory = dataSourceFactory;
     }
 
@@ -30,7 +30,7 @@ public class DataSourceHealthCheckGroup implements HealthCheckGroup {
         Map<String, HealthCheck> checks = new HashMap<>();
 
         dataSourceFactory.allNames().forEach(n ->
-                checks.put(DataSourceHealthCheck.healthCheckName(n), new DeferredHealthCheck(createConnectivityCheck(n)))
+                checks.put(TomcatDataSourceHealthCheck.healthCheckName(n), new DeferredHealthCheck(createConnectivityCheck(n)))
         );
 
         return checks;
@@ -40,7 +40,7 @@ public class DataSourceHealthCheckGroup implements HealthCheckGroup {
         return () ->
                 dataSourceFactory
                         .forNameIfStarted(dataSourceName)
-                        .map(ds -> new DataSourceHealthCheck(ds));
+                        .map(ds -> new TomcatDataSourceHealthCheck(ds));
     }
 
 }

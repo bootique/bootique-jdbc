@@ -7,7 +7,7 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory;
-import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthCheckGroupFactory;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecksFactory;
 import io.bootique.jdbc.instrumented.hikaricp.managed.InstrumentedManagedDataSourceStarter;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.health.HealthCheckGroup;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @JsonTypeName("hikari-instrumented")
 public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSourceFactory {
 
-    private HikariCPHealthCheckGroupFactory health;
+    private HikariCPHealthChecksFactory health;
 
     @Override
     protected ManagedDataSourceStarter create(
@@ -31,24 +31,22 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
 
         MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
         DataSourceFactory dataSourceFactory = injector.getInstance(DataSourceFactory.class);
-        HealthCheckGroup healthChecks = dataSourceHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
+        HealthCheckGroup healthChecks = healthChecks(metricRegistry, dataSourceFactory, dataSourceName);
 
         return new InstrumentedManagedDataSourceStarter(getJdbcUrl(), startup, shutdown, healthChecks);
     }
 
     @BQConfigProperty
-    public void setHealth(HikariCPHealthCheckGroupFactory health) {
+    public void setHealth(HikariCPHealthChecksFactory health) {
         this.health = health;
     }
 
-    private HealthCheckGroup dataSourceHealthChecks(
+    private HealthCheckGroup healthChecks(
             MetricRegistry metricRegistry,
             DataSourceFactory dataSourceFactory,
             String dataSourceName) {
 
-        HikariCPHealthCheckGroupFactory factory = this.health != null ? this.health : new HikariCPHealthCheckGroupFactory();
-        return factory.createHealthCheckGroup(metricRegistry, dataSourceFactory, dataSourceName);
+        HikariCPHealthChecksFactory factory = this.health != null ? this.health : new HikariCPHealthChecksFactory();
+        return factory.createHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
     }
-
-
 }

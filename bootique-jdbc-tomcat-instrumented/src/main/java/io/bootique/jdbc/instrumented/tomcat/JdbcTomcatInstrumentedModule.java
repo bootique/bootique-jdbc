@@ -7,7 +7,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.JdbcModule;
-import io.bootique.jdbc.instrumented.tomcat.healthcheck.DataSourceHealthCheckGroup;
+import io.bootique.jdbc.instrumented.tomcat.healthcheck.TomcatHealthChecks;
 import io.bootique.metrics.health.HealthCheckModule;
 
 public class JdbcTomcatInstrumentedModule implements Module {
@@ -15,7 +15,7 @@ public class JdbcTomcatInstrumentedModule implements Module {
     @Override
     public void configure(Binder binder) {
         JdbcModule.extend(binder).addDataSourceListener(TomcatMetricsInitializer.class);
-        HealthCheckModule.extend(binder).addHealthCheckGroup(DataSourceHealthCheckGroup.class);
+        HealthCheckModule.extend(binder).addHealthCheckGroup(TomcatHealthChecks.class);
     }
 
     @Singleton
@@ -26,7 +26,7 @@ public class JdbcTomcatInstrumentedModule implements Module {
 
     @Singleton
     @Provides
-    DataSourceHealthCheckGroup provideDataSourceHealthCheckGroup(DataSourceFactory dataSourceFactory) {
-        return new DataSourceHealthCheckGroup(dataSourceFactory);
+    TomcatHealthChecks provideDataSourceHealthCheckGroup(DataSourceFactory dataSourceFactory) {
+        return new TomcatHealthChecks(dataSourceFactory);
     }
 }

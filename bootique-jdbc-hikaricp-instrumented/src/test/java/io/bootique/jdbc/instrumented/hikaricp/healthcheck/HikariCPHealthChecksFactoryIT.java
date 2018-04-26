@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class HikariCPHealthCheckGroupFactoryIT {
+public class HikariCPHealthChecksFactoryIT {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();

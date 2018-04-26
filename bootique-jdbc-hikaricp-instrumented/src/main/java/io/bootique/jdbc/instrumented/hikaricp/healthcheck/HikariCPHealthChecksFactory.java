@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 @BQConfig("Configures health checks for a Hikari DataSource.")
-public class HikariCPHealthCheckGroupFactory {
+public class HikariCPHealthChecksFactory {
 
     private DurationRangeFactory connectivity;
     private DurationRangeFactory connection99Percent;
@@ -32,7 +32,7 @@ public class HikariCPHealthCheckGroupFactory {
         this.connection99Percent = connection99Percent;
     }
 
-    public HealthCheckGroup createHealthCheckGroup(MetricRegistry registry, DataSourceFactory dsf, String dataSourceName) {
+    public HealthCheckGroup createHealthChecks(MetricRegistry registry, DataSourceFactory dsf, String dataSourceName) {
 
         Map<String, HealthCheck> checks = new HashMap<>(3);
 

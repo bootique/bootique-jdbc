@@ -1,5 +1,6 @@
 package io.bootique.jdbc.instrumented.tomcat.healthcheck;
 
+import io.bootique.jdbc.instrumented.tomcat.JdbcTomcatInstrumentedModule;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 
@@ -33,9 +34,9 @@ public class TomcatConnectivityCheck implements HealthCheck {
      * Generates stable qualified name for the {@link TomcatConnectivityCheck}
      *
      * @param dataSourceName
-     * @return qualified name bq.jdbc.[dataSourceName].canConnect
+     * @return qualified name bq.JdbcTomcat.Pool.[dataSourceName].Connectivity
      */
     public static String healthCheckName(String dataSourceName) {
-        return "bq.jdbc." + dataSourceName + ".canConnect";
+        return JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", dataSourceName, "Connectivity");
     }
 }

@@ -8,11 +8,14 @@ import com.google.inject.Singleton;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecks;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
+import io.bootique.metrics.MetricNaming;
 import io.bootique.metrics.health.HealthCheckModule;
 
 import java.util.Map;
 
 public class JdbcHikariCPInstrumentedModule implements Module {
+
+    public static final MetricNaming METRIC_NAMING = MetricNaming.forModule(JdbcHikariCPInstrumentedModule.class);
 
     @Override
     public void configure(Binder binder) {

@@ -6,6 +6,7 @@ import com.google.inject.TypeLiteral;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.DataSourceListener;
+import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -46,17 +47,29 @@ public class JdbcTomcatInstrumentedModuleIT {
 
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 
-        DataSource dataSource = factory.forName("DerbyDatabaseIT");
+        DataSource dataSource = factory.forName("db");
         assertNotNull(dataSource);
 
         MetricRegistry metricRegistry = runtime.getInstance(MetricRegistry.class);
 
         Set<String> expected = new HashSet<>(asList(
-                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.ActiveConnections",
-                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.IdleConnections",
-                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.PendingConnections",
-                "bq.JdbcTomcat.Pool.DerbyDatabaseIT.Size"));
+                "bq.JdbcTomcat.Pool.db.ActiveConnections",
+                "bq.JdbcTomcat.Pool.db.IdleConnections",
+                "bq.JdbcTomcat.Pool.db.PendingConnections",
+                "bq.JdbcTomcat.Pool.db.Size"));
 
         assertEquals(expected, metricRegistry.getGauges().keySet());
+    }
+
+    @Test
+    public void testHealthChecks() {
+        BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/dummy-ds.yml")
+                .autoLoadModules()
+                .createRuntime();
+
+        Set<String> expectedNames = new HashSet<>(asList("bq.JdbcTomcat.Pool.db.Connectivity"));
+
+        HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
+        assertEquals(expectedNames, registry.healthCheckNames());
     }
 }

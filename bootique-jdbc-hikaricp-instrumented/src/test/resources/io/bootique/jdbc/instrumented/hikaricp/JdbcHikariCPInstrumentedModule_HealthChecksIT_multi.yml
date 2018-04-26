@@ -1,5 +1,5 @@
 jdbc:
-  derby2:
+  db1:
     type: "hikari-instrumented"
     minimumIdle: 1
     maximumPoolSize: 10
@@ -13,7 +13,7 @@ jdbc:
       connection99Percent:
         warning: 10ms
         critical: 500ms
-  derby3:
+  db2:
     type: "hikari-instrumented"
     minimumIdle: 1
     maximumPoolSize: 10

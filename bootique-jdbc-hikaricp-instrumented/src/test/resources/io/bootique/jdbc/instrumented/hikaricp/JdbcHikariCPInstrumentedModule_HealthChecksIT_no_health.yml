@@ -1,5 +1,5 @@
 jdbc:
-  DerbyDatabaseIT:
+  db:
     type: "hikari-instrumented"
     connectionTimeout: 250
     minimumIdle: 1

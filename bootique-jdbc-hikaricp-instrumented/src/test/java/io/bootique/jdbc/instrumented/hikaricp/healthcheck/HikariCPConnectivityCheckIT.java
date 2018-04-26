@@ -22,7 +22,7 @@ public class HikariCPConnectivityCheckIT {
     @Test
     public void testHealthChecks() {
         BQRuntime runtime = testFactory
-                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/healthcheck/ConnectivityCheckIT.yml")
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/healthcheck/HikariCPConnectivityCheckIT.yml")
                 .autoLoadModules()
                 .createRuntime();
         

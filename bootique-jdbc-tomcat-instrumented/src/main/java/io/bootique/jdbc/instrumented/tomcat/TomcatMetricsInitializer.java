@@ -3,7 +3,6 @@ package io.bootique.jdbc.instrumented.tomcat;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import io.bootique.jdbc.DataSourceListener;
-import io.bootique.metrics.MetricNaming;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 
 import javax.sql.DataSource;
@@ -38,11 +37,14 @@ public class TomcatMetricsInitializer implements DataSourceListener {
         org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) dataSource;
         ConnectionPool pool = tomcat.getPool();
 
-        MetricNaming naming = MetricNaming.forModule(JdbcTomcatInstrumentedModule.class);
 
-        metricRegistry.register(naming.name("Pool", name, "ActiveConnections"), (Gauge<Integer>) () -> pool.getActive());
-        metricRegistry.register(naming.name("Pool", name, "IdleConnections"), (Gauge<Integer>) () -> pool.getIdle());
-        metricRegistry.register(naming.name("Pool", name, "PendingConnections"), (Gauge<Integer>) () -> pool.getWaitCount());
-        metricRegistry.register(naming.name("Pool", name, "Size"), (Gauge<Integer>) () -> pool.getSize());
+        metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "ActiveConnections"),
+                (Gauge<Integer>) () -> pool.getActive());
+        metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "IdleConnections"),
+                (Gauge<Integer>) () -> pool.getIdle());
+        metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "PendingConnections"),
+                (Gauge<Integer>) () -> pool.getWaitCount());
+        metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "Size"),
+                (Gauge<Integer>) () -> pool.getSize());
     }
 }

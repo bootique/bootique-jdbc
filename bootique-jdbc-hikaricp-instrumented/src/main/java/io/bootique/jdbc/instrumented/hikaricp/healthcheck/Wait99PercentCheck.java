@@ -1,9 +1,10 @@
 package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
+import io.bootique.jdbc.instrumented.hikaricp.JdbcHikariCPInstrumentedModule;
 import io.bootique.metrics.health.check.ValueRange;
 import io.bootique.metrics.health.check.ValueRangeCheck;
-
 import io.bootique.value.Duration;
+
 import java.util.function.Supplier;
 
 /**
@@ -25,6 +26,6 @@ public class Wait99PercentCheck extends ValueRangeCheck<Duration> {
      * @return qualified name bq.jdbc.[dataSourceName].connection99Percent
      */
     public static String healthCheckName(String dataSourceName) {
-        return "bq.jdbc." + dataSourceName + ".connection99Percent";
+        return JdbcHikariCPInstrumentedModule.METRIC_NAMING.name("Pool", dataSourceName, "Wait99Percent");
     }
 }

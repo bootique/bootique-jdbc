@@ -11,6 +11,7 @@
 * #84 Name Hikari pools after Bootique config names
 * #85 Align Hikari metrics names with other Bootique metrics
 * #86 Metrics renaming to follow naming convention
+* #87 Health check renaming to follow naming convention
 
 ## 0.25
 

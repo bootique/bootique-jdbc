@@ -2,6 +2,7 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import com.zaxxer.hikari.HikariPoolMXBean;
 import com.zaxxer.hikari.pool.HikariPool;
+import io.bootique.jdbc.instrumented.hikaricp.JdbcHikariCPInstrumentedModule;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.check.Threshold;
@@ -33,7 +34,7 @@ public class HikariCPConnectivityCheck implements HealthCheck {
      * @return qualified name bq.jdbc.[dataSourceName].connectivity
      */
     public static String healthCheckName(String dataSourceName) {
-        return "bq.jdbc." + dataSourceName + ".connectivity";
+        return JdbcHikariCPInstrumentedModule.METRIC_NAMING.name("Pool", dataSourceName, "Connectivity");
     }
 
     /**

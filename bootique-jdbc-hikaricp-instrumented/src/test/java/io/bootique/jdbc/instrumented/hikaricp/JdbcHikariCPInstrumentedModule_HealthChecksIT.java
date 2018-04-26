@@ -1,7 +1,6 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
 import io.bootique.BQRuntime;
-import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.test.junit.BQTestFactory;
 import org.junit.Rule;
@@ -25,15 +24,44 @@ public class JdbcHikariCPInstrumentedModule_HealthChecksIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        // fault DataSource to init metrics
-        runtime.getInstance(DataSourceFactory.class).forName("db");
+        Set<String> expectedNames = new HashSet<>(asList(
+                "bq.JdbcHikariCP.Pool.db.Connectivity",
+                "bq.JdbcHikariCP.Pool.db.Wait99Percent"));
 
-        Set<String> names = runtime.getInstance(HealthCheckRegistry.class).healthCheckNames();
+        HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
+        assertEquals(expectedNames, registry.healthCheckNames());
+    }
+
+    @Test
+    public void testHealthChecksMultipleDs() {
+
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/JdbcHikariCPInstrumentedModule_HealthChecksIT_multi.yml")
+                .autoLoadModules()
+                .createRuntime();
+
+        Set<String> expectedNames = new HashSet<>(asList(
+                "bq.JdbcHikariCP.Pool.db1.Connectivity",
+                "bq.JdbcHikariCP.Pool.db1.Wait99Percent",
+                "bq.JdbcHikariCP.Pool.db2.Connectivity",
+                "bq.JdbcHikariCP.Pool.db2.Wait99Percent"));
+
+        HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
+        assertEquals(expectedNames, registry.healthCheckNames());
+    }
+
+    @Test
+    public void testHealthChecks_Implicit() {
+        BQRuntime runtime = testFactory
+                .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/JdbcHikariCPInstrumentedModule_HealthChecksIT_no_health.yml")
+                .autoLoadModules()
+                .createRuntime();
 
         Set<String> expectedNames = new HashSet<>(asList(
                 "bq.JdbcHikariCP.Pool.db.Connectivity",
                 "bq.JdbcHikariCP.Pool.db.Wait99Percent"));
-        assertEquals(expectedNames, names);
 
+        HealthCheckRegistry registry = runtime.getInstance(HealthCheckRegistry.class);
+        assertEquals(expectedNames, registry.healthCheckNames());
     }
 }

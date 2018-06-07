@@ -3,6 +3,7 @@ package io.bootique.jdbc.instrumented.hikaricp;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
@@ -30,8 +31,8 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
             Consumer<DataSource> shutdown) {
 
         MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
-        DataSourceFactory dataSourceFactory = injector.getInstance(DataSourceFactory.class);
-        HealthCheckGroup healthChecks = healthChecks(metricRegistry, dataSourceFactory, dataSourceName);
+        Provider<DataSourceFactory> dataSourceFactoryProvider = injector.getProvider(DataSourceFactory.class);
+        HealthCheckGroup healthChecks = healthChecks(metricRegistry, dataSourceFactoryProvider, dataSourceName);
 
         return new InstrumentedManagedDataSourceStarter(getJdbcUrl(), startup, shutdown, healthChecks);
     }
@@ -43,10 +44,10 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
 
     private HealthCheckGroup healthChecks(
             MetricRegistry metricRegistry,
-            DataSourceFactory dataSourceFactory,
+            Provider<DataSourceFactory> dataSourceFactoryProvider,
             String dataSourceName) {
 
         HikariCPHealthChecksFactory factory = this.health != null ? this.health : new HikariCPHealthChecksFactory();
-        return factory.createHealthChecks(metricRegistry, dataSourceFactory, dataSourceName);
+        return factory.createHealthChecks(metricRegistry, dataSourceFactoryProvider, dataSourceName);
     }
 }

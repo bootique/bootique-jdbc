@@ -12,6 +12,7 @@
 * #85 Align Hikari metrics names with other Bootique metrics
 * #86 Metrics renaming to follow naming convention
 * #87 Health check renaming to follow naming convention
+* #88 Hikari instrumented: remove circular dependency DataSourceFactory <-> ManagedDataSourceStarter
 
 ## 0.25
 

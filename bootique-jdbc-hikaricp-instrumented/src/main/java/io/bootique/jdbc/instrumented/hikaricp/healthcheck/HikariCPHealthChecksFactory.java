@@ -1,6 +1,7 @@
 package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import com.codahale.metrics.MetricRegistry;
+import com.google.inject.Provider;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
@@ -32,25 +33,28 @@ public class HikariCPHealthChecksFactory {
         this.connection99Percent = connection99Percent;
     }
 
-    public HealthCheckGroup createHealthChecks(MetricRegistry registry, DataSourceFactory dsf, String dataSourceName) {
+    public HealthCheckGroup createHealthChecks(MetricRegistry registry,
+                                               Provider<DataSourceFactory> dataSourceFactoryProvider,
+                                               String dataSourceName) {
 
         Map<String, HealthCheck> checks = new HashMap<>(3);
 
         checks.put(HikariCPConnectivityCheck.healthCheckName(dataSourceName),
-                new DeferredHealthCheck(createConnectivityCheck(dsf, dataSourceName)));
+                new DeferredHealthCheck(createConnectivityCheck(dataSourceFactoryProvider, dataSourceName)));
 
         checks.put(Wait99PercentCheck.healthCheckName(dataSourceName),
-                new DeferredHealthCheck(createConnection99PercentCheck(registry, dsf, dataSourceName)));
+                new DeferredHealthCheck(createConnection99PercentCheck(registry, dataSourceFactoryProvider, dataSourceName)));
 
         return () -> checks;
     }
 
     private Supplier<Optional<HealthCheck>> createConnectivityCheck(
-            DataSourceFactory dataSourceFactory,
+            Provider<DataSourceFactory> dataSourceFactoryProvider,
             String dataSourceName) {
 
         return () ->
-                dataSourceFactory
+                dataSourceFactoryProvider
+                        .get()
                         .forNameIfStarted(dataSourceName)
                         .map(ds -> (HikariDataSource) ds)
                         .map(ds -> new HikariCPConnectivityCheckFactory(connectivity).createHealthCheck(ds));
@@ -58,11 +62,12 @@ public class HikariCPHealthChecksFactory {
 
     private Supplier<Optional<HealthCheck>> createConnection99PercentCheck(
             MetricRegistry registry,
-            DataSourceFactory dataSourceFactory,
+            Provider<DataSourceFactory> dataSourceFactoryProvider,
             String dataSourceName) {
 
         return () ->
-                dataSourceFactory
+                dataSourceFactoryProvider
+                        .get()
                         .forNameIfStarted(dataSourceName)
                         .map(ds -> (HikariDataSource) ds)
                         .map(ds -> new Wait99PercentCheckFactory(connection99Percent)

@@ -18,17 +18,17 @@
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-hikaricp</artifactId>
-                <version>${project.version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics-healthchecks</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

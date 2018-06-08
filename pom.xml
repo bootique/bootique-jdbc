@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.bootique.modules.parent</groupId>
         <artifactId>bootique-modules-parent</artifactId>
-        <version>0.8</version>
+        <version>0.10</version>
     </parent>
 
     <groupId>io.bootique.jdbc</groupId>
@@ -19,8 +19,8 @@
     </description>
 
     <properties>
-        <bootique-version>${project.version}</bootique-version>
-        <derby-version>10.14.1.0</derby-version>
+        <bootique.version>${project.version}</bootique.version>
+        <derby.version>10.14.1.0</derby.version>
     </properties>
 
 	<modules>
@@ -52,37 +52,27 @@
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.metrics</groupId>
                 <artifactId>bootique-metrics-healthchecks</artifactId>
-                <version>${bootique-version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique-test</artifactId>
-                <version>${bootique-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
-                <version>${derby-version}</version>
+                <version>${derby.version}</version>
             </dependency>
 
             <dependency>

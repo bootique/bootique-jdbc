@@ -16,10 +16,6 @@
         Requires an extra implementor module in runtime, such as 'bootique-jdbc-tomcat", etc.
     </description>
 
-    <properties>
-        <tomcat-version>8.0.30</tomcat-version>
-    </properties>
-
     <dependencies>
         <!-- Unit test dependencies -->
         <dependency>

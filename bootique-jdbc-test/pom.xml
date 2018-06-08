@@ -19,12 +19,12 @@
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc</artifactId>
-                <version>${project.version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
                 <artifactId>bootique-jdbc-tomcat</artifactId>
-                <version>${project.version}</version>
+                <version>${bootique.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

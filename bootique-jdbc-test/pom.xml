@@ -136,7 +136,7 @@
                         <groupId>org.apache.rat</groupId>
                         <artifactId>apache-rat-plugin</artifactId>
                         <configuration>
-                            <excludes combine.children="append">
+                            <excludes>
                                 <exclude>**/*.csv</exclude>
                             </excludes>
                         </configuration>

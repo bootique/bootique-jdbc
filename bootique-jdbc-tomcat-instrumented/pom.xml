@@ -124,7 +124,7 @@
 						<groupId>org.apache.rat</groupId>
 						<artifactId>apache-rat-plugin</artifactId>
 						<configuration>
-							<excludes combine.children="append">
+							<excludes>
 								<exclude>derby.log</exclude>
 							</excludes>
 						</configuration>

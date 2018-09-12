@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
- * @since 0.26
+ * @since 1.0.RC1
  */
 class Wait99PercentCheckFactory {
 

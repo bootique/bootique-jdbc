@@ -27,7 +27,7 @@ import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
 import javax.sql.DataSource;
 
 /**
- * @since 0.26
+ * @since 1.0.RC1
  */
 public class HikariCPMetricsInitializer implements DataSourceListener {
 

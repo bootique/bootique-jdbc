@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  * Generates individual healthchecks for a {@link io.bootique.jdbc.DataSourceFactory} DataSources. It is important to
  * report DataSource health individually.
  *
- * @since 0.26
+ * @since 1.0.RC1
  */
 public class TomcatHealthChecks implements HealthCheckGroup {
 

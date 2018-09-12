@@ -49,7 +49,7 @@ public interface DataSourceFactory {
      *
      * @param dataSourceName symbolic name of the DataSource we are interested in.
      * @return true if the named DataSource has already been created.
-     * @since 0.26
+     * @since 1.0.RC1
      */
     boolean isStarted(String dataSourceName);
 
@@ -57,7 +57,7 @@ public interface DataSourceFactory {
      * @param dataSourceName symbolic name of the DataSource we are interested in.
      * @return an optional DataSource for a given name. Will be an empty Optional if the DataSource for that name is
      * not yet started.
-     * @since 0.26
+     * @since 1.0.RC1
      */
     default Optional<DataSource> forNameIfStarted(String dataSourceName) {
         return isStarted(dataSourceName) ? Optional.of(forName(dataSourceName)) : Optional.empty();

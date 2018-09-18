@@ -19,6 +19,7 @@
 
 [![Build Status](https://travis-ci.org/bootique/bootique-jdbc.svg)](https://travis-ci.org/bootique/bootique-jdbc)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.bootique.jdbc/bootique-jdbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.bootique.jdbc/bootique-jdbc/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.bootique.jdbc/bootique-jdbc.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique.jdbc/bootique-jdbc/)
 
 # bootique-jdbc
 

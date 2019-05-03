@@ -24,7 +24,7 @@
     <parent>
         <artifactId>bootique-jdbc-parent</artifactId>
         <groupId>io.bootique.jdbc</groupId>
-        <version>1.0.RC2-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>bootique-jdbc-hikaricp</artifactId>

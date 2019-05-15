@@ -1,3 +1,9 @@
+## 1.1
+
+* #91 bootique-jdbc-test: TableMatcher.eq doesn't work for nulls
+
+## 1.0
+
 ## 1.0.RC1
 
 * #75 Cleaning up APIs deprecated since <= 0.25

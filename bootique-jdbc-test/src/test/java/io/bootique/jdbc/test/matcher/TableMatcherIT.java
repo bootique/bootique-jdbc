@@ -83,6 +83,16 @@ public class TableMatcherIT {
     }
 
     @Test
+    public void testAssertMatches_WithNullCondition() {
+        TableMatcher matcher = new TableMatcher(T1);
+
+        T1.insert(1, "y", "z");
+        T1.insert(2, "a", null);
+        matcher.eq("c3", null).eq("c1", 2).assertMatches(1);
+    }
+
+
+    @Test
     public void testAssertMatches_Negative() {
         TableMatcher matcher = new TableMatcher(T1);
         assertAssertionError(() -> matcher.assertMatches(1), "The matcher incorrectly assumed there's 1 row in " +

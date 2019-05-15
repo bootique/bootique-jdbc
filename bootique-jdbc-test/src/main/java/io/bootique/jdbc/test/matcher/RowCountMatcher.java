@@ -71,12 +71,23 @@ public class RowCountMatcher {
             for (BinaryCondition c : conditions) {
 
                 // TODO: use some kind of tree visitor to parse conditions?
+
+                // TODO: pull out SQL translation from here... things like NULL syntax make it non-trivial, so would
+                //  be nice to reuse elsewhere
+
                 builder.append(separator);
-                builder.appendIdentifier(c.getColumn())
-                        .append(" ")
-                        .append(c.getOperator().getSqlOperator())
-                        .append(" ")
-                        .appendBinding(table.getColumn(c.getColumn()), c.getValue());
+
+                if (c.getValue() != null) {
+
+                    builder.appendIdentifier(c.getColumn())
+                            .append(" ")
+                            .append(c.getOperator().getSqlOperator())
+                            .append(" ")
+                            .appendBinding(table.getColumn(c.getColumn()), c.getValue());
+                } else {
+                    builder.appendIdentifier(c.getColumn()).append(" IS NULL");
+                }
+
                 separator = " AND ";
             }
         }

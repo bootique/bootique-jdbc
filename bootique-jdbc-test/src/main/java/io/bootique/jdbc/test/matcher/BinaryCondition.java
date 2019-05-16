@@ -24,18 +24,6 @@ package io.bootique.jdbc.test.matcher;
  */
 class BinaryCondition {
 
-    enum Comparision {
-
-        eq {
-            @Override
-            public String getSqlOperator() {
-                return "=";
-            }
-        };
-
-        public abstract String getSqlOperator();
-    }
-
     private String column;
     private Object value;
     private Comparision operator;
@@ -56,5 +44,27 @@ class BinaryCondition {
 
     public Comparision getOperator() {
         return operator;
+    }
+
+    enum Comparision {
+
+        eq {
+            @Override
+            public String getSqlOperator() {
+                return "=";
+            }
+        },
+        in {
+            @Override
+            public String getSqlOperator() {
+                return "IN";
+            }
+        };
+
+        /**
+         * @deprecated since 1.1, as SQL operator is provided by translator
+         */
+        @Deprecated
+        public abstract String getSqlOperator();
     }
 }

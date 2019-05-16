@@ -74,7 +74,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_WithCondition() {
+    public void testAssertMatches_Eq() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -83,7 +83,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_WithNullCondition() {
+    public void testAssertMatches_Eq_Null() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -91,6 +91,39 @@ public class TableMatcherIT {
         matcher.eq("c3", null).eq("c1", 2).assertMatches(1);
     }
 
+    @Test
+    public void testAssertMatches_In() {
+        TableMatcher matcher = new TableMatcher(T1);
+
+        T1.insert(1, "y", "z");
+        T1.insert(2, "a", "b");
+        T1.insert(3, "c", "d");
+
+        matcher.in("c3", "z", "d").assertMatches(2);
+    }
+
+    // TODO: no null support in IN yet
+    @Test(expected = IllegalArgumentException.class)
+    public void testAssertMatches_In_Null() {
+        TableMatcher matcher = new TableMatcher(T1);
+
+        T1.insert(1, "y", "z");
+        T1.insert(2, "a", null);
+        T1.insert(3, "c", "d");
+
+        matcher.in("c3", "z", null).assertMatches(2);
+    }
+
+    @Test
+    public void testAssertMatches_In_Eq() {
+        TableMatcher matcher = new TableMatcher(T1);
+
+        T1.insert(1, "y", "z");
+        T1.insert(2, "a", "x");
+        T1.insert(3, "c", "d");
+
+        matcher.in("c3", "z", "x").eq("c2", "a").assertMatches(1);
+    }
 
     @Test
     public void testAssertMatches_Negative() {
@@ -100,7 +133,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_WithCondition_Negative() {
+    public void testAssertMatches_Eq_Negative() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");

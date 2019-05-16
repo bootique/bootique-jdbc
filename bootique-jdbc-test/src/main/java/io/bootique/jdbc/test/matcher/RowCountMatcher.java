@@ -19,6 +19,7 @@
 
 package io.bootique.jdbc.test.matcher;
 
+import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
@@ -43,6 +44,14 @@ public class RowCountMatcher {
 
     public RowCountMatcher eq(String column, Object value) {
         getConditions().add(new BinaryCondition(column, BinaryCondition.Comparision.eq, value));
+        return this;
+    }
+
+    /**
+     * @since 1.1
+     */
+    public RowCountMatcher in(String column, Object... values) {
+        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparision.in, values));
         return this;
     }
 
@@ -77,20 +86,78 @@ public class RowCountMatcher {
 
                 builder.append(separator);
 
-                if (c.getValue() != null) {
-
-                    builder.appendIdentifier(c.getColumn())
-                            .append(" ")
-                            .append(c.getOperator().getSqlOperator())
-                            .append(" ")
-                            .appendBinding(table.getColumn(c.getColumn()), c.getValue());
-                } else {
-                    builder.appendIdentifier(c.getColumn()).append(" IS NULL");
+                switch (c.getOperator()) {
+                    case eq:
+                        appendEq(builder, c);
+                        break;
+                    case in:
+                        appendIn(builder, c);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Unexpected operator: " + c.getOperator());
                 }
 
                 separator = " AND ";
             }
         }
+
+        return builder;
+    }
+
+    protected <T> SelectStatementBuilder<T> appendEq(SelectStatementBuilder<T> builder, BinaryCondition eq) {
+        if (eq.getValue() != null) {
+
+            builder.appendIdentifier(eq.getColumn())
+                    .append(" ")
+                    .append("=")
+                    .append(" ")
+                    .appendBinding(table.getColumn(eq.getColumn()), eq.getValue());
+        } else {
+            builder.appendIdentifier(eq.getColumn()).append(" IS NULL");
+        }
+
+        return builder;
+    }
+
+    protected <T> SelectStatementBuilder<T> appendIn(SelectStatementBuilder<T> builder, BinaryCondition in) {
+
+        if (in.getValue() instanceof Object[]) {
+            return appendIn(builder, in.getColumn(), (Object[]) in.getValue());
+        } else if (in.getValue() instanceof Collection) {
+            Collection<?> c = (Collection<?>) in.getValue();
+            Object[] array = new Object[c.size()];
+            c.toArray(array);
+            return appendIn(builder, in.getColumn(), array);
+        } else {
+            // null collection or scalar value
+            return appendEq(builder, in);
+        }
+    }
+
+    protected <T> SelectStatementBuilder<T> appendIn(SelectStatementBuilder<T> builder, String columnName, Object[] values) {
+
+        builder.appendIdentifier(columnName)
+                .append(" ")
+                .append("IN")
+                .append(" (");
+
+        Column column = table.getColumn(columnName);
+
+        // TODO: how to handle empty collections?
+        for (int i = 0; i < values.length; i++) {
+
+            // TODO: NULL support via an extra "OR c IS NULL" clause
+            if (values[i] == null) {
+                throw new IllegalArgumentException("Can't use nulls in the 'IN' condition");
+            }
+
+            if (i > 0) {
+                builder.append(",");
+            }
+            builder.appendBinding(column, values[i]);
+        }
+
+        builder.append(")");
 
         return builder;
     }

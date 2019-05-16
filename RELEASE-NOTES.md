@@ -1,6 +1,7 @@
 ## 1.1
 
 * #91 bootique-jdbc-test: TableMatcher.eq doesn't work for nulls
+* #92 bootique-jdbc-test: support "in" condition in the matcher 
 
 ## 1.0
 

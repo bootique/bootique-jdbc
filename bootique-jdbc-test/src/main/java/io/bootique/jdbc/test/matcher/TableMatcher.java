@@ -43,6 +43,13 @@ public class TableMatcher {
         return new RowCountMatcher(table).eq(column, value);
     }
 
+    /**
+     * @since 1.1
+     */
+    public RowCountMatcher in(String column, Object... values) {
+        return new RowCountMatcher(table).in(column, values);
+    }
+
     public void assertMatches(int expectedRows) {
         new RowCountMatcher(table).assertMatches(expectedRows);
     }

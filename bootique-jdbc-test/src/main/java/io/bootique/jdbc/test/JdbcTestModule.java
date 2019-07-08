@@ -47,7 +47,8 @@ public class JdbcTestModule extends ConfigModule {
     DatabaseChannelFactory provideDatabaseChannelFactory(
             ConfigurationFactory configFactory,
             DataSourceFactory dataSourceFactory) {
-        return configFactory.config(DatabaseChannelFactoryFactory.class, configPrefix).createFactory(dataSourceFactory);
+
+        return config(DatabaseChannelFactoryFactory.class, configFactory).createFactory(dataSourceFactory);
     }
 
     @Singleton

@@ -39,6 +39,7 @@ public class TableMatcherIT {
     private static Table T1;
     private static Table T2;
     private static Table T3;
+    private static Table T4;
 
     @Rule
     public TestDataManager dataManager = new TestDataManager(true, T1);
@@ -55,10 +56,12 @@ public class TableMatcherIT {
         channel.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         channel.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
         channel.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
+        channel.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" BIGINT, \"c2\" VARCHAR (10))");
 
         T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").initColumnTypesFromDBMetadata().build();
         T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").initColumnTypesFromDBMetadata().build();
         T3 = channel.newTable("t3").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
+        T4 = channel.newTable("t4").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
     }
 
     @Test
@@ -202,6 +205,19 @@ public class TableMatcherIT {
                 .exec();
 
         matcher.assertMatchesCsv("classpath:io/bootique/jdbc/test/matcher/t3_ref.csv", "c1");
+    }
+
+    @Test
+    public void testAssertMatchesCsv_Bigint() {
+
+        TableMatcher matcher = new TableMatcher(T4);
+
+        T4.insertColumns("c1", "c2")
+                .values(1L, "abc")
+                .values(2L, "xyz")
+                .exec();
+
+        matcher.assertMatchesCsv("classpath:io/bootique/jdbc/test/matcher/t4_ref.csv", "c1");
     }
 
     private void assertAssertionError(Runnable test, String whenNoErrorMessage) {

@@ -138,7 +138,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
             try {
                 dataSource.createPool();
             } catch (Exception e) {
-                throw new RuntimeException("Error creating DataSource", e);
+                throw new RuntimeException("Error creating DataSource. DataSource name: " + dataSourceName, e);
             }
 
             return dataSource;

@@ -1,5 +1,6 @@
 ## 1.1
 
+* #37 Hard to trace misconfigured DataSources
 * #91 bootique-jdbc-test: TableMatcher.eq doesn't work for nulls
 * #92 bootique-jdbc-test: support "in" condition in the matcher 
 

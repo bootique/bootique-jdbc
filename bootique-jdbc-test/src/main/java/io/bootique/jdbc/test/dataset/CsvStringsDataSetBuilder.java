@@ -27,14 +27,16 @@ import java.io.StringReader;
 import java.util.Objects;
 
 /**
+ * A builder that assembles a data set matching a {@link Table} structure from in-memory CSV-like strings.
+ *
  * @since 0.24
  */
 public class CsvStringsDataSetBuilder {
 
+    protected StringBuilder data;
     private Table table;
     private boolean containsHeader;
     private FromStringConverter valueConverter;
-    protected StringBuilder data;
 
     public CsvStringsDataSetBuilder(Table table, FromStringConverter valueConverter) {
         this(table, null, valueConverter);
@@ -57,7 +59,7 @@ public class CsvStringsDataSetBuilder {
     }
 
     public CsvStringsDataSetBuilder rows(String... csvStrings) {
-        for(String row: csvStrings) {
+        for (String row : csvStrings) {
             data.append(row).append("\n");
         }
         return this;

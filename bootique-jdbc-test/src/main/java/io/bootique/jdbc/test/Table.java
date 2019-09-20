@@ -153,7 +153,8 @@ public class Table {
     }
 
     /**
-     * Returns a builder object to assemble a data set from CSV strings, or a CSV resource.
+     * Returns a builder object to assemble a data set matching this table structure either from CSV-like strings,
+     * or from a CSV file resource.
      *
      * @return a builder of a {@link io.bootique.jdbc.test.dataset.TableDataSet}.
      * @since 0.24

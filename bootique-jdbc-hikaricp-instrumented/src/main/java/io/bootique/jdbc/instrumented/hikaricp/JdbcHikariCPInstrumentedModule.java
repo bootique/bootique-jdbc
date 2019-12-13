@@ -20,10 +20,9 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecks;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
@@ -31,8 +30,9 @@ import io.bootique.metrics.MetricNaming;
 import io.bootique.metrics.health.HealthCheckModule;
 
 import java.util.Map;
+import javax.inject.Singleton;
 
-public class JdbcHikariCPInstrumentedModule implements Module {
+public class JdbcHikariCPInstrumentedModule implements BQModule {
 
     public static final MetricNaming METRIC_NAMING = MetricNaming.forModule(JdbcHikariCPInstrumentedModule.class);
 

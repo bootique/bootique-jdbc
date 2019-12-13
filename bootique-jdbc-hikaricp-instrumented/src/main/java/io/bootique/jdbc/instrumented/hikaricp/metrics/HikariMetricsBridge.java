@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class HikariMetricsBridge implements IMetricsTracker {
 
-
     private final String dataSourceName;
     private final Timer connectionWaitTimer;
     private final Histogram connectionUsage;
@@ -52,10 +51,10 @@ public class HikariMetricsBridge implements IMetricsTracker {
         this.connectionCreation = registry.histogram(connectionCreationMetric(dataSourceName));
         this.connectionTimeoutMeter = registry.meter(connectionTimeoutRateMetric(dataSourceName));
 
-        registry.register(totalConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getTotalConnections());
-        registry.register(idleConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getIdleConnections());
-        registry.register(activeConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getActiveConnections());
-        registry.register(pendingConnectionsMetric(dataSourceName), (Gauge<Integer>) () -> poolStats.getPendingThreads());
+        registry.register(totalConnectionsMetric(dataSourceName), (Gauge<Integer>) poolStats::getTotalConnections);
+        registry.register(idleConnectionsMetric(dataSourceName), (Gauge<Integer>) poolStats::getIdleConnections);
+        registry.register(activeConnectionsMetric(dataSourceName), (Gauge<Integer>) poolStats::getActiveConnections);
+        registry.register(pendingConnectionsMetric(dataSourceName), (Gauge<Integer>) poolStats::getPendingThreads);
     }
 
     public static String connectionWaitMetric(String dataSourceName) {

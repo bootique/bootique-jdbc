@@ -19,12 +19,11 @@
 
 package io.bootique.jdbc;
 
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Provides;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.log.BootLogger;
@@ -34,6 +33,7 @@ import io.bootique.type.TypeRef;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.inject.Singleton;
 
 public class JdbcModule extends ConfigModule {
 

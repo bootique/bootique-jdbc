@@ -20,9 +20,9 @@
 package io.bootique.jdbc.instrumented.tomcat;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import io.bootique.BQRuntime;
+import io.bootique.di.Key;
+import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.DataSourceListener;
 import io.bootique.metrics.health.HealthCheckRegistry;
@@ -50,7 +50,7 @@ public class JdbcTomcatInstrumentedModuleIT {
                 .autoLoadModules()
                 .createRuntime();
 
-        TypeLiteral<Set<DataSourceListener>> typeLiteral = new TypeLiteral<Set<io.bootique.jdbc.DataSourceListener>>() {
+        TypeLiteral<Set<DataSourceListener>> typeLiteral = new TypeLiteral<Set<DataSourceListener>>() {
         };
 
         Set<DataSourceListener> set = runtime.getInstance(Key.get(typeLiteral));

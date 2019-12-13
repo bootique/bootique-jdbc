@@ -58,12 +58,12 @@ public class TomcatMetricsInitializer implements DataSourceListener {
 
 
         metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "ActiveConnections"),
-                (Gauge<Integer>) () -> pool.getActive());
+                (Gauge<Integer>) pool::getActive);
         metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "IdleConnections"),
-                (Gauge<Integer>) () -> pool.getIdle());
+                (Gauge<Integer>) pool::getIdle);
         metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "PendingConnections"),
-                (Gauge<Integer>) () -> pool.getWaitCount());
+                (Gauge<Integer>) pool::getWaitCount);
         metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "Size"),
-                (Gauge<Integer>) () -> pool.getSize());
+                (Gauge<Integer>) pool::getSize);
     }
 }

@@ -20,9 +20,9 @@
 package io.bootique.jdbc.managed;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.inject.Injector;
 import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.di.Injector;
 
 /**
  * Configuration factory for specific DataSource implementations.

@@ -54,11 +54,11 @@ public class DatabaseChannelFactory {
             throw new IllegalStateException("More than one DataSource is configured. Don't know which one is default");
         }
 
-        return channels.computeIfAbsent(names.iterator().next(), name -> createChannel(name));
+        return channels.computeIfAbsent(names.iterator().next(), this::createChannel);
     }
 
     public DatabaseChannel getChannel(String dataSourceName) {
-        return channels.computeIfAbsent(dataSourceName, name -> createChannel(name));
+        return channels.computeIfAbsent(dataSourceName, this::createChannel);
     }
 
     protected DatabaseChannel createChannel(String dataSourceName) {

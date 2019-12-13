@@ -19,11 +19,11 @@
 
 package io.bootique.jdbc;
 
-import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.Multibinder;
 import io.bootique.ModuleExtender;
+import io.bootique.di.Binder;
+import io.bootique.di.Key;
+import io.bootique.di.SetBuilder;
+import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 
 /**
@@ -35,8 +35,8 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
             .get(new TypeLiteral<Class<? extends ManagedDataSourceFactory>>() {
             });
 
-    private Multibinder<DataSourceListener> listeners;
-    private Multibinder<Class<? extends ManagedDataSourceFactory>> factoryTypes;
+    private SetBuilder<DataSourceListener> listeners;
+    private SetBuilder<Class<? extends ManagedDataSourceFactory>> factoryTypes;
 
     public JdbcModuleExtender(Binder binder) {
         super(binder);
@@ -50,25 +50,25 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
     }
 
     public JdbcModuleExtender addFactoryType(Class<? extends ManagedDataSourceFactory> factoryType) {
-        contributeFactoryTypes().addBinding().toInstance(factoryType);
+        contributeFactoryTypes().add(factoryType);
         return this;
     }
 
     public JdbcModuleExtender addDataSourceListener(DataSourceListener listener) {
-        contributeListeners().addBinding().toInstance(listener);
+        contributeListeners().add(listener);
         return this;
     }
 
     public JdbcModuleExtender addDataSourceListener(Class<? extends DataSourceListener> listenerType) {
-        contributeListeners().addBinding().to(listenerType);
+        contributeListeners().add(listenerType);
         return this;
     }
 
-    private Multibinder<DataSourceListener> contributeListeners() {
+    private SetBuilder<DataSourceListener> contributeListeners() {
         return listeners != null ? listeners : (listeners = newSet(DataSourceListener.class));
     }
 
-    private Multibinder<Class<? extends ManagedDataSourceFactory>> contributeFactoryTypes() {
+    private SetBuilder<Class<? extends ManagedDataSourceFactory>> contributeFactoryTypes() {
         return factoryTypes != null ? factoryTypes : (factoryTypes = newSet(FACTORY_TYPE_KEY));
     }
 }

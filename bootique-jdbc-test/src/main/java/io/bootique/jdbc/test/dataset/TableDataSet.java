@@ -70,7 +70,7 @@ public class TableDataSet implements DataSet {
     public void persist() {
         if (size() > 0) {
             InsertBuilder builder = table.insertColumns(getHeader());
-            records.forEach(row -> builder.values(row));
+            records.forEach(builder::values);
             builder.exec();
         }
     }

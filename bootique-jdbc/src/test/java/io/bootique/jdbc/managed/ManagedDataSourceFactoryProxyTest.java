@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.managed;
 
-import com.google.inject.Injector;
+import io.bootique.di.Injector;
 import org.junit.Test;
 
 import java.util.HashSet;

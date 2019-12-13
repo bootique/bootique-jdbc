@@ -25,11 +25,11 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.TypeLiteral;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 
@@ -103,8 +103,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
     private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {
 
         Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
-                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {
-                });
+                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {});
 
         Set<Class<? extends ManagedDataSourceFactory>> allFactories = injector.getProvider(setKey).get();
 

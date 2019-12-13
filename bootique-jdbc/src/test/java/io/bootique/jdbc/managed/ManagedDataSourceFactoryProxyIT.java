@@ -20,11 +20,11 @@
 package io.bootique.jdbc.managed;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.inject.Injector;
-import com.google.inject.ProvisionException;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.DIRuntimeException;
+import io.bootique.di.Injector;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.test.junit.BQTestFactory;
@@ -176,7 +176,7 @@ public class ManagedDataSourceFactoryProxyIT {
         try {
             runtime.getInstance(DataSourceFactory.class).forName("ds1");
             fail("Exception expected");
-        } catch (ProvisionException e) {
+        } catch (DIRuntimeException e) {
             assertTrue(e.getCause() instanceof BootiqueException);
         }
     }
@@ -195,7 +195,7 @@ public class ManagedDataSourceFactoryProxyIT {
         try {
             runtime.getInstance(DataSourceFactory.class).forName("ds1");
             fail("Exception expected");
-        } catch (ProvisionException e) {
+        } catch (DIRuntimeException e) {
             assertTrue(e.getCause() instanceof BootiqueException);
         }
     }

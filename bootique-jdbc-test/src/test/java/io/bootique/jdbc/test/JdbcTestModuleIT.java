@@ -19,13 +19,12 @@
 
 package io.bootique.jdbc.test;
 
-import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import io.bootique.BQRuntime;
+import io.bootique.di.Binder;
+import io.bootique.di.Key;
+import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
+import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.log.BootLogger;
@@ -33,6 +32,7 @@ import io.bootique.test.junit.BQTestFactory;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class JdbcTestModuleIT {
                 }).createRuntime();
 
 
-        TypeLiteral<Set<io.bootique.jdbc.DataSourceListener>> typeLiteral = new TypeLiteral<Set<io.bootique.jdbc.DataSourceListener>>() {
+        TypeLiteral<Set<DataSourceListener>> typeLiteral = new TypeLiteral<Set<io.bootique.jdbc.DataSourceListener>>() {
         };
 
         Set<io.bootique.jdbc.DataSourceListener> set = runtime.getInstance(Key.get(typeLiteral));
@@ -65,7 +65,7 @@ public class JdbcTestModuleIT {
     public void testListeners_Injected() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/test/dummy-ds.yml")
                 .autoLoadModules()
-                .module(new Module() {
+                .module(new BQModule() {
 
                     @Override
                     public void configure(Binder binder) {

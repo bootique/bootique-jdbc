@@ -19,8 +19,8 @@
 
 package io.bootique.jdbc.test;
 
-import com.google.inject.Module;
 import io.bootique.BQModuleProvider;
+import io.bootique.di.BQModule;
 import io.bootique.jdbc.JdbcModuleProvider;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 
@@ -35,7 +35,7 @@ import java.util.Map;
 public class JdbcTestModuleProvider implements BQModuleProvider {
 
     @Override
-    public Module module() {
+    public BQModule module() {
         return new JdbcTestModule();
     }
 

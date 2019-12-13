@@ -21,10 +21,9 @@ package io.bootique.jdbc.instrumented.hikaricp;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.inject.Injector;
-import com.google.inject.Provider;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.di.Injector;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecksFactory;
@@ -32,6 +31,7 @@ import io.bootique.jdbc.instrumented.hikaricp.managed.InstrumentedManagedDataSou
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.health.HealthCheckGroup;
 
+import javax.inject.Provider;
 import javax.sql.DataSource;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

@@ -59,7 +59,7 @@ public class TomcatHealthChecks implements HealthCheckGroup {
         return () ->
                 dataSourceFactory
                         .forNameIfStarted(dataSourceName)
-                        .map(ds -> new TomcatConnectivityCheck(ds));
+                        .map(TomcatConnectivityCheck::new);
     }
 
 }

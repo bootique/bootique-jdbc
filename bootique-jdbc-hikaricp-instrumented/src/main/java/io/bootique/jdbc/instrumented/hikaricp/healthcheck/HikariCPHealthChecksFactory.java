@@ -20,7 +20,6 @@
 package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Provider;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import javax.inject.Provider;
 
 @BQConfig("Configures health checks for a Hikari DataSource.")
 public class HikariCPHealthChecksFactory {

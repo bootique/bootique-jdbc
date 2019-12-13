@@ -19,9 +19,9 @@
 
 package io.bootique.jdbc.hikaricp;
 
-import com.google.inject.Module;
-import io.bootique.BQModule;
+import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
+import io.bootique.di.BQModule;
 import io.bootique.jdbc.JdbcModuleProvider;
 
 import java.util.Collection;
@@ -30,12 +30,12 @@ import java.util.Collections;
 public class JdbcHikariCPModuleProvider implements BQModuleProvider {
 
     @Override
-    public Module module() {
+    public BQModule module() {
         return new JdbcHikariCPModule();
     }
 
     @Override
-    public BQModule.Builder moduleBuilder() {
+    public BQModuleMetadata.Builder moduleBuilder() {
         return BQModuleProvider.super
                 .moduleBuilder()
                 .description("Integrates HikariCP DataSource implementation.");

@@ -19,9 +19,9 @@
 
 package io.bootique.jdbc.tomcat;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 import io.bootique.jdbc.JdbcModule;
 
 import java.util.logging.Level;
@@ -29,7 +29,7 @@ import java.util.logging.Level;
 /**
  * @since 0.25
  */
-public class JdbcTomcatModule implements Module {
+public class JdbcTomcatModule implements BQModule {
 
     @Override
     public void configure(Binder binder) {

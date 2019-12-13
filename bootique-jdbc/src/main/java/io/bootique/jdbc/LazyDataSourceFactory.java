@@ -45,7 +45,7 @@ public class LazyDataSourceFactory implements DataSourceFactory {
     }
 
     public void shutdown() {
-        dataSources.values().forEach(ds -> ds.shutdown());
+        dataSources.values().forEach(ManagedDataSource::shutdown);
 
         dataSources.forEach((name, dataSource) ->
                 listeners.forEach(listener -> listener.afterShutdown(name, dataSource.getUrl(), dataSource.getDataSource()))

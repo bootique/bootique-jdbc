@@ -19,12 +19,11 @@
 
 package io.bootique.jdbc.hikaricp;
 
-
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 import io.bootique.jdbc.JdbcModule;
 
-public class JdbcHikariCPModule implements Module {
+public class JdbcHikariCPModule implements BQModule {
 
     @Override
     public void configure(Binder binder) {

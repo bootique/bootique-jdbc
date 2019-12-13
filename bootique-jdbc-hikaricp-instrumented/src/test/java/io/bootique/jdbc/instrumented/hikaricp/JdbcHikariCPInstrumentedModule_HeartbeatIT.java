@@ -19,8 +19,6 @@
 
 package io.bootique.jdbc.instrumented.hikaricp;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
@@ -42,6 +40,9 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

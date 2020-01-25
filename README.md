@@ -22,9 +22,9 @@
 
 # bootique-jdbc
 
-Provides a number of modules for your [Bootique](http://bootique.io) apps to work with JDBC data stores:
+Provides a number of modules for your [Bootique](https://bootique.io) apps to work with JDBC data stores:
 
-* [bootique-jdbc](https://github.com/bootique/bootique-jdbc) - an abstract module providing injectable configurable map of
+* [bootique-jdbc](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc) - an abstract module providing injectable configurable map of
 named JDBC connection pools (`java.sql.DataSource` instances). Normally you won't be importing this module directly.
 It will be added automatically as a transitive dependency of concrete modules. There are currently two choices
 shown below - Tomcat and Hikari.

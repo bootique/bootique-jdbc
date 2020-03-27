@@ -419,6 +419,10 @@ public class Table {
                     }
                 }
 
+                if(types.isEmpty()) {
+                    throw new RuntimeException("Table '" + table.getName() + "' is not found in DB");
+                }
+
                 table.columns.stream()
                         .map(col -> new Column(col.getName(), types.get(col.getName())))
                         .forEach(updatedColumns::add);

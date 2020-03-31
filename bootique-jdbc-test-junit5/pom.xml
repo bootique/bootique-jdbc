@@ -27,11 +27,11 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bootique-jdbc-test</artifactId>
+    <artifactId>bootique-jdbc-test-junit5</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-jdbc-test: Helper classes for unit tests that require a database</name>
-    <description>Provides helper classes for unit tests that require a database</description>
+    <name>bootique-jdbc-test-junit5: JUnit5-based helper classes for unit tests that require a database</name>
+    <description>Provides JUnit5-based helper classes for unit tests that require a database</description>
 
     <dependencyManagement>
         <dependencies>
@@ -74,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
+            <artifactId>bootique-test-junit5</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -1,3 +1,7 @@
+## 2.0
+
+* #95 Support for JUnit 5
+
 ## 1.1
 
 * #37 Hard to trace misconfigured DataSources

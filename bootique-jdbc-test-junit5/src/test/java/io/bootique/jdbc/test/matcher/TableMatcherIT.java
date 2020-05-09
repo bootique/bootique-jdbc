@@ -20,20 +20,26 @@
 package io.bootique.jdbc.test.matcher;
 
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.junit5.TestDataManager;
-import io.bootique.test.junit5.BQTestClassFactory;
+import io.bootique.test.junit5.BQApp;
+import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class TableMatcherIT {
 
-    @RegisterExtension
-    public static BQTestClassFactory TEST_FACTORY = new BQTestClassFactory();
+    @BQApp(skipRun = true)
+    static final BQRuntime runtime = Bootique
+            .app("-c", "classpath:io/bootique/jdbc/test/matcher/TableMatcherIT.yml")
+            .autoLoadModules()
+            .createRuntime();
 
     private static Table T1;
     private static Table T2;
@@ -45,10 +51,6 @@ public class TableMatcherIT {
 
     @BeforeAll
     public static void setupDB() {
-        BQRuntime runtime = TEST_FACTORY
-                .app("-c", "classpath:io/bootique/jdbc/test/matcher/TableMatcherIT.yml")
-                .autoLoadModules()
-                .createRuntime();
 
         DatabaseChannel channel = DatabaseChannel.get(runtime);
 

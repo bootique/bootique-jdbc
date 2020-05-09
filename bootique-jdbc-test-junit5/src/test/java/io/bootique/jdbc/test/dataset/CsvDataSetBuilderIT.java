@@ -20,10 +20,12 @@
 package io.bootique.jdbc.test.dataset;
 
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.junit5.TestDataManager;
-import io.bootique.test.junit5.BQTestClassFactory;
+import io.bootique.test.junit5.BQApp;
+import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,10 +39,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class CsvDataSetBuilderIT {
 
-    @RegisterExtension
-    public static BQTestClassFactory TEST_FACTORY = new BQTestClassFactory();
+    @BQApp(skipRun = true)
+    static final BQRuntime runtime = Bootique
+            .app("--config=classpath:io/bootique/jdbc/test/dataset/CsvDataSetBuilderIT.yml")
+            .autoLoadModules()
+            .createRuntime();
 
     private static Table T1;
     private static Table T2;
@@ -52,10 +58,6 @@ public class CsvDataSetBuilderIT {
 
     @BeforeAll
     public static void setupDB() {
-        BQRuntime runtime = TEST_FACTORY
-                .app("--config=classpath:io/bootique/jdbc/test/dataset/CsvDataSetBuilderIT.yml")
-                .autoLoadModules()
-                .createRuntime();
 
         DatabaseChannel channel = DatabaseChannel.get(runtime);
 

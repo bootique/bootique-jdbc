@@ -20,39 +20,37 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.BQRuntime;
-import io.bootique.test.junit5.BQTestClassFactory;
+import io.bootique.Bootique;
+import io.bootique.test.junit5.BQApp;
+import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@BQTest
 public class DefaultDatabaseChannelIT {
 
-    @RegisterExtension
-    public static BQTestClassFactory TEST_FACTORY = new BQTestClassFactory();
+    @BQApp(skipRun = true)
+    static final BQRuntime quotesOn = Bootique
+            .app("-c", "classpath:io/bootique/jdbc/test/DefaultDatabaseChannel_QuoteIT.yml")
+            .autoLoadModules()
+            .createRuntime();
 
-    private DefaultDatabaseChannel loadChannel(String configResource) {
-        BQRuntime runtime = TEST_FACTORY
-                .app("-c", configResource)
-                .autoLoadModules()
-                .createRuntime();
-
-        DatabaseChannel channel = DatabaseChannel.get(runtime);
-
-        assertTrue(channel instanceof DefaultDatabaseChannel);
-        return (DefaultDatabaseChannel) channel;
-    }
+    @BQApp(skipRun = true)
+    static final BQRuntime quotesOff = Bootique
+            .app("-c", "classpath:io/bootique/jdbc/test/DefaultDatabaseChannel_NoQuoteIT.yml")
+            .autoLoadModules()
+            .createRuntime();
 
     @Test
     public void testDefaultQuotesOn() {
-        DefaultDatabaseChannel channel = loadChannel("classpath:io/bootique/jdbc/test/DefaultDatabaseChannel_QuoteIT.yml");
+        DefaultDatabaseChannel channel = (DefaultDatabaseChannel) DatabaseChannel.get(quotesOn);
         assertEquals("\"a\"", channel.getDefaultIdentifierQuotationStrategy().quoted("a"));
     }
 
     @Test
     public void testDefaultQuotesOff() {
-        DefaultDatabaseChannel channel = loadChannel("classpath:io/bootique/jdbc/test/DefaultDatabaseChannel_NoQuoteIT.yml");
+        DefaultDatabaseChannel channel = (DefaultDatabaseChannel) DatabaseChannel.get(quotesOff);
         assertEquals("a", channel.getDefaultIdentifierQuotationStrategy().quoted("a"));
     }
 }

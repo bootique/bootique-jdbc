@@ -20,17 +20,21 @@
 package io.bootique.jdbc.test.junit5;
 
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
-import io.bootique.test.junit5.BQTestClassFactory;
+import io.bootique.test.junit5.BQApp;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class TestDataManagerIT {
 
-    @RegisterExtension
-    public static BQTestClassFactory TEST_FACTORY = new BQTestClassFactory();
+    @BQApp(skipRun = true)
+    static final BQRuntime runtime = Bootique
+            .app("-c", "classpath:io/bootique/jdbc/test/TestDataManagerIT.yml")
+            .autoLoadModules()
+            .createRuntime();
 
     private static Table T1;
     private static Table T2;
@@ -40,12 +44,8 @@ public class TestDataManagerIT {
 
     @BeforeAll
     public static void setupDB() {
-        BQRuntime testRuntime = TEST_FACTORY
-                .app("--config=classpath:io/bootique/jdbc/test/TestDataManagerIT.yml")
-                .autoLoadModules()
-                .createRuntime();
 
-        DatabaseChannel channel = DatabaseChannel.get(testRuntime);
+        DatabaseChannel channel = DatabaseChannel.get(runtime);
 
         channel.execStatement().exec("CREATE TABLE \"t1\" (\"id\" INT NOT NULL PRIMARY KEY, \"name\" VARCHAR(10))");
         channel.execStatement().exec("CREATE TABLE \"t2\" (\"id\" INT NOT NULL PRIMARY KEY, \"name\" VARCHAR(10), \"t1_id\" INT)");

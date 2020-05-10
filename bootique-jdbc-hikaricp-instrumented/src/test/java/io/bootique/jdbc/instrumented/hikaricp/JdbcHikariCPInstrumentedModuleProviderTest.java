@@ -41,7 +41,7 @@ public class JdbcHikariCPInstrumentedModuleProviderTest {
 
     @Test
     public void testModuleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().module(new JdbcHikariCPInstrumentedModuleProvider()).createRuntime();
+        final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcHikariCPInstrumentedModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime,
                 HealthCheckModule.class,
                 MetricsModule.class,

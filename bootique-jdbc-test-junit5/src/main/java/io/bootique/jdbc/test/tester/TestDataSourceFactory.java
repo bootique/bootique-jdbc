@@ -18,6 +18,7 @@
  */
 package io.bootique.jdbc.test.tester;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.di.Injector;
@@ -31,6 +32,8 @@ import io.bootique.jdbc.test.JdbcTester;
  */
 @BQConfig("Test DataSource configuration")
 @JsonTypeName("bqjdbctest")
+// must be able to deserialize over the existing configs, so instruct Jackson to be lenient
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestDataSourceFactory implements ManagedDataSourceFactory {
 
     @Override

@@ -23,7 +23,10 @@ import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.jdbc.test.datasource.PoolingDataSource;
 import io.bootique.jdbc.test.datasource.PoolingDataSourceParameters;
-import io.bootique.jdbc.test.tester.*;
+import io.bootique.jdbc.test.tester.DataSourcePropertyBuilder;
+import io.bootique.jdbc.test.tester.DerbyTester;
+import io.bootique.jdbc.test.tester.SqlScriptParser;
+import io.bootique.jdbc.test.tester.TestcontainersTester;
 import io.bootique.resource.ResourceFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -32,16 +35,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A helper class that is declared in a unit test and manages database startup, schema and data initialization and
- * shutdown. Currently works only with Hikari DataSource provider.
+ * shutdown.
  *
  * @since 2.0
  */
@@ -63,8 +68,13 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     }
 
     public static JdbcTester useDerby() {
-        // TODO: Don't assume Maven, use deletable temp dir.
-        return new DerbyTester(new File("target/derby"));
+
+        Path[] tempFir = new Path[1];
+        assertDoesNotThrow(() -> {
+            tempFir[0] = Files.createTempDirectory("io.bootique.jdbc.test.derby-db");
+        });
+
+        return new DerbyTester(tempFir[0].toFile());
     }
 
     public DataSource getDataSource() {
@@ -82,8 +92,6 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     }
 
     protected void configureDataSource(Binder binder, String dataSourceName) {
-        // TODO: we need to handle the case when this is overlayed over the existing configuration that will
-        //  have other properties unsupported by "bqjdbctest" factory
         DataSourcePropertyBuilder.create(binder, dataSourceName).property("type", "bqjdbctest");
     }
 
@@ -151,5 +159,6 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     @Override
     public void afterAll(ExtensionContext context) {
         dataSource.close();
+        dataSource = null;
     }
 }

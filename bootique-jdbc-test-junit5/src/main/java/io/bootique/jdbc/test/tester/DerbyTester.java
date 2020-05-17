@@ -30,9 +30,6 @@ import java.io.OutputStream;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -44,55 +41,42 @@ public class DerbyTester extends JdbcTester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DerbyTester.class);
 
+    // called via reflection, so looks unused
     public static final OutputStream DEV_NULL = new OutputStream() {
         @Override
         public void write(int b) {
         }
     };
-    private static final Pattern DERBY_URL_PATTERN = Pattern.compile("^jdbc:derby:([^;:]+)");
 
-    private final AtomicInteger dbId;
-    private final File baseDirectory;
+    private final File derbyFolder;
+    private final String jdbcUrl;
 
-    public DerbyTester(File baseDirectory) {
-        this.baseDirectory = Objects.requireNonNull(baseDirectory);
-        this.dbId = new AtomicInteger(0);
+    public DerbyTester(File derbyFolder) {
+        this.derbyFolder = Objects.requireNonNull(derbyFolder);
+        this.jdbcUrl = String.format("jdbc:derby:%s;create=true", derbyFolder);
+
+        // suppressing derby.log in "user.dir".
+        if (System.getProperty("derby.stream.error.field") == null) {
+            System.setProperty("derby.stream.error.field", DerbyTester.class.getName() + ".DEV_NULL");
+        }
     }
 
     @Override
     protected DataSource createNonPoolingDataSource() {
-        String url = jdbcUrl();
-        beforeDerbyStartup(url);
-        return new DriverDataSource(null, url, null, null);
+        prepareForDerbyStartup();
+        return new DriverDataSource(null, jdbcUrl, null, null);
     }
 
     @Override
     public void afterAll(ExtensionContext context) {
         super.afterAll(context);
-        afterDerbyShutdown();
+        performDerbyShutdown();
     }
 
-    protected String jdbcUrl() {
-        return String.format("jdbc:derby:%s/db_%s;create=true", baseDirectory, dbId.getAndIncrement());
-    }
+    protected void prepareForDerbyStartup() {
 
-    protected void afterDerbyShutdown() {
-        LOGGER.info("Stopping all JVM Derby servers...");
-
-        try {
-            DriverManager.getConnection("jdbc:derby:;shutdown=true");
-        } catch (SQLException e) {
-            // the exception is actually expected on shutdown... go figure...
-        }
-    }
-
-    protected void beforeDerbyStartup(String jdbcUrl) {
-
-        LOGGER.info("Preparing Derby server at '{}'...", jdbcUrl);
-        File dbDir = getDbDir(jdbcUrl);
-        if (dbDir != null) {
-            deleteDir(dbDir);
-        }
+        LOGGER.info("Preparing Derby server at '{}'...", derbyFolder);
+        deleteDir(derbyFolder);
 
         // Need to reload the driver if there was a previous shutdown
         // see https://db.apache.org/derby/docs/10.5/devguide/tdevdvlp20349.html
@@ -103,7 +87,19 @@ public class DerbyTester extends JdbcTester {
         }
     }
 
-    protected void deleteDir(File dir) {
+    protected void performDerbyShutdown() {
+        LOGGER.info("Stopping all JVM Derby servers...");
+
+        try {
+            DriverManager.getConnection("jdbc:derby:;shutdown=true");
+        } catch (SQLException e) {
+            // the exception is actually expected on shutdown... go figure...
+        }
+
+        deleteDir(derbyFolder);
+    }
+
+    protected static void deleteDir(File dir) {
         if (dir.exists()) {
 
             for (File f : dir.listFiles()) {
@@ -116,10 +112,5 @@ public class DerbyTester extends JdbcTester {
 
             assertTrue(dir.delete());
         }
-    }
-
-    protected static File getDbDir(String jdbcUrl) {
-        Matcher m = DERBY_URL_PATTERN.matcher(jdbcUrl);
-        return m.find() ? new File(m.group(1)) : null;
     }
 }

@@ -18,18 +18,18 @@
  */
 package io.bootique.jdbc.test;
 
+import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.test.junit5.BQApp;
-import io.bootique.test.junit5.BQTest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@BQTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JdbcTester_DerbyIT extends BaseJdbcTesterTest {
+public class JdbcTester_OverlayExistingConfigIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
     static final JdbcTester jdbcTester = JdbcTester.useDerby();
@@ -38,26 +38,14 @@ public class JdbcTester_DerbyIT extends BaseJdbcTesterTest {
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
             .module(jdbcTester.setOrReplaceDataSource("myDS"))
+            .module(b -> BQCoreModule.extend(b).setProperty("bq.jdbc.myDS.jdbcUrl", "test"))
             .createRuntime();
 
     @Test
     @Order(0)
-    @DisplayName("Derby DataSource must be in use")
+    @DisplayName("Existing DataSource config properties must be ignored")
     public void testDerby() {
+        // assertion details are irrelevant here... We just need to make sure the DB started
         run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
-    }
-
-    @Test
-    @Order(1)
-    @DisplayName("Setup data for subsequent state test")
-    public void setupDbState() {
-        createDbState(app);
-    }
-
-    @Test
-    @Order(2)
-    @DisplayName("DB state must be preserved between the tests")
-    public void testDbState() {
-        checkDbState(app);
     }
 }

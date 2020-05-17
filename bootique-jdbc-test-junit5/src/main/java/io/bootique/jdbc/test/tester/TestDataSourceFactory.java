@@ -39,7 +39,7 @@ public class TestDataSourceFactory implements ManagedDataSourceFactory {
         JdbcTester tester = injector.getInstance(Key.get(JdbcTester.class, dataSourceName));
 
         return new ManagedDataSourceStarter(
-                null, // we don't know the URL around here. Should be irrelevant
+                null, // we don't know the URL around here. Also passing null URL allows to bypass legacy DerbyListener
                 () -> tester.getDataSource(), // return fixed DataSource managed by JdbcTester
                 ds -> {
                 }  // don't let Bootique to do shutdown... JdbcTester is responsible for it

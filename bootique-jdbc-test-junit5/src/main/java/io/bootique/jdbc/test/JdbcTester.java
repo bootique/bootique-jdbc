@@ -21,20 +21,21 @@ package io.bootique.jdbc.test;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Key;
-import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.test.datasource.PoolingDataSource;
 import io.bootique.jdbc.test.datasource.PoolingDataSourceParameters;
-import io.bootique.jdbc.test.tester.DataSourcePropertyBuilder;
-import io.bootique.jdbc.test.tester.DerbyTester;
-import io.bootique.jdbc.test.tester.InitDBListener;
-import io.bootique.jdbc.test.tester.TestcontainersTester;
+import io.bootique.jdbc.test.tester.*;
 import io.bootique.resource.ResourceFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -45,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @since 2.0
  */
 public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcTester.class);
 
     protected ResourceFactory initDBScript;
     protected PoolingDataSource dataSource;
@@ -72,7 +75,6 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     protected void configure(Binder binder, String dataSourceName) {
         bindSelf(binder, dataSourceName);
         configureDataSource(binder, dataSourceName);
-        configureInitFunction(binder);
     }
 
     protected void bindSelf(Binder binder, String dataSourceName) {
@@ -83,12 +85,6 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
         // TODO: we need to handle the case when this is overlayed over the existing configuration that will
         //  have other properties unsupported by "bqjdbctest" factory
         DataSourcePropertyBuilder.create(binder, dataSourceName).property("type", "bqjdbctest");
-    }
-
-    protected void configureInitFunction(Binder binder) {
-        if (initDBScript != null) {
-            JdbcModule.extend(binder).addDataSourceListener(new InitDBListener(initDBScript));
-        }
     }
 
     /**
@@ -124,9 +120,32 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
 
     protected abstract DataSource createNonPoolingDataSource();
 
+    protected void execInitScript() {
+        if (initDBScript != null) {
+
+            LOGGER.info("initializing DB from {}", initDBScript.getUrl());
+            Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", ";").getStatements(initDBScript);
+
+            try (Connection c = dataSource.getConnection()) {
+
+                for (String sql : statements) {
+                    try (PreparedStatement statement = c.prepareStatement(sql)) {
+                        statement.execute();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Error running SQL statement " + sql + ": " + e.getMessage(), e);
+                    }
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error running SQL from " + initDBScript.getUrl() + ": " + e.getMessage(), e);
+            }
+        }
+    }
+
     @Override
     public void beforeAll(ExtensionContext context) {
         this.dataSource = createDataSource();
+        execInitScript();
     }
 
     @Override

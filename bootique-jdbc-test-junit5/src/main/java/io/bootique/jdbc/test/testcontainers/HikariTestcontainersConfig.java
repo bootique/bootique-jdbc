@@ -16,36 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.test.tester;
+package io.bootique.jdbc.test.testcontainers;
 
-import io.bootique.BQCoreModule;
 import io.bootique.di.Binder;
+import io.bootique.jdbc.test.config.DataSourcePropertyBuilder;
+import io.bootique.jdbc.test.tester.TestDataSourceConfig;
 
-import java.io.File;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @since 2.0
  */
-public class HikariDerbyConfig implements TestDataSourceConfig {
+public class HikariTestcontainersConfig implements TestDataSourceConfig {
 
-    private final AtomicInteger dataSourceId;
-    private final File baseDirectory;
+    private final AtomicInteger dbId;
+    private final String containerDbUrl;
 
-    public HikariDerbyConfig(File baseDirectory) {
-        this.baseDirectory = Objects.requireNonNull(baseDirectory);
-        this.dataSourceId = new AtomicInteger(0);
+    public HikariTestcontainersConfig(String containerDbUrl) {
+        this.dbId = new AtomicInteger(0);
+        this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
     }
 
     @Override
     public void configure(Binder binder, String dataSourceName) {
-        BQCoreModule.extend(binder)
-                .setProperty(jdbcProperty(dataSourceName, "type"), "hikari")
-                .setProperty(jdbcProperty(dataSourceName, "jdbcUrl"), jdbcUrl(dataSourceName));
-    }
-
-    protected String jdbcUrl(String dataSourceName) {
-        return String.format("jdbc:derby:%s/%s_%s;create=true", baseDirectory, dataSourceName, dataSourceId.getAndIncrement());
+        DataSourcePropertyBuilder.create(binder, dataSourceName)
+                .property("type", "hikari")
+                .property("driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver")
+                .property("jdbcUrl", containerDbUrl);
     }
 }

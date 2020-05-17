@@ -19,11 +19,9 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.di.BQModule;
-import io.bootique.jdbc.test.tester.HikariDerbyConfig;
+import io.bootique.jdbc.test.derby.HikariDerbyConfig;
+import io.bootique.jdbc.test.testcontainers.HikariTestcontainersConfig;
 import io.bootique.jdbc.test.tester.TestDataSourceConfig;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.File;
 
@@ -33,14 +31,24 @@ import java.io.File;
  *
  * @since 2.0
  */
-// TODO: change to a custom lifecycle
-public class JdbcTester implements BeforeAllCallback, AfterAllCallback {
+public class JdbcTester {
 
     private TestDataSourceConfig dataSourceConfig;
 
     public JdbcTester() {
         // TODO: Don't assume Maven, use deletable temp dir.
         this.dataSourceConfig = new HikariDerbyConfig(new File("target/derby"));
+    }
+
+    /**
+     * Configures the tester to use Postgres data source
+     *
+     * @return this tester
+     * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers URLs</a>
+     */
+    public JdbcTester useTestcontainers(String containerDbUrl) {
+        this.dataSourceConfig = new HikariTestcontainersConfig(containerDbUrl);
+        return this;
     }
 
     /**
@@ -51,16 +59,5 @@ public class JdbcTester implements BeforeAllCallback, AfterAllCallback {
      */
     public BQModule setOrReplaceDataSource(String dataSourceName) {
         return binder -> dataSourceConfig.configure(binder, dataSourceName);
-    }
-
-
-    @Override
-    public void beforeAll(ExtensionContext context) {
-
-    }
-
-    @Override
-    public void afterAll(ExtensionContext context) {
-
     }
 }

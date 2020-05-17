@@ -40,6 +40,8 @@
     <properties>
         <bootique.version>${project.version}</bootique.version>
         <derby.version>10.14.1.0</derby.version>
+        <testcontainers.version>1.14.2</testcontainers.version>
+        <postgresql.version>42.2.9</postgresql.version>
     </properties>
 
 	<modules>
@@ -98,6 +100,18 @@
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
                 <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

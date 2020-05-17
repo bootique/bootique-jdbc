@@ -16,14 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.test.tester;
+package io.bootique.jdbc.test.config;
 
+import io.bootique.BQCoreModule;
+import io.bootique.BQCoreModuleExtender;
 import io.bootique.di.Binder;
 
 /**
  * @since 2.0
  */
-public interface TestDataSourceConfig {
+public class DataSourcePropertyBuilder {
 
-    void configure(Binder binder, String dataSourceName);
+    private String propertyPrefix;
+    private BQCoreModuleExtender extender;
+
+    protected DataSourcePropertyBuilder(String propertyPrefix, BQCoreModuleExtender extender) {
+        this.propertyPrefix = propertyPrefix;
+        this.extender = extender;
+    }
+
+    public static DataSourcePropertyBuilder create(Binder binder, String dataSourceName) {
+        String propertyPrefix = String.format("bq.jdbc.%s.", dataSourceName);
+        return new DataSourcePropertyBuilder(propertyPrefix, BQCoreModule.extend(binder));
+    }
+
+    public DataSourcePropertyBuilder property(String suffix, String value) {
+        extender.setProperty(propertyPrefix + suffix, value);
+        return this;
+    }
 }

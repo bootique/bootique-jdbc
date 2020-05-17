@@ -23,21 +23,24 @@ import io.bootique.Bootique;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class JdbcTesterIT {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class JdbcTester_Testcontainers_PostgresIT {
 
-    static final JdbcTester jdbcTester = new JdbcTester();
+    static final JdbcTester jdbcTester = new JdbcTester()
+            .useTestcontainers("jdbc:tc:postgresql:11:///mydb");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -45,8 +48,10 @@ public class JdbcTesterIT {
             .module(jdbcTester.setOrReplaceDataSource("myDS"))
             .createRuntime();
 
+
     @Test
-    @DisplayName("JdbcTester-provided DataSource must be in use")
+    @Order(1)
+    @DisplayName("Testcontainers DataSource must be in use")
     public void testSetOrReplaceDataSource() throws SQLException {
 
         DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
@@ -56,6 +61,26 @@ public class JdbcTesterIT {
         try (Connection c = ds.getConnection()) {
             try (Statement s = c.createStatement()) {
                 s.executeUpdate("create table a (id integer)");
+                s.executeUpdate("insert into a values (345)");
+            }
+        }
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("DB state must be preserved between the tests")
+    public void testDbStatePreserved() throws SQLException {
+
+        DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
+        assertEquals(Collections.singleton("myDS"), factory.allNames());
+
+        DataSource ds = factory.forName("myDS");
+        try (Connection c = ds.getConnection()) {
+            try (Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select * from a")) {
+                    assertTrue(rs.next());
+                    assertEquals(345, rs.getInt(1));
+                }
             }
         }
     }

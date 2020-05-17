@@ -18,27 +18,29 @@
  */
 package io.bootique.jdbc.test.tester;
 
-import io.bootique.di.Binder;
 import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.datasource.DriverDataSource;
+import org.junit.jupiter.api.Assertions;
 
+import javax.sql.DataSource;
 import java.util.Objects;
 
 /**
  * @since 2.0
  */
-public class HikariTestcontainersTester extends JdbcTester {
+public class TestcontainersTester extends JdbcTester {
 
     private final String containerDbUrl;
 
-    public HikariTestcontainersTester(String containerDbUrl) {
+    public TestcontainersTester(String containerDbUrl) {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
     }
 
     @Override
-    protected void configureBootiqueDataSource(Binder binder, String dataSourceName) {
-        DataSourcePropertyBuilder.create(binder, dataSourceName)
-                .property("type", "hikari")
-                .property("driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver")
-                .property("jdbcUrl", containerDbUrl);
+    protected DataSource createNonPoolingDataSource() {
+        Assertions.assertDoesNotThrow(
+                () -> Class.forName("org.testcontainers.jdbc.ContainerDatabaseDriver"),
+                "Error loading testcontainers JDBC driver");
+        return new DriverDataSource(null, containerDbUrl, null, null);
     }
 }

@@ -21,12 +21,17 @@ package io.bootique.jdbc.test;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.jdbc.JdbcModule;
-import io.bootique.jdbc.test.tester.HikariDerbyTester;
-import io.bootique.jdbc.test.tester.HikariTestcontainersTester;
-import io.bootique.jdbc.test.tester.InitDBListener;
+import io.bootique.jdbc.test.datasource.PoolingDataSourceParameters;
+import io.bootique.jdbc.test.datasource.PoolingDataSource;
+import io.bootique.jdbc.test.tester.*;
 import io.bootique.resource.ResourceFactory;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
+import javax.sql.DataSource;
 import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A helper class that is declared in a unit test and manages database startup, schema and data initialization and
@@ -34,9 +39,10 @@ import java.io.File;
  *
  * @since 2.0
  */
-public abstract class JdbcTester {
+public abstract class JdbcTester implements BeforeAllCallback {
 
     protected ResourceFactory initDBScript;
+    protected ExtensionContext.Store dataSourceStore;
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers.
@@ -45,20 +51,28 @@ public abstract class JdbcTester {
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
     public static JdbcTester useTestcontainers(String containerDbUrl) {
-        return new HikariTestcontainersTester(containerDbUrl);
+        return new TestcontainersTester(containerDbUrl);
     }
 
     public static JdbcTester useDerby() {
         // TODO: Don't assume Maven, use deletable temp dir.
-        return new HikariDerbyTester(new File("target/derby"));
+        return new DerbyTester(new File("target/derby"));
     }
 
     protected void configure(Binder binder, String dataSourceName) {
-        configureBootiqueDataSource(binder, dataSourceName);
+        configureDataSource(binder, dataSourceName);
         configureInitFunction(binder);
     }
 
-    protected abstract void configureBootiqueDataSource(Binder binder, String dataSourceName);
+    protected void configureDataSource(Binder binder, String dataSourceName) {
+
+        assertNotNull(dataSourceStore);
+        JdbcTesterState.bindToBootique(binder, dataSourceStore);
+
+        // TODO: we need to handle the case when this is overlayed over the existing configuration that will
+        //  have other properties unsupported by "bqjdbctest" factory
+        DataSourcePropertyBuilder.create(binder, dataSourceName).property("type", "bqjdbctest");
+    }
 
     protected void configureInitFunction(Binder binder) {
         if (initDBScript != null) {
@@ -87,4 +101,21 @@ public abstract class JdbcTester {
     public BQModule setOrReplaceDataSource(String dataSourceName) {
         return binder -> configure(binder, dataSourceName);
     }
+
+    @Override
+    public void beforeAll(ExtensionContext context) {
+        // PoolingDataSource is a ClosableResource, so it will be disposed of by JUnit when the store goes out of scope
+        this.dataSourceStore = JdbcTesterState.saveDataSource(context, createDataSource());
+    }
+
+    protected PoolingDataSource createDataSource() {
+        PoolingDataSourceParameters parameters = new PoolingDataSourceParameters();
+        parameters.setMaxConnections(5);
+        parameters.setMinConnections(1);
+        parameters.setMaxQueueWaitTime(20000);
+
+        return new PoolingDataSource(createNonPoolingDataSource(), parameters);
+    }
+
+    protected abstract DataSource createNonPoolingDataSource();
 }

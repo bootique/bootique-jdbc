@@ -18,9 +18,10 @@
  */
 package io.bootique.jdbc.test.tester;
 
-import io.bootique.di.Binder;
 import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.datasource.DriverDataSource;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,24 +29,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @since 2.0
  */
-public class HikariDerbyTester extends JdbcTester {
+public class DerbyTester extends JdbcTester {
 
     private final AtomicInteger dbId;
     private final File baseDirectory;
 
-    public HikariDerbyTester(File baseDirectory) {
+    public DerbyTester(File baseDirectory) {
         this.baseDirectory = Objects.requireNonNull(baseDirectory);
         this.dbId = new AtomicInteger(0);
     }
 
     @Override
-    protected void configureBootiqueDataSource(Binder binder, String dataSourceName) {
-        DataSourcePropertyBuilder.create(binder, dataSourceName)
-                .property("type", "hikari")
-                .property("jdbcUrl", jdbcUrl(dataSourceName));
+    protected DataSource createNonPoolingDataSource() {
+        return new DriverDataSource(null, jdbcUrl(), null, null);
     }
 
-    protected String jdbcUrl(String dataSourceName) {
-        return String.format("jdbc:derby:%s/%s_%s;create=true", baseDirectory, dataSourceName, dbId.getAndIncrement());
+    protected String jdbcUrl() {
+        return String.format("jdbc:derby:%s/db_%s;create=true", baseDirectory, dbId.getAndIncrement());
     }
 }

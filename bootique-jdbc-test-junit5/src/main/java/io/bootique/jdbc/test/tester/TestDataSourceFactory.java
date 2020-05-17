@@ -21,10 +21,10 @@ package io.bootique.jdbc.test.tester;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.di.Injector;
+import io.bootique.di.Key;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
-
-import javax.sql.DataSource;
+import io.bootique.jdbc.test.JdbcTester;
 
 /**
  * @since 2.0
@@ -36,12 +36,11 @@ public class TestDataSourceFactory implements ManagedDataSourceFactory {
     @Override
     public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
-        // TODO: multiple named data sources...
-        DataSource dataSource = JdbcTesterState.getDataSource(injector);
+        JdbcTester tester = injector.getInstance(Key.get(JdbcTester.class, dataSourceName));
 
         return new ManagedDataSourceStarter(
                 null, // we don't know the URL around here. Should be irrelevant
-                () -> dataSource, // return fixed DataSource managed by JdbcTester
+                () -> tester.getDataSource(), // return fixed DataSource managed by JdbcTester
                 ds -> {
                 }  // don't let Bootique to do shutdown... JdbcTester is responsible for it
         );

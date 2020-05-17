@@ -24,6 +24,7 @@ import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @BQTest
 public class JdbcTester_InitDB_PostgresIT extends BaseJdbcTesterTest {
 
+    @RegisterExtension
     static final JdbcTester jdbcTester = JdbcTester
             .useTestcontainers("jdbc:tc:postgresql:11:///mydb")
             .initDB("classpath:io/bootique/jdbc/test/JdbcTester_InitDB_PostgresIT.sql");

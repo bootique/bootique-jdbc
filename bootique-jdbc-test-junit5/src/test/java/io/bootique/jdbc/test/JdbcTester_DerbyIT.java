@@ -23,6 +23,7 @@ import io.bootique.Bootique;
 import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JdbcTester_DerbyIT extends BaseJdbcTesterTest {
 
+    @RegisterExtension
     static final JdbcTester jdbcTester = JdbcTester.useDerby();
 
     @BQApp(skipRun = true)

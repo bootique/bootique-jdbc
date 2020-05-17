@@ -20,24 +20,15 @@ package io.bootique.jdbc.test;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.*;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JdbcTester_DerbyIT {
+public class JdbcTester_DerbyIT extends BaseJdbcTesterTest {
 
     static final JdbcTester jdbcTester = new JdbcTester();
 
@@ -48,38 +39,23 @@ public class JdbcTester_DerbyIT {
             .createRuntime();
 
     @Test
-    @Order(1)
+    @Order(0)
     @DisplayName("Derby DataSource must be in use")
-    public void testSetOrReplaceDataSource() throws SQLException {
+    public void testPostgres() {
+        run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
+    }
 
-        DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
-        assertEquals(Collections.singleton("myDS"), factory.allNames());
-
-        DataSource ds = factory.forName("myDS");
-        try (Connection c = ds.getConnection()) {
-            try (Statement s = c.createStatement()) {
-                s.executeUpdate("create table a (id integer)");
-                s.executeUpdate("insert into a values (345)");
-            }
-        }
+    @Test
+    @Order(1)
+    @DisplayName("Setup data for subsequent state test")
+    public void setupDbState() {
+        createDbState(app);
     }
 
     @Test
     @Order(2)
     @DisplayName("DB state must be preserved between the tests")
-    public void testDbStatePreserved() throws SQLException {
-
-        DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
-        assertEquals(Collections.singleton("myDS"), factory.allNames());
-
-        DataSource ds = factory.forName("myDS");
-        try (Connection c = ds.getConnection()) {
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from a")) {
-                    assertTrue(rs.next());
-                    assertEquals(345, rs.getInt(1));
-                }
-            }
-        }
+    public void testDbState() {
+        checkDbState(app);
     }
 }

@@ -20,24 +20,15 @@ package io.bootique.jdbc.test;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.*;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JdbcTester_Testcontainers_PostgresIT {
+public class JdbcTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
 
     static final JdbcTester jdbcTester = new JdbcTester()
             .useTestcontainers("jdbc:tc:postgresql:11:///mydb");
@@ -48,40 +39,24 @@ public class JdbcTester_Testcontainers_PostgresIT {
             .module(jdbcTester.setOrReplaceDataSource("myDS"))
             .createRuntime();
 
+    @Test
+    @Order(0)
+    @DisplayName("PostgreSQL DataSource must be in use")
+    public void testPostgres() {
+        run(app, c -> assertEquals("PostgreSQL", c.getMetaData().getDatabaseProductName()));
+    }
 
     @Test
     @Order(1)
-    @DisplayName("Testcontainers DataSource must be in use")
-    public void testSetOrReplaceDataSource() throws SQLException {
-
-        DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
-        assertEquals(Collections.singleton("myDS"), factory.allNames());
-
-        DataSource ds = factory.forName("myDS");
-        try (Connection c = ds.getConnection()) {
-            try (Statement s = c.createStatement()) {
-                s.executeUpdate("create table a (id integer)");
-                s.executeUpdate("insert into a values (345)");
-            }
-        }
+    @DisplayName("Setup data for subsequent state test")
+    public void setupDbState() {
+        createDbState(app);
     }
 
     @Test
     @Order(2)
     @DisplayName("DB state must be preserved between the tests")
-    public void testDbStatePreserved() throws SQLException {
-
-        DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
-        assertEquals(Collections.singleton("myDS"), factory.allNames());
-
-        DataSource ds = factory.forName("myDS");
-        try (Connection c = ds.getConnection()) {
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from a")) {
-                    assertTrue(rs.next());
-                    assertEquals(345, rs.getInt(1));
-                }
-            }
-        }
+    public void testDbState() {
+        checkDbState(app);
     }
 }

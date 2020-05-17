@@ -60,7 +60,7 @@ public abstract class BaseJdbcTesterTest {
         try (Connection c = ds.getConnection()) {
             runner.run(c);
         } catch (SQLException e) {
-            fail("Error excecuting DB operation", e);
+            fail("Error executing DB operation", e);
         }
     }
 

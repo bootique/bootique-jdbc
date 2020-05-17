@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JdbcTester_DerbyIT extends BaseJdbcTesterTest {
 
-    static final JdbcTester jdbcTester = new JdbcTester();
+    static final JdbcTester jdbcTester = JdbcTester.useDerby();
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()

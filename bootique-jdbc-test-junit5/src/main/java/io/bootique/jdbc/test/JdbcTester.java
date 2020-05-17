@@ -19,9 +19,12 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.di.BQModule;
-import io.bootique.jdbc.test.derby.HikariDerbyConfig;
-import io.bootique.jdbc.test.testcontainers.HikariTestcontainersConfig;
-import io.bootique.jdbc.test.tester.TestDataSourceConfig;
+import io.bootique.di.Binder;
+import io.bootique.jdbc.JdbcModule;
+import io.bootique.jdbc.test.tester.HikariDerbyTester;
+import io.bootique.jdbc.test.tester.HikariTestcontainersTester;
+import io.bootique.jdbc.test.tester.InitDBListener;
+import io.bootique.resource.ResourceFactory;
 
 import java.io.File;
 
@@ -31,23 +34,47 @@ import java.io.File;
  *
  * @since 2.0
  */
-public class JdbcTester {
+public abstract class JdbcTester {
 
-    private TestDataSourceConfig dataSourceConfig;
+    protected ResourceFactory initDBScript;
 
-    public JdbcTester() {
+    /**
+     * Creates a tester that will bootstrap a DB using Docker/Testcontainers.
+     *
+     * @return this tester
+     * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
+     */
+    public static JdbcTester useTestcontainers(String containerDbUrl) {
+        return new HikariTestcontainersTester(containerDbUrl);
+    }
+
+    public static JdbcTester useDerby() {
         // TODO: Don't assume Maven, use deletable temp dir.
-        this.dataSourceConfig = new HikariDerbyConfig(new File("target/derby"));
+        return new HikariDerbyTester(new File("target/derby"));
+    }
+
+    protected void configure(Binder binder, String dataSourceName) {
+        configureBootiqueDataSource(binder, dataSourceName);
+        configureInitFunction(binder);
+    }
+
+    protected abstract void configureBootiqueDataSource(Binder binder, String dataSourceName);
+
+    protected void configureInitFunction(Binder binder) {
+        if (initDBScript != null) {
+            JdbcModule.extend(binder).addDataSourceListener(new InitDBListener(initDBScript));
+        }
     }
 
     /**
-     * Configures the tester to use Postgres data source
+     * Executes a provided SQL script after the DB startup. The script would usually contain database schema and test
+     * data.
      *
+     * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
      * @return this tester
-     * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers URLs</a>
      */
-    public JdbcTester useTestcontainers(String containerDbUrl) {
-        this.dataSourceConfig = new HikariTestcontainersConfig(containerDbUrl);
+    public JdbcTester initDB(String initDBScript) {
+        this.initDBScript = new ResourceFactory(initDBScript);
         return this;
     }
 
@@ -58,6 +85,6 @@ public class JdbcTester {
      * @return a new Bootique module with test DataSource configuration.
      */
     public BQModule setOrReplaceDataSource(String dataSourceName) {
-        return binder -> dataSourceConfig.configure(binder, dataSourceName);
+        return binder -> configure(binder, dataSourceName);
     }
 }

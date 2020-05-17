@@ -16,32 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.test.config;
+package io.bootique.jdbc.test.tester;
 
-import io.bootique.BQCoreModule;
-import io.bootique.BQCoreModuleExtender;
 import io.bootique.di.Binder;
+import io.bootique.jdbc.test.JdbcTester;
+
+import java.util.Objects;
 
 /**
  * @since 2.0
  */
-public class DataSourcePropertyBuilder {
+public class HikariTestcontainersTester extends JdbcTester {
 
-    private String propertyPrefix;
-    private BQCoreModuleExtender extender;
+    private final String containerDbUrl;
 
-    protected DataSourcePropertyBuilder(String propertyPrefix, BQCoreModuleExtender extender) {
-        this.propertyPrefix = propertyPrefix;
-        this.extender = extender;
+    public HikariTestcontainersTester(String containerDbUrl) {
+        this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
     }
 
-    public static DataSourcePropertyBuilder create(Binder binder, String dataSourceName) {
-        String propertyPrefix = String.format("bq.jdbc.%s.", dataSourceName);
-        return new DataSourcePropertyBuilder(propertyPrefix, BQCoreModule.extend(binder));
-    }
-
-    public DataSourcePropertyBuilder property(String suffix, String value) {
-        extender.setProperty(propertyPrefix + suffix, value);
-        return this;
+    @Override
+    protected void configureBootiqueDataSource(Binder binder, String dataSourceName) {
+        DataSourcePropertyBuilder.create(binder, dataSourceName)
+                .property("type", "hikari")
+                .property("driverClassName", "org.testcontainers.jdbc.ContainerDatabaseDriver")
+                .property("jdbcUrl", containerDbUrl);
     }
 }

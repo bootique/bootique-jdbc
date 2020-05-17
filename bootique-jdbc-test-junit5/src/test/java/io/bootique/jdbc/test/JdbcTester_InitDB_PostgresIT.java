@@ -22,15 +22,21 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JdbcTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
+public class JdbcTester_InitDB_PostgresIT extends BaseJdbcTesterTest {
 
-    static final JdbcTester jdbcTester = JdbcTester.useTestcontainers("jdbc:tc:postgresql:11:///mydb");
+    static final JdbcTester jdbcTester = JdbcTester
+            .useTestcontainers("jdbc:tc:postgresql:11:///mydb")
+            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_InitDB_PostgresIT.sql");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -39,23 +45,16 @@ public class JdbcTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
             .createRuntime();
 
     @Test
-    @Order(0)
-    @DisplayName("PostgreSQL DataSource must be in use")
+    @DisplayName("DB was initialized")
     public void testPostgres() {
-        run(app, c -> assertEquals("PostgreSQL", c.getMetaData().getDatabaseProductName()));
-    }
-
-    @Test
-    @Order(1)
-    @DisplayName("Setup data for subsequent state test")
-    public void setupDbState() {
-        createDbState(app);
-    }
-
-    @Test
-    @Order(2)
-    @DisplayName("DB state must be preserved between the tests")
-    public void testDbState() {
-        checkDbState(app);
+        run(app, c -> {
+            try(Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select * from b")) {
+                    assertTrue(rs.next());
+                    assertEquals(12, rs.getInt("id"));
+                    assertEquals("myname", rs.getString("name"));
+                }
+            }
+        });
     }
 }

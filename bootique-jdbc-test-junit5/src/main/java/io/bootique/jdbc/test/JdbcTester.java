@@ -125,7 +125,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
      * @param tablesInInsertOrder a list of table names in the order of INSERT dependencies between them.
      * @return this tester
      */
-    public JdbcTester shouldDeleteBeforeEachTest(String... tablesInInsertOrder) {
+    public JdbcTester deleteBeforeEachTest(String... tablesInInsertOrder) {
         this.deleteTablesInInsertOrder = tablesInInsertOrder;
         return this;
     }

@@ -32,13 +32,13 @@ import java.sql.Statement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class JdbcTester_ShouldDeleteBeforeEachTest_PostgresIT extends BaseJdbcTesterTest {
+public class JdbcTester_DeleteBeforeEachTest_DerbyIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
     static final JdbcTester jdbcTester = JdbcTester
-            .useTestcontainers("jdbc:tc:postgresql:11:///mydb")
-            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_ShouldDeleteBeforeEachTest_PostgresIT.sql")
-            .shouldDeleteBeforeEachTest("a", "b");
+            .useDerby()
+            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_DeleteBeforeEachTest_DerbyIT.sql")
+            .deleteBeforeEachTest("a", "b");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -63,12 +63,12 @@ public class JdbcTester_ShouldDeleteBeforeEachTest_PostgresIT extends BaseJdbcTe
     protected void checkNoData() {
         run(app, c -> {
             try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select count(1) from a")) {
+                try (ResultSet rs = s.executeQuery("select count(1) from \"a\"")) {
                     rs.next();
                     assertEquals(0, rs.getInt(1));
                 }
 
-                try (ResultSet rs = s.executeQuery("select count(1) from b")) {
+                try (ResultSet rs = s.executeQuery("select count(1) from \"b\"")) {
                     rs.next();
                     assertEquals(0, rs.getInt(1));
                 }
@@ -79,8 +79,8 @@ public class JdbcTester_ShouldDeleteBeforeEachTest_PostgresIT extends BaseJdbcTe
     protected void insertTestData() {
         run(app, c -> {
             try (Statement s = c.createStatement()) {
-                s.executeUpdate("insert into a (id, name) values (10, 'myname')");
-                s.executeUpdate("insert into b (id, name, a_id) values (11, 'myname', 10)");
+                s.executeUpdate("insert into \"a\" (\"id\", \"name\") values (10, 'myname')");
+                s.executeUpdate("insert into \"b\" (\"id\", \"name\", \"a_id\") values (11, 'myname', 10)");
             }
         });
     }

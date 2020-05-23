@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.Column;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -38,7 +38,7 @@ public class DefaultFromStringConverter implements FromStringConverter {
     static final FromStringConverter DEFAULT_CONVERTER = new DefaultFromStringConverter();
 
     @Override
-    public Object fromString(String value, Column column) {
+    public Object fromString(String value, DbColumnMetadata column) {
 
         if (value == null) {
             return null;

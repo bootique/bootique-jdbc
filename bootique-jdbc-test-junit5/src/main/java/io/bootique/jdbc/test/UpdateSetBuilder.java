@@ -20,6 +20,7 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 public class UpdateSetBuilder {
 
@@ -40,7 +41,7 @@ public class UpdateSetBuilder {
 
 
     public UpdateSetBuilder set(String column, Object value) {
-        return set(column, value, Column.NO_TYPE);
+        return set(column, value, DbColumnMetadata.NO_TYPE);
     }
 
     public UpdateSetBuilder set(String column, Object value, int valueType) {
@@ -55,7 +56,7 @@ public class UpdateSetBuilder {
     }
 
     public UpdateWhereBuilder where(String column, Object value) {
-        return where(column, value, Column.NO_TYPE);
+        return where(column, value, DbColumnMetadata.NO_TYPE);
     }
 
     public UpdateWhereBuilder where(String column, Object value, int valueType) {

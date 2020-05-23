@@ -19,23 +19,20 @@
 
 package io.bootique.jdbc.test.matcher;
 
-import io.bootique.jdbc.test.Column;
-import org.junit.jupiter.api.BeforeEach;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.sql.Types;
 
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RowKeyFactoryTest {
 
-    private List<Column> columns;
-
-    @BeforeEach
-    public void before() {
-        columns = asList(new Column("A"), new Column("B"), new Column("C"));
-    }
+    private static DbColumnMetadata[] columns = new DbColumnMetadata[]{
+            new DbColumnMetadata("A", Types.BINARY, false, true),
+            new DbColumnMetadata("B", Types.BINARY, false, true),
+            new DbColumnMetadata("C", Types.BINARY, false, true)
+    };
 
     @Test
     public void testCreateKey_OneColumn() {

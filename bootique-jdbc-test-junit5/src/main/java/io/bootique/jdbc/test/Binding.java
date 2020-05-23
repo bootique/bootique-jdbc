@@ -19,6 +19,8 @@
 
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
+
 import java.sql.PreparedStatement;
 
 /**
@@ -26,10 +28,10 @@ import java.sql.PreparedStatement;
  */
 public class Binding {
 
-    private Column column;
+    private DbColumnMetadata column;
     private Object value;
 
-    public Binding(Column column, Object value) {
+    public Binding(DbColumnMetadata column, Object value) {
         this.column = column;
         this.value = value;
     }
@@ -38,7 +40,7 @@ public class Binding {
         column.bind(statement, position, value);
     }
 
-    public Column getColumn() {
+    public DbColumnMetadata getColumn() {
         return column;
     }
 

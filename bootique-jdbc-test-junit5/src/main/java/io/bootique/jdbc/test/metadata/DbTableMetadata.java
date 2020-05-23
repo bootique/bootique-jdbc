@@ -48,9 +48,6 @@ public class DbTableMetadata {
         }
     }
 
-    /**
-     * @since 0.7
-     */
     public TableFQName getName() {
         return name;
     }

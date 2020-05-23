@@ -39,7 +39,7 @@ public class JdbcTestJUnit5ModuleProviderTest {
 
     @Test
     public void testModuleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcTestJUnit5ModuleProvider()).createRuntime();
+        BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcTestJUnit5ModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime, JdbcModule.class);
     }
 }

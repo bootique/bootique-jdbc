@@ -19,10 +19,7 @@
 
 package io.bootique.jdbc.test;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.jdbc.test.junit5.TestDataManager;
-import io.bootique.test.junit5.BQApp;
+import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,31 +37,24 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @BQTest
 public class TableIT {
 
-    @BQApp(skipRun = true)
-    static final BQRuntime runtime = Bootique
-            .app("--config=classpath:io/bootique/jdbc/test/TableIT.yml")
-            .autoLoadModules()
-            .createRuntime();
+    @RegisterExtension
+    static final JdbcTester jdbcTester = JdbcTester
+            .useDerby()
+            .deleteBeforeEachTest("t1", "t2");
 
     private static Table T1;
     private static Table T2;
-    private static Table T3;
-
-    @RegisterExtension
-    public TestDataManager dataManager = new TestDataManager(true, T1, T2, T3);
 
     @BeforeAll
     public static void setupDB() {
 
-        DatabaseChannel channel = DatabaseChannel.get(runtime);
+        DbConnector connector = jdbcTester.getConnector();
 
-        channel.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
-        channel.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
-        channel.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
+        connector.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
+        connector.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
 
-        T1 = channel.newTable("t1").columnNames("c1", "c2", "c3").initColumnTypesFromDBMetadata().build();
-        T2 = channel.newTable("t2").columnNames("c1", "c2", "c3", "c4").initColumnTypesFromDBMetadata().build();
-        T3 = channel.newTable("t3").columnNames("c1", "c2").initColumnTypesFromDBMetadata().build();
+        T1 = connector.getTable("t1");
+        T2 = connector.getTable("t2");
     }
 
     @Test

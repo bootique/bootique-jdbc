@@ -19,10 +19,12 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.Column;
-import io.bootique.jdbc.test.DatabaseChannel;
 import io.bootique.jdbc.test.Table;
-import org.junit.jupiter.api.BeforeEach;
+import io.bootique.jdbc.test.connector.DbConnector;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
+import io.bootique.jdbc.test.metadata.DbTableMetadata;
+import io.bootique.jdbc.test.metadata.TableFQName;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Types;
@@ -33,17 +35,18 @@ import static org.mockito.Mockito.mock;
 
 public class CsvDataSetBuilderTest {
 
-    private Table table;
+    private static Table table;
 
-    @BeforeEach
-    public void before() {
-        DatabaseChannel mockChannel = mock(DatabaseChannel.class);
-        table = Table.builder(mockChannel, "t_t")
-                .columns(
-                        new Column("c1", Types.VARCHAR),
-                        new Column("c2", Types.INTEGER),
-                        new Column("c3", Types.VARBINARY))
-                .build();
+    @BeforeAll
+    public static void createTable() {
+
+        DbColumnMetadata[] columns = new DbColumnMetadata[]{
+                new DbColumnMetadata("c1", Types.VARCHAR, false, true),
+                new DbColumnMetadata("c2", Types.INTEGER, false, true),
+                new DbColumnMetadata("c3", Types.VARBINARY, false, true)
+        };
+        DbTableMetadata metadata = new DbTableMetadata(new TableFQName(null, null, "t1"), columns);
+        table = new Table(mock(DbConnector.class), metadata);
     }
 
     @Test
@@ -54,7 +57,7 @@ public class CsvDataSetBuilderTest {
     @Test
     public void testBuild_Empty() {
         TableDataSet ds = new CsvDataSetBuilder(table).columns("c2,c1").build();
-        assertEquals(2, ds.getHeader().size());
+        assertEquals(2, ds.getHeader().length);
         assertEquals(0, ds.size());
     }
 
@@ -67,7 +70,7 @@ public class CsvDataSetBuilderTest {
                         "35,\"a\""
                 ).build();
 
-        assertEquals(2, ds.getHeader().size());
+        assertEquals(2, ds.getHeader().length);
         assertEquals(2, ds.size());
 
         assertEquals(1, ds.getRecords().get(0)[0]);

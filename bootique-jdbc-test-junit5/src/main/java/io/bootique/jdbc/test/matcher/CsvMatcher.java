@@ -19,9 +19,9 @@
 
 package io.bootique.jdbc.test.matcher;
 
-import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.dataset.TableDataSet;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import io.bootique.resource.ResourceFactory;
 
 import java.util.Objects;
@@ -60,7 +60,11 @@ public class CsvMatcher {
 
     private RowKeyFactory createRowKeyFactory(TableDataSet refData, String... keyColumns) {
         if (keyColumns == null || keyColumns.length == 0) {
-            keyColumns = refData.getHeader().stream().map(Column::getName).toArray(String[]::new);
+            DbColumnMetadata[] columns = refData.getHeader();
+            keyColumns = new String[columns.length];
+            for(int i = 0; i < columns.length; i++) {
+                keyColumns[i] = columns[i].getName();
+            }
         }
 
         return RowKeyFactory.create(refData.getHeader(), keyColumns);

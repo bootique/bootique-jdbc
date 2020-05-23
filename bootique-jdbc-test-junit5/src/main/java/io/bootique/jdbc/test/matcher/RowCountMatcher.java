@@ -19,10 +19,10 @@
 
 package io.bootique.jdbc.test.matcher;
 
-import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,15 +67,15 @@ public class RowCountMatcher {
 
     protected SelectStatementBuilder<Integer> countStatement() {
         return table.selectStatement(RowReader.intReader())
-                .append("SELECT COUNT(*) FROM ")
-                .appendIdentifier(table.getName());
+                .append("select count(*) from ")
+                .appendTableName(table.getMetadata().getName());
     }
 
     protected <T> SelectStatementBuilder<T> appendConditions(SelectStatementBuilder<T> builder) {
 
         if (conditions != null && !conditions.isEmpty()) {
 
-            String separator = " WHERE ";
+            String separator = " where ";
 
             for (BinaryCondition c : conditions) {
 
@@ -97,7 +97,7 @@ public class RowCountMatcher {
                         throw new UnsupportedOperationException("Unexpected operator: " + c.getOperator());
                 }
 
-                separator = " AND ";
+                separator = " and ";
             }
         }
 
@@ -111,7 +111,7 @@ public class RowCountMatcher {
                     .append(" ")
                     .append("=")
                     .append(" ")
-                    .appendBinding(table.getColumn(eq.getColumn()), eq.getValue());
+                    .appendBinding(table.getMetadata().getColumn(eq.getColumn()), eq.getValue());
         } else {
             builder.appendIdentifier(eq.getColumn()).append(" IS NULL");
         }
@@ -136,12 +136,9 @@ public class RowCountMatcher {
 
     protected <T> SelectStatementBuilder<T> appendIn(SelectStatementBuilder<T> builder, String columnName, Object[] values) {
 
-        builder.appendIdentifier(columnName)
-                .append(" ")
-                .append("IN")
-                .append(" (");
+        builder.appendIdentifier(columnName).append(" in (");
 
-        Column column = table.getColumn(columnName);
+        DbColumnMetadata column = table.getMetadata().getColumn(columnName);
 
         // TODO: how to handle empty collections?
         for (int i = 0; i < values.length; i++) {

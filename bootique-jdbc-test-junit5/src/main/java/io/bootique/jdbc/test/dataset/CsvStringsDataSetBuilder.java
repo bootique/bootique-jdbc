@@ -83,7 +83,7 @@ public class CsvStringsDataSetBuilder {
 
     private TableDataSet buildWithTableHeader() {
         try (Reader reader = getDataReader()) {
-            return new CsvReader(table, valueConverter).loadDataSet(table.getColumns(), reader);
+            return new CsvReader(table, valueConverter).loadDataSet(table.getMetadata().getColumns(), reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading CSV", e);
         }

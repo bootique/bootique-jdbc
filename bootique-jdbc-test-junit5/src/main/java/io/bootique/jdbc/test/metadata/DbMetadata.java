@@ -61,6 +61,10 @@ public class DbMetadata {
         return flavor.getIdentifierQuote();
     }
 
+    public boolean shouldQuoteIdentifiers() {
+        return flavor.shouldQuoteIdentifiers();
+    }
+
     public boolean supportsParamsMetadata() {
         return flavor.supportsParamsMetadata();
     }
@@ -156,6 +160,17 @@ public class DbMetadata {
                 }
             }
 
+            // sanity check ... table with no columns is possible, but suspect
+            if (columnsAndTypes.isEmpty()) {
+
+                try (ResultSet tablesRs = md.getTables(
+                        tableName.getCatalog(), tableName.getSchema(), tableName.getTable(), null)) {
+                    if (!tablesRs.next()) {
+                        throw new RuntimeException("Non-existent table '" + tableName + "'");
+                    }
+                }
+            }
+
             try (ResultSet pkRs = md.getPrimaryKeys(
                     tableName.getCatalog(), tableName.getSchema(), tableName.getTable())) {
 
@@ -167,7 +182,6 @@ public class DbMetadata {
         } catch (SQLException e) {
             throw new RuntimeException("Error getting info about table '" + tableName + "'", e);
         }
-
 
         int len = columnsAndTypes.size();
         DbColumnMetadata[] columns = new DbColumnMetadata[len];

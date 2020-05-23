@@ -19,12 +19,12 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.Column;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 /**
  * @since 0.24
  */
 public interface FromStringConverter {
 
-    Object fromString(String value, Column column);
+    Object fromString(String value, DbColumnMetadata column);
 }

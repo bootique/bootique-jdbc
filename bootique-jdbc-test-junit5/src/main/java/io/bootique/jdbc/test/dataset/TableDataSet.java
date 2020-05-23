@@ -19,9 +19,9 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.InsertBuilder;
 import io.bootique.jdbc.test.Table;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,15 +29,15 @@ import java.util.Objects;
 /**
  * Represents data from a single table.
  *
- * @since 0.24
+ * @since 2.0
  */
 public class TableDataSet implements DataSet {
 
     private Table table;
-    private List<Column> header;
+    private DbColumnMetadata[] header;
     private List<Object[]> records;
 
-    public TableDataSet(Table table, List<Column> header, List<Object[]> records) {
+    public TableDataSet(Table table, DbColumnMetadata[] header, List<Object[]> records) {
         this.header = Objects.requireNonNull(header);
         this.records = Objects.requireNonNull(records);
         this.table = Objects.requireNonNull(table);
@@ -47,7 +47,7 @@ public class TableDataSet implements DataSet {
         return table;
     }
 
-    public List<Column> getHeader() {
+    public DbColumnMetadata[] getHeader() {
         return header;
     }
 

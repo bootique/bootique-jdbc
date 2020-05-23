@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 
 /**
  * @param <T>
- * @since 0.24
+ * @since 2.0
  */
 public interface RowReader<T> {
 

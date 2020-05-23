@@ -20,8 +20,8 @@
 package io.bootique.jdbc.test.jdbc;
 
 import io.bootique.jdbc.test.BindingValueToStringConverter;
-import io.bootique.jdbc.test.DatabaseChannel;
-import io.bootique.jdbc.test.IdentifierQuotationStrategy;
+import io.bootique.jdbc.test.connector.DbConnector;
+import io.bootique.jdbc.test.connector.IdentifierQuotationStrategy;
 import io.bootique.jdbc.test.ObjectValueConverter;
 
 import java.sql.Connection;
@@ -34,7 +34,7 @@ import java.sql.SQLException;
 public class ExecStatementBuilder extends StatementBuilder<ExecStatementBuilder> {
 
     public ExecStatementBuilder(
-            DatabaseChannel channel,
+            DbConnector channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
             IdentifierQuotationStrategy quotationStrategy) {

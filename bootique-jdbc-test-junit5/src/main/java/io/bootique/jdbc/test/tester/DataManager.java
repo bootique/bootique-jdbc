@@ -18,27 +18,24 @@
  */
 package io.bootique.jdbc.test.tester;
 
-import io.bootique.jdbc.test.DatabaseChannel;
+import io.bootique.jdbc.test.connector.DbConnector;
 
 /**
  * Provides test data manager facilities to the {@link io.bootique.jdbc.test.JdbcTester}.
  */
 public class DataManager {
 
-    private DatabaseChannel channel;
+    private DbConnector connector;
     private String[] tablesInInsertOrder;
 
-    public DataManager(DatabaseChannel channel, String[] tablesInInsertOrder) {
-        this.channel = channel;
+    public DataManager(DbConnector connector, String[] tablesInInsertOrder) {
+        this.connector = connector;
         this.tablesInInsertOrder = tablesInInsertOrder;
     }
 
     public void deleteData() {
         for (int i = tablesInInsertOrder.length - 1; i >= 0; i--) {
-            channel
-                    .execStatement()
-                    .append("DELETE FROM ")
-                    .appendIdentifier(tablesInInsertOrder[i]).exec();
+            connector.getTable(tablesInInsertOrder[i]).deleteAll();
         }
     }
 }

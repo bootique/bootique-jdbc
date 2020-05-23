@@ -22,12 +22,9 @@ package io.bootique.jdbc.test.junit5;
 import io.bootique.BQModuleProvider;
 import io.bootique.di.BQModule;
 import io.bootique.jdbc.JdbcModuleProvider;
-import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * @since 2.0
@@ -40,14 +37,7 @@ public class JdbcTestJUnit5ModuleProvider implements BQModuleProvider {
     }
 
     @Override
-    public Map<String, Type> configs() {
-        return Collections.singletonMap("jdbctest", DatabaseChannelFactoryFactory.class);
-    }
-
-    @Override
     public Collection<BQModuleProvider> dependencies() {
-        return Collections.singletonList(
-                new JdbcModuleProvider()
-        );
+        return Collections.singletonList(new JdbcModuleProvider());
     }
 }

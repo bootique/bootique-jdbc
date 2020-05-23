@@ -19,12 +19,11 @@
 
 package io.bootique.jdbc.test.jdbc;
 
-import io.bootique.jdbc.test.Binding;
-import io.bootique.jdbc.test.BindingValueToStringConverter;
-import io.bootique.jdbc.test.Column;
-import io.bootique.jdbc.test.DatabaseChannel;
-import io.bootique.jdbc.test.IdentifierQuotationStrategy;
-import io.bootique.jdbc.test.ObjectValueConverter;
+import io.bootique.jdbc.test.*;
+import io.bootique.jdbc.test.connector.DbConnector;
+import io.bootique.jdbc.test.connector.IdentifierQuotationStrategy;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
+import io.bootique.jdbc.test.metadata.TableFQName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,21 +43,21 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
 
     protected ObjectValueConverter objectValueConverter;
     protected BindingValueToStringConverter valueToStringConverter;
-    protected IdentifierQuotationStrategy quotationStrategy;
-    protected DatabaseChannel channel;
+    protected IdentifierQuotationStrategy quoter;
+    protected DbConnector channel;
 
     protected List<Binding> bindings;
     protected StringBuilder sqlBuffer;
 
     public StatementBuilder(
-            DatabaseChannel channel,
+            DbConnector channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
-            IdentifierQuotationStrategy quotationStrategy) {
+            IdentifierQuotationStrategy quoter) {
 
         this.channel = channel;
         this.objectValueConverter = objectValueConverter;
-        this.quotationStrategy = quotationStrategy;
+        this.quoter = quoter;
         this.valueToStringConverter = valueToStringConverter;
 
         this.bindings = new ArrayList<>();
@@ -94,33 +93,36 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
         return sqlBuffer.toString();
     }
 
-    /**
-     * Sets a quotation strategy for identifiers that is different from the default startegy defined in the parent
-     * channel.
-     *
-     * @param quotationStrategy new quotation strategy to override the default.
-     * @return this builder instance.
-     */
-    public T quoteIdentifiersWith(IdentifierQuotationStrategy quotationStrategy) {
-        this.quotationStrategy = quotationStrategy;
-        return (T) this;
-    }
-
     public T append(String sql) {
         sqlBuffer.append(sql);
         return (T) this;
     }
 
+    public T appendTableName(TableFQName name) {
+
+        if (name.hasCatalog()) {
+            sqlBuffer.append(quoter.quoted(name.getCatalog())).append(".");
+        }
+
+        if (name.hasSchema()) {
+            sqlBuffer.append(quoter.quoted(name.getSchema())).append(".");
+        }
+
+        sqlBuffer.append(quoter.quoted(name.getTable()));
+
+        return (T) this;
+    }
+
     public T appendIdentifier(String sqlIdentifier) {
-        sqlBuffer.append(quotationStrategy.quoted(sqlIdentifier));
+        sqlBuffer.append(quoter.quoted(sqlIdentifier));
         return (T) this;
     }
 
     public T appendBinding(String columnName, int valueType, Object value) {
-        return appendBinding(new Column(columnName, valueType), value);
+        return appendBinding(new DbColumnMetadata(columnName, valueType, false, true), value);
     }
 
-    public T appendBinding(Column column, Object value) {
+    public T appendBinding(DbColumnMetadata column, Object value) {
         sqlBuffer.append("?");
         bindings.add(new Binding(column, objectValueConverter.convert(value)));
         return (T) this;

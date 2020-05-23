@@ -19,9 +19,9 @@
 
 package io.bootique.jdbc.test.matcher;
 
-import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.dataset.TableDataSet;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 import java.sql.Types;
 import java.util.HashMap;
@@ -45,15 +45,15 @@ class CsvMatcherRunner {
         this.keyFactory = keyFactory;
     }
 
-    private static void compareNull(Column c, RowKey rowKey, Object dbVal) {
+    private static void compareNull(DbColumnMetadata c, RowKey rowKey, Object dbVal) {
         assertNull(dbVal, () -> "Expected null value in column [" + c.getName() + "], row " + rowKey);
     }
 
-    private static void compareByteArrays(Column c, RowKey rowKey, byte[] refVal, byte[] dbVal) {
+    private static void compareByteArrays(DbColumnMetadata c, RowKey rowKey, byte[] refVal, byte[] dbVal) {
         assertArrayEquals(refVal, dbVal, () -> "Unexpected value in column [" + c.getName() + "], row " + rowKey);
     }
 
-    private static void compareValues(Column c, RowKey rowKey, Object refVal, Object dbVal) {
+    private static void compareValues(DbColumnMetadata c, RowKey rowKey, Object refVal, Object dbVal) {
         assertEquals(refVal, dbVal, () -> "Unexpected value in column [" + c.getName() + "], row " + rowKey);
     }
 
@@ -95,7 +95,7 @@ class CsvMatcherRunner {
                 Object refVal = ref[i];
                 Object dbVal = row[i];
 
-                Column c = referenceData.getHeader().get(i);
+                DbColumnMetadata c = referenceData.getHeader()[i];
 
                 if (refVal == null) {
                     compareNull(c, rowKey, dbVal);

@@ -19,10 +19,8 @@
 
 package io.bootique.jdbc.test.matcher;
 
-import io.bootique.jdbc.test.Column;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.List;
 
 /**
  * A factory of {@link RowKey} objects.
@@ -37,16 +35,16 @@ public class RowKeyFactory {
         this.keyIndexes = keyIndexes;
     }
 
-    public static RowKeyFactory create(List<Column> header, String[] rowKeyColumns) {
+    public static RowKeyFactory create(DbColumnMetadata[] header, String[] rowKeyColumns) {
         int[] keyIndexes = new int[rowKeyColumns.length];
 
         for (int i = 0; i < rowKeyColumns.length; i++) {
 
             int index = -1;
 
-            for (int j = 0; j < header.size(); j++) {
+            for (int j = 0; j < header.length; j++) {
 
-                if (rowKeyColumns[i].equals(header.get(j).getName())) {
+                if (rowKeyColumns[i].equals(header[j].getName())) {
                     index = j;
                     break;
                 }

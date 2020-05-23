@@ -17,63 +17,63 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.test.connector;
 
+import io.bootique.jdbc.test.BindingValueToStringConverter;
+import io.bootique.jdbc.test.ObjectValueConverter;
+import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.bootique.jdbc.test.metadata.DbMetadata;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A helper class to run common DB operations during unit tests.
- *
  * @since 2.0
  */
-public class DefaultDatabaseChannel implements DatabaseChannel {
+public class DbConnector {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);
-
-    protected boolean closed;
     protected DataSource dataSource;
-    protected String identifierQuote;
-    protected IdentifierQuotationStrategy defaultIdentifierQuotationStrategy;
+    protected DbMetadata metadata;
+
+    protected IdentifierQuotationStrategy identifierQuotationStrategy;
     protected BindingValueToStringConverter valueToStringConverter;
     protected ObjectValueConverter objectValueConverter;
 
-    public DefaultDatabaseChannel(DataSource dataSource, String identifierQuote, boolean defaultQuoteIdentifiers) {
-        LOGGER.debug("Test DatabaseChannel opened...");
-        this.dataSource = dataSource;
-        this.identifierQuote = identifierQuote;
+    protected Map<String, Table> tables;
+
+    public DbConnector(DataSource dataSource, DbMetadata metadata) {
+
+        this.dataSource = Objects.requireNonNull(dataSource);
+        this.metadata = Objects.requireNonNull(metadata);
+
         this.valueToStringConverter = new BindingValueToStringConverter();
         this.objectValueConverter = new ObjectValueConverter();
 
-        this.defaultIdentifierQuotationStrategy = defaultQuoteIdentifiers
-                ? IdentifierQuotationStrategy.forQuoteSymbol(identifierQuote)
+        this.identifierQuotationStrategy = metadata.shouldQuoteIdentifiers()
+                ? IdentifierQuotationStrategy.forQuoteSymbol(metadata.getIdentifierQuote())
                 : IdentifierQuotationStrategy.noQuote();
+
+        this.tables = new ConcurrentHashMap<>();
     }
 
-    @Override
-    public String getIdentifierQuote() {
-        return identifierQuote;
+    public Table getTable(String tableName) {
+        return tables.computeIfAbsent(tableName, tn -> new Table(this, metadata.getTable(tn)));
     }
 
-    IdentifierQuotationStrategy getDefaultIdentifierQuotationStrategy() {
-        return defaultIdentifierQuotationStrategy;
+    public DbMetadata getMetadata() {
+        return metadata;
     }
 
-    @Override
     public Connection getConnection() {
 
-        if (closed) {
-            throw new IllegalStateException("The channel is closed");
-        }
-
-        Connection connection = null;
+        Connection connection;
         try {
             connection = dataSource.getConnection();
         } catch (SQLException e) {
@@ -92,28 +92,29 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
         return connection;
     }
 
-    @Override
-    public void close() {
-        LOGGER.debug("Test DatabaseChannel closed...");
-        this.closed = true;
-    }
-
-    @Override
+    /**
+     * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement.
+     */
     public ExecStatementBuilder execStatement() {
         return new ExecStatementBuilder(
                 this,
                 objectValueConverter,
                 valueToStringConverter,
-                defaultIdentifierQuotationStrategy);
+                identifierQuotationStrategy);
     }
 
-    @Override
+    /**
+     * @param rowReader a function that converts a ResultSet row into an object.
+     * @param <T>       the type of objects read by returned statement builder.
+     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
+     * PreparedStatement.
+     */
     public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
         return new SelectStatementBuilder(
                 rowReader,
                 this,
                 objectValueConverter,
                 valueToStringConverter,
-                defaultIdentifierQuotationStrategy);
+                identifierQuotationStrategy);
     }
 }

@@ -19,12 +19,16 @@
 
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.jdbc.test.dataset.TableDataSet;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.matcher.TableMatcher;
-import org.junit.jupiter.api.BeforeEach;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
+import io.bootique.jdbc.test.metadata.DbTableMetadata;
+import io.bootique.jdbc.test.metadata.TableFQName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,29 +39,37 @@ import static org.mockito.Mockito.when;
 
 public class TableTest {
 
-    private DatabaseChannel mockChannel;
+    private Table createTable() {
 
-    @BeforeEach
-    public void before() {
         ExecStatementBuilder mockExecBuilder = mock(ExecStatementBuilder.class);
 
-        mockChannel = mock(DatabaseChannel.class);
-        when(mockChannel.execStatement()).thenReturn(mockExecBuilder);
+        DbConnector mockConnector = mock(DbConnector.class);
+        when(mockConnector.execStatement()).thenReturn(mockExecBuilder);
+
+        DbColumnMetadata[] columns = new DbColumnMetadata[]{
+                new DbColumnMetadata("a", DbColumnMetadata.NO_TYPE, false, true),
+                new DbColumnMetadata("b", DbColumnMetadata.NO_TYPE, false, true),
+                new DbColumnMetadata("c", DbColumnMetadata.NO_TYPE, false, true)
+        };
+
+        DbTableMetadata tableMetadata = new DbTableMetadata(new TableFQName(null, null, "t"), columns);
+        return new Table(mockConnector, tableMetadata);
     }
 
     @Test
     public void testInsertColumns() {
-        Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
+        Table t = createTable();
 
         InsertBuilder insertBuilder = t.insertColumns("c", "a");
         assertNotNull(insertBuilder);
-        List<String> names = insertBuilder.columns.stream().map(Column::getName).collect(Collectors.toList());
+
+        List<String> names = Arrays.stream(insertBuilder.columns).map(DbColumnMetadata::getName).collect(Collectors.toList());
         assertEquals(asList("c", "a"), names, "Incorrect columns or order is not preserved");
     }
 
     @Test
     public void testMatcher() {
-        Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
+        Table t = createTable();
 
         TableMatcher m = t.matcher();
         assertNotNull(m);
@@ -67,10 +79,10 @@ public class TableTest {
     @Test
     public void testCsvDataSet() {
 
-        Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
+        Table t = createTable();
 
         TableDataSet ds = t.csvDataSet().columns("c,b").build();
-        assertEquals(2, ds.getHeader().size());
+        assertEquals(2, ds.getHeader().length);
         assertEquals(0, ds.size());
     }
 

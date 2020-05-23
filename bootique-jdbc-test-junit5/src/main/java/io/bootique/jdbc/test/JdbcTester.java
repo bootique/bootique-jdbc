@@ -21,8 +21,10 @@ package io.bootique.jdbc.test;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Key;
+import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.jdbc.test.datasource.PoolingDataSource;
 import io.bootique.jdbc.test.datasource.PoolingDataSourceParameters;
+import io.bootique.jdbc.test.metadata.DbMetadata;
 import io.bootique.jdbc.test.tester.*;
 import io.bootique.resource.ResourceFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -36,7 +38,6 @@ import javax.sql.DataSource;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -57,7 +58,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
     protected String[] deleteTablesInInsertOrder;
 
     protected PoolingDataSource dataSource;
-    protected DatabaseChannel channel;
+    protected DbConnector connector;
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers.
@@ -89,9 +90,13 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
         return dataSource;
     }
 
-    public DatabaseChannel getChannel() {
-        assertNotNull(channel, "DatabaseChannel is not initialized. Called outside of test lifecycle?");
-        return channel;
+    public DbConnector getConnector() {
+        assertNotNull(connector, "DbConnector is not initialized. Called outside of test lifecycle?");
+        return connector;
+    }
+
+    public Table getTable(String name) {
+        return connector.getTable(name);
     }
 
     protected void configure(Binder binder, String dataSourceName) {
@@ -140,23 +145,6 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
         return binder -> configure(binder, dataSourceName);
     }
 
-    protected DatabaseChannel createDatabaseChannel(DataSource dataSource) {
-        // TODO: copy metadata handling from DFLib
-
-        try (Connection c = dataSource.getConnection()) {
-            DatabaseMetaData metaData = c.getMetaData();
-
-            // if no quotations are supported, per JDBC spec the returned value is space
-            String quoteString = metaData.getIdentifierQuoteString();
-            return " ".equals(quoteString)
-                    ? new DefaultDatabaseChannel(dataSource, "", false)
-                    : new DefaultDatabaseChannel(dataSource, quoteString, true);
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Error reading DB metadata", e);
-        }
-    }
-
     protected PoolingDataSource createDataSource() {
         PoolingDataSourceParameters parameters = new PoolingDataSourceParameters();
         parameters.setMaxConnections(5);
@@ -193,7 +181,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
     @Override
     public void beforeAll(ExtensionContext context) {
         this.dataSource = createDataSource();
-        this.channel = createDatabaseChannel(dataSource);
+        this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
         execInitScript();
     }
 
@@ -206,7 +194,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
     @Override
     public void beforeEach(ExtensionContext context) {
         if (deleteTablesInInsertOrder != null && deleteTablesInInsertOrder.length > 0) {
-            new DataManager(getChannel(), deleteTablesInInsertOrder).deleteData();
+            new DataManager(getConnector(), deleteTablesInInsertOrder).deleteData();
         }
     }
 }

@@ -20,6 +20,8 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
+import io.bootique.jdbc.test.metadata.TableFQName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +31,12 @@ import java.util.List;
  */
 public class InsertBuilder {
 
-    protected String tableName;
+    protected TableFQName tableName;
     protected ExecStatementBuilder builder;
-    protected List<Column> columns;
+    protected DbColumnMetadata[] columns;
     protected List<Object[]> values;
 
-    public InsertBuilder(ExecStatementBuilder builder, String tableName, List<Column> columns) {
+    public InsertBuilder(ExecStatementBuilder builder, TableFQName tableName, DbColumnMetadata[] columns) {
         this.values = new ArrayList<>();
         this.tableName = tableName;
         this.columns = columns;
@@ -42,8 +44,8 @@ public class InsertBuilder {
     }
 
     public InsertBuilder values(Object... values) {
-        if (columns.size() != values.length) {
-            throw new IllegalArgumentException(tableName + ": values do not match columns. There are " + columns.size()
+        if (columns.length != values.length) {
+            throw new IllegalArgumentException(tableName + ": values do not match columns. There are " + columns.length
                     + " column(s) " + "and " + values.length + " value(s).");
         }
 
@@ -51,25 +53,15 @@ public class InsertBuilder {
         return this;
     }
 
-    /**
-     * Returns a list of columns for this insert.
-     *
-     * @return a list of columns for this insert.
-     * @since 0.14
-     */
-    public List<Column> getColumns() {
-        return columns;
-    }
-
     public void exec() {
 
-        builder.append("INSERT INTO ")
-                .appendIdentifier(tableName)
+        builder.append("insert into ")
+                .appendTableName(tableName)
                 .append(" (");
 
-        for (int i = 0; i < columns.size(); i++) {
+        for (int i = 0; i < columns.length; i++) {
 
-            Column col = columns.get(i);
+            DbColumnMetadata col = columns[i];
 
             if (i > 0) {
                 builder.append(", ");
@@ -78,7 +70,7 @@ public class InsertBuilder {
             builder.appendIdentifier(col.getName());
         }
 
-        builder.append(") VALUES ");
+        builder.append(") values ");
 
         for (int i = 0; i < values.size(); i++) {
 
@@ -90,12 +82,12 @@ public class InsertBuilder {
 
             Object[] rowValues = values.get(i);
 
-            for (int j = 0; j < columns.size(); j++) {
+            for (int j = 0; j < columns.length; j++) {
                 if (j > 0) {
                     builder.append(", ");
                 }
 
-                builder.appendBinding(columns.get(j), rowValues[j]);
+                builder.appendBinding(columns[j], rowValues[j]);
             }
 
             builder.append(")");

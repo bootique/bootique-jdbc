@@ -19,8 +19,8 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -47,41 +47,43 @@ class CsvReader {
 
             Iterator<CSVRecord> rows = parser.iterator();
             if (!rows.hasNext()) {
-                return new TableDataSet(table, Collections.emptyList(), Collections.emptyList());
+                return new TableDataSet(table, new DbColumnMetadata[0], Collections.emptyList());
             }
 
-            List<Column> header = getHeader(rows.next());
+           DbColumnMetadata[] header = getHeader(rows.next());
             return readData(header, rows);
         }
     }
 
-    TableDataSet loadDataSet(List<Column> header, Reader dataReader) throws IOException {
+    TableDataSet loadDataSet(DbColumnMetadata[] header, Reader dataReader) throws IOException {
         try (CSVParser parser = new CSVParser(dataReader, CSVFormat.DEFAULT, 0, 0)) {
             return readData(header, parser.iterator());
         }
     }
 
-    private List<Column> getHeader(CSVRecord record) {
-        List<Column> header = new ArrayList<>(record.size());
-        for (String column : record) {
-            header.add(table.getColumn(column));
+    private DbColumnMetadata[] getHeader(CSVRecord record) {
+        DbColumnMetadata[] header = new DbColumnMetadata[record.size()];
+
+        for (int i = 0; i < record.size(); i++) {
+            header[i] = table.getMetadata().getColumn(record.get(i));
         }
+
         return header;
     }
 
-    private Object[] getRow(CSVRecord csvRow, List<Column> header) {
+    private Object[] getRow(CSVRecord csvRow, DbColumnMetadata[] header) {
 
         Object[] row = new Object[csvRow.size()];
 
-        int len = header.size();
+        int len = header.length;
         for (int i = 0; i < len; i++) {
-            row[i] = valueConverter.fromString(csvRow.get(i), header.get(i));
+            row[i] = valueConverter.fromString(csvRow.get(i), header[i]);
         }
 
         return row;
     }
 
-    private TableDataSet readData(List<Column> header, Iterator<CSVRecord> rows) throws IOException {
+    private TableDataSet readData(DbColumnMetadata[] header, Iterator<CSVRecord> rows) {
 
         List<Object[]> records = new ArrayList<>();
         while (rows.hasNext()) {

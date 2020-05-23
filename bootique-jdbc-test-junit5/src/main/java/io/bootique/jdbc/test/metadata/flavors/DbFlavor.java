@@ -36,4 +36,9 @@ public interface DbFlavor {
     boolean supportsSchemas();
 
     int columnType(int jdbcType, String nativeType);
+
+    default boolean shouldQuoteIdentifiers() {
+        // per JDBC spec a space symboil means quotations ar enot supported
+        return !" ".equals(getIdentifierQuote());
+    }
 }

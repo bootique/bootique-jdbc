@@ -20,14 +20,10 @@
 package io.bootique.jdbc.test.junit5;
 
 import io.bootique.ConfigModule;
-import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
-import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.test.derby.DerbyListener;
-import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
-import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 import io.bootique.log.BootLogger;
 
 import javax.inject.Singleton;
@@ -46,15 +42,6 @@ public class JdbcTestJUnit5Module extends ConfigModule {
     public void configure(Binder binder) {
         // for now we only support Derby...
         JdbcModule.extend(binder).initAllExtensions().addDataSourceListener(DerbyListener.class);
-    }
-
-    @Singleton
-    @Provides
-    DatabaseChannelFactory provideDatabaseChannelFactory(
-            ConfigurationFactory configFactory,
-            DataSourceFactory dataSourceFactory) {
-
-        return config(DatabaseChannelFactoryFactory.class, configFactory).createFactory(dataSourceFactory);
     }
 
     @Singleton

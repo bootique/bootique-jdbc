@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.test.connector;
 
 import java.sql.Date;
 import java.sql.Time;

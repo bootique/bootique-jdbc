@@ -20,8 +20,8 @@
 package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.jdbc.RowReader;
-import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
+import io.bootique.jdbc.test.RowReader;
+import io.bootique.jdbc.test.connector.SelectStatementBuilder;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
 import java.util.ArrayList;

@@ -19,12 +19,8 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.jdbc.test.JdbcTester;
 import io.bootique.jdbc.test.Table;
-import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,16 +39,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CsvDataSetBuilderIT {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester
+    static final JdbcTester db = JdbcTester
             .useDerby()
             .deleteBeforeEachTest("t1", "t2", "t3", "t4");
-
-    @BQApp(skipRun = true)
-    static final BQRuntime runtime = Bootique
-            .app()
-            .autoLoadModules()
-            .module(jdbcTester.setOrReplaceDataSource("ds"))
-            .createRuntime();
 
     private static Table T1;
     private static Table T2;
@@ -62,17 +51,15 @@ public class CsvDataSetBuilderIT {
     @BeforeAll
     public static void setupDB() {
 
-        DbConnector channel = jdbcTester.getConnector();
+        db.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
+        db.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
+        db.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
+        db.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" INT, \"c2\" BOOLEAN)");
 
-        channel.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
-        channel.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
-        channel.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
-        channel.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" INT, \"c2\" BOOLEAN)");
-
-        T1 = channel.getTable("t1");
-        T2 = channel.getTable("t2");
-        T3 = channel.getTable("t3");
-        T4 = channel.getTable("t4");
+        T1 = db.getTable("t1");
+        T2 = db.getTable("t2");
+        T3 = db.getTable("t3");
+        T4 = db.getTable("t4");
     }
 
     @Test

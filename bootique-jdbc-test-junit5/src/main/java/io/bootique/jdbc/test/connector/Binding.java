@@ -19,30 +19,32 @@
 
 package io.bootique.jdbc.test.connector;
 
-import java.util.Objects;
+import io.bootique.jdbc.test.metadata.DbColumnMetadata;
+
+import java.sql.PreparedStatement;
 
 /**
  * @since 2.0
  */
-public interface IdentifierQuotationStrategy {
+public class Binding {
 
-    String quoted(String bareIdentifier);
+    private DbColumnMetadata column;
+    private Object value;
 
-    /**
-     * @param quote a quote symbol for identifiers.
-     * @return a strategy that will enclose identifiers in the provided quotation symbol.
-     * @since 0.24
-     */
-    static IdentifierQuotationStrategy forQuoteSymbol(String quote) {
-        Objects.requireNonNull(quote);
-        return id -> quote + id + quote;
+    public Binding(DbColumnMetadata column, Object value) {
+        this.column = column;
+        this.value = value;
     }
 
-    /**
-     * @return a strategy that will returns identifiers unchanged.
-     * @since 0.24
-     */
-    static IdentifierQuotationStrategy noQuote() {
-        return id -> id;
+    public void bind(PreparedStatement statement, int position) {
+        column.bind(statement, position, value);
+    }
+
+    public DbColumnMetadata getColumn() {
+        return column;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }

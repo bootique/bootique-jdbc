@@ -17,34 +17,30 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.test.connector;
 
-import io.bootique.jdbc.test.metadata.DbColumnMetadata;
-
-import java.sql.PreparedStatement;
+import java.util.Objects;
 
 /**
  * @since 2.0
  */
-public class Binding {
+public interface IdentifierQuoter {
 
-    private DbColumnMetadata column;
-    private Object value;
-
-    public Binding(DbColumnMetadata column, Object value) {
-        this.column = column;
-        this.value = value;
+    /**
+     * @param quote a quote symbol for identifiers.
+     * @return a strategy that will enclose identifiers in the provided quotation symbol.
+     */
+    static IdentifierQuoter forQuoteSymbol(String quote) {
+        Objects.requireNonNull(quote);
+        return id -> quote + id + quote;
     }
 
-    public void bind(PreparedStatement statement, int position) {
-        column.bind(statement, position, value);
+    /**
+     * @return a strategy that will returns identifiers unchanged.
+     */
+    static IdentifierQuoter noQuote() {
+        return id -> id;
     }
 
-    public DbColumnMetadata getColumn() {
-        return column;
-    }
-
-    public Object getValue() {
-        return value;
-    }
+    String quoted(String bareIdentifier);
 }

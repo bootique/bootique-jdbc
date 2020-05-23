@@ -19,7 +19,6 @@
 
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TableIT {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester
+    static final JdbcTester db = JdbcTester
             .useDerby()
             .deleteBeforeEachTest("t1", "t2");
 
@@ -48,13 +47,11 @@ public class TableIT {
     @BeforeAll
     public static void setupDB() {
 
-        DbConnector connector = jdbcTester.getConnector();
+        db.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
+        db.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
 
-        connector.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
-        connector.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
-
-        T1 = connector.getTable("t1");
-        T2 = connector.getTable("t2");
+        T1 = db.getTable("t1");
+        T2 = db.getTable("t2");
     }
 
     @Test

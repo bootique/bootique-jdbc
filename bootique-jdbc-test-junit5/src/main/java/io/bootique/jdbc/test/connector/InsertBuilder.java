@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.test.connector;
 
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import io.bootique.jdbc.test.metadata.TableFQName;
 
@@ -51,6 +50,10 @@ public class InsertBuilder {
 
         this.values.add(values);
         return this;
+    }
+
+    public DbColumnMetadata[] getColumns() {
+        return columns;
     }
 
     public void exec() {

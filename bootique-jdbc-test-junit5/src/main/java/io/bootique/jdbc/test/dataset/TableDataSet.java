@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.InsertBuilder;
+import io.bootique.jdbc.test.connector.InsertBuilder;
 import io.bootique.jdbc.test.Table;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 

@@ -17,11 +17,8 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test.jdbc;
+package io.bootique.jdbc.test.connector;
 
-import io.bootique.jdbc.test.*;
-import io.bootique.jdbc.test.connector.DbConnector;
-import io.bootique.jdbc.test.connector.IdentifierQuotationStrategy;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import io.bootique.jdbc.test.metadata.TableFQName;
 import org.slf4j.Logger;
@@ -43,7 +40,7 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
 
     protected ObjectValueConverter objectValueConverter;
     protected BindingValueToStringConverter valueToStringConverter;
-    protected IdentifierQuotationStrategy quoter;
+    protected IdentifierQuoter quoter;
     protected DbConnector channel;
 
     protected List<Binding> bindings;
@@ -53,7 +50,7 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
             DbConnector channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
-            IdentifierQuotationStrategy quoter) {
+            IdentifierQuoter quoter) {
 
         this.channel = channel;
         this.objectValueConverter = objectValueConverter;

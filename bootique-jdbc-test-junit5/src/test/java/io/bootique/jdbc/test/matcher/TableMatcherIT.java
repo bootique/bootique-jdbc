@@ -21,7 +21,6 @@ package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.JdbcTester;
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TableMatcherIT {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester
+    static final JdbcTester db = JdbcTester
             .useDerby()
             .deleteBeforeEachTest("t1");
 
@@ -45,17 +44,15 @@ public class TableMatcherIT {
     @BeforeAll
     public static void setupDB() {
 
-        DbConnector connector = jdbcTester.getConnector();
+        db.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
+        db.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
+        db.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
+        db.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" BIGINT, \"c2\" VARCHAR (10))");
 
-        connector.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
-        connector.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
-        connector.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
-        connector.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" BIGINT, \"c2\" VARCHAR (10))");
-
-        T1 = connector.getTable("t1");
-        T2 = connector.getTable("t2");
-        T3 = connector.getTable("t3");
-        T4 = connector.getTable("t4");
+        T1 = db.getTable("t1");
+        T2 = db.getTable("t2");
+        T3 = db.getTable("t3");
+        T4 = db.getTable("t4");
     }
 
     @Test

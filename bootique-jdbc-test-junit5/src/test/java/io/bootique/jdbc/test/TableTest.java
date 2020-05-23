@@ -20,8 +20,9 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.connector.DbConnector;
+import io.bootique.jdbc.test.connector.InsertBuilder;
 import io.bootique.jdbc.test.dataset.TableDataSet;
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.connector.ExecStatementBuilder;
 import io.bootique.jdbc.test.matcher.TableMatcher;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import io.bootique.jdbc.test.metadata.DbTableMetadata;
@@ -63,7 +64,10 @@ public class TableTest {
         InsertBuilder insertBuilder = t.insertColumns("c", "a");
         assertNotNull(insertBuilder);
 
-        List<String> names = Arrays.stream(insertBuilder.columns).map(DbColumnMetadata::getName).collect(Collectors.toList());
+        List<String> names = Arrays.stream(insertBuilder.getColumns())
+                .map(DbColumnMetadata::getName)
+                .collect(Collectors.toList());
+
         assertEquals(asList("c", "a"), names, "Incorrect columns or order is not preserved");
     }
 

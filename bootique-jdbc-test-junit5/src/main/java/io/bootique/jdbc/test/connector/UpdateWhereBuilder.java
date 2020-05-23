@@ -17,17 +17,16 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.test.connector;
 
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 
-public class UpdateSetBuilder {
+public class UpdateWhereBuilder {
 
     protected ExecStatementBuilder builder;
-    protected int setCount;
+    protected int whereCount;
 
-    protected UpdateSetBuilder(ExecStatementBuilder builder) {
+    public UpdateWhereBuilder(ExecStatementBuilder builder) {
         this.builder = builder;
     }
 
@@ -39,29 +38,38 @@ public class UpdateSetBuilder {
         return builder.exec();
     }
 
-
-    public UpdateSetBuilder set(String column, Object value) {
-        return set(column, value, DbColumnMetadata.NO_TYPE);
+    public UpdateWhereBuilder and(String column, Object value) {
+        return and(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateSetBuilder set(String column, Object value, int valueType) {
-        if (setCount++ > 0) {
-            builder.append(", ");
+    public UpdateWhereBuilder and(String column, Object value, int valueType) {
+
+        if (whereCount++ > 0) {
+            builder.append(" AND ");
+        } else {
+            builder.append(" WHERE ");
         }
 
         builder.appendIdentifier(column)
                 .append(" = ")
                 .appendBinding(column, valueType, value);
+
         return this;
     }
 
-    public UpdateWhereBuilder where(String column, Object value) {
-        return where(column, value, DbColumnMetadata.NO_TYPE);
+    public UpdateWhereBuilder or(String column, Object value) {
+        return or(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateWhereBuilder where(String column, Object value, int valueType) {
-        UpdateWhereBuilder where = new UpdateWhereBuilder(builder);
-        where.and(column, value, valueType);
-        return where;
+    public UpdateWhereBuilder or(String column, Object value, int valueType) {
+        if (whereCount++ > 0) {
+            builder.append(" OR ");
+        }
+
+        builder.appendIdentifier(column)
+                .append(" = ")
+                .appendBinding(column, valueType, value);
+
+        return this;
     }
 }

@@ -19,12 +19,8 @@
 
 package io.bootique.jdbc.test.connector;
 
-import io.bootique.jdbc.test.BindingValueToStringConverter;
-import io.bootique.jdbc.test.ObjectValueConverter;
+import io.bootique.jdbc.test.RowReader;
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
-import io.bootique.jdbc.test.jdbc.RowReader;
-import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import io.bootique.jdbc.test.metadata.DbMetadata;
 
 import javax.sql.DataSource;
@@ -42,7 +38,7 @@ public class DbConnector {
     protected DataSource dataSource;
     protected DbMetadata metadata;
 
-    protected IdentifierQuotationStrategy identifierQuotationStrategy;
+    protected IdentifierQuoter identifierQuoter;
     protected BindingValueToStringConverter valueToStringConverter;
     protected ObjectValueConverter objectValueConverter;
 
@@ -56,9 +52,9 @@ public class DbConnector {
         this.valueToStringConverter = new BindingValueToStringConverter();
         this.objectValueConverter = new ObjectValueConverter();
 
-        this.identifierQuotationStrategy = metadata.shouldQuoteIdentifiers()
-                ? IdentifierQuotationStrategy.forQuoteSymbol(metadata.getIdentifierQuote())
-                : IdentifierQuotationStrategy.noQuote();
+        this.identifierQuoter = metadata.shouldQuoteIdentifiers()
+                ? IdentifierQuoter.forQuoteSymbol(metadata.getIdentifierQuote())
+                : IdentifierQuoter.noQuote();
 
         this.tables = new ConcurrentHashMap<>();
     }
@@ -100,7 +96,7 @@ public class DbConnector {
                 this,
                 objectValueConverter,
                 valueToStringConverter,
-                identifierQuotationStrategy);
+                identifierQuoter);
     }
 
     /**
@@ -115,6 +111,6 @@ public class DbConnector {
                 this,
                 objectValueConverter,
                 valueToStringConverter,
-                identifierQuotationStrategy);
+                identifierQuoter);
     }
 }

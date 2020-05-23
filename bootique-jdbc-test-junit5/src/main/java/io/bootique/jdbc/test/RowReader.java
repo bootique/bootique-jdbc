@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test.jdbc;
+package io.bootique.jdbc.test;
 
 import java.sql.Date;
 import java.sql.ResultSet;

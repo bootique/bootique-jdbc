@@ -42,13 +42,13 @@ public class DbConnectorIT {
     public void testDerbyQuotes() {
         DataSource dataSource = derbyTester.getDataSource();
         DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
-        assertEquals("\"a\"", connector.identifierQuotationStrategy.quoted("a"));
+        assertEquals("\"a\"", connector.identifierQuoter.quoted("a"));
     }
 
     @Test
     public void testMySQLQuotes() {
         DataSource dataSource = mysqlTester.getDataSource();
         DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
-        assertEquals("`a`", connector.identifierQuotationStrategy.quoted("a"));
+        assertEquals("`a`", connector.identifierQuoter.quoted("a"));
     }
 }

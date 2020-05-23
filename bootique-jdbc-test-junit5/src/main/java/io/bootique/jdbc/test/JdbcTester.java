@@ -24,6 +24,8 @@ import io.bootique.di.Key;
 import io.bootique.jdbc.test.connector.DbConnector;
 import io.bootique.jdbc.test.datasource.PoolingDataSource;
 import io.bootique.jdbc.test.datasource.PoolingDataSourceParameters;
+import io.bootique.jdbc.test.connector.ExecStatementBuilder;
+import io.bootique.jdbc.test.connector.SelectStatementBuilder;
 import io.bootique.jdbc.test.metadata.DbMetadata;
 import io.bootique.jdbc.test.tester.*;
 import io.bootique.resource.ResourceFactory;
@@ -90,13 +92,29 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
         return dataSource;
     }
 
-    public DbConnector getConnector() {
+    protected DbConnector getConnector() {
         assertNotNull(connector, "DbConnector is not initialized. Called outside of test lifecycle?");
         return connector;
     }
 
+    public DbMetadata getMetadata() {
+        return getConnector().getMetadata();
+    }
+
     public Table getTable(String name) {
-        return connector.getTable(name);
+        return getConnector().getTable(name);
+    }
+
+    public ExecStatementBuilder execStatement() {
+        return getConnector().execStatement();
+    }
+
+    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
+        return getConnector().selectStatement(rowReader);
+    }
+
+    public Connection getConnection() {
+        return getConnector().getConnection();
     }
 
     protected void configure(Binder binder, String dataSourceName) {

@@ -17,66 +17,53 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test.jdbc;
-
-import io.bootique.jdbc.test.BindingValueToStringConverter;
-import io.bootique.jdbc.test.connector.DbConnector;
-import io.bootique.jdbc.test.connector.IdentifierQuotationStrategy;
-import io.bootique.jdbc.test.ObjectValueConverter;
+package io.bootique.jdbc.test.connector;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @since 0.24
  */
-public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
+public class ExecStatementBuilder extends StatementBuilder<ExecStatementBuilder> {
 
-    private RowReader<T> rowReader;
-
-    public SelectStatementBuilder(
-            RowReader<T> rowReader,
+    public ExecStatementBuilder(
             DbConnector channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
-            IdentifierQuotationStrategy quotationStrategy) {
+            IdentifierQuoter quotationStrategy) {
         super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
-        this.rowReader = rowReader;
     }
 
-    public List<T> select(long maxRows) {
+    public int exec(String sql) {
+        return append(sql).exec();
+    }
+
+    public int exec() {
 
         String sql = getSql();
         log(sql, bindings);
 
         try {
-            return selectWithExceptions(sql, maxRows);
+            return execWithExceptions(sql);
         } catch (SQLException e) {
-            throw new RuntimeException("Error running selecting SQL: " + sql, e);
+            throw new RuntimeException("Error running updating SQL: " + sql, e);
         }
     }
 
-    protected List<T> selectWithExceptions(String sql, long maxRows) throws SQLException {
+    protected int execWithExceptions(String sql) throws SQLException {
 
-        List<T> result = new ArrayList<>();
+        try (Connection c = channel.getConnection();) {
 
-        try (Connection c = channel.getConnection()) {
+            int count;
             try (PreparedStatement st = c.prepareStatement(sql)) {
-
                 bind(st);
-                try (ResultSet rs = st.executeQuery()) {
-
-                    while (rs.next() && result.size() < maxRows) {
-                        result.add(rowReader.readRow(rs));
-                    }
-                }
+                count = st.executeUpdate();
             }
-        }
 
-        return result;
+            c.commit();
+            return count;
+        }
     }
 }

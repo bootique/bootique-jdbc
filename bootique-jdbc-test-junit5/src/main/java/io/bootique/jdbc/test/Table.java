@@ -19,11 +19,8 @@
 
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.connector.DbConnector;
+import io.bootique.jdbc.test.connector.*;
 import io.bootique.jdbc.test.dataset.CsvDataSetBuilder;
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
-import io.bootique.jdbc.test.jdbc.RowReader;
-import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import io.bootique.jdbc.test.matcher.TableMatcher;
 import io.bootique.jdbc.test.metadata.DbColumnMetadata;
 import io.bootique.jdbc.test.metadata.DbTableMetadata;
@@ -77,7 +74,7 @@ public class Table {
     /**
      * Update table statement
      *
-     * @return {@link UpdateSetBuilder}
+     * @return a new {@link io.bootique.jdbc.test.connector.UpdateSetBuilder}.
      */
     public UpdateSetBuilder update() {
         ExecStatementBuilder builder = execStatement()

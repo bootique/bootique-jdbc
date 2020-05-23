@@ -19,6 +19,7 @@
 
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.connector.BindingValueToStringConverter;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

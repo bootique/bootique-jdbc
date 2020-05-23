@@ -18,7 +18,7 @@
  */
 package io.bootique.jdbc.test.tester;
 
-import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.DbTester;
 import io.bootique.jdbc.test.datasource.DriverDataSource;
 import org.junit.jupiter.api.Assertions;
 
@@ -28,7 +28,7 @@ import java.util.Objects;
 /**
  * @since 2.0
  */
-public class TestcontainersTester extends JdbcTester {
+public class TestcontainersTester extends DbTester {
 
     private final String containerDbUrl;
 

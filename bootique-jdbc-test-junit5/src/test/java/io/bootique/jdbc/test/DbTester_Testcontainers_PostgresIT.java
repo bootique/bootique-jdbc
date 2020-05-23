@@ -33,22 +33,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JdbcTester_DerbyIT extends BaseJdbcTesterTest {
+public class DbTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester.useDerby();
+    static final DbTester db = DbTester.testcontainersDb("jdbc:tc:postgresql:11:///mydb");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(jdbcTester.setOrReplaceDataSource("myDS"))
+            .module(db.setOrReplaceDataSource("myDS"))
             .createRuntime();
 
     @Test
     @Order(0)
-    @DisplayName("Derby DataSource must be in use")
-    public void testDerby() {
-        run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
+    @DisplayName("PostgreSQL DataSource must be in use")
+    public void testPostgres() {
+        run(app, c -> assertEquals("PostgreSQL", c.getMetaData().getDatabaseProductName()));
     }
 
     @Test

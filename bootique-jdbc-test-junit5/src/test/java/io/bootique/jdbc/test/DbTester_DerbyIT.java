@@ -22,65 +22,65 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.test.junit5.BQApp;
 import io.bootique.test.junit5.BQTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class JdbcTester_DeleteBeforeEachTest_PostgresIT extends BaseJdbcTesterTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class DbTester_DerbyIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester
-            .useTestcontainers("jdbc:tc:postgresql:11:///mydb")
-            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_DeleteBeforeEachTest_PostgresIT.sql")
-            .deleteBeforeEachTest("a", "b");
+    static final DbTester db = DbTester.derbyDb();
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(jdbcTester.setOrReplaceDataSource("myDS"))
+            .module(db.setOrReplaceDataSource("myDS"))
             .createRuntime();
 
     @Test
-    @DisplayName("Check tables are clean, insert data for next test")
-    public void test1() {
-        checkNoData();
-        insertTestData();
+    @Order(0)
+    @DisplayName("Derby DataSource must be in use")
+    public void testDerby() {
+        run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
     }
 
     @Test
-    @DisplayName("Check tables are clean, insert data for next test")
-    public void test2() {
-        checkNoData();
-        insertTestData();
+    @Order(1)
+    @DisplayName("Setup data for subsequent state test")
+    public void setupDbState() {
+        createDbState(app);
     }
 
-    protected void checkNoData() {
+    @Test
+    @Order(2)
+    @DisplayName("DB state must be preserved between the tests")
+    public void testDbState() {
+        checkDbState(app);
+    }
+
+    protected void createDbState(BQRuntime app) {
         run(app, c -> {
             try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select count(1) from a")) {
-                    rs.next();
-                    assertEquals(0, rs.getInt(1));
-                }
-
-                try (ResultSet rs = s.executeQuery("select count(1) from b")) {
-                    rs.next();
-                    assertEquals(0, rs.getInt(1));
-                }
+                s.executeUpdate("create table a (id integer)");
+                s.executeUpdate("insert into a values (345)");
             }
         });
     }
 
-    protected void insertTestData() {
+    protected void checkDbState(BQRuntime app) {
         run(app, c -> {
             try (Statement s = c.createStatement()) {
-                s.executeUpdate("insert into a (id, name) values (10, 'myname')");
-                s.executeUpdate("insert into b (id, name, a_id) values (11, 'myname', 10)");
+                try (ResultSet rs = s.executeQuery("select * from a")) {
+                    assertTrue(rs.next());
+                    assertEquals(345, rs.getInt(1));
+                }
             }
         });
     }

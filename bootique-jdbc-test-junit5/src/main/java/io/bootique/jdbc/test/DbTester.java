@@ -52,9 +52,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @since 2.0
  */
-public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcTester.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
 
     protected ResourceFactory initDBScript;
     protected String[] deleteTablesInInsertOrder;
@@ -68,7 +68,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
      * @return a new tester instance
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
-    public static JdbcTester useTestcontainers(String containerDbUrl) {
+    public static DbTester testcontainersDb(String containerDbUrl) {
         return new TestcontainersTester(containerDbUrl);
     }
 
@@ -77,7 +77,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
      *
      * @return a new tester instance
      */
-    public static JdbcTester useDerby() {
+    public static DbTester derbyDb() {
 
         Path[] tempFir = new Path[1];
         assertDoesNotThrow(() -> {
@@ -123,7 +123,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
     }
 
     protected void bindSelf(Binder binder, String dataSourceName) {
-        binder.bind(Key.get(JdbcTester.class, dataSourceName)).toInstance(this);
+        binder.bind(Key.get(DbTester.class, dataSourceName)).toInstance(this);
     }
 
     protected void configureDataSource(Binder binder, String dataSourceName) {
@@ -137,18 +137,18 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback,
      * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
      * @return this tester
      */
-    public JdbcTester initDB(String initDBScript) {
+    public DbTester initDB(String initDBScript) {
         this.initDBScript = new ResourceFactory(initDBScript);
         return this;
     }
 
     /**
-     * Configres JdbcTester to delete data from the specified tables before each test.
+     * Configures the Tester to delete data from the specified tables before each test.
      *
      * @param tablesInInsertOrder a list of table names in the order of INSERT dependencies between them.
      * @return this tester
      */
-    public JdbcTester deleteBeforeEachTest(String... tablesInInsertOrder) {
+    public DbTester deleteBeforeEachTest(String... tablesInInsertOrder) {
         this.deleteTablesInInsertOrder = tablesInInsertOrder;
         return this;
     }

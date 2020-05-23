@@ -18,34 +18,45 @@
  */
 package io.bootique.jdbc.test;
 
-import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.test.junit5.BQApp;
+import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-public class JdbcTester_OverlayExistingConfigIT extends BaseJdbcTesterTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@BQTest
+public class DbTester_InitDB_PostgresIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester.useDerby();
+    static final DbTester db = DbTester
+            .testcontainersDb("jdbc:tc:postgresql:11:///mydb")
+            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_InitDB_PostgresIT.sql");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(jdbcTester.setOrReplaceDataSource("myDS"))
-            .module(b -> BQCoreModule.extend(b).setProperty("bq.jdbc.myDS.jdbcUrl", "test"))
+            .module(db.setOrReplaceDataSource("myDS"))
             .createRuntime();
 
     @Test
-    @Order(0)
-    @DisplayName("Existing DataSource config properties must be ignored")
-    public void testDerby() {
-        // assertion details are irrelevant here... We just need to make sure the DB started
-        run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
+    @DisplayName("DB was initialized")
+    public void testInitDB() {
+        run(app, c -> {
+            try(Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select * from b")) {
+                    assertTrue(rs.next());
+                    assertEquals(12, rs.getInt("id"));
+                    assertEquals("myname", rs.getString("name"));
+                }
+            }
+        });
     }
 }

@@ -25,7 +25,7 @@ import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
-import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.DbTester;
 
 /**
  * @since 2.0
@@ -39,7 +39,7 @@ public class TestDataSourceFactory implements ManagedDataSourceFactory {
     @Override
     public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
-        JdbcTester tester = injector.getInstance(Key.get(JdbcTester.class, dataSourceName));
+        DbTester tester = injector.getInstance(Key.get(DbTester.class, dataSourceName));
 
         return new ManagedDataSourceStarter(
                 null, // we don't know the URL around here. Also passing null URL allows to bypass legacy DerbyListener

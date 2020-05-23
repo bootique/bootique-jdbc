@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TableIT {
 
     @RegisterExtension
-    static final JdbcTester db = JdbcTester
-            .useDerby()
+    static final DbTester db = DbTester
+            .derbyDb()
             .deleteBeforeEachTest("t1", "t2");
 
     private static Table T1;

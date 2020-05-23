@@ -18,45 +18,34 @@
  */
 package io.bootique.jdbc.test;
 
+import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.test.junit5.BQApp;
-import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@BQTest
-public class JdbcTester_InitDB_DerbyIT extends BaseJdbcTesterTest {
+public class DbTester_OverlayExistingConfigIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
-    static final JdbcTester jdbcTester = JdbcTester
-            .useDerby()
-            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_InitDB_DerbyIT.sql");
+    static final DbTester db = DbTester.derbyDb();
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(jdbcTester.setOrReplaceDataSource("myDS"))
+            .module(db.setOrReplaceDataSource("myDS"))
+            .module(b -> BQCoreModule.extend(b).setProperty("bq.jdbc.myDS.jdbcUrl", "test"))
             .createRuntime();
 
     @Test
-    @DisplayName("DB was initialized")
-    public void testInitDB() {
-        run(app, c -> {
-            try(Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from \"b\"")) {
-                    assertTrue(rs.next());
-                    assertEquals(10, rs.getInt("id"));
-                    assertEquals("myname", rs.getString("name"));
-                }
-            }
-        });
+    @Order(0)
+    @DisplayName("Existing DataSource config properties must be ignored")
+    public void testDerby() {
+        // assertion details are irrelevant here... We just need to make sure the DB started
+        run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
     }
 }

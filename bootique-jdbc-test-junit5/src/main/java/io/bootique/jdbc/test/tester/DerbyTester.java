@@ -18,7 +18,7 @@
  */
 package io.bootique.jdbc.test.tester;
 
-import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.DbTester;
 import io.bootique.jdbc.test.datasource.DriverDataSource;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @since 2.0
  */
-public class DerbyTester extends JdbcTester {
+public class DerbyTester extends DbTester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DerbyTester.class);
 

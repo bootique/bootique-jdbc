@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.test.connector;
 
-import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.DbTester;
 import io.bootique.jdbc.test.metadata.DbMetadata;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.Test;
@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DbConnectorIT {
 
     @RegisterExtension
-    static final JdbcTester derbyTester = JdbcTester.useDerby();
+    static final DbTester derbyTester = DbTester.derbyDb();
 
     @RegisterExtension
-    static final JdbcTester mysqlTester = JdbcTester.useTestcontainers("jdbc:tc:mysql:8.0.20:///db");
+    static final DbTester mysqlTester = DbTester.testcontainersDb("jdbc:tc:mysql:8.0.20:///db");
 
     @Test
     public void testDerbyQuotes() {

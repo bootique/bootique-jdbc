@@ -18,10 +18,11 @@
  */
 package io.bootique.jdbc.test.tester;
 
+import io.bootique.jdbc.test.DbTester;
 import io.bootique.jdbc.test.connector.DbConnector;
 
 /**
- * Provides test data manager facilities to the {@link io.bootique.jdbc.test.JdbcTester}.
+ * Provides test data manager facilities to the {@link DbTester}.
  */
 public class DataManager {
 

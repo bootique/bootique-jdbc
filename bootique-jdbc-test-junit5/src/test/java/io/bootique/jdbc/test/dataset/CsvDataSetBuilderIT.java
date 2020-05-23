@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.test.dataset;
 
-import io.bootique.jdbc.test.JdbcTester;
+import io.bootique.jdbc.test.DbTester;
 import io.bootique.jdbc.test.Table;
 import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CsvDataSetBuilderIT {
 
     @RegisterExtension
-    static final JdbcTester db = JdbcTester
-            .useDerby()
+    static final DbTester db = DbTester
+            .derbyDb()
             .deleteBeforeEachTest("t1", "t2", "t3", "t4");
 
     private static Table T1;

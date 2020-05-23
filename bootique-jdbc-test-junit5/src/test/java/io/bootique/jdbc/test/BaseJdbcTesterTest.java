@@ -23,34 +23,13 @@ import io.bootique.jdbc.DataSourceFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class BaseJdbcTesterTest {
-
-    protected void createDbState(BQRuntime app) {
-        run(app, c -> {
-            try (Statement s = c.createStatement()) {
-                s.executeUpdate("create table a (id integer)");
-                s.executeUpdate("insert into a values (345)");
-            }
-        });
-    }
-
-    protected void checkDbState(BQRuntime app) {
-        run(app, c -> {
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from a")) {
-                    assertTrue(rs.next());
-                    assertEquals(345, rs.getInt(1));
-                }
-            }
-        });
-    }
 
     protected void run(BQRuntime app, JdbcRunner runner) {
         DataSourceFactory factory = app.getInstance(DataSourceFactory.class);

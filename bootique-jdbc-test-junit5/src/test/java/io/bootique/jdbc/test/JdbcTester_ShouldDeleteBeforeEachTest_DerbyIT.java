@@ -30,15 +30,15 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class JdbcTester_InitDB_DerbyIT extends BaseJdbcTesterTest {
+public class JdbcTester_ShouldDeleteBeforeEachTest_DerbyIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
     static final JdbcTester jdbcTester = JdbcTester
             .useDerby()
-            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_InitDB_DerbyIT.sql");
+            .initDB("classpath:io/bootique/jdbc/test/JdbcTester_ShouldDeleteBeforeEachTest_DerbyIT.sql")
+            .shouldDeleteBeforeEachTest("a", "b");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -47,15 +47,40 @@ public class JdbcTester_InitDB_DerbyIT extends BaseJdbcTesterTest {
             .createRuntime();
 
     @Test
-    @DisplayName("DB was initialized")
-    public void testInitDB() {
+    @DisplayName("Check tables are clean, insert data for next test")
+    public void test1() {
+        checkNoData();
+        insertTestData();
+    }
+
+    @Test
+    @DisplayName("Check tables are clean, insert data for next test")
+    public void test2() {
+        checkNoData();
+        insertTestData();
+    }
+
+    protected void checkNoData() {
         run(app, c -> {
-            try(Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from \"b\"")) {
-                    assertTrue(rs.next());
-                    assertEquals(10, rs.getInt("id"));
-                    assertEquals("myname", rs.getString("name"));
+            try (Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select count(1) from \"a\"")) {
+                    rs.next();
+                    assertEquals(0, rs.getInt(1));
                 }
+
+                try (ResultSet rs = s.executeQuery("select count(1) from \"b\"")) {
+                    rs.next();
+                    assertEquals(0, rs.getInt(1));
+                }
+            }
+        });
+    }
+
+    protected void insertTestData() {
+        run(app, c -> {
+            try (Statement s = c.createStatement()) {
+                s.executeUpdate("insert into \"a\" (\"id\", \"name\") values (10, 'myname')");
+                s.executeUpdate("insert into \"b\" (\"id\", \"name\", \"a_id\") values (11, 'myname', 10)");
             }
         });
     }

@@ -23,13 +23,11 @@ import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.jdbc.test.datasource.PoolingDataSource;
 import io.bootique.jdbc.test.datasource.PoolingDataSourceParameters;
-import io.bootique.jdbc.test.tester.DataSourcePropertyBuilder;
-import io.bootique.jdbc.test.tester.DerbyTester;
-import io.bootique.jdbc.test.tester.SqlScriptParser;
-import io.bootique.jdbc.test.tester.TestcontainersTester;
+import io.bootique.jdbc.test.tester.*;
 import io.bootique.resource.ResourceFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +36,7 @@ import javax.sql.DataSource;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -50,23 +49,31 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @since 2.0
  */
-public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback {
+public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcTester.class);
 
     protected ResourceFactory initDBScript;
+    protected String[] deleteTablesInInsertOrder;
+
     protected PoolingDataSource dataSource;
+    protected DatabaseChannel channel;
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers.
      *
-     * @return this tester
+     * @return a new tester instance
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
     public static JdbcTester useTestcontainers(String containerDbUrl) {
         return new TestcontainersTester(containerDbUrl);
     }
 
+    /**
+     * Creates a tester that will use in-memory Derby DB, with DB files stored in a temporary directory.
+     *
+     * @return a new tester instance
+     */
     public static JdbcTester useDerby() {
 
         Path[] tempFir = new Path[1];
@@ -80,6 +87,11 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     public DataSource getDataSource() {
         assertNotNull(dataSource, "DataSource is not initialized. Called outside of test lifecycle?");
         return dataSource;
+    }
+
+    public DatabaseChannel getChannel() {
+        assertNotNull(channel, "DatabaseChannel is not initialized. Called outside of test lifecycle?");
+        return channel;
     }
 
     protected void configure(Binder binder, String dataSourceName) {
@@ -108,6 +120,17 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     }
 
     /**
+     * Configres JdbcTester to delete data from the specified tables before each test.
+     *
+     * @param tablesInInsertOrder a list of table names in the order of INSERT dependencies between them.
+     * @return this tester
+     */
+    public JdbcTester shouldDeleteBeforeEachTest(String... tablesInInsertOrder) {
+        this.deleteTablesInInsertOrder = tablesInInsertOrder;
+        return this;
+    }
+
+    /**
      * Returns a Bootique module that can be used to configure a test DataSource in test Bootique runtime.
      *
      * @param dataSourceName the name of the DataSource
@@ -115,6 +138,23 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
      */
     public BQModule setOrReplaceDataSource(String dataSourceName) {
         return binder -> configure(binder, dataSourceName);
+    }
+
+    protected DatabaseChannel createDatabaseChannel(DataSource dataSource) {
+        // TODO: copy metadata handling from DFLib
+
+        try (Connection c = dataSource.getConnection()) {
+            DatabaseMetaData metaData = c.getMetaData();
+
+            // if no quotations are supported, per JDBC spec the returned value is space
+            String quoteString = metaData.getIdentifierQuoteString();
+            return " ".equals(quoteString)
+                    ? new DefaultDatabaseChannel(dataSource, "", false)
+                    : new DefaultDatabaseChannel(dataSource, quoteString, true);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading DB metadata", e);
+        }
     }
 
     protected PoolingDataSource createDataSource() {
@@ -153,6 +193,7 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     @Override
     public void beforeAll(ExtensionContext context) {
         this.dataSource = createDataSource();
+        this.channel = createDatabaseChannel(dataSource);
         execInitScript();
     }
 
@@ -160,5 +201,12 @@ public abstract class JdbcTester implements BeforeAllCallback, AfterAllCallback 
     public void afterAll(ExtensionContext context) {
         dataSource.close();
         dataSource = null;
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext context) {
+        if (deleteTablesInInsertOrder != null && deleteTablesInInsertOrder.length > 0) {
+            new DataManager(getChannel(), deleteTablesInInsertOrder).deleteData();
+        }
     }
 }

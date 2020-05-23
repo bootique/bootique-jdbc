@@ -48,7 +48,7 @@ public class JdbcTester_InitDB_PostgresIT extends BaseJdbcTesterTest {
 
     @Test
     @DisplayName("DB was initialized")
-    public void testPostgres() {
+    public void testInitDB() {
         run(app, c -> {
             try(Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from b")) {

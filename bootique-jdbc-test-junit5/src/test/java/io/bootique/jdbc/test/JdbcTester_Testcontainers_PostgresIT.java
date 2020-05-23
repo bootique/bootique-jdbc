@@ -25,7 +25,11 @@ import io.bootique.test.junit5.BQTest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -59,5 +63,25 @@ public class JdbcTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
     @DisplayName("DB state must be preserved between the tests")
     public void testDbState() {
         checkDbState(app);
+    }
+
+    protected void createDbState(BQRuntime app) {
+        run(app, c -> {
+            try (Statement s = c.createStatement()) {
+                s.executeUpdate("create table a (id integer)");
+                s.executeUpdate("insert into a values (345)");
+            }
+        });
+    }
+
+    protected void checkDbState(BQRuntime app) {
+        run(app, c -> {
+            try (Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select * from a")) {
+                    assertTrue(rs.next());
+                    assertEquals(345, rs.getInt(1));
+                }
+            }
+        });
     }
 }

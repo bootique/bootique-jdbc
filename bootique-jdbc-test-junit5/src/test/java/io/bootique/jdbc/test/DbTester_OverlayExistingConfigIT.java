@@ -21,7 +21,7 @@ package io.bootique.jdbc.test;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.test.junit5.BQApp;
+import io.bootique.junit5.BQApp;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

@@ -21,7 +21,7 @@ package io.bootique.jdbc.test.connector;
 
 import io.bootique.jdbc.test.DbTester;
 import io.bootique.jdbc.test.metadata.DbMetadata;
-import io.bootique.test.junit5.BQTest;
+import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

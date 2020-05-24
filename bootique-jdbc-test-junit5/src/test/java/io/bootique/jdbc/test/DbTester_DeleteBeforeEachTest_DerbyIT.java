@@ -20,8 +20,8 @@ package io.bootique.jdbc.test;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.test.junit5.BQApp;
-import io.bootique.test.junit5.BQTest;
+import io.bootique.junit5.BQApp;
+import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

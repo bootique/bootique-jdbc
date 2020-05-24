@@ -37,7 +37,7 @@ public class DbTester_DeleteBeforeEachTest_PostgresIT extends BaseJdbcTesterTest
     @RegisterExtension
     static final DbTester db = DbTester
             .testcontainersDb("jdbc:tc:postgresql:11:///mydb")
-            .initDB("classpath:io/bootique/jdbc/junit5/JdbcTester_DeleteBeforeEachTest_PostgresIT.sql")
+            .initDB("classpath:io/bootique/jdbc/junit5/DbTester_DeleteBeforeEachTest_PostgresIT.sql")
             .deleteBeforeEachTest("a", "b");
 
     @BQApp(skipRun = true)

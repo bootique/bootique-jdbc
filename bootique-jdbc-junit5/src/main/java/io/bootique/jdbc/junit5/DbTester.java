@@ -57,6 +57,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
 
     protected ResourceFactory initDBScript;
+    protected String initDBScriptDelimiter;
     protected String[] deleteTablesInInsertOrder;
 
     protected PoolingDataSource dataSource;
@@ -138,7 +139,21 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
      * @return this tester
      */
     public DbTester initDB(String initDBScript) {
+        return initDB(initDBScript, null);
+    }
+
+    /**
+     * Executes a provided SQL script after the DB startup. The script would usually contain database schema and test
+     * data.
+     *
+     * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
+     * @param delimiter    SQL statements delimiter in the "initDBScript". AN explicit delimiter may be useful when
+     *                     the file contains common DB delimiters in the middle of stored procedure declartations, etc.
+     * @return this tester
+     */
+    public DbTester initDB(String initDBScript, String delimiter) {
         this.initDBScript = new ResourceFactory(initDBScript);
+        this.initDBScriptDelimiter = delimiter;
         return this;
     }
 
@@ -178,7 +193,8 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
         if (initDBScript != null) {
 
             LOGGER.info("initializing DB from {}", initDBScript.getUrl());
-            Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", ";").getStatements(initDBScript);
+            String delimiter = this.initDBScriptDelimiter != null ? this.initDBScriptDelimiter : ";";
+            Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", delimiter).getStatements(initDBScript);
 
             try (Connection c = dataSource.getConnection()) {
 
@@ -206,7 +222,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     @Override
     public void afterAll(ExtensionContext context) {
         // can be null if failed to start
-        if(dataSource != null) {
+        if (dataSource != null) {
             dataSource.close();
             dataSource = null;
         }

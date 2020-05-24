@@ -38,7 +38,7 @@ public class DbTester_InitDB_DerbyIT extends BaseJdbcTesterTest {
     @RegisterExtension
     static final DbTester db = DbTester
             .derbyDb()
-            .initDB("classpath:io/bootique/jdbc/junit5/JdbcTester_InitDB_DerbyIT.sql");
+            .initDB("classpath:io/bootique/jdbc/junit5/DbTester_InitDB_DerbyIT.sql");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()

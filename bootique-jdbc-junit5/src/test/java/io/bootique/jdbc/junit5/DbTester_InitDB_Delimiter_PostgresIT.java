@@ -26,19 +26,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class DbTester_DeleteBeforeEachTest_DerbyIT extends BaseJdbcTesterTest {
+public class DbTester_InitDB_Delimiter_PostgresIT extends BaseJdbcTesterTest {
 
     @RegisterExtension
     static final DbTester db = DbTester
-            .derbyDb()
-            .initDB("classpath:io/bootique/jdbc/junit5/DbTester_DeleteBeforeEachTest_DerbyIT.sql")
-            .deleteBeforeEachTest("a", "b");
+            .testcontainersDb("jdbc:tc:postgresql:11:///mydb")
+            .initDB("classpath:io/bootique/jdbc/junit5/DbTester_InitDB_Delimiter_PostgresIT.sql", "--");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -47,40 +48,21 @@ public class DbTester_DeleteBeforeEachTest_DerbyIT extends BaseJdbcTesterTest {
             .createRuntime();
 
     @Test
-    @DisplayName("Check tables are clean, insert data for next test")
-    public void test1() {
-        checkNoData();
-        insertTestData();
-    }
-
-    @Test
-    @DisplayName("Check tables are clean, insert data for next test")
-    public void test2() {
-        checkNoData();
-        insertTestData();
-    }
-
-    protected void checkNoData() {
+    @DisplayName("DB was initialized with custom delimiter")
+    public void testInitDB() {
         run(app, c -> {
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select count(1) from \"a\"")) {
-                    rs.next();
-                    assertEquals(0, rs.getInt(1));
-                }
 
-                try (ResultSet rs = s.executeQuery("select count(1) from \"b\"")) {
-                    rs.next();
-                    assertEquals(0, rs.getInt(1));
-                }
+            // procedure must be there, and the second definition from the test must be in use
+            try (CallableStatement s = c.prepareCall("{call insert_procedure ()}")) {
+                s.executeUpdate();
             }
-        });
-    }
 
-    protected void insertTestData() {
-        run(app, c -> {
             try (Statement s = c.createStatement()) {
-                s.executeUpdate("insert into \"a\" (\"id\", \"name\") values (10, 'myname')");
-                s.executeUpdate("insert into \"b\" (\"id\", \"name\", \"a_id\") values (11, 'myname', 10)");
+                try (ResultSet rs = s.executeQuery("select * from b")) {
+                    assertTrue(rs.next());
+                    assertEquals(66, rs.getInt("id"));
+                    assertEquals("yyy", rs.getString("name"));
+                }
             }
         });
     }

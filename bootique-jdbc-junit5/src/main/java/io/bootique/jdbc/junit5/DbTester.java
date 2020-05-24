@@ -205,8 +205,11 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
 
     @Override
     public void afterAll(ExtensionContext context) {
-        dataSource.close();
-        dataSource = null;
+        // can be null if failed to start
+        if(dataSource != null) {
+            dataSource.close();
+            dataSource = null;
+        }
     }
 
     @Override

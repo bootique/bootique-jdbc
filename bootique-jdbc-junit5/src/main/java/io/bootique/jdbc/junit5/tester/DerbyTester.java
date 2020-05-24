@@ -53,7 +53,9 @@ public class DerbyTester extends DbTester {
 
     public DerbyTester(File derbyFolder) {
         this.derbyFolder = Objects.requireNonNull(derbyFolder);
-        this.jdbcUrl = String.format("jdbc:derby:%s;create=true", derbyFolder);
+
+        // placing derby in subfolder, so that the presence of the parent folder is not in the way of starting the DB
+        this.jdbcUrl = String.format("jdbc:derby:%s/derby;create=true", derbyFolder);
 
         // suppressing derby.log in "user.dir".
         if (System.getProperty("derby.stream.error.field") == null) {
@@ -76,7 +78,7 @@ public class DerbyTester extends DbTester {
     protected void prepareForDerbyStartup() {
 
         LOGGER.info("Preparing Derby server at '{}'...", derbyFolder);
-        deleteDir(derbyFolder);
+        deleteDirContents(derbyFolder);
 
         // Need to reload the driver if there was a previous shutdown
         // see https://db.apache.org/derby/docs/10.5/devguide/tdevdvlp20349.html
@@ -99,7 +101,7 @@ public class DerbyTester extends DbTester {
         deleteDir(derbyFolder);
     }
 
-    protected static void deleteDir(File dir) {
+    protected static void deleteDirContents(File dir) {
         if (dir.exists()) {
 
             for (File f : dir.listFiles()) {
@@ -109,7 +111,12 @@ public class DerbyTester extends DbTester {
                     deleteDir(f);
                 }
             }
+        }
+    }
 
+    protected static void deleteDir(File dir) {
+        if (dir.exists()) {
+            deleteDirContents(dir);
             assertTrue(dir.delete());
         }
     }

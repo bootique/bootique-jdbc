@@ -23,7 +23,6 @@ import io.bootique.Bootique;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -46,8 +45,6 @@ public class DbTester_setOrReplaceDataSourceIT {
             .createRuntime();
 
     @Test
-    // TODO:
-    @Disabled("TODO: two modules created via lambda are treated as one by Bootique per #283. This is a bug in BQ core")
     public void testTwoDataSources() {
         DataSourceFactory dsf = app.getInstance(DataSourceFactory.class);
         assertEquals(new HashSet<>(asList("db1", "db2")), dsf.allNames());

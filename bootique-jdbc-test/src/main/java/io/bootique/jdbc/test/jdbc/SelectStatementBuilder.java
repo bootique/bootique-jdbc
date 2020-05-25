@@ -48,6 +48,13 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
         this.rowReader = rowReader;
     }
 
+    /**
+     * @since 2.0
+     */
+    public List<T> select() {
+        return select(Long.MAX_VALUE);
+    }
+
     public List<T> select(long maxRows) {
 
         String sql = getSql();

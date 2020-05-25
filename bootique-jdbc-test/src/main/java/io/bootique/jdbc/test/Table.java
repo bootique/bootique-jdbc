@@ -243,7 +243,7 @@ public class Table {
     }
 
     public List<Object[]> selectColumns(List<Column> columns) {
-        return selectColumnsBuilder(columns).select(Long.MAX_VALUE);
+        return selectColumnsBuilder(columns).select();
     }
 
     protected SelectStatementBuilder<Object[]> selectColumnsBuilder(List<Column> columns) {

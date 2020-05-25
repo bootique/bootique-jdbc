@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 0.24
+ * @since 2.0
  */
 public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
 
@@ -43,6 +43,10 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
             IdentifierQuoter quotationStrategy) {
         super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
         this.rowReader = rowReader;
+    }
+
+    public List<T> select() {
+        return select(Long.MAX_VALUE);
     }
 
     public List<T> select(long maxRows) {

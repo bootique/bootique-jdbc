@@ -40,16 +40,6 @@
                 <artifactId>bootique-jdbc</artifactId>
                 <version>${bootique.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-tomcat</artifactId>
-                <version>${bootique.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-hikaricp</artifactId>
-                <version>${bootique.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -90,11 +80,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-tomcat</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

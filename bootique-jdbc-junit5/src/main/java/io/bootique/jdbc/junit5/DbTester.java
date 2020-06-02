@@ -21,13 +21,13 @@ package io.bootique.jdbc.junit5;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Key;
-import io.bootique.jdbc.junit5.tester.*;
 import io.bootique.jdbc.junit5.connector.DbConnector;
-import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
-import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
 import io.bootique.jdbc.junit5.connector.SelectStatementBuilder;
+import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
+import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
+import io.bootique.jdbc.junit5.tester.*;
 import io.bootique.resource.ResourceFactory;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -44,7 +44,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A helper class that is declared in a unit test and manages database startup, schema and data initialization and
@@ -89,12 +88,12 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     public DataSource getDataSource() {
-        assertNotNull(dataSource, "DataSource is not initialized. Called outside of test lifecycle?");
+        initIfNeeded();
         return dataSource;
     }
 
     protected DbConnector getConnector() {
-        assertNotNull(connector, "DbConnector is not initialized. Called outside of test lifecycle?");
+        initIfNeeded();
         return connector;
     }
 
@@ -212,11 +211,25 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
         }
     }
 
+    protected void initIfNeeded() {
+        if (dataSource == null) {
+            synchronized (this) {
+                if (dataSource == null) {
+                    this.dataSource = createDataSource();
+                    this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
+                    execInitScript();
+                }
+            }
+        }
+    }
+
     @Override
     public void beforeAll(ExtensionContext context) {
-        this.dataSource = createDataSource();
-        this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
-        execInitScript();
+        // we don't absolutely have to do it (letting on demand initialization to happen when it does), but
+        // suppose there's a benefit to initializing the DB unconditionally in a predictable place
+        // Note that by now it may already be initialized if BQRuntime using DbTester had some eager dependencies
+        // on DataSource.
+        initIfNeeded();
     }
 
     @Override

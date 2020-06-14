@@ -46,8 +46,9 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
- * A helper class that is declared in a unit test and manages database startup, schema and data initialization and
- * shutdown.
+ * A JUnit 5 extension that manages a single test database. DbTester is declared in a unit test and handles database
+ * startup, schema and data initialization and shutdown. A single database controlled by DbTester can be used by
+ * one or more BQRuntimes.
  *
  * @since 2.0
  */

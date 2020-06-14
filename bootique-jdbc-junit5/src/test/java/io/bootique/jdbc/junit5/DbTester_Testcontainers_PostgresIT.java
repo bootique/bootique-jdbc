@@ -41,7 +41,7 @@ public class DbTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(db.setOrReplaceDataSource("myDS"))
+            .module(db.moduleWithTestDataSource("myDS"))
             .createRuntime();
 
     @Test

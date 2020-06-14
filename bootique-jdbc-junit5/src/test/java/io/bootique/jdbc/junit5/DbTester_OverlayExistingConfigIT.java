@@ -37,7 +37,7 @@ public class DbTester_OverlayExistingConfigIT extends BaseJdbcTesterTest {
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(db.setOrReplaceDataSource("myDS"))
+            .module(db.moduleWithTestDataSource("myDS"))
             .module(b -> BQCoreModule.extend(b).setProperty("bq.jdbc.myDS.jdbcUrl", "test"))
             .createRuntime();
 

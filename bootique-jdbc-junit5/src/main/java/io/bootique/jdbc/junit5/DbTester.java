@@ -169,12 +169,14 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     /**
-     * Returns a Bootique module that can be used to configure a test DataSource in test Bootique runtime.
+     * Returns a Bootique module that can be used to configure a test DataSource in test {@link io.bootique.BQRuntime}.
+     * This method can be used to initialize one or more BQRuntimes in a test class, so that they can share the database
+     * managed by this tester.
      *
-     * @param dataSourceName the name of the DataSource
+     * @param dataSourceName the name of the DataSource to create or replace in the target runtime
      * @return a new Bootique module with test DataSource configuration.
      */
-    public BQModule setOrReplaceDataSource(String dataSourceName) {
+    public BQModule moduleWithTestDataSource(String dataSourceName) {
         return binder -> configure(binder, dataSourceName);
     }
 

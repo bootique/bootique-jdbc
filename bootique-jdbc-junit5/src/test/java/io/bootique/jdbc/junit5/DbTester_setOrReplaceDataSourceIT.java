@@ -40,8 +40,8 @@ public class DbTester_setOrReplaceDataSourceIT {
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(db.setOrReplaceDataSource("db1"))
-            .module(db.setOrReplaceDataSource("db2"))
+            .module(db.moduleWithTestDataSource("db1"))
+            .module(db.moduleWithTestDataSource("db2"))
             .createRuntime();
 
     @Test

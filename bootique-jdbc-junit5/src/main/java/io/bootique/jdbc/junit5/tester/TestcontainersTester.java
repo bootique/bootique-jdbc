@@ -21,19 +21,26 @@ package io.bootique.jdbc.junit5.tester;
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.sql.DataSource;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @since 2.0
  */
 public class TestcontainersTester extends DbTester {
 
-    private final String containerDbUrl;
+    private static final Pattern TC_REUSABLE_PATTERN = Pattern.compile("&?TC_REUSABLE=([^\\?&]+)");
 
-    public TestcontainersTester(String containerDbUrl) {
+    private final String containerDbUrl;
+    private boolean reusable;
+
+    public TestcontainersTester(String containerDbUrl, boolean reusable) {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
+        this.reusable = reusable;
     }
 
     @Override
@@ -41,6 +48,46 @@ public class TestcontainersTester extends DbTester {
         Assertions.assertDoesNotThrow(
                 () -> Class.forName("org.testcontainers.jdbc.ContainerDatabaseDriver"),
                 "Error loading testcontainers JDBC driver");
-        return new DriverDataSource(null, containerDbUrl, null, null);
+
+        // Ensure that Testcontainers doesn't shut down the container underneath DbTester.
+        // Generally keeping the connection pool around is sufficient to prevent shutdown
+        // (as it keeps some open connections), but let's not rely on side effects for this,
+        // and set TC_REUSABLE=true explicitly
+        String url = reusable ? reusableContainerDbUrl(containerDbUrl) : containerDbUrl;
+        return new DriverDataSource(null, url, null, null);
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) {
+        if (!reusable) {
+            super.afterAll(context);
+        }
+        // else - keep the DataSource around
+    }
+
+    protected String reusableContainerDbUrl(String url) {
+        String reusableParam = "TC_REUSABLE=true";
+        String andReusableParam = "&" + reusableParam;
+
+        int q = url.indexOf('?');
+        if (q < 0) {
+            return url + "?" + reusableParam;
+        } else if (q == url.length() - 1) {
+            return url + reusableParam;
+        }
+
+        Matcher m = TC_REUSABLE_PATTERN.matcher(url.substring(q + 1));
+        if (!m.find()) {
+            return url + andReusableParam;
+        }
+
+        StringBuffer out = new StringBuffer().append(url, 0, q + 1);
+        do {
+            m.appendReplacement(out, m.group().startsWith("&") ? andReusableParam : reusableParam);
+        } while (m.find());
+
+        m.appendTail(out);
+
+        return out.toString();
     }
 }

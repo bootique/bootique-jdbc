@@ -72,13 +72,32 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     protected DbConnector connector;
 
     /**
-     * Creates a tester that will bootstrap a DB using Docker/Testcontainers.
+     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. The tester is created in a "non-reusable"
+     * mode, i.e. it will be reset according to the DbTester JUnit lifecycle. To create a container that is shared across
+     * multiple test classes use {@link #testcontainersDb(String, boolean)}.
      *
+     * @param containerDbUrl a Testcontainers DB URL
      * @return a new tester instance
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
     public static DbTester testcontainersDb(String containerDbUrl) {
-        return new TestcontainersTester(containerDbUrl);
+        return testcontainersDb(containerDbUrl, false);
+    }
+
+    /**
+     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If "reusable" is true, the DB container
+     * and its database will be reused. E.g. a static DbTester will not attempt to reinitialize schema and data between
+     * different test classes. DbTester will alter "containerDbUrl" before passing it to Testcontainers, forcing a
+     * "TC_REUSABLE=true" parameter regardless of of its current presence or value.
+     *
+     * @param containerDbUrl a Testcontainers DB URL
+     * @param reusable       whether the container should only be started once and reused across test classes, ignoring
+     *                       JUnit lifecycle.
+     * @return a new tester instance
+     * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
+     */
+    public static DbTester testcontainersDb(String containerDbUrl, boolean reusable) {
+        return new TestcontainersTester(containerDbUrl, reusable);
     }
 
     /**

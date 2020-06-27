@@ -27,24 +27,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class BaseReusableDbTesterTest extends BaseDbTesterTest {
 
-    protected static final String DB_URL =
-            "jdbc:tc:postgresql:11:///mydb" +
-                    "?TC_REUSABLE=true" +
-                    "&TC_INITFUNCTION=io.bootique.jdbc.junit5.BaseReusableDbTesterTest::initDB";
+    private static boolean wasInitialized;
 
     @RegisterExtension
     protected static final DbTester db = DbTester
-            .testcontainersDb(DB_URL)
+            .testcontainersDb("jdbc:tc:postgresql:11:///", true)
+            .initDB(BaseReusableDbTesterTest::initDB)
             .deleteBeforeEachTest("reusable_a");
 
-    public static void initDB(Connection connection) throws SQLException {
+    static void initDB(Connection connection) throws SQLException {
+
+        assertFalse(wasInitialized, "'initDB' is called more than once. Container not reusable?");
+
         try (Statement s = connection.createStatement()) {
             s.executeUpdate("create table reusable_a (id integer)");
             s.executeUpdate("insert into reusable_a values (3456)");
         }
+
+        wasInitialized = true;
     }
 
     protected void checkEmptyAndInsert(BQRuntime app) {

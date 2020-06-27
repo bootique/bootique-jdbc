@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class DbTester_TesteFactory_DerbyIT {
+public class DbTester_TestFactory_DerbyIT {
 
     @RegisterExtension
     static final DbTester db = DbTester.derbyDb();

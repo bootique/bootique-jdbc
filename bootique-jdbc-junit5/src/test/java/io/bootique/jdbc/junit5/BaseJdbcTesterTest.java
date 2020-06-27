@@ -19,6 +19,7 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.jdbc.DataSourceFactory;
 
 import javax.sql.DataSource;
@@ -30,6 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class BaseJdbcTesterTest {
+
+    protected static BQRuntime createRuntime(DbTester db) {
+        return Bootique.app()
+                .autoLoadModules()
+                .module(db.moduleWithTestDataSource("myDS"))
+                .createRuntime();
+    }
 
     protected void run(BQRuntime app, JdbcRunner runner) {
         DataSourceFactory factory = app.getInstance(DataSourceFactory.class);

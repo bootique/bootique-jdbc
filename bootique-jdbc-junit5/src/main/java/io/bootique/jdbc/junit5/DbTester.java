@@ -28,7 +28,11 @@ import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.jdbc.junit5.tester.*;
+import io.bootique.jdbc.liquibase.LiquibaseRunner;
 import io.bootique.resource.ResourceFactory;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
+import liquibase.Liquibase;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -42,6 +46,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -58,6 +63,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
 
     protected ResourceFactory initDBScript;
     protected String initDBScriptDelimiter;
+    protected ResourceFactory liquibaseChangeLog;
     protected String[] deleteTablesInInsertOrder;
 
     protected PoolingDataSource dataSource;
@@ -158,6 +164,18 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     /**
+     * Executes provides Liquibase changelog file after the DB startup.
+     *
+     * @param liquibaseChangeLog a location of the Liquibase changelog file in Bootique
+     *                           {@link io.bootique.resource.ResourceFactory} format.
+     * @return this tester
+     */
+    public DbTester runLiquibaseMigrations(String liquibaseChangeLog) {
+        this.liquibaseChangeLog = new ResourceFactory(liquibaseChangeLog);
+        return this;
+    }
+
+    /**
      * Configures the Tester to delete data from the specified tables before each test.
      *
      * @param tablesInInsertOrder a list of table names in the order of INSERT dependencies between them.
@@ -214,6 +232,22 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
         }
     }
 
+    protected void execLiquibaseMigrations() {
+        if (liquibaseChangeLog != null) {
+            LOGGER.info("executing Liquibase migrations from {}", liquibaseChangeLog.getUrl());
+            new LiquibaseRunner(Collections.singletonList(liquibaseChangeLog), dataSource, null)
+                    .run(this::execLiquibaseMigrations);
+        }
+    }
+
+    protected void execLiquibaseMigrations(Liquibase lb) {
+        try {
+            lb.update(new Contexts(), new LabelExpression());
+        } catch (Exception e) {
+            throw new RuntimeException("Error running migrations against the test DB", e);
+        }
+    }
+
     protected void initIfNeeded() {
         if (dataSource == null) {
             synchronized (this) {
@@ -221,6 +255,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
                     this.dataSource = createDataSource();
                     this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
                     execInitScript();
+                    execLiquibaseMigrations();
                 }
             }
         }

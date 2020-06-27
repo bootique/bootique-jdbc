@@ -28,11 +28,15 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bootique-jdbc-junit5</artifactId>
+    <artifactId>bootique-jdbc-liquibase-internal</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-jdbc-junit5: JUnit5-based helper classes for unit tests that require a database</name>
-    <description>Provides JUnit5-based helper classes for unit tests that require a database</description>
+    <name>bootique-jdbc-liquibase-internal: Non-public module with Bootique Liquibase utilities</name>
+    <description>
+    	Provides utilities and dependency management for Bootique modules that need to run Liquibase 
+    	migrations embedded in their code. Not intended for direct inclusion by the end users. 
+    	NOT TO BE EXPOSED to the users via "bootique-bom".
+    </description>
 
     <dependencyManagement>
         <dependencies>
@@ -42,9 +46,20 @@
                 <version>${bootique.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-liquibase-internal</artifactId>
-                <version>${bootique.version}</version>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
+                <exclusions>
+                    <!-- Version conflicting with Bootique core one imported via jackson -->
+                    <exclusion>
+                        <groupId>org.yaml</groupId>
+                        <artifactId>snakeyaml</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -56,24 +71,12 @@
             <artifactId>bootique-jdbc</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.bootique</groupId>
-            <artifactId>bootique-junit5</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-liquibase-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
 
         <!-- Unit test dependencies -->
@@ -85,26 +88,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

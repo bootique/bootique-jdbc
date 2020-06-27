@@ -2,6 +2,7 @@
 
 * #95 Support for JUnit 5
 * #96 DbTester - a JUnit 5 extension to bootstrap test databases, provide integration w/Testcontainers
+* #97 DbTester support for Liquibase 
 
 ## 1.1
 

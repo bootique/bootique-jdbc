@@ -18,7 +18,10 @@
  */
 package io.bootique.jdbc.junit5;
 
+import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.command.Command;
+import io.bootique.command.CommandOutcome;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.junit5.BQTestFactory;
 import org.junit.jupiter.api.Test;
@@ -26,8 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.sql.DataSource;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DbTester_TestFactory_DerbyIT {
 
@@ -38,7 +40,7 @@ public class DbTester_TestFactory_DerbyIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testBootstrapWithTestFactory() {
+    public void testCreateRuntimeWithTestFactory() {
         BQRuntime rt1 = testFactory
                 .app()
                 .autoLoadModules()
@@ -57,5 +59,19 @@ public class DbTester_TestFactory_DerbyIT {
         DataSource ds2 = rt2.getInstance(DataSourceFactory.class).forName("ds");
         assertNotNull(ds2);
         assertSame(ds1, ds2);
+    }
+
+    @Test
+    public void testRunWithTestFactory() {
+
+        Command c = cli -> CommandOutcome.succeeded();
+        CommandOutcome ran = testFactory
+                .app()
+                .autoLoadModules()
+                .module(db.moduleWithTestDataSource("ds"))
+                .module(b -> BQCoreModule.extend(b).addCommand(c).setDefaultCommand(c))
+                .run();
+
+        assertTrue(ran.isSuccess());
     }
 }

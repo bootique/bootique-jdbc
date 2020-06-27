@@ -47,6 +47,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -63,6 +64,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
 
     protected ResourceFactory initDBScript;
     protected String initDBScriptDelimiter;
+    protected JdbcOp initFunction;
     protected ResourceFactory liquibaseChangeLog;
     protected String[] deleteTablesInInsertOrder;
 
@@ -163,6 +165,11 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
         return this;
     }
 
+    public DbTester initDB(JdbcOp initFunction) {
+        this.initFunction = Objects.requireNonNull(initFunction);
+        return this;
+    }
+
     /**
      * Executes provides Liquibase changelog file after the DB startup.
      *
@@ -209,6 +216,19 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
 
     protected abstract DataSource createNonPoolingDataSource();
 
+    protected void execInitFunction() {
+        if (initFunction != null) {
+
+            LOGGER.info("initializing DB from using custom init function");
+
+            try (Connection c = dataSource.getConnection()) {
+                initFunction.run(c);
+            } catch (SQLException e) {
+                throw new RuntimeException("Error running custom init function: " + e.getMessage(), e);
+            }
+        }
+    }
+
     protected void execInitScript() {
         if (initDBScript != null) {
 
@@ -254,6 +274,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
                 if (dataSource == null) {
                     this.dataSource = createDataSource();
                     this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
+                    execInitFunction();
                     execInitScript();
                     execLiquibaseMigrations();
                 }

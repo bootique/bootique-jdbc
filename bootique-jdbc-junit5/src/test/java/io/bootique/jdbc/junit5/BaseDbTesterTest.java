@@ -39,7 +39,7 @@ public abstract class BaseDbTesterTest {
                 .createRuntime();
     }
 
-    protected void run(BQRuntime app, JdbcRunner runner) {
+    protected void run(BQRuntime app, JdbcOp runner) {
         DataSourceFactory factory = app.getInstance(DataSourceFactory.class);
         assertEquals(Collections.singleton("myDS"), factory.allNames());
 
@@ -49,10 +49,5 @@ public abstract class BaseDbTesterTest {
         } catch (SQLException e) {
             fail("Error executing DB operation", e);
         }
-    }
-
-    @FunctionalInterface
-    interface JdbcRunner {
-        void run(Connection c) throws SQLException;
     }
 }

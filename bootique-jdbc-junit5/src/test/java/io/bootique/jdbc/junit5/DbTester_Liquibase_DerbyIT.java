@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class DbTester_Liquibase_DerbyIT extends BaseJdbcTesterTest {
+public class DbTester_Liquibase_DerbyIT extends BaseDbTesterTest {
 
     @RegisterExtension
     static final DbTester db = DbTester

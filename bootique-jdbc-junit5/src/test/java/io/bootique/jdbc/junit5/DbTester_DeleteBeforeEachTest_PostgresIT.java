@@ -32,7 +32,7 @@ import java.sql.Statement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class DbTester_DeleteBeforeEachTest_PostgresIT extends BaseJdbcTesterTest {
+public class DbTester_DeleteBeforeEachTest_PostgresIT extends BaseDbTesterTest {
 
     @RegisterExtension
     static final DbTester db = DbTester

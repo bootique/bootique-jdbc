@@ -30,7 +30,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public abstract class BaseJdbcTesterTest {
+public abstract class BaseDbTesterTest {
 
     protected static BQRuntime createRuntime(DbTester db) {
         return Bootique.app()

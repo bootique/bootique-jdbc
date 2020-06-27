@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DbTester_DerbyIT extends BaseJdbcTesterTest {
+public class DbTester_DerbyIT extends BaseDbTesterTest {
 
     @RegisterExtension
     static final DbTester db = DbTester.derbyDb();

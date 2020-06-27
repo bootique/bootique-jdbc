@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DbTester_Testcontainers_PostgresIT extends BaseJdbcTesterTest {
+public class DbTester_Testcontainers_PostgresIT extends BaseDbTesterTest {
 
     @RegisterExtension
     static final DbTester db = DbTester.testcontainersDb("jdbc:tc:postgresql:11:///mydb");

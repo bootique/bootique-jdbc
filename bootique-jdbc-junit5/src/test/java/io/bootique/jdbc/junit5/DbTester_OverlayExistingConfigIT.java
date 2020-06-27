@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DbTester_OverlayExistingConfigIT extends BaseJdbcTesterTest {
+public class DbTester_OverlayExistingConfigIT extends BaseDbTesterTest {
 
     @RegisterExtension
     static final DbTester db = DbTester.derbyDb();

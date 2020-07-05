@@ -22,9 +22,9 @@ package io.bootique.jdbc.junit5.dataset;
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @BQTest
 public class CsvDataSetBuilderIT {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester
             .derbyDb()
             .deleteBeforeEachTest("t1", "t2", "t3", "t4");

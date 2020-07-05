@@ -23,20 +23,22 @@ import io.bootique.BQRuntime;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class DbTester_TestFactory_DerbyIT {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester.derbyDb();
 
-    @RegisterExtension
+    @BQTestTool
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test

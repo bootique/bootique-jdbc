@@ -20,9 +20,9 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.sql.Date;
 import java.sql.Types;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @BQTest
 public class TableIT {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester
             .derbyDb()
             .deleteBeforeEachTest("t1", "t2");

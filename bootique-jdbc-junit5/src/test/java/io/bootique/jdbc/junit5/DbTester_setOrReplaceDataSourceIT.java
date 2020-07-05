@@ -23,8 +23,8 @@ import io.bootique.Bootique;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.HashSet;
 
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @BQTest
 public class DbTester_setOrReplaceDataSourceIT {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester.derbyDb();
 
     @BQApp(skipRun = true)

@@ -22,16 +22,16 @@ package io.bootique.jdbc.junit5.matcher;
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @BQTest
 public class TableMatcherIT {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester
             .derbyDb()
             .deleteBeforeEachTest("t1");

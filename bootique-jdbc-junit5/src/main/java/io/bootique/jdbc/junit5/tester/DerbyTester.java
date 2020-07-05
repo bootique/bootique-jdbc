@@ -20,6 +20,7 @@ package io.bootique.jdbc.junit5.tester;
 
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
+import io.bootique.junit5.BQTestScope;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,14 +69,13 @@ public class DerbyTester extends DbTester {
     }
 
     @Override
-    protected DataSource createNonPoolingDataSource() {
+    protected DataSource createNonPoolingDataSource(BQTestScope scope) {
         prepareForDerbyStartup();
         return new DriverDataSource(null, jdbcUrl, null, null);
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {
-        super.afterAll(context);
+    public void afterScope(BQTestScope scope, ExtensionContext context) {
         performDerbyShutdown();
     }
 

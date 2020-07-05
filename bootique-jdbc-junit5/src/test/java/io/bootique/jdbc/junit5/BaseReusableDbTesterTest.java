@@ -19,7 +19,9 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.BQRuntime;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestScope;
+import io.bootique.junit5.BQTestTool;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -29,13 +31,14 @@ import java.sql.Statement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@BQTest
 public class BaseReusableDbTesterTest extends BaseDbTesterTest {
 
     private static boolean wasInitialized;
 
-    @RegisterExtension
+    @BQTestTool(BQTestScope.GLOBAL)
     protected static final DbTester db = DbTester
-            .testcontainersDb("jdbc:tc:postgresql:11:///", true)
+            .testcontainersDb("jdbc:tc:postgresql:11:///")
             .initDB(BaseReusableDbTesterTest::initDB)
             .deleteBeforeEachTest("reusable_a");
 

@@ -22,16 +22,18 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.junit5.BQApp;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@BQTest
 public class DbTester_OverlayExistingConfigIT extends BaseDbTesterTest {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester.derbyDb();
 
     @BQApp(skipRun = true)

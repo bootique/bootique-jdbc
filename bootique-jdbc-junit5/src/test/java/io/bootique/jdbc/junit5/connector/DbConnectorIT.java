@@ -22,8 +22,8 @@ package io.bootique.jdbc.junit5.connector;
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.sql.DataSource;
 
@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @BQTest
 public class DbConnectorIT {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester derbyTester = DbTester.derbyDb();
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester mysqlTester = DbTester.testcontainersDb("jdbc:tc:mysql:8.0.20:///db");
 
     @Test

@@ -29,13 +29,14 @@ import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.jdbc.junit5.tester.*;
 import io.bootique.jdbc.liquibase.LiquibaseRunner;
+import io.bootique.junit5.BQTestScope;
+import io.bootique.junit5.scope.BQAfterScopeCallback;
+import io.bootique.junit5.scope.BQBeforeMethodCallback;
+import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import io.bootique.resource.ResourceFactory;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  *
  * @since 2.0
  */
-public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback {
+public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
 
@@ -78,32 +79,16 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     /**
-     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. The tester is created in a "non-reusable"
-     * mode, i.e. it will be reset according to the DbTester JUnit lifecycle. To create a container that is shared across
-     * multiple test classes use {@link #testcontainersDb(String, boolean)}.
+     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in "global"
+     * scope (per {@link io.bootique.junit5.BQTestTool} annoattion), it will alter "containerDbUrl" before passing it
+     * to Testcontainers, forcing a "TC_REUSABLE=true" parameter regardless of of its current presence or value.
      *
      * @param containerDbUrl a Testcontainers DB URL
      * @return a new tester instance
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
     public static DbTester testcontainersDb(String containerDbUrl) {
-        return testcontainersDb(containerDbUrl, false);
-    }
-
-    /**
-     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If "reusable" is true, the DB container
-     * and its database will be reused. E.g. a static DbTester will not attempt to reinitialize schema and data between
-     * different test classes. DbTester will alter "containerDbUrl" before passing it to Testcontainers, forcing a
-     * "TC_REUSABLE=true" parameter regardless of of its current presence or value.
-     *
-     * @param containerDbUrl a Testcontainers DB URL
-     * @param reusable       whether the container should only be started once and reused across test classes, ignoring
-     *                       JUnit lifecycle.
-     * @return a new tester instance
-     * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
-     */
-    public static DbTester testcontainersDb(String containerDbUrl, boolean reusable) {
-        return new TestcontainersTester(containerDbUrl, reusable);
+        return new TestcontainersTester(containerDbUrl);
     }
 
     /**
@@ -122,13 +107,11 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     public DataSource getDataSource() {
-        initIfNeeded();
-        return dataSource;
+        return Objects.requireNonNull(dataSource, "'dataSource' not initialized. Called outside of JUnit lifecycle?");
     }
 
     protected DbConnector getConnector() {
-        initIfNeeded();
-        return connector;
+        return Objects.requireNonNull(connector, "'connector' not initialized. Called outside of JUnit lifecycle?");
     }
 
     public DbMetadata getMetadata() {
@@ -230,16 +213,16 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
         return binder -> configure(binder, dataSourceName);
     }
 
-    protected PoolingDataSource createDataSource() {
+    protected PoolingDataSource createDataSource(BQTestScope scope) {
         PoolingDataSourceParameters parameters = new PoolingDataSourceParameters();
         parameters.setMaxConnections(5);
         parameters.setMinConnections(1);
         parameters.setMaxQueueWaitTime(20000);
 
-        return new PoolingDataSource(createNonPoolingDataSource(), parameters);
+        return new PoolingDataSource(createNonPoolingDataSource(scope), parameters);
     }
 
-    protected abstract DataSource createNonPoolingDataSource();
+    protected abstract DataSource createNonPoolingDataSource(BQTestScope scope);
 
     protected void execInitFunction() {
         if (initFunction != null) {
@@ -293,11 +276,11 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
         }
     }
 
-    protected void initIfNeeded() {
+    protected void initIfNeeded(BQTestScope scope) {
         if (dataSource == null) {
             synchronized (this) {
                 if (dataSource == null) {
-                    this.dataSource = createDataSource();
+                    this.dataSource = createDataSource(scope);
                     this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
                     execInitFunction();
                     execInitScript();
@@ -308,16 +291,14 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     @Override
-    public void beforeAll(ExtensionContext context) {
-        // we don't absolutely have to do it (letting on demand initialization to happen when it does), but
-        // suppose there's a benefit to initializing the DB unconditionally in a predictable place
-        // Note that by now it may already be initialized if BQRuntime using DbTester had some eager dependencies
-        // on DataSource.
-        initIfNeeded();
+    public void beforeScope(BQTestScope scope, ExtensionContext context) {
+        // By now the DataSource may already be initialized if BQRuntime using DbTester had some eager dependencies
+        // on DataSource
+        initIfNeeded(scope);
     }
 
     @Override
-    public void afterAll(ExtensionContext context) {
+    public void afterScope(BQTestScope scope, ExtensionContext context) {
         // can be null if failed to start
         if (dataSource != null) {
             dataSource.close();
@@ -326,7 +307,7 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) {
+    public void beforeMethod(BQTestScope scope, ExtensionContext context) {
         if (deleteTablesInInsertOrder != null && deleteTablesInInsertOrder.length > 0) {
             new DataManager(getConnector(), deleteTablesInInsertOrder).deleteData();
         }

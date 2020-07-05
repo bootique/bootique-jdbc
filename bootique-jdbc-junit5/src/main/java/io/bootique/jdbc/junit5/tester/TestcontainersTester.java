@@ -20,8 +20,8 @@ package io.bootique.jdbc.junit5.tester;
 
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
+import io.bootique.junit5.BQTestScope;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.sql.DataSource;
 import java.util.Objects;
@@ -36,33 +36,32 @@ public class TestcontainersTester extends DbTester {
     private static final Pattern TC_REUSABLE_PATTERN = Pattern.compile("&?TC_REUSABLE=([^\\?&]+)");
 
     private final String containerDbUrl;
-    private boolean reusable;
 
-    public TestcontainersTester(String containerDbUrl, boolean reusable) {
+    public TestcontainersTester(String containerDbUrl) {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
-        this.reusable = reusable;
     }
 
     @Override
-    protected DataSource createNonPoolingDataSource() {
+    protected DataSource createNonPoolingDataSource(BQTestScope scope) {
         Assertions.assertDoesNotThrow(
                 () -> Class.forName("org.testcontainers.jdbc.ContainerDatabaseDriver"),
                 "Error loading testcontainers JDBC driver");
 
-        // Ensure that Testcontainers doesn't shut down the container underneath DbTester.
-        // Generally keeping the connection pool around is sufficient to prevent shutdown
-        // (as it keeps some open connections), but let's not rely on side effects for this,
-        // and set TC_REUSABLE=true explicitly
-        String url = reusable ? reusableContainerDbUrl(containerDbUrl) : containerDbUrl;
-        return new DriverDataSource(null, url, null, null);
+        return new DriverDataSource(null, dbUrl(scope), null, null);
     }
 
-    @Override
-    public void afterAll(ExtensionContext context) {
-        if (!reusable) {
-            super.afterAll(context);
+    protected String dbUrl(BQTestScope scope) {
+
+        // Ensure that Testcontainers doesn't shut down the container underneath DbTester running in a global scope.
+        // Generally keeping the connection pool around is sufficient to prevent shutdown (as it keeps some open
+        // connections), but let's not rely on side effects for this, and set TC_REUSABLE=true explicitly.
+
+        switch (scope) {
+            case GLOBAL:
+                return reusableContainerDbUrl(containerDbUrl);
+            default:
+                return containerDbUrl;
         }
-        // else - keep the DataSource around
     }
 
     protected String reusableContainerDbUrl(String url) {

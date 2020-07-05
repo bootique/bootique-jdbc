@@ -22,11 +22,14 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @BQTest
 public class DbTester_InitDB_Function_PostgresIT extends BaseDbTesterTest {
 
-    @RegisterExtension
+    @BQTestTool
     static final DbTester db = DbTester
             .testcontainersDb("jdbc:tc:postgresql:11:///")
             .initDB(DbTester_InitDB_Function_PostgresIT::initDB);

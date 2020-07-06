@@ -23,6 +23,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.jdbc.DataSourceListener;
 import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
@@ -30,6 +32,8 @@ import javax.sql.DataSource;
  * @since 1.0.RC1
  */
 public class HikariCPMetricsInitializer implements DataSourceListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HikariCPMetricsInitializer.class);
 
     private MetricRegistry metricRegistry;
 
@@ -44,7 +48,11 @@ public class HikariCPMetricsInitializer implements DataSourceListener {
 
     @Override
     public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
-        collectPoolMetrics(dataSource);
+        if (dataSource instanceof HikariDataSource) {
+            collectPoolMetrics((HikariDataSource) dataSource);
+        } else {
+            LOGGER.warn("DataSource ({}) is not an instance of HikariDataSource, skipping metrics init", dataSource.getClass());
+        }
     }
 
     @Override
@@ -52,8 +60,7 @@ public class HikariCPMetricsInitializer implements DataSourceListener {
         // do nothing
     }
 
-    void collectPoolMetrics(DataSource dataSource) {
-        HikariDataSource hikariDS = (HikariDataSource) dataSource;
-        hikariDS.setMetricsTrackerFactory((pn, ps) -> new HikariMetricsBridge(pn, ps, metricRegistry));
+    void collectPoolMetrics(HikariDataSource dataSource) {
+        dataSource.setMetricsTrackerFactory((pn, ps) -> new HikariMetricsBridge(pn, ps, metricRegistry));
     }
 }

@@ -23,6 +23,8 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import io.bootique.jdbc.DataSourceListener;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
@@ -30,6 +32,8 @@ import javax.sql.DataSource;
  * @since 0.25
  */
 public class TomcatMetricsInitializer implements DataSourceListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TomcatMetricsInitializer.class);
 
     private MetricRegistry metricRegistry;
 
@@ -44,7 +48,13 @@ public class TomcatMetricsInitializer implements DataSourceListener {
 
     @Override
     public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
-        collectPoolMetrics(name, dataSource);
+        if (dataSource instanceof org.apache.tomcat.jdbc.pool.DataSource) {
+            collectPoolMetrics(name, (org.apache.tomcat.jdbc.pool.DataSource) dataSource);
+        } else {
+            LOGGER.warn("DataSource '{}' ({}) is not an instance of HikariDataSource, skipping metrics init",
+                    name,
+                    dataSource.getClass());
+        }
     }
 
     @Override
@@ -52,10 +62,8 @@ public class TomcatMetricsInitializer implements DataSourceListener {
         // do nothing
     }
 
-    void collectPoolMetrics(String name, DataSource dataSource) {
-        org.apache.tomcat.jdbc.pool.DataSource tomcat = (org.apache.tomcat.jdbc.pool.DataSource) dataSource;
-        ConnectionPool pool = tomcat.getPool();
-
+    void collectPoolMetrics(String name, org.apache.tomcat.jdbc.pool.DataSource dataSource) {
+        ConnectionPool pool = dataSource.getPool();
 
         metricRegistry.register(JdbcTomcatInstrumentedModule.METRIC_NAMING.name("Pool", name, "ActiveConnections"),
                 (Gauge<Integer>) pool::getActive);

@@ -5,6 +5,7 @@
 * #97 DbTester support for Liquibase 
 * #98 DbTester: support for custom init function
 * #99 DbTester: database reusable between test classes
+* #100  DbTester drops empty "derby.log" file even if Derby DB is not in use
 
 ## 1.1
 

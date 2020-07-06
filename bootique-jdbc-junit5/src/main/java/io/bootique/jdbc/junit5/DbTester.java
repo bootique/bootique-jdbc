@@ -71,6 +71,12 @@ public abstract class DbTester implements BeforeAllCallback, AfterAllCallback, B
     protected PoolingDataSource dataSource;
     protected DbConnector connector;
 
+    static {
+        // Since Derby Driver is on classpath, even if Derby is not in use in the tests, it generates an empty
+        // "derby.log". Let's get rid of it preemptively. TODO: dirty
+        DerbyTester.sendDerbyLogsToDevNull();
+    }
+
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers. The tester is created in a "non-reusable"
      * mode, i.e. it will be reset according to the DbTester JUnit lifecycle. To create a container that is shared across

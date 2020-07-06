@@ -41,12 +41,19 @@ public class DerbyTester extends DbTester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DerbyTester.class);
 
-    // called via reflection, so looks unused
+    // called via reflection in 'devNullLogger', so looks unused
     public static final OutputStream DEV_NULL = new OutputStream() {
         @Override
         public void write(int b) {
         }
     };
+
+    public static void sendDerbyLogsToDevNull() {
+        // suppressing derby.log in "user.dir".
+        if (System.getProperty("derby.stream.error.field") == null) {
+            System.setProperty("derby.stream.error.field", DerbyTester.class.getName() + ".DEV_NULL");
+        }
+    }
 
     private final File derbyFolder;
     private final String jdbcUrl;
@@ -54,13 +61,10 @@ public class DerbyTester extends DbTester {
     public DerbyTester(File derbyFolder) {
         this.derbyFolder = Objects.requireNonNull(derbyFolder);
 
-        // placing derby in subfolder, so that the presence of the parent folder is not in the way of starting the DB
+        // placing Derby in subfolder, so that the presence of the parent folder is not in the way of starting the DB
         this.jdbcUrl = String.format("jdbc:derby:%s/derby;create=true", derbyFolder);
 
-        // suppressing derby.log in "user.dir".
-        if (System.getProperty("derby.stream.error.field") == null) {
-            System.setProperty("derby.stream.error.field", DerbyTester.class.getName() + ".DEV_NULL");
-        }
+        sendDerbyLogsToDevNull();
     }
 
     @Override

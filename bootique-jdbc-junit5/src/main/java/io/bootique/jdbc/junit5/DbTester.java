@@ -79,9 +79,10 @@ public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCal
     }
 
     /**
-     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in "global"
-     * scope (per {@link io.bootique.junit5.BQTestTool} annoattion), it will alter "containerDbUrl" before passing it
-     * to Testcontainers, forcing a "TC_REUSABLE=true" parameter regardless of of its current presence or value.
+     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in the "global"
+     * scope (per {@link io.bootique.junit5.BQTestTool} annotation), the tester will alter "containerDbUrl" internally
+     * before passing it to Testcontainers, forcing a "TC_REUSABLE=true" parameter regardless of its presence
+     * or value in the original String.
      *
      * @param containerDbUrl a Testcontainers DB URL
      * @return a new tester instance

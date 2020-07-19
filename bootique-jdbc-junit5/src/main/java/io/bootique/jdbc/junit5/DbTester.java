@@ -115,7 +115,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     /**
      * Executes a provided SQL script after the DB startup. The script would usually contain database schema and test
-     * data.
+     * data. Assumes statements are separated with ";" character.
      *
      * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
      * @return this tester
@@ -129,8 +129,8 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * data.
      *
      * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
-     * @param delimiter    SQL statements delimiter in the "initDBScript". AN explicit delimiter may be useful when
-     *                     the file contains common DB delimiters in the middle of stored procedure declartations, etc.
+     * @param delimiter    SQL statements delimiter in the "initDBScript". An explicit delimiter may be useful when
+     *                     the file contains common DB delimiters in the middle of stored procedure declarations, etc.
      * @return this tester
      */
     public SELF initDB(String initDBScript, String delimiter) {

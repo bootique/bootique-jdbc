@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @BQTest
-public class TcTester_InitDB_MySQL_ContainerIT extends BaseTcTesterTest {
+public class TcTester_InitDB_MySQL_Container_RootIT extends BaseTcTesterTest {
 
     @Container
     static final MySQLContainer db = new MySQLContainer("mysql:8.0.20")
@@ -47,7 +47,8 @@ public class TcTester_InitDB_MySQL_ContainerIT extends BaseTcTesterTest {
 
     @BQTestTool
     static final TcTester dbTester = TcTester
-            .db(db)
+            // Non-root password is also forced to be the root password
+            .db(db, "root", "secret")
             .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_MySQLIT.sql");
 
     @BQApp(skipRun = true)
@@ -57,7 +58,7 @@ public class TcTester_InitDB_MySQL_ContainerIT extends BaseTcTesterTest {
             .createRuntime();
 
     @Test
-    @DisplayName("Explicit container - DB was initialized")
+    @DisplayName("Explicit container, root user - DB was initialized")
     public void testInitDB() {
         run(app, c -> {
             try (Statement s = c.createStatement()) {

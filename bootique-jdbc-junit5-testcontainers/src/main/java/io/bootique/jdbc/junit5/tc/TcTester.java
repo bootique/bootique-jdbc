@@ -40,6 +40,8 @@ public class TcTester extends DbTester<TcTester> {
 
     private final String containerDbUrl;
     private final JdbcDatabaseContainer container;
+    private final String userName;
+    private final String password;
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in the "global"
@@ -52,21 +54,29 @@ public class TcTester extends DbTester<TcTester> {
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
     public static TcTester db(String containerDbUrl) {
-        return new TcTester(containerDbUrl);
+        return new TcTester(containerDbUrl, null, null);
     }
 
     public static TcTester db(JdbcDatabaseContainer container) {
-        return new TcTester(container);
+        return new TcTester(container, null, null);
     }
 
-    protected TcTester(String containerDbUrl) {
+    public static TcTester db(JdbcDatabaseContainer container, String userName, String password) {
+        return new TcTester(container, userName, password);
+    }
+
+    protected TcTester(String containerDbUrl, String userName, String password) {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
         this.container = null;
+        this.userName = userName;
+        this.password = password;
     }
 
-    protected TcTester(JdbcDatabaseContainer container) {
+    protected TcTester(JdbcDatabaseContainer container, String userName, String password) {
         this.container = Objects.requireNonNull(container);
         this.containerDbUrl = null;
+        this.userName = userName;
+        this.password = password;
     }
 
     @Override
@@ -79,11 +89,15 @@ public class TcTester extends DbTester<TcTester> {
     }
 
     protected String dbUser() {
-        return container != null ? container.getUsername() : null;
+        return userName != null
+                ? userName
+                : container != null ? container.getUsername() : null;
     }
 
     protected String dbPassword() {
-        return container != null ? container.getPassword() : null;
+        return password != null
+                ? password
+                : container != null ? container.getPassword() : null;
     }
 
     protected String dbUrl(BQTestScope scope) {

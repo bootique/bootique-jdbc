@@ -47,7 +47,7 @@ public class TcTester_InitDB_MySQLIT extends BaseTcTesterTest {
             .createRuntime();
 
     @Test
-    @DisplayName("DB was initialized")
+    @DisplayName("URL container - DB was initialized")
     public void testInitDB() {
         run(app, c -> {
             try(Statement s = c.createStatement()) {

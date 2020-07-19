@@ -26,7 +26,7 @@ public class TcTesterTest {
 
     @Test
     public void testReusableContainerDbUrl() {
-        TcTester tester = new TcTester("dummy");
+        TcTester tester = new TcTester("dummy", null, null);
         assertEquals("jdbc:tc:postgresql:11:///?TC_REUSABLE=true",
                 tester.reusableContainerDbUrl("jdbc:tc:postgresql:11:///"));
 

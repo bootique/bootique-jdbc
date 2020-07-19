@@ -26,20 +26,21 @@ import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class TcTester_InitDB_Delimiter_PostgresIT extends BaseTcTesterTest {
+public class UrlTcTester_InitDB_Function_PostgresIT extends BaseTcTesterTest {
 
     @BQTestTool
     static final TcTester db = TcTester
-            .db("jdbc:tc:postgresql:11:///mydb")
-            .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_Delimiter_PostgresIT.sql", "--");
+            .db("jdbc:tc:postgresql:11:///")
+            .initDB(UrlTcTester_InitDB_Function_PostgresIT::initDB);
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -47,21 +48,29 @@ public class TcTester_InitDB_Delimiter_PostgresIT extends BaseTcTesterTest {
             .module(db.moduleWithTestDataSource("myDS"))
             .createRuntime();
 
+    static void initDB(Connection c) throws SQLException {
+        c.setAutoCommit(false);
+        try (Statement s = c.createStatement()) {
+            s.executeUpdate("create table b (id integer not null primary key, name text)");
+        }
+        c.commit();
+    }
+
     @Test
-    @DisplayName("DB was initialized with custom delimiter")
+    @DisplayName("DB was initialized with custom function")
     public void testInitDB() {
         run(app, c -> {
 
             // procedure must be there, and the second definition from the test must be in use
-            try (CallableStatement s = c.prepareCall("{call insert_procedure ()}")) {
-                s.executeUpdate();
+            try (Statement s = c.createStatement()) {
+                s.executeUpdate("insert into b (id, name) values (77, 'x')");
             }
 
             try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from b")) {
                     assertTrue(rs.next());
-                    assertEquals(66, rs.getInt("id"));
-                    assertEquals("yyy", rs.getString("name"));
+                    assertEquals(77, rs.getInt("id"));
+                    assertEquals("x", rs.getString("name"));
                 }
             }
         });

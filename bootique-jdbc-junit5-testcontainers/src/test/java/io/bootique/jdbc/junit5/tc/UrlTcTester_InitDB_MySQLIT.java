@@ -22,19 +22,41 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @BQTest
-public class TcTester_Postgres_Reusable2IT extends BaseReusableTcTesterTest {
+public class UrlTcTester_InitDB_MySQLIT extends BaseTcTesterTest {
+
+    @BQTestTool
+    static final TcTester db = TcTester
+            .db("jdbc:tc:mysql:8.0.20:///db")
+            .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_MySQLIT.sql");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(BaseReusableTcTesterTest.db.moduleWithTestDataSource("myDS"))
+            .module(db.moduleWithTestDataSource("myDS"))
             .createRuntime();
 
     @Test
-    public void testDbState() {
-        checkEmptyAndInsert(app);
+    @DisplayName("DB was initialized")
+    public void testInitDB() {
+        run(app, c -> {
+            try(Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select * from b")) {
+                    assertTrue(rs.next());
+                    assertEquals(12, rs.getInt("id"));
+                    assertEquals("myname", rs.getString("name"));
+                }
+            }
+        });
     }
 }

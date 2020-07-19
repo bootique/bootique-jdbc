@@ -25,7 +25,7 @@ import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 
 @BQTest
-public class TcTester_Postgres_Reusable1IT extends BaseReusableTcTesterTest {
+public class UrlTcTester_Postgres_Reusable2IT extends BaseReusableTcTesterTest {
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -34,12 +34,7 @@ public class TcTester_Postgres_Reusable1IT extends BaseReusableTcTesterTest {
             .createRuntime();
 
     @Test
-    public void testDbState1() {
-        checkEmptyAndInsert(app);
-    }
-
-    @Test
-    public void testDbState2() {
+    public void testDbState() {
         checkEmptyAndInsert(app);
     }
 }

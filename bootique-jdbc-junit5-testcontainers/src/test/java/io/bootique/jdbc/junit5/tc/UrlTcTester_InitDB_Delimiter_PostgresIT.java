@@ -26,6 +26,7 @@ import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -33,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class TcTester_InitDB_MySQLIT extends BaseTcTesterTest {
+public class UrlTcTester_InitDB_Delimiter_PostgresIT extends BaseTcTesterTest {
 
     @BQTestTool
     static final TcTester db = TcTester
-            .db("jdbc:tc:mysql:8.0.20:///db")
-            .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_MySQLIT.sql");
+            .db("jdbc:tc:postgresql:11:///mydb")
+            .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_Delimiter_PostgresIT.sql", "--");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
@@ -47,14 +48,20 @@ public class TcTester_InitDB_MySQLIT extends BaseTcTesterTest {
             .createRuntime();
 
     @Test
-    @DisplayName("URL container - DB was initialized")
+    @DisplayName("DB was initialized with custom delimiter")
     public void testInitDB() {
         run(app, c -> {
-            try(Statement s = c.createStatement()) {
+
+            // procedure must be there, and the second definition from the test must be in use
+            try (CallableStatement s = c.prepareCall("{call insert_procedure ()}")) {
+                s.executeUpdate();
+            }
+
+            try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from b")) {
                     assertTrue(rs.next());
-                    assertEquals(12, rs.getInt("id"));
-                    assertEquals("myname", rs.getString("name"));
+                    assertEquals(66, rs.getInt("id"));
+                    assertEquals("yyy", rs.getString("name"));
                 }
             }
         });

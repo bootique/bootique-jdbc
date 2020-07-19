@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: classpath:io/bootique/jdbc/junit5/derby/changelogs/changelog.sql
+

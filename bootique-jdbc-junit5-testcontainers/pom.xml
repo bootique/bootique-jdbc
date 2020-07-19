@@ -28,23 +28,17 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bootique-jdbc-junit5</artifactId>
+    <artifactId>bootique-jdbc-junit5-testcontainers</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-jdbc-junit5: Common JUnit5-based helper classes for tests that require a database</name>
-    <description>Provides common abstarct JUnit5-based helper classes for tests that require a database. Users
-    should import its "submodules" - "bootique-jdbc-junit5-derby" and  "bootique-jdbc-junit5-testcontainers"</description>
+    <name>bootique-jdbc-junit5-testcontainers: JUnit5 helper classes for unit tests using a Docker database</name>
+    <description>Provides JUnit5 helper classes for unit tests using a Docker database via Testcontainers</description>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc</artifactId>
-                <version>${bootique.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.bootique.jdbc</groupId>
-                <artifactId>bootique-jdbc-liquibase-internal</artifactId>
+                <artifactId>bootique-jdbc-junit5</artifactId>
                 <version>${bootique.version}</version>
             </dependency>
         </dependencies>
@@ -54,23 +48,7 @@
         <!-- Compile dependencies -->
         <dependency>
             <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique</groupId>
-            <artifactId>bootique-junit5</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-liquibase-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <artifactId>bootique-jdbc-junit5</artifactId>
         </dependency>
 
         <!-- Unit test dependencies -->
@@ -82,6 +60,26 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

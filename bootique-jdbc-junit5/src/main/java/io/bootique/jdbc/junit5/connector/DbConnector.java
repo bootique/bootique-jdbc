@@ -59,6 +59,10 @@ public class DbConnector {
         this.tables = new ConcurrentHashMap<>();
     }
 
+    public IdentifierQuoter getIdentifierQuoter() {
+        return identifierQuoter;
+    }
+
     public Table getTable(String tableName) {
         return tables.computeIfAbsent(tableName, tn -> new Table(this, metadata.getTable(tn)));
     }

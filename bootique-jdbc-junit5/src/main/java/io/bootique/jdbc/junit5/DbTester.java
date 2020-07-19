@@ -27,7 +27,9 @@ import io.bootique.jdbc.junit5.connector.SelectStatementBuilder;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
-import io.bootique.jdbc.junit5.tester.*;
+import io.bootique.jdbc.junit5.tester.DataManager;
+import io.bootique.jdbc.junit5.tester.DataSourcePropertyBuilder;
+import io.bootique.jdbc.junit5.tester.SqlScriptParser;
 import io.bootique.jdbc.liquibase.LiquibaseRunner;
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
@@ -42,24 +44,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 /**
  * A JUnit 5 extension that manages a single test database. DbTester is declared in a unit test and handles database
  * startup, schema and data initialization and shutdown. A single database controlled by DbTester can be used by
- * one or more BQRuntimes.
+ * one or more BQRuntimes. This class is abstract. Specific testers (such as DerbyTester or TestcontainersTester)
+ * are provided in separate modules.
  *
  * @since 2.0
  */
-public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
+public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
 
@@ -72,40 +71,6 @@ public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCal
     protected PoolingDataSource dataSource;
     protected DbConnector connector;
 
-    static {
-        // Since Derby Driver is on classpath, even if Derby is not in use in the tests, it generates an empty
-        // "derby.log". Let's get rid of it preemptively. TODO: dirty
-        DerbyTester.sendDerbyLogsToDevNull();
-    }
-
-    /**
-     * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in the "global"
-     * scope (per {@link io.bootique.junit5.BQTestTool} annotation), the tester will alter "containerDbUrl" internally
-     * before passing it to Testcontainers, forcing a "TC_REUSABLE=true" parameter regardless of its presence
-     * or value in the original String.
-     *
-     * @param containerDbUrl a Testcontainers DB URL
-     * @return a new tester instance
-     * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
-     */
-    public static DbTester testcontainersDb(String containerDbUrl) {
-        return new TestcontainersTester(containerDbUrl);
-    }
-
-    /**
-     * Creates a tester that will use in-memory Derby DB, with DB files stored in a temporary directory.
-     *
-     * @return a new tester instance
-     */
-    public static DbTester derbyDb() {
-
-        Path[] tempFir = new Path[1];
-        assertDoesNotThrow(() -> {
-            tempFir[0] = Files.createTempDirectory("io.bootique.jdbc.test.derby-db");
-        });
-
-        return new DerbyTester(tempFir[0].toFile());
-    }
 
     public DataSource getDataSource() {
         return Objects.requireNonNull(dataSource, "'dataSource' not initialized. Called outside of JUnit lifecycle?");
@@ -155,7 +120,7 @@ public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCal
      * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
      * @return this tester
      */
-    public DbTester initDB(String initDBScript) {
+    public SELF initDB(String initDBScript) {
         return initDB(initDBScript, null);
     }
 
@@ -168,15 +133,15 @@ public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCal
      *                     the file contains common DB delimiters in the middle of stored procedure declartations, etc.
      * @return this tester
      */
-    public DbTester initDB(String initDBScript, String delimiter) {
+    public SELF initDB(String initDBScript, String delimiter) {
         this.initDBScript = new ResourceFactory(initDBScript);
         this.initDBScriptDelimiter = delimiter;
-        return this;
+        return (SELF) this;
     }
 
-    public DbTester initDB(JdbcOp initFunction) {
+    public SELF initDB(JdbcOp initFunction) {
         this.initFunction = Objects.requireNonNull(initFunction);
-        return this;
+        return (SELF) this;
     }
 
     /**
@@ -186,9 +151,9 @@ public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCal
      *                           {@link io.bootique.resource.ResourceFactory} format.
      * @return this tester
      */
-    public DbTester runLiquibaseMigrations(String liquibaseChangeLog) {
+    public SELF runLiquibaseMigrations(String liquibaseChangeLog) {
         this.liquibaseChangeLog = new ResourceFactory(liquibaseChangeLog);
-        return this;
+        return (SELF) this;
     }
 
     /**
@@ -197,9 +162,9 @@ public abstract class DbTester implements BQBeforeScopeCallback, BQAfterScopeCal
      * @param tablesInInsertOrder a list of table names in the order of INSERT dependencies between them.
      * @return this tester
      */
-    public DbTester deleteBeforeEachTest(String... tablesInInsertOrder) {
+    public SELF deleteBeforeEachTest(String... tablesInInsertOrder) {
         this.deleteTablesInInsertOrder = tablesInInsertOrder;
-        return this;
+        return (SELF) this;
     }
 
     /**

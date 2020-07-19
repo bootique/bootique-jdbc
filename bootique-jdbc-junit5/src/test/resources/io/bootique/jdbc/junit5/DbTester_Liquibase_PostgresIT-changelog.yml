@@ -1,4 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: classpath:io/bootique/jdbc/junit5/changelogs/postgres-changelog.sql
-

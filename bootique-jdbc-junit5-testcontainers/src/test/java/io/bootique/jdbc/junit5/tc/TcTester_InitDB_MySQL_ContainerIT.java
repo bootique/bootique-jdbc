@@ -40,11 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TcTester_InitDB_MySQL_ContainerIT extends BaseTcTesterTest {
 
     @Container
-    public static MySQLContainer db = (MySQLContainer) new MySQLContainer("mysql:8.0.20")
+    public static MySQLContainer db = new MySQLContainer("mysql:8.0.20")
             .withDatabaseName("xdb")
             .withUsername("mysqluser")
-            .withPassword("secret")
-            .withEnv("MYSQL_ROOT_HOST", "%");
+            .withPassword("secret");
 
     @BQTestTool
     static final TcTester dbTester = TcTester

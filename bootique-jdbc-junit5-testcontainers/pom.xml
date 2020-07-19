@@ -50,6 +50,10 @@
             <groupId>io.bootique.jdbc</groupId>
             <artifactId>bootique-jdbc-junit5</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>jdbc</artifactId>
+        </dependency>
 
         <!-- Unit test dependencies -->
         <dependency>
@@ -80,6 +84,11 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

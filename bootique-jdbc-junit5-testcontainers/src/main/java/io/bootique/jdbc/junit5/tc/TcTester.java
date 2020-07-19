@@ -22,6 +22,7 @@ import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
 import io.bootique.junit5.BQTestScope;
 import org.junit.jupiter.api.Assertions;
+import org.testcontainers.containers.JdbcDatabaseContainer;
 
 import javax.sql.DataSource;
 import java.util.Objects;
@@ -38,6 +39,7 @@ public class TcTester extends DbTester<TcTester> {
     private static final Pattern TC_REUSABLE_PATTERN = Pattern.compile("&?TC_REUSABLE=([^\\?&]+)");
 
     private final String containerDbUrl;
+    private final JdbcDatabaseContainer container;
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in the "global"
@@ -53,8 +55,18 @@ public class TcTester extends DbTester<TcTester> {
         return new TcTester(containerDbUrl);
     }
 
-    public TcTester(String containerDbUrl) {
+    public static TcTester db(JdbcDatabaseContainer container) {
+        return new TcTester(container);
+    }
+
+    protected TcTester(String containerDbUrl) {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
+        this.container = null;
+    }
+
+    protected TcTester(JdbcDatabaseContainer container) {
+        this.container = Objects.requireNonNull(container);
+        this.containerDbUrl = null;
     }
 
     @Override
@@ -63,10 +75,24 @@ public class TcTester extends DbTester<TcTester> {
                 () -> Class.forName("org.testcontainers.jdbc.ContainerDatabaseDriver"),
                 "Error loading testcontainers JDBC driver");
 
-        return new DriverDataSource(null, dbUrl(scope), null, null);
+        return new DriverDataSource(null, dbUrl(scope), dbUser(), dbPassword());
+    }
+
+    protected String dbUser() {
+        return container != null ? container.getUsername() : null;
+    }
+
+    protected String dbPassword() {
+        return container != null ? container.getPassword() : null;
     }
 
     protected String dbUrl(BQTestScope scope) {
+        // ignoring scope if the URL is container provided. Any way to check the container scope and ensure it matches
+        // ours?
+        return container != null ? container.getJdbcUrl() : urlBaseDbUrl(scope);
+    }
+
+    protected String urlBaseDbUrl(BQTestScope scope) {
 
         // Ensure that Testcontainers doesn't shut down the container underneath DbTester running in a global scope.
         // Generally keeping the connection pool around is sufficient to prevent shutdown (as it keeps some open

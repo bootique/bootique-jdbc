@@ -7,7 +7,7 @@
 * #99 DbTester: database reusable between test classes
 * #100 DbTester drops empty "derby.log" file even if Derby DB is not in use
 * #101 Split jdbc-junit5 into Derby and Testcontainers-specific modules
-* #102 TcTester: support for explicit container instance
+* #102 TcDbTester: support for explicit container instance
 
 ## 1.1
 

@@ -26,13 +26,13 @@ import java.util.Objects;
 /**
  * @since 2.0
  */
-public class ContainerTcTester extends TcTester {
+public class ContainerTcDbTester extends TcDbTester {
 
     private final JdbcDatabaseContainer container;
     private final String userName;
     private final String password;
 
-    protected ContainerTcTester(JdbcDatabaseContainer container, String userName, String password) {
+    protected ContainerTcDbTester(JdbcDatabaseContainer container, String userName, String password) {
         this.container = Objects.requireNonNull(container);
         this.userName = userName;
         this.password = password;

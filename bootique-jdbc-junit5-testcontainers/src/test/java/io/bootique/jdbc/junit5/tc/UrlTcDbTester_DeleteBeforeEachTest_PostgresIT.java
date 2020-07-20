@@ -32,10 +32,10 @@ import java.sql.Statement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class UrlTcTester_DeleteBeforeEachTest_PostgresIT extends BaseTcTesterTest {
+public class UrlTcDbTester_DeleteBeforeEachTest_PostgresIT extends BaseTcTesterTest {
 
     @BQTestTool
-    static final TcTester db = TcTester
+    static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///mydb")
             .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_DeleteBeforeEachTest_PostgresIT.sql")
             .deleteBeforeEachTest("a", "b");

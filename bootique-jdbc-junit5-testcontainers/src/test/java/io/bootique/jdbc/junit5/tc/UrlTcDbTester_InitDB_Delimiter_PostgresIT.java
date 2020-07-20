@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class UrlTcTester_InitDB_Delimiter_PostgresIT extends BaseTcTesterTest {
+public class UrlTcDbTester_InitDB_Delimiter_PostgresIT extends BaseTcTesterTest {
 
     @BQTestTool
-    static final TcTester db = TcTester
+    static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///mydb")
             .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_Delimiter_PostgresIT.sql", "--");
 

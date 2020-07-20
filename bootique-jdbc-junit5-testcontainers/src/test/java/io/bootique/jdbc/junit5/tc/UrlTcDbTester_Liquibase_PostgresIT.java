@@ -19,58 +19,38 @@
 package io.bootique.jdbc.junit5.tc;
 
 import io.bootique.BQRuntime;
-import io.bootique.Bootique;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class UrlTcTester_InitDB_Function_PostgresIT extends BaseTcTesterTest {
+public class UrlTcDbTester_Liquibase_PostgresIT extends BaseTcTesterTest {
 
     @BQTestTool
-    static final TcTester db = TcTester
+    static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
-            .initDB(UrlTcTester_InitDB_Function_PostgresIT::initDB);
+            .runLiquibaseMigrations("classpath:io/bootique/jdbc/junit5/tc/TcTester_Liquibase_PostgresIT-changelog.yml");
 
     @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
-
-    static void initDB(Connection c) throws SQLException {
-        c.setAutoCommit(false);
-        try (Statement s = c.createStatement()) {
-            s.executeUpdate("create table b (id integer not null primary key, name text)");
-        }
-        c.commit();
-    }
+    static final BQRuntime app = BaseTcTesterTest.createRuntime(db);
 
     @Test
-    @DisplayName("DB was initialized with custom function")
-    public void testInitDB() {
+    @DisplayName("Migrations are run")
+    public void testMigrationsAreRun() {
         run(app, c -> {
-
-            // procedure must be there, and the second definition from the test must be in use
             try (Statement s = c.createStatement()) {
-                s.executeUpdate("insert into b (id, name) values (77, 'x')");
-            }
-
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from b")) {
+                try (ResultSet rs = s.executeQuery("select * from \"b\"")) {
                     assertTrue(rs.next());
-                    assertEquals(77, rs.getInt("id"));
-                    assertEquals("x", rs.getString("name"));
+                    assertEquals(12, rs.getInt("id"));
+                    assertEquals("myname", rs.getString("name"));
                 }
             }
         });

@@ -37,7 +37,7 @@ public class BaseReusableTcTesterTest extends BaseTcTesterTest {
     private static boolean wasInitialized;
 
     @BQTestTool(BQTestScope.GLOBAL)
-    protected static final TcTester db = TcTester
+    protected static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
             .initDB(BaseReusableTcTesterTest::initDB)
             .deleteBeforeEachTest("reusable_a");

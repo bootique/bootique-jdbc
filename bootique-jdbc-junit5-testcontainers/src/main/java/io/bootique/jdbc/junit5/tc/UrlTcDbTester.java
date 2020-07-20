@@ -28,13 +28,13 @@ import java.util.regex.Pattern;
 /**
  * @since 2.0
  */
-public class UrlTcTester extends TcTester {
+public class UrlTcDbTester extends TcDbTester {
 
     private static final Pattern TC_REUSABLE_PATTERN = Pattern.compile("&?TC_REUSABLE=([^\\?&]+)");
 
     private final String containerDbUrl;
 
-    protected UrlTcTester(String containerDbUrl) {
+    protected UrlTcDbTester(String containerDbUrl) {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
     }
 

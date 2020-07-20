@@ -26,11 +26,11 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import javax.sql.DataSource;
 
 /**
- * A DbTester based on testcontainers library.
+ * A DbTester based on the Testcontainers library.
  *
  * @since 2.0
  */
-public abstract class TcTester extends DbTester<TcTester> {
+public abstract class TcDbTester extends DbTester<TcDbTester> {
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in the "global"
@@ -42,16 +42,16 @@ public abstract class TcTester extends DbTester<TcTester> {
      * @return a new tester instance
      * @see <a href="https://www.testcontainers.org/modules/databases/jdbc/">Testcontainers JDBC URLs</a>
      */
-    public static TcTester db(String containerDbUrl) {
-        return new UrlTcTester(containerDbUrl);
+    public static TcDbTester db(String containerDbUrl) {
+        return new UrlTcDbTester(containerDbUrl);
     }
 
-    public static TcTester db(JdbcDatabaseContainer container) {
-        return new ContainerTcTester(container, null, null);
+    public static TcDbTester db(JdbcDatabaseContainer container) {
+        return new ContainerTcDbTester(container, null, null);
     }
 
-    public static TcTester db(JdbcDatabaseContainer container, String userName, String password) {
-        return new ContainerTcTester(container, userName, password);
+    public static TcDbTester db(JdbcDatabaseContainer container, String userName, String password) {
+        return new ContainerTcDbTester(container, userName, password);
     }
 
     @Override

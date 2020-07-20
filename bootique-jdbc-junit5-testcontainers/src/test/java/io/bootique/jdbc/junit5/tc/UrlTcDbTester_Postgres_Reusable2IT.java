@@ -25,7 +25,7 @@ import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 
 @BQTest
-public class UrlTcTester_Postgres_Reusable2IT extends BaseReusableTcTesterTest {
+public class UrlTcDbTester_Postgres_Reusable2IT extends BaseReusableTcTesterTest {
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()

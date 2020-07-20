@@ -21,7 +21,7 @@ package io.bootique.jdbc.junit5.tc.connector;
 
 import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
-import io.bootique.jdbc.junit5.tc.TcTester;
+import io.bootique.jdbc.junit5.tc.TcDbTester;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DbConnectorIT {
 
     @BQTestTool
-    static final TcTester mysqlTester = TcTester.db("jdbc:tc:mysql:8.0.20:///db");
+    static final TcDbTester mysqlTester = TcDbTester.db("jdbc:tc:mysql:8.0.20:///db");
 
     @Test
     public void testMySQLQuotes() {

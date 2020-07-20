@@ -22,11 +22,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UrlTcTesterTest {
+public class UrlTcDbTesterTest {
 
     @Test
     public void testReusableContainerDbUrl() {
-        UrlTcTester tester = new UrlTcTester("dummy");
+        UrlTcDbTester tester = new UrlTcDbTester("dummy");
         assertEquals("jdbc:tc:postgresql:11:///?TC_REUSABLE=true",
                 tester.reusableContainerDbUrl("jdbc:tc:postgresql:11:///"));
 

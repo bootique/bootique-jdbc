@@ -66,6 +66,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     protected String initDBScriptDelimiter;
     protected JdbcOp initFunction;
     protected ResourceFactory liquibaseChangeLog;
+    protected String liquibaseContext;
     protected String[] deleteTablesInInsertOrder;
 
     protected PoolingDataSource dataSource;
@@ -157,6 +158,20 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     }
 
     /**
+     * Executes provides Liquibase changelog file after the DB startup.
+     *
+     * @param liquibaseChangeLog a location of the Liquibase changelog file in Bootique
+     *                           {@link io.bootique.resource.ResourceFactory} format.
+     * @param liquibaseContext   Liquibase context expression to filter migrations as appropriate for the test run.
+     * @return this tester
+     */
+    public SELF runLiquibaseMigrations(String liquibaseChangeLog, String liquibaseContext) {
+        this.liquibaseChangeLog = new ResourceFactory(liquibaseChangeLog);
+        this.liquibaseContext = liquibaseContext;
+        return (SELF) this;
+    }
+
+    /**
      * Configures the Tester to delete data from the specified tables before each test.
      *
      * @param tablesInInsertOrder a list of table names in the order of INSERT dependencies between them.
@@ -235,8 +250,10 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     }
 
     protected void execLiquibaseMigrations(Liquibase lb) {
+        Contexts contexts = liquibaseContext != null ? new Contexts(liquibaseContext) : new Contexts();
+
         try {
-            lb.update(new Contexts(), new LabelExpression());
+            lb.update(contexts, new LabelExpression());
         } catch (Exception e) {
             throw new RuntimeException("Error running migrations against the test DB", e);
         }

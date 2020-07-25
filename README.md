@@ -24,10 +24,10 @@
 
 Provides a number of modules for your [Bootique](https://bootique.io) apps to work with JDBC data stores:
 
-* [bootique-jdbc](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc) - an abstract module providing injectable configurable map of
-named JDBC connection pools (`java.sql.DataSource` instances). Normally you won't be importing this module directly.
-It will be added automatically as a transitive dependency of concrete modules. There are currently two choices
-shown below - Tomcat and Hikari.
+* [bootique-jdbc](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc) - an abstract module providing 
+injectable configurable map of named JDBC connection pools (`java.sql.DataSource` instances). Normally you won't be 
+importing this module directly. It will be added automatically as a transitive dependency of concrete modules. 
+There are currently two choices shown below - Tomcat and Hikari.
 
 * [bootique-jdbc-tomcat](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-tomcat) - a concrete
 module that provides configurable [Tomcat Connection Pool](https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html).
@@ -41,7 +41,13 @@ a variation of `bootique-jdbc-tomcat` with support for performance metrics.
 * [bootique-jdbc-hikaricp-instrumented](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-hikaricp-instrumented) -
 a variation of `bootique-jdbc-hikaricp` with support for performance metrics and health checks.
 
-* [bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-test) - a DB unit testing
-facility that helps to prepare test datasets and run assertions against the DB data. Supports API-based and CSV-based data sets. Can be used to test any apps that read or write from/to RDBMS. E.g. Bootique JDBC apps, non-Bootique JDBC apps, [Cayenne apps](https://github.com/bootique/bootique-cayenne/tree/master/bootique-cayenne-test).
+* [bootique-jdbc-junit5](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-junit5) - a DB testing
+facility for JUnit 5 that helps to prepare test databases (in-memory or Docker-based), datasets and run assertions 
+against the DB data. Supports API-based and CSV-based data sets. Can be used to test any apps that read or write 
+from/to RDBMS. E.g. Bootique JDBC apps, non-Bootique JDBC apps, 
+[Cayenne apps](https://github.com/bootique/bootique-cayenne/tree/master/bootique-cayenne41-junit5).
+
+* [bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-test) - a DB testing
+facility for JUnit 4. Not as advanced and somewhat convoluted compared to `bootique-jdbc-junit5`.
 
 See usage example [bootique-jdbc-demo](https://github.com/bootique-examples/bootique-jdbc-demo).

@@ -18,6 +18,8 @@
 [#jdbc-integration]
 == Bootique Integration with JDBC
 
+NOTE: This is an incomplete 1.x version of the JDBC documentation. 2.x is more comprehensive.
+
 JDBC is a well-known standard Java API to access relational databases. Normally you would connect to a database via
 a connection pool represented by a `javax.sql.DataSource` object. https://github.com/bootique/bootique-jdbc[`bootique-jdbc`]
 is a set of modules for configuring one or more DataSources in your app. It also provides advanced facilities for

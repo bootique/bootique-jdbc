@@ -18,7 +18,5 @@
 // use custom header
 :bq-header: _chapters/header.html
 
-NOTE: This is an incomplete 1.x version of the JDBC documentation. 2.x is more comprehensive.
-
 include::_chapters/_01_jdbc_integration.adoc[]
 

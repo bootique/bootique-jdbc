@@ -1,0 +1,7 @@
+#tag::config[]
+jdbc:
+  mysql:
+    jdbcUrl: "jdbc:mysql://host/db"
+    username: root
+    password: root
+#end::config[]

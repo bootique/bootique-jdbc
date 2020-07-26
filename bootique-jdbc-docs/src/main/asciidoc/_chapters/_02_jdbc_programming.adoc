@@ -1,0 +1,41 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+[#jdbc-configuration]
+== Programming with "bootique-jdbc"
+
+To work with а database you need an instance of `javax.sql.DataSource`. `bootique-jdbc` provides a way to configure
+one or more named DataSource in the app. Here is a minimal configuration example using HikariCP format. Full
+reference for both Tomcat and HikariCP configuration is provided in <<jdbc-configuration-ref,this chapter>>. (And don't
+forget that you can print full configuration docs for your version of Bootique by running your app with `-H` flag).
+
+[source,yaml]
+----
+include::../../../test/resources/io/bootique/jdbc/docs/config.yml[tags=config]
+----
+Once you have a named DataSource configured, you can inject a `io.bootique.jdbc.DataSourceFactory` and access configured
+DataSources by name:
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/DataSourceFactoryTest.java[tags=dsf]
+----
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/DataSourceFactoryTest.java[tags=ds]
+----
+
+

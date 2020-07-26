@@ -19,7 +19,7 @@
 :bq-header: _chapters/header.html
 
 include::_chapters/_01_jdbc_integration.adoc[]
-include::_chapters/_02_jdbc_using.adoc[]
+include::_chapters/_02_jdbc_programming.adoc[]
 include::_chapters/_03_jdbc_instrumented.adoc[]
 include::_chapters/_04_jdbc_testing.adoc[]
 include::_chapters/_05_jdbc_configuration-ref.adoc[]

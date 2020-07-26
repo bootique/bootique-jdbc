@@ -55,7 +55,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private String connectionTestQuery;
     private long connectionTimeout;
     private String dataSourceClassName;
-    private String dataSourceJndiName;
+    private String dataSourceJNDI;
     private Properties dataSourceProperties;
     private String driverClassName;
     private long idleTimeout;
@@ -199,8 +199,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @BQConfigProperty
-    public void setDataSourceJNDI(String jndiDataSource) {
-        this.dataSourceJndiName = jndiDataSource;
+    public void setDataSourceJNDI(String dataSourceJNDI) {
+        this.dataSourceJNDI = dataSourceJNDI;
     }
 
     @BQConfigProperty
@@ -283,7 +283,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         hikariConfig.setConnectionInitSql(connectionInitSql);
         hikariConfig.setConnectionTestQuery(connectionTestQuery);
         hikariConfig.setDataSourceClassName(dataSourceClassName);
-        hikariConfig.setDataSourceJNDI(dataSourceJndiName);
+        hikariConfig.setDataSourceJNDI(dataSourceJNDI);
 
         if (driverClassName != null) {
             hikariConfig.setDriverClassName(driverClassName);

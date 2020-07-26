@@ -18,18 +18,20 @@
 [#jdbc-integration]
 == Bootique Integration with JDBC
 
-JDBC is a well-known standard Java API to access relational databases. Normally you would connect to a database via
-a connection pool represented by a `javax.sql.DataSource` object. https://github.com/bootique/bootique-jdbc[`bootique-jdbc`]
-is a set of modules for configuring one or more DataSources in your app. It also provides advanced facilities for
-database testing and connection pool monitoring.
+JDBC is a standard and well-known API to access relational databases. To connect to a database you would need a
+connection pool that is an instance of `javax.sql.DataSource`. https://github.com/bootique/bootique-jdbc[`bootique-jdbc`]
+helps to configure one or more DataSources in your app. It also provides advanced APIs for database testing and
+connection pool monitoring. All Bootique modules that require database access (Cayenne, JOOQ, MyBatis, etc.) would
+also rely on `bootique-jdbc`.
 
-All other Bootique modules that require database access (Cayenne, JOOQ, MyBatis, etc.) also rely on `bootique-jdbc`.
+Out of the box Bootique supports a choice of two connection pool providers:
 
-Out of the box Bootique supports two connection pool providers: https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html[Tomcat JDBC]
-and https://github.com/brettwooldridge/HikariCP[HikariCP]. Both are production-quality data sources, and you can choose
-either one. From the application perspective the difference is mostly in configuration and available
-<<jdbc-merics-and-healthchecks,metrics and health checks>>, as Bootique (and JDBC) gives you the API abstraction common
-to both.
+* https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html[Tomcat JDBC]
+* https://github.com/brettwooldridge/HikariCP[HikariCP].
+
+Both are production-quality. From the application perspective the difference is in configuration and available
+<<jdbc-merics-and-healthchecks,metrics and health checks>>. Beyond that Bootique (and JDBC) gives you the API
+abstraction common to both, so you can pick either one.
 
 Import one of these Bootique modules in your app, depending on your connection pool choice:
 [source,xml]

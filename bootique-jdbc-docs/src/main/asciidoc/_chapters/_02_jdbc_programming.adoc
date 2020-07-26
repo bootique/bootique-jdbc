@@ -25,7 +25,7 @@ forget that you can print full configuration docs for your version of Bootique b
 
 [source,yaml]
 ----
-include::../../../test/resources/io/bootique/jdbc/docs/hikari-config.yml[tags=hikariconfig]
+include::../../../test/resources/io/bootique/jdbc/docs/hikari-config.yml[tags=config]
 ----
 Once you have a named DataSource configured, you can inject a `io.bootique.jdbc.DataSourceFactory` and access configured
 DataSources by name:

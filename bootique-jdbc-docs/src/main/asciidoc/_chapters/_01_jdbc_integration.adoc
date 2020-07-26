@@ -1,0 +1,51 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+[#jdbc-integration]
+== Bootique Integration with JDBC
+
+JDBC is a well-known standard Java API to access relational databases. Normally you would connect to a database via
+a connection pool represented by a `javax.sql.DataSource` object. https://github.com/bootique/bootique-jdbc[`bootique-jdbc`]
+is a set of modules for configuring one or more DataSources in your app. It also provides advanced facilities for
+database testing and connection pool monitoring.
+
+Out of the box Bootique supports two connection pool providers: https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html[Tomcat JDBC]
+and https://github.com/brettwooldridge/HikariCP[HikariCP]. Both are production-quality data sources, and you can choose
+either one. From the application perspective the difference is mostly in configuration and available
+metrics and health checks, as Bootique (and JDBC) gives you the API abstraction common to both.
+
+Import one of these Bootique modules in your app, depending on your connection pool choice:
+[source,xml]
+----
+<!-- For Tomcat DataSource -->
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-tomcat</artifactId>
+</dependency>
+----
+
+[source,xml]
+----
+<!-- For HikariCP -->
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-hikaricp</artifactId>
+</dependency>
+----
+
+Alternatively you may include an "instrumented" version of each module, that will enable a number of metrics for your
+running app.

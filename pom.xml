@@ -49,6 +49,7 @@
         <module>bootique-jdbc-hikaricp</module>
         <module>bootique-jdbc-hikaricp-instrumented</module>
         <module>bootique-jdbc-test</module>
+        <module>bootique-jdbc-docs</module>
     </modules>
 
     <scm>

@@ -34,9 +34,15 @@ TODO
 
 === HikariCP
 
-HikariCP DataSource is produced via `io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory` and supports the
-following properties (mostly matching https://github.com/brettwooldridge/HikariCP[HikariCP docs]. In fact most of
-the descriptions are adopted from Hikari):
+HikariCP DataSource is produced by `io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory` and supports the
+properties listed below (mostly matching
+https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby[HikariCP docs]. In fact most of the descriptions
+are adopted from that document). A typical config might look like this:
+
+[source,yaml]
+----
+include::../../../test/resources/io/bootique/jdbc/docs/config.yml[tags=hikariconfig]
+----
 
 .HikariCP DataSource Property Reference - Essential Properties
 [cols=3*,options=header]
@@ -48,7 +54,7 @@ the descriptions are adopted from Hikari):
 |`type`
 |`hikari`
 |Indicates that the DataSource is produced by HikariCP. Can be either `hikari` or `hikari-instrumented`. Can be omitted
-if `bootique-jdbc-hikaricp` is the only implementation in the app dependencies.
+if `bootique-jdbc-hikaricp` is the only DataSourceFactory implementation in the app dependencies.
 
 |`autoCommit`
 |`true`
@@ -218,11 +224,11 @@ aliveness. This value must be less than the `connectionTimeout`. Lowest acceptab
 
 |`health.connection99Percent`
 |
-| An object resolved as 'io.bootique.metrics.health.check.DurationRangeFactory', <<DurationRangeFactory,see below>>.
+|Represented by DurationRangeFactory object <<DurationRangeFactory,documented below>>.
 
 |`health.connectivity`
 |
-| An object resolved as 'io.bootique.metrics.health.check.DurationRangeFactory', <<DurationRangeFactory,see below>>.
+| Configures "aliveness" health check. Represented by DurationRangeFactory object <<DurationRangeFactory,documented below>>.
 |===
 
 
@@ -235,7 +241,7 @@ aliveness. This value must be less than the `connectionTimeout`. Lowest acceptab
 |Description
 
 |`critical`
-| "5s"
+| 5s
 | Critical threshold duration. E.g. 5ms, 2s, 1hr
 
 |`max`

@@ -1,7 +1,7 @@
-#tag::config[]
+#tag::hikariconfig[]
 jdbc:
   mysql:
     jdbcUrl: "jdbc:mysql://host/db"
     username: testuser
     password: secret
-#end::config[]
+#end::hikariconfig[]

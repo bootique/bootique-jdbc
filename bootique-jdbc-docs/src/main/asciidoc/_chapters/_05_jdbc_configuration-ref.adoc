@@ -18,4 +18,13 @@
 [#jdbc-configuration-ref]
 == Configuration Reference
 
-TODO:
+`jdbc` is the root element of JDBC configuration. Its properties depend on whether you are using Tomcat or Hikari
+(or your own) connection pool, as described in the following chapters.
+
+=== Tomcat JDBC
+
+TODO
+
+=== HikariCP
+
+TODO

@@ -16,6 +16,5 @@
 // under the License.
 
 [#jdbc-configuration]
-== Configuration
+== Programming Jetty Applications
 
-TODO:

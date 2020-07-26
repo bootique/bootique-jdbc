@@ -23,6 +23,8 @@ a connection pool represented by a `javax.sql.DataSource` object. https://github
 is a set of modules for configuring one or more DataSources in your app. It also provides advanced facilities for
 database testing and connection pool monitoring.
 
+All other Bootique modules that require database access (Cayenne, JOOQ, MyBatis, etc.) also rely on `bootique-jdbc`.
+
 Out of the box Bootique supports two connection pool providers: https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html[Tomcat JDBC]
 and https://github.com/brettwooldridge/HikariCP[HikariCP]. Both are production-quality data sources, and you can choose
 either one. From the application perspective the difference is mostly in configuration and available

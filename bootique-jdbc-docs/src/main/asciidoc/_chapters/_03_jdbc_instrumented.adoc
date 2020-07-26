@@ -16,6 +16,6 @@
 // under the License.
 
 [#jdbc-merics-and-healthchecks]
-=== Metrics and Health Checks
+== Metrics and Health Checks
 
 TODO:

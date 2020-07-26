@@ -52,3 +52,5 @@ Import one of these Bootique modules in your app, depending on your connection p
 
 Alternatively you may include an <<jdbc-merics-and-healthchecks,"instrumented" version>> of each module, that will
 enable a number of metrics for your running app.
+
+You will also need to add JDBC driver jar to the app dependencies corresponding to your database.

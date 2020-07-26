@@ -2,6 +2,6 @@
 jdbc:
   mysql:
     jdbcUrl: "jdbc:mysql://host/db"
-    username: root
-    password: root
+    username: testuser
+    password: secret
 #end::config[]

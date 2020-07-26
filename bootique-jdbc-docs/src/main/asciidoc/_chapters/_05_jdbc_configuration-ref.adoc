@@ -18,8 +18,15 @@
 [#jdbc-configuration-ref]
 == Configuration Reference
 
-`jdbc` is the root element of JDBC configuration. Its properties depend on whether you are using Tomcat or Hikari
-(or your own) connection pool, as described in the following chapters.
+`jdbc` is the root element of JDBC configuration. It is a map of named data source configurations:
+
+```yaml
+jdbc:
+  ds1: ...
+  ds2: ...
+```
+DataSource properties depend on whether you are using Tomcat or Hikari (or your own) connection pool and are documented
+below.
 
 === Tomcat JDBC
 
@@ -27,4 +34,146 @@ TODO
 
 === HikariCP
 
-TODO
+HikariCP DataSource is produced via `io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory` and supports the
+following properties (mostly matching https://github.com/brettwooldridge/HikariCP[HikariCP docs]):
+
+HikariCP DataSource Property Reference - Essential Properties
+[cols=3*,options=header]
+|===
+|Property
+|Default
+|Description
+
+|`type`
+|`hikari`
+|Indicates that the DataSource is produced by HikariCP. Can be either `hikari` or `hikari-instrumented`. Can be omitted
+if `bootique-jdbc-hikaricp` is the only implementation in the app dependencies.
+
+|`autoCommit`
+|`true`
+| Controls the default auto-commit behavior of connections returned from the pool.
+
+|`connectionTestQuery`
+|
+|
+
+|`connectionTimeout`
+|
+|
+
+|`idleTimeout`
+|
+|
+
+|`jdbcUrl`
+|
+|
+
+|`maximumPoolSize`
+|
+|
+
+|`minimumIdle`
+|
+|
+
+|`password`
+|
+|
+
+|`username`
+|
+|Database user name
+|===
+
+
+
+HikariCP DataSource Property Reference - Other Properties
+[cols=3*,options=header]
+|===
+|Property
+|Default
+|Description
+
+|`allowPoolSuspension`
+|`false`
+|Controls whether the pool can be suspended and resumed through JMX
+
+|`catalog`
+|
+|
+
+|`connectionInitSql`
+|
+|
+
+|`dataSourceClassName`
+|
+|
+
+|`dataSourceJNDI`
+|
+|
+
+|`dataSourceProperties`
+|
+|
+
+|`driverClassName`
+|
+|
+
+|`initializationFailTimeout`
+|
+|
+
+|`isolateInternalQueries`
+|
+|
+
+|`leakDetectionThreshold`
+|
+|
+
+|`maxLifetime`
+|
+|
+
+|`readOnly`
+|
+|
+
+|`registerMbeans`
+|
+|
+
+|`schema`
+|
+|
+
+|`transactionIsolation`
+|
+|
+
+|`validationTimeout`
+|
+|
+|===
+
+"hikari-instrumented" inherits from "hikari" and supports an additional set of properties:
+
+HikariCP Instrumented Property Reference
+[cols=3*,options=header]
+|===
+|Property
+|Default
+|Description
+
+|`health.connection99Percent`
+|
+|
+
+|`health.connectivity`
+|
+|
+|===

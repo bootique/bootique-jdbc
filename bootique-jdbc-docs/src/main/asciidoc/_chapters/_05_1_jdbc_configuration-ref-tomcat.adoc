@@ -33,9 +33,8 @@ include::../../../test/resources/io/bootique/jdbc/docs/tomcat-config.yml[tags=co
 
 |`type`
 |
-|Indicates that the DataSource is produced by TomcatManagedDataSourceFactory. Can be omitted
-if `bootique-jdbc-tomcat` is the only DataSourceFactory implementation in the app dependencies. Otherwise should be
-set to `tomcat`.
+|Can be omitted if `bootique-jdbc-tomcat` is the only DataSourceFactory implementation in the app dependencies. In
+rare cases when there is more than one implementation, set to `tomcat`.
 
 |`defaultAutoCommit`
 |

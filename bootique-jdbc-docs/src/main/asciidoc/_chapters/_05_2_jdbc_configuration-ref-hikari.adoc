@@ -35,8 +35,8 @@ include::../../../test/resources/io/bootique/jdbc/docs/hikari-config.yml[tags=co
 
 |`type`
 |
-|Indicates that the DataSource is produced by HikariCP. Can be either `hikari` or `hikari-instrumented`. Can be omitted
-if `bootique-jdbc-hikaricp` is the only DataSourceFactory implementation in the app dependencies.
+|Can be omitted if `bootique-jdbc-hikaricp` is the only DataSourceFactory implementation in the app dependencies.
+In rare cases when there is more than one implementation, set to either `hikari` or `hikari-instrumented`.
 
 |`autoCommit`
 |`true`

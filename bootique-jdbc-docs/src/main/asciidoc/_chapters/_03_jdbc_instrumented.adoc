@@ -18,4 +18,22 @@
 [#jdbc-merics-and-healthchecks]
 == Metrics and Health Checks
 
-TODO:
+You may use an "instrumented" version of one of the `bootique-jdbc-*` connection pools, that will expose a number of
+metrics and health checks:
+[source,xml]
+----
+<!-- For Tomcat DataSource -->
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-tomcat-instrumented</artifactId>
+</dependency>
+----
+
+[source,xml]
+----
+<!-- For HikariCP -->
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-hikaricp-instrumented</artifactId>
+</dependency>
+----

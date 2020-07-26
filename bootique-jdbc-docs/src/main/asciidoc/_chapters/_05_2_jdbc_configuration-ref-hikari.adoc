@@ -14,24 +14,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
-[#jdbc-configuration-ref]
-== Configuration Reference
-
-`jdbc` is the root element of a configuration. It is a map of named data source configurations:
-
-```yaml
-jdbc:
-  ds1: ...
-  ds2: ...
-```
-DataSource properties depend on whether you are using Tomcat or Hikari (or your own) connection pool and are documented
-below.
-
-=== Tomcat JDBC
-
-TODO
-
 === HikariCP
 
 HikariCP DataSource is produced by `io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory` and supports the
@@ -41,7 +23,7 @@ are adopted from that document). A typical config might look like this:
 
 [source,yaml]
 ----
-include::../../../test/resources/io/bootique/jdbc/docs/config.yml[tags=hikariconfig]
+include::../../../test/resources/io/bootique/jdbc/docs/hikari-config.yml[tags=config]
 ----
 
 .HikariCP DataSource Property Reference - Essential Properties
@@ -52,7 +34,7 @@ include::../../../test/resources/io/bootique/jdbc/docs/config.yml[tags=hikaricon
 |Description
 
 |`type`
-|`hikari`
+|
 |Indicates that the DataSource is produced by HikariCP. Can be either `hikari` or `hikari-instrumented`. Can be omitted
 if `bootique-jdbc-hikaricp` is the only DataSourceFactory implementation in the app dependencies.
 
@@ -62,7 +44,7 @@ if `bootique-jdbc-hikaricp` is the only DataSourceFactory implementation in the 
 
 |`connectionTestQuery`
 |
-| The query that will be executed just before a connection is given to you from the pool to validate that the
+| The query that will be executed just before a connection is given to the app from the pool to validate that the
 connection to the database is still alive. This is for "legacy" drivers that do not support the JDBC4
 `Connection.isValid()` API.
 

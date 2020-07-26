@@ -18,7 +18,7 @@
 [#jdbc-merics-and-healthchecks]
 == Metrics and Health Checks
 
-You may use an "instrumented" version of one of the `bootique-jdbc-*` connection pools, that will expose a number of
+You may use the "instrumented" version of one of the `bootique-jdbc-*` connection pools, that will expose a number of
 metrics and health checks:
 [source,xml]
 ----

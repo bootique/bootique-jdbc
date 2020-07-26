@@ -71,12 +71,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-junit5</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>

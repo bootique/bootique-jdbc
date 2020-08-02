@@ -50,10 +50,7 @@ include::../../../test/java/io/bootique/jdbc/docs/DerbyTest.java[tags=declaratio
 <1> DbTester requires containing test to be annotated with `BQTest`.
 <2> DbTester requires `BQTestTool` annotation.
 
-There are more options that you can use when creating a DbTester, but since they are the same for either Derby or
-Testcontainers DB, we'll look at them in a <<dbtester-db-initialization,common section below>>.
-
-=== DB started on Docker
+=== Docker/Testcontainers DB
 
 If you need a real database environment that is as close as possible to your production, you need to include a
 different dependency:
@@ -78,8 +75,6 @@ so it makes sense to reuse it across many tests if at all possible.
 DB, and the Docker container version you want to use for it. As an alternative you can pass an instance of
 `JdbcDatabaseContainer`, if you want to customize/manage the DB container and JDBC URL options are not sufficient for
 your setup.
-
-The rest of the examples will use `TcDbTester`, but they should work the same way for Derby.
 
 [#dbtester-db-initialization]
 === DB initialization
@@ -115,7 +110,7 @@ include::../../../test/java/io/bootique/jdbc/docs/PostgresLiquibase.java[tags=mi
 
 === Data reset before each test
 
-Since the DB may be setup once and reused between multiple tests, it is often important to reset it to a known state
+Since the DB may be setup once and reused between multiple tests, it is important to reset it to a known state
 before each test. The following code does it by deleting all data from the specified tables:
 
 [source,java,indent=0]

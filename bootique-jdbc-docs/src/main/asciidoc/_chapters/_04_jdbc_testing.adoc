@@ -18,4 +18,119 @@
 [#jdbc-testing]
 == Testing
 
-TODO:
+NOTE: Bootique provides integration for both JUnit 4 and JUnit 5. This chapter will focus exclusively on the latter.
+JUnit 5 integration is much more capable.
+
+"bootique-jdbc" test extensions provide a way to create a test database. This can be either an in-memory DB (Derby),
+or a real DB started via Docker / https://www.testcontainers.org/[testcontainers library]. The test database can be
+initialized with either a SQL script, Liquibase migrations, or custom code. There's an API to create test data sets and
+perform assertions against DB data after the tested code is executed.
+
+The main object used to control the DB in tests is `DbTester`. Depending on whether you want to use Derby or a real DB,
+you create it differently, as described in the following two sections.
+
+=== In-memory Derby DB
+
+Testing with an in-memory DB has the advantage of speed, and a disadvantage of being only an approximation of the
+production DB. If you decide to go this way, start by including the following dependency:
+[source,xml]
+----
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-junit5-derby</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+Then create a `DbTester` in a desired scope:
+
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/DerbyTest.java[tags=declarations]
+----
+<1> DbTester requires containing test to be annotated with `BQTest`.
+<2> DbTester requires `BQTestTool` annotation.
+
+There are more options that you can use when creating a DbTester, but since they are the same for either Derby or
+Testcontainers DB, we'll look at them in a <<dbtester-db-initialization,common section below>>.
+
+=== DB started on Docker
+
+If you need a real database environment that is as close as possible to your production, you need to include a
+different dependency:
+[source,xml]
+----
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-junit5-testcontainers</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+Now you can create a `DbTester` using `TcDbTester`:
+
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/PostgresTest.java[tags=declarations]
+----
+
+<1> Often `TcDbTester` is created in the "GLOBAL" scope, as it may take a substantial time to start a database on Docker,
+so it makes sense to reuse it across many tests if at all possible.
+<2> Pass a https://www.testcontainers.org/modules/databases/jdbc/[testcontainers JDBC URL] to specify the type of the
+DB, and the Docker container version you want to use for it. As an alternative you can pass an instance of
+`JdbcDatabaseContainer`, if you want to customize/manage the DB container and JDBC URL options are not sufficient for
+your setup.
+
+The rest of the examples will use `TcDbTester`, but they should work the same way for Derby.
+
+[#dbtester-db-initialization]
+=== DB initialization
+
+No matter whether your are using Derby or a Docker DB, after starting the database, you often need to initialize it
+with the schema and maybe some test data. `DbTester` provides a number of convenient options for this, that can be used
+in any combination:
+
+==== SQL script
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/PostgresSQLScript.java[tags=init-script]
+----
+<1> SQL init script. Format is Bootique "resource" URL (i.e. may start with "classpath:" prefix). The default delimiter
+of statements in the file is `;`. It can be changed via the `initDB` method second argument.
+
+==== Custom function
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/PostgresInitFunction.java[tags=init-function]
+----
+<1> Calling a custom init function
+<2> A custom init function that takes `java.sql.Connection` as the only argument
+
+==== Liquibase migrations
+This is an attractive option if you are already using Liquibase. It ensures that your test schema exactly matches your
+real schema at any moment:
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/PostgresLiquibase.java[tags=migrations]
+----
+<1> Liquibase changelog URL. Format is Bootique "resource" URL (i.e. may start with "classpath:" prefix).
+
+=== Data reset before each test
+
+Since the DB may be setup once and reused between multiple tests, it is often important to reset it to a known state
+before each test. The following code does it by deleting all data from the specified tables:
+
+[source,java,indent=0]
+----
+include::../../../test/java/io/bootique/jdbc/docs/PostgresDeleteTestData.java[tags=deleteBeforeEachTest]
+----
+<1> A vararg that lists tables whose data needs to be deleted before each test. To avoid foreign key constraint
+violations during delete, you must pass tables names to this method in the "insert" order (i.e. if "t2" has an FK
+to "t1", "t2" must go *after* "t1").
+
+=== Connecting DbTester with test BQRuntime
+
+TODO
+
+=== Using DbTester
+
+TODO
+

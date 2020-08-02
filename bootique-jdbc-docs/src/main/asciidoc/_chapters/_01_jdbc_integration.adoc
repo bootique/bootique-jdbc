@@ -18,11 +18,11 @@
 [#jdbc-integration]
 == Bootique Integration with JDBC
 
-JDBC is a standard and well-known API to access relational databases. To connect to a database you would need a
-connection pool that is an instance of `javax.sql.DataSource`. https://github.com/bootique/bootique-jdbc[`bootique-jdbc`]
-helps to configure one or more DataSources in your app. It also provides advanced APIs for database testing and
-connection pool monitoring. All Bootique modules that require database access (Cayenne, JOOQ, MyBatis, etc.) would
-also rely on `bootique-jdbc`.
+JDBC is a standard and well-known API to access relational databases. To connect to a database you need a
+connection pool (`javax.sql.DataSource`). https://github.com/bootique/bootique-jdbc[`bootique-jdbc`]
+helps to configure one or more DataSources in your app. It also provides advanced APIs for
+connection pool monitoring and database testing. `bootique-jdbc` is used by applications directly, as well as by
+other Bootique modules that require database access (Cayenne, JOOQ, MyBatis, etc.).
 
 Out of the box Bootique supports a choice of two connection pool providers:
 

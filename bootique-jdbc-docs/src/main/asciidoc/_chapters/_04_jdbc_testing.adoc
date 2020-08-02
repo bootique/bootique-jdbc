@@ -118,7 +118,7 @@ before each test. The following code does it by deleting all data from the speci
 include::../../../test/java/io/bootique/jdbc/docs/PostgresDeleteTestData.java[tags=deleteBeforeEachTest]
 ----
 <1> A vararg that lists tables whose data needs to be deleted before each test. To avoid foreign key constraint
-violations during delete, you must pass tables names to this method in the "insert" order (i.e. if "t2" has an FK
+violations during delete, you must pass tables names to this method in the "insert" order (e.g. if "t2" has an FK
 to "t1", "t2" must go *after* "t1").
 
 === Connecting DbTester with test BQRuntime

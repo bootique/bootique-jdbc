@@ -34,6 +34,10 @@ Both are production-quality. From the application perspective the difference is 
 abstraction common to both, so you can pick either one.
 
 Import one of these Bootique modules in your app, depending on your connection pool choice:
+
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <!-- For Tomcat DataSource -->
@@ -51,6 +55,27 @@ Import one of these Bootique modules in your app, depending on your connection p
     <artifactId>bootique-jdbc-hikaricp</artifactId>
 </dependency>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+// For Tomcat DataSource
+{
+  implementation: 'io.bootique.jdbc:bootique-jdbc-tomcat'
+}
+----
+
+[source,groovy]
+----
+// For HikariCP
+{
+  implementation: 'io.bootique.jdbc:bootique-jdbc-hikaricp'
+}
+----
+====
 
 Alternatively you may include an <<jdbc-merics-and-healthchecks,"instrumented" version>> of each module, that will
 enable a number of metrics for your running app.

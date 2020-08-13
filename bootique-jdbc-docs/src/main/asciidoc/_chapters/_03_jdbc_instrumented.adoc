@@ -20,6 +20,10 @@
 
 You may use the "instrumented" version of one of the `bootique-jdbc-*` connection pools, that will expose a number of
 metrics and health checks:
+
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <!-- For Tomcat DataSource -->
@@ -37,3 +41,24 @@ metrics and health checks:
     <artifactId>bootique-jdbc-hikaricp-instrumented</artifactId>
 </dependency>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+// For Tomcat DataSource
+{
+  implementation: 'io.bootique.jdbc:bootique-jdbc-tomcat-instrumented'
+}
+----
+
+[source,groovy]
+----
+// For HikariCP
+{
+  implementation: 'io.bootique.jdbc:bootique-jdbc-hikaric-instrumentedp'
+}
+----
+====

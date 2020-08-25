@@ -18,8 +18,8 @@
  */
 package io.bootique.jdbc.junit5.metadata;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Calendar;
 
 /**
  * @since 2.0
@@ -82,10 +82,30 @@ public class DbColumnMetadata {
 
     protected void bindNotNull(PreparedStatement statement, int position, Object value) throws SQLException {
         int jdbcPosition = position + 1;
-        if (typeUnknown()) {
-            statement.setObject(jdbcPosition, value);
-        } else {
-            statement.setObject(jdbcPosition, value, type);
+        switch (type) {
+            case NO_TYPE:
+                statement.setObject(jdbcPosition, value);
+                break;
+            case Types.TIME:
+                // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
+                // Other DBs work fine with or without the calendar
+                if (value instanceof Time) {
+                    statement.setTime(jdbcPosition, (Time) value, Calendar.getInstance());
+                } else {
+                    statement.setObject(jdbcPosition, value, type);
+                }
+                break;
+            case Types.TIMESTAMP:
+                // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
+                // Other DBs work fine with or without the calendar
+                if (value instanceof Timestamp) {
+                    statement.setTimestamp(jdbcPosition, (Timestamp) value, Calendar.getInstance());
+                } else {
+                    statement.setObject(jdbcPosition, value, type);
+                }
+                break;
+            default:
+                statement.setObject(jdbcPosition, value, type);
         }
     }
 

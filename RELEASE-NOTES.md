@@ -1,4 +1,4 @@
-## 2.0
+## 2.0.M1
 
 * #95 Support for JUnit 5
 * #96 DbTester - a JUnit 5 extension to bootstrap test databases, provide integration w/Testcontainers

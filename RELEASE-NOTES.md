@@ -1,3 +1,7 @@
+## 2.0.B1
+
+* #105 Upgrade Testcontainers to 1.15.0-rc2
+
 ## 2.0.M1
 
 * #95 Support for JUnit 5

@@ -268,17 +268,16 @@ public class Table {
         return new SelectBuilder<>(builder);
     }
 
+    @Deprecated
     protected <T> T selectColumn(String columnName, RowReader<T> reader) {
         return selectColumn(columnName, reader, null);
     }
 
+    @Deprecated
     protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = selectStatement(reader)
-                .append("SELECT ")
-                .appendIdentifier(columnName)
-                .append(" FROM ")
-                .appendIdentifier(name);
-        return ensureAtMostOneRow(builder, defaultValue);
+        return selectColumns(columnName)
+                .reader(reader)
+                .selectOne(defaultValue);
     }
 
     /**
@@ -408,19 +407,6 @@ public class Table {
         }
 
         return -1;
-    }
-
-    protected <T> T ensureAtMostOneRow(SelectStatementBuilder<T> builder, T defaultValue) {
-
-        List<T> data = builder.select(2);
-        switch (data.size()) {
-            case 0:
-                return defaultValue;
-            case 1:
-                return data.get(0);
-            default:
-                throw new IllegalArgumentException("At most one row expected in the result");
-        }
     }
 
     public static class Builder {

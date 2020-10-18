@@ -194,16 +194,4 @@ public class Table {
 
         return columnsArray;
     }
-
-    private int columnIndex(String columnName) {
-        DbColumnMetadata[] columns = metadata.getColumns();
-
-        for (int i = 0; i < columns.length; i++) {
-            if (columnName.equals(columns[i].getName())) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
 }

@@ -51,30 +51,13 @@ public class Table {
     }
 
     /**
-     * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
-     * using policies specified for this table.
-     */
-    public ExecStatementBuilder execStatement() {
-        return getConnector().execStatement();
-    }
-
-    /**
-     * @param rowReader a function that converts a ResultSet row into an object.
-     * @param <T>       the type of objects read by returned statement builder.
-     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
-     * PreparedStatement using policies specified for this table.
-     */
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
-        return getConnector().selectStatement(rowReader);
-    }
-
-    /**
      * Update table statement
      *
      * @return a new {@link UpdateSetBuilder}.
      */
     public UpdateSetBuilder update() {
-        ExecStatementBuilder builder = execStatement()
+        ExecStatementBuilder builder = getConnector()
+                .execStatement()
                 .append("update ")
                 .appendTableName(metadata.getName())
                 .append(" set ");
@@ -83,7 +66,8 @@ public class Table {
     }
 
     public DeleteBuilder delete() {
-        ExecStatementBuilder builder = execStatement()
+        ExecStatementBuilder builder = getConnector()
+                .execStatement()
                 .append("delete from ")
                 .appendTableName(metadata.getName());
 
@@ -126,7 +110,7 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(execStatement(), metadata.getName(), columns);
+        return new InsertBuilder(getConnector().execStatement(), metadata.getName(), columns);
     }
 
     /**
@@ -160,7 +144,7 @@ public class Table {
             throw new IllegalArgumentException("No columns");
         }
 
-        SelectStatementBuilder<Object[]> builder = this
+        SelectStatementBuilder<Object[]> builder = getConnector()
                 .selectStatement(RowReader.arrayReader(columns.length))
                 .append("select ");
 

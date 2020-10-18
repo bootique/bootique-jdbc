@@ -23,7 +23,6 @@ import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
-import io.bootique.jdbc.junit5.connector.SelectStatementBuilder;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
@@ -91,10 +90,6 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     public ExecStatementBuilder execStatement() {
         return getConnector().execStatement();
-    }
-
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
-        return getConnector().selectStatement(rowReader);
     }
 
     public Connection getConnection() {

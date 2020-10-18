@@ -87,6 +87,8 @@ public class Table {
      * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
      * PreparedStatement using policies specified for this table.
      * @since 0.24
+     * @deprecated since 2.0 in favor of "getChannel().selectStatement". Generally this API is too low-level
+     * and should be avoided.
      */
     public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
         return getChannel().selectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
@@ -411,7 +413,7 @@ public class Table {
 
     public static class Builder {
 
-        private Table table;
+        private final Table table;
         private boolean quotingSqlIdentifiers;
         private boolean initColumnTypesFromDBMetadata;
 
@@ -454,7 +456,7 @@ public class Table {
                     }
                 }
 
-                if(types.isEmpty()) {
+                if (types.isEmpty()) {
                     throw new RuntimeException("Table '" + table.getName() + "' is not found in DB");
                 }
 

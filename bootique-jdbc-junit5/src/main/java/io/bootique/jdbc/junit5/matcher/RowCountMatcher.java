@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class RowCountMatcher {
 
-    private Table table;
+    private final Table table;
     private List<BinaryCondition> conditions;
 
     public RowCountMatcher(Table table) {
@@ -66,7 +66,8 @@ public class RowCountMatcher {
     }
 
     protected SelectStatementBuilder<Integer> countStatement() {
-        return table.selectStatement(RowReader.intReader())
+        return table.getConnector()
+                .selectStatement(RowReader.intReader())
                 .append("select count(*) from ")
                 .appendTableName(table.getMetadata().getName());
     }

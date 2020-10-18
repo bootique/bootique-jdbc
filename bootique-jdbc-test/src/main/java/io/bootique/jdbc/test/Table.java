@@ -222,31 +222,27 @@ public class Table {
      * @return a List of Object[] where each array represents a row in the underlying table.
      */
     public List<Object[]> select() {
-        return selectColumns(this.columns);
+        return selectColumns(this.columns).select();
     }
 
     /**
      * Selects a single row from the mapped table.
      */
     public Object[] selectOne() {
-        return ensureAtMostOneRow(selectColumnsBuilder(this.columns), null);
+        return selectColumns(this.columns).selectOne(null);
     }
 
     /**
-     * @param columns an array of columns to select.
-     * @return a List of Object[] where each array represents a row in the underlying table made of columns requested
-     * in this method.
-     * @since 0.14
+     * @since 2.0.B1
      */
-    public List<Object[]> selectColumns(String... columns) {
+    public SelectBuilder<Object[]> selectColumns(String... columns) {
         return selectColumns(toColumnsList(columns));
     }
 
-    public List<Object[]> selectColumns(List<Column> columns) {
-        return selectColumnsBuilder(columns).select();
-    }
-
-    protected SelectStatementBuilder<Object[]> selectColumnsBuilder(List<Column> columns) {
+    /**
+     * @since 2.0.B1
+     */
+    public SelectBuilder<Object[]> selectColumns(List<Column> columns) {
         if (columns.isEmpty()) {
             throw new IllegalArgumentException("No columns");
         }
@@ -264,7 +260,8 @@ public class Table {
             builder.appendIdentifier(col.getName());
         }
 
-        return builder.append(" FROM ").appendIdentifier(name);
+        builder.append(" FROM ").appendIdentifier(name);
+        return new SelectBuilder<>(builder);
     }
 
     protected <T> T selectColumn(String columnName, RowReader<T> reader) {

@@ -61,7 +61,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
      * @since 2.0.B1
      */
     public <U> SelectStatementBuilder<U> reader(RowReader<U> reader) {
-        return new SelectStatementBuilder<U>(
+        return new SelectStatementBuilder<>(
                 reader,
                 this.channel,
                 this.objectValueConverter,

@@ -19,33 +19,39 @@
 
 package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
+
+import java.util.List;
 
 /**
  * @since 2.0.B1
  */
-public class WhereBuilder {
+public class SelectWhereBuilder<T> {
 
-    protected ExecStatementBuilder builder;
+    protected final SelectStatementBuilder<T> builder;
     protected int whereCount;
 
-    protected WhereBuilder(ExecStatementBuilder builder) {
+    public SelectWhereBuilder(SelectStatementBuilder<T> builder) {
         this.builder = builder;
     }
 
-    /**
-     * @return the number of updated records.
-     * @since 0.24
-     */
-    public int exec() {
-        return builder.exec();
+    public List<T> select() {
+        return builder.select();
     }
 
-    public WhereBuilder and(String column, Object value) {
+    public List<T> select(long maxRows) {
+        return builder.select(maxRows);
+    }
+
+    public T selectOne(T defaultValue) {
+        return builder.selectOne(defaultValue);
+    }
+
+    public SelectWhereBuilder<T> and(String column, Object value) {
         return and(column, value, Column.NO_TYPE);
     }
 
-    public WhereBuilder and(String column, Object value, int valueType) {
+    public SelectWhereBuilder<T> and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
             builder.append(" AND ");
@@ -60,11 +66,11 @@ public class WhereBuilder {
         return this;
     }
 
-    public WhereBuilder or(String column, Object value) {
+    public SelectWhereBuilder<T> or(String column, Object value) {
         return or(column, value, Column.NO_TYPE);
     }
 
-    public WhereBuilder or(String column, Object value, int valueType) {
+    public SelectWhereBuilder<T> or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
             builder.append(" OR ");
         }

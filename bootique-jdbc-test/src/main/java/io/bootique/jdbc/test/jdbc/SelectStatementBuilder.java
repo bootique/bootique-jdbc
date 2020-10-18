@@ -19,10 +19,7 @@
 
 package io.bootique.jdbc.test.jdbc;
 
-import io.bootique.jdbc.test.BindingValueToStringConverter;
-import io.bootique.jdbc.test.DatabaseChannel;
-import io.bootique.jdbc.test.IdentifierQuotationStrategy;
-import io.bootique.jdbc.test.ObjectValueConverter;
+import io.bootique.jdbc.test.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +33,7 @@ import java.util.List;
  */
 public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
 
-    private RowReader<T> rowReader;
+    private final RowReader<T> rowReader;
 
     public SelectStatementBuilder(
             RowReader<T> rowReader,
@@ -46,6 +43,32 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
             IdentifierQuotationStrategy quotationStrategy) {
         super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
         this.rowReader = rowReader;
+    }
+
+    protected SelectStatementBuilder(
+            RowReader<T> rowReader,
+            DatabaseChannel channel,
+            ObjectValueConverter objectValueConverter,
+            BindingValueToStringConverter valueToStringConverter,
+            IdentifierQuotationStrategy quotationStrategy,
+            List<Binding> bindings,
+            StringBuilder sqlBuffer) {
+        super(channel, objectValueConverter, valueToStringConverter, quotationStrategy, bindings, sqlBuffer);
+        this.rowReader = rowReader;
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public <U> SelectStatementBuilder<U> reader(RowReader<U> reader) {
+        return new SelectStatementBuilder<>(
+                reader,
+                this.channel,
+                this.objectValueConverter,
+                this.valueToStringConverter,
+                this.quotationStrategy,
+                this.bindings,
+                this.sqlBuffer);
     }
 
     /**
@@ -64,6 +87,22 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
             return selectWithExceptions(sql, maxRows);
         } catch (SQLException e) {
             throw new RuntimeException("Error running selecting SQL: " + sql, e);
+        }
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public T selectOne(T defaultValue) {
+
+        List<T> data = select(2);
+        switch (data.size()) {
+            case 0:
+                return defaultValue;
+            case 1:
+                return data.get(0);
+            default:
+                throw new IllegalArgumentException("At most one row expected in the result");
         }
     }
 

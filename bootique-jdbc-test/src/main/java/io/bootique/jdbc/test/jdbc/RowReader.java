@@ -19,11 +19,9 @@
 
 package io.bootique.jdbc.test.jdbc;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+import io.bootique.jdbc.test.RowConverter;
+
+import java.sql.*;
 
 /**
  * @param <T>
@@ -32,6 +30,24 @@ import java.sql.Timestamp;
 public interface RowReader<T> {
 
     T readRow(ResultSet rs) throws SQLException;
+
+    /**
+     * @since 2.0.b1
+     */
+    static <T> RowReader<T> arrayReader(RowConverter<T> converter) {
+
+        return rs -> {
+            int width = rs.getMetaData().getColumnCount();
+            Object[] result = new Object[width];
+
+            for (int i = 1; i <= width; i++) {
+                result[i - 1] = rs.getObject(i);
+            }
+
+            return converter.convert(result);
+        };
+    }
+
 
     static RowReader<Object[]> arrayReader(int width) {
         return rs -> {

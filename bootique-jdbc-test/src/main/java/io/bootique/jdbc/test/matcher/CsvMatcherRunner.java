@@ -35,9 +35,9 @@ import static org.junit.Assert.*;
  */
 class CsvMatcherRunner {
 
-    private Table table;
-    private TableDataSet referenceData;
-    private RowKeyFactory keyFactory;
+    private final Table table;
+    private final TableDataSet referenceData;
+    private final RowKeyFactory keyFactory;
 
     public CsvMatcherRunner(Table table, TableDataSet referenceData, RowKeyFactory keyFactory) {
         this.table = table;
@@ -66,7 +66,7 @@ class CsvMatcherRunner {
     }
 
     private List<Object[]> readTableData() {
-        List<Object[]> data = table.selectColumns(referenceData.getHeader());
+        List<Object[]> data = table.selectColumns(referenceData.getHeader()).select();
         assertSizeMatches(referenceData, data);
         return data;
     }

@@ -21,12 +21,15 @@ package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 
-public class UpdateWhereBuilder {
+/**
+ * @since 2.0.B1
+ */
+public class WhereBuilder {
 
     protected ExecStatementBuilder builder;
     protected int whereCount;
 
-    protected UpdateWhereBuilder(ExecStatementBuilder builder) {
+    protected WhereBuilder(ExecStatementBuilder builder) {
         this.builder = builder;
     }
 
@@ -38,11 +41,11 @@ public class UpdateWhereBuilder {
         return builder.exec();
     }
 
-    public UpdateWhereBuilder and(String column, Object value) {
+    public WhereBuilder and(String column, Object value) {
         return and(column, value, Column.NO_TYPE);
     }
 
-    public UpdateWhereBuilder and(String column, Object value, int valueType) {
+    public WhereBuilder and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
             builder.append(" AND ");
@@ -57,11 +60,11 @@ public class UpdateWhereBuilder {
         return this;
     }
 
-    public UpdateWhereBuilder or(String column, Object value) {
+    public WhereBuilder or(String column, Object value) {
         return or(column, value, Column.NO_TYPE);
     }
 
-    public UpdateWhereBuilder or(String column, Object value, int valueType) {
+    public WhereBuilder or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
             builder.append(" OR ");
         }

@@ -86,12 +86,12 @@ public class Table {
         return new UpdateSetBuilder(builder);
     }
 
-    public UpdateWhereBuilder delete() {
+    public DeleteBuilder delete() {
         ExecStatementBuilder builder = execStatement()
                 .append("delete from ")
                 .appendTableName(metadata.getName());
 
-        return new UpdateWhereBuilder(builder);
+        return new DeleteBuilder(builder);
     }
 
     public int deleteAll() {

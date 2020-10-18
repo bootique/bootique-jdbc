@@ -21,12 +21,15 @@ package io.bootique.jdbc.junit5.connector;
 
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
-public class UpdateWhereBuilder {
+/**
+ * @since 2.0.B1
+ */
+public class WhereBuilder {
 
     protected ExecStatementBuilder builder;
     protected int whereCount;
 
-    public UpdateWhereBuilder(ExecStatementBuilder builder) {
+    public WhereBuilder(ExecStatementBuilder builder) {
         this.builder = builder;
     }
 
@@ -38,11 +41,11 @@ public class UpdateWhereBuilder {
         return builder.exec();
     }
 
-    public UpdateWhereBuilder and(String column, Object value) {
+    public WhereBuilder and(String column, Object value) {
         return and(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateWhereBuilder and(String column, Object value, int valueType) {
+    public WhereBuilder and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
             builder.append(" AND ");
@@ -57,11 +60,11 @@ public class UpdateWhereBuilder {
         return this;
     }
 
-    public UpdateWhereBuilder or(String column, Object value) {
+    public WhereBuilder or(String column, Object value) {
         return or(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateWhereBuilder or(String column, Object value, int valueType) {
+    public WhereBuilder or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
             builder.append(" OR ");
         }

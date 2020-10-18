@@ -54,12 +54,12 @@ public class UpdateSetBuilder {
         return this;
     }
 
-    public UpdateWhereBuilder where(String column, Object value) {
+    public WhereBuilder where(String column, Object value) {
         return where(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateWhereBuilder where(String column, Object value, int valueType) {
-        UpdateWhereBuilder where = new UpdateWhereBuilder(builder);
+    public WhereBuilder where(String column, Object value, int valueType) {
+        WhereBuilder where = new WhereBuilder(builder);
         where.and(column, value, valueType);
         return where;
     }

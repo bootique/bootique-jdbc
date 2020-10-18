@@ -165,4 +165,14 @@ public class TableIT {
         assertEquals(56, T1.getInt("c1"));
     }
 
+    @Test
+    public void testDelete() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        T1.matcher().assertMatches(2);
+
+        T1.delete().where("c2", "c").exec();
+        T1.matcher().assertOneMatch();
+        T1.matcher().eq("c1", 1).assertOneMatch();
+    }
+
 }

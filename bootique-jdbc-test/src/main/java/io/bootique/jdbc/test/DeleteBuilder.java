@@ -16,42 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 
-public class UpdateSetBuilder {
+/**
+ * @since 2.0.B1
+ */
+public class DeleteBuilder {
 
-    protected ExecStatementBuilder builder;
-    protected int setCount;
+    protected final ExecStatementBuilder builder;
 
-    protected UpdateSetBuilder(ExecStatementBuilder builder) {
+    public DeleteBuilder(ExecStatementBuilder builder) {
         this.builder = builder;
-    }
-
-    /**
-     * @return the number of updated records.
-     * @since 0.24
-     */
-    public int exec() {
-        return builder.exec();
-    }
-
-
-    public UpdateSetBuilder set(String column, Object value) {
-        return set(column, value, Column.NO_TYPE);
-    }
-
-    public UpdateSetBuilder set(String column, Object value, int valueType) {
-        if (setCount++ > 0) {
-            builder.append(", ");
-        }
-
-        builder.appendIdentifier(column)
-                .append(" = ")
-                .appendBinding(column, valueType, value);
-        return this;
     }
 
     public WhereBuilder where(String column, Object value) {
@@ -62,5 +39,9 @@ public class UpdateSetBuilder {
         WhereBuilder where = new WhereBuilder(builder);
         where.and(column, value, valueType);
         return where;
+    }
+
+    public int exec() {
+        return builder.exec();
     }
 }

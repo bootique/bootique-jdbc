@@ -131,12 +131,12 @@ public class Table {
         return new UpdateSetBuilder(builder);
     }
 
-    public UpdateWhereBuilder delete() {
+    public DeleteBuilder delete() {
         ExecStatementBuilder builder = execStatement()
                 .append("DELETE FROM ")
                 .appendIdentifier(name);
 
-        return new UpdateWhereBuilder(builder);
+        return new DeleteBuilder(builder);
     }
 
     public int deleteAll() {

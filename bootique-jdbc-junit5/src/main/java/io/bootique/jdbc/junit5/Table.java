@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JDBC utility class for setting up and analyzing the DB data sets for a single table.
- * Table intentionally bypasses Cayenne stack.
+ * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test
+ * data.
  */
 public class Table {
 

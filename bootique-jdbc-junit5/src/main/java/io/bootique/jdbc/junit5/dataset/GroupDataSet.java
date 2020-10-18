@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
  */
 public class GroupDataSet implements DataSet {
 
-    private Collection<DataSet> dataSets;
+    private final Collection<DataSet> dataSets;
 
     public GroupDataSet(DataSet... dataSets) {
         this(asList(dataSets));

@@ -20,8 +20,8 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.jdbc.junit5.connector.*;
-import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.dataset.CsvDataSetBuilder;
+import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
@@ -103,7 +103,7 @@ public class Table {
      * @return a builder for insert query.
      */
     public InsertBuilder insertColumns(String... columns) {
-        return insertColumns(toColumnsArray(columns));
+        return insertColumns(toColumnMetadata(columns));
     }
 
     /**
@@ -173,30 +173,30 @@ public class Table {
      * @return a List of Object[] where each array represents a row in the underlying table.
      */
     public List<Object[]> select() {
-        return selectColumns(metadata.getColumns());
+        return selectColumns(metadata.getColumns()).select();
     }
 
     /**
      * Selects a single row from the mapped table.
      */
     public Object[] selectOne() {
-        return ensureAtMostOneRow(selectColumnsBuilder(metadata.getColumns()), null);
+        return selectColumns(metadata.getColumns()).selectOne(null);
+    }
+
+
+    /**
+     * @param columns an array of columns to select
+     * @since 2.0.B1
+     */
+    public SelectBuilder<Object[]> selectColumns(String... columns) {
+        return selectColumns(toColumnMetadata(columns));
     }
 
     /**
-     * @param columns an array of columns to select.
-     * @return a List of Object[] where each array represents a row in the underlying table made of columns requested
-     * in this method.
+     * @since 2.0.B1
      */
-    public List<Object[]> selectColumns(String... columns) {
-        return selectColumns(toColumnsArray(columns));
-    }
+    public SelectBuilder<Object[]> selectColumns(DbColumnMetadata... columns) {
 
-    public List<Object[]> selectColumns(DbColumnMetadata... columns) {
-        return selectColumnsBuilder(columns).select();
-    }
-
-    protected SelectStatementBuilder<Object[]> selectColumnsBuilder(DbColumnMetadata... columns) {
         if (columns == null || columns.length == 0) {
             throw new IllegalArgumentException("No columns");
         }
@@ -214,7 +214,8 @@ public class Table {
             builder.appendIdentifier(col.getName());
         }
 
-        return builder.append(" from ").appendTableName(metadata.getName());
+        builder.append(" from ").appendTableName(metadata.getName());
+        return new SelectBuilder<>(builder);
     }
 
     protected <T> T selectColumn(String columnName, RowReader<T> reader) {
@@ -222,12 +223,7 @@ public class Table {
     }
 
     protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = selectStatement(reader)
-                .append("select ")
-                .appendIdentifier(columnName)
-                .append(" from ")
-                .appendTableName(metadata.getName());
-        return ensureAtMostOneRow(builder, defaultValue);
+        return selectColumns(columnName).reader(reader).selectOne(defaultValue);
     }
 
     public Object getObject(String column) {
@@ -278,7 +274,7 @@ public class Table {
         return selectColumn(column, RowReader.timestampReader());
     }
 
-    protected DbColumnMetadata[] toColumnsArray(String... columns) {
+    protected DbColumnMetadata[] toColumnMetadata(String... columns) {
         if (columns == null) {
             throw new NullPointerException("Null columns");
         }
@@ -305,18 +301,5 @@ public class Table {
         }
 
         return -1;
-    }
-
-    protected <T> T ensureAtMostOneRow(SelectStatementBuilder<T> builder, T defaultValue) {
-
-        List<T> data = builder.select(2);
-        switch (data.size()) {
-            case 0:
-                return defaultValue;
-            case 1:
-                return data.get(0);
-            default:
-                throw new IllegalArgumentException("At most one row expected in the result");
-        }
     }
 }

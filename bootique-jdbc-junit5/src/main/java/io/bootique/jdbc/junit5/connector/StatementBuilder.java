@@ -38,13 +38,12 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatementBuilder.class);
 
-    protected ObjectValueConverter objectValueConverter;
-    protected BindingValueToStringConverter valueToStringConverter;
-    protected IdentifierQuoter quoter;
-    protected DbConnector channel;
-
-    protected List<Binding> bindings;
-    protected StringBuilder sqlBuffer;
+    protected final DbConnector channel;
+    protected final ObjectValueConverter objectValueConverter;
+    protected final BindingValueToStringConverter valueToStringConverter;
+    protected final IdentifierQuoter quoter;
+    protected final List<Binding> bindings;
+    protected final StringBuilder sqlBuffer;
 
     public StatementBuilder(
             DbConnector channel,
@@ -56,9 +55,24 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
         this.objectValueConverter = objectValueConverter;
         this.quoter = quoter;
         this.valueToStringConverter = valueToStringConverter;
-
         this.bindings = new ArrayList<>();
         this.sqlBuffer = new StringBuilder();
+    }
+
+    protected StatementBuilder(
+            DbConnector channel,
+            ObjectValueConverter objectValueConverter,
+            BindingValueToStringConverter valueToStringConverter,
+            IdentifierQuoter quoter,
+            List<Binding> bindings,
+            StringBuilder sqlBuffer) {
+
+        this.objectValueConverter = objectValueConverter;
+        this.valueToStringConverter = valueToStringConverter;
+        this.quoter = quoter;
+        this.channel = channel;
+        this.bindings = bindings;
+        this.sqlBuffer = sqlBuffer;
     }
 
     protected void bind(PreparedStatement statement) {

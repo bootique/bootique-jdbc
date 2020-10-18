@@ -29,20 +29,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @since 2.0
+ * @since 2.0.M1
  */
 public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
 
-    private RowReader<T> rowReader;
+    private final RowReader<T> rowReader;
 
     public SelectStatementBuilder(
             RowReader<T> rowReader,
             DbConnector channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
-            IdentifierQuoter quotationStrategy) {
-        super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
+            IdentifierQuoter quoter) {
+        super(channel, objectValueConverter, valueToStringConverter, quoter);
         this.rowReader = rowReader;
+    }
+
+    protected SelectStatementBuilder(
+            RowReader<T> rowReader,
+            DbConnector channel,
+            ObjectValueConverter objectValueConverter,
+            BindingValueToStringConverter valueToStringConverter,
+            IdentifierQuoter quoter,
+            List<Binding> bindings,
+            StringBuilder sqlBuffer) {
+        super(channel, objectValueConverter, valueToStringConverter, quoter, bindings, sqlBuffer);
+        this.rowReader = rowReader;
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public <U> SelectStatementBuilder<U> reader(RowReader<U> reader) {
+        return new SelectStatementBuilder<U>(
+                reader,
+                this.channel,
+                this.objectValueConverter,
+                this.valueToStringConverter,
+                this.quoter,
+                this.bindings,
+                this.sqlBuffer);
     }
 
     public List<T> select() {
@@ -58,6 +84,19 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
             return selectWithExceptions(sql, maxRows);
         } catch (SQLException e) {
             throw new RuntimeException("Error running selecting SQL: " + sql, e);
+        }
+    }
+
+    public T selectOne(T defaultValue) {
+
+        List<T> data = select(2);
+        switch (data.size()) {
+            case 0:
+                return defaultValue;
+            case 1:
+                return data.get(0);
+            default:
+                throw new IllegalArgumentException("At most one row expected in the result");
         }
     }
 

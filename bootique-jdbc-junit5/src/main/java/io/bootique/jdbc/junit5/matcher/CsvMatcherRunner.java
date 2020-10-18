@@ -79,7 +79,8 @@ class CsvMatcherRunner {
     }
 
     private List<Object[]> readTableData() {
-        List<Object[]> data = table.selectColumns(referenceData.getHeader());
+        DbColumnMetadata[] header = referenceData.getHeader();
+        List<Object[]> data = table.selectColumns(header).select();
         assertSizeMatches(referenceData, data);
         return data;
     }

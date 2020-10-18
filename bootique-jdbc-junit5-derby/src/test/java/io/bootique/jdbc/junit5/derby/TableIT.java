@@ -118,7 +118,7 @@ public class TableIT {
         assertEquals(3, row[0]);
         assertEquals(4, row[1]);
         assertEquals(Date.valueOf("2018-01-09"), row[2]);
-        assertEquals(null, row[3]);
+        assertNull(row[3]);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class TableIT {
         assertEquals(3, row[0]);
         assertEquals(4, row[1]);
         assertEquals(Date.valueOf("2018-01-09"), row[2]);
-        assertEquals(null, row[3]);
+        assertNull(row[3]);
     }
 
     @Test
@@ -167,4 +167,25 @@ public class TableIT {
         T1.matcher().eq("c1", 1).assertOneMatch();
     }
 
+    @Test
+    public void testSelectColumns() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        DTO dto = T1.selectColumns("c2", "c3")
+                .converter(a -> new DTO((String) a[0], (String) a[1]))
+                .where("c1", 2)
+                .selectOne(null);
+
+        assertEquals("c", dto.c2);
+        assertEquals("d", dto.c3);
+    }
+
+    private static class DTO {
+        final String c2;
+        final String c3;
+
+        public DTO(String c2, String c3) {
+            this.c2 = c2;
+            this.c3 = c3;
+        }
+    }
 }

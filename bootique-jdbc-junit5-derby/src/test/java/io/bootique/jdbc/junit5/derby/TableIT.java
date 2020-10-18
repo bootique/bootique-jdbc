@@ -92,7 +92,7 @@ public class TableIT {
                 .set("c3", "b", Types.VARCHAR)
                 .exec();
 
-        List<Object[]> data = T1.select();
+        List<Object[]> data = T1.selectAllColumns().select();
         assertEquals(1, data.size());
 
         Object[] row = data.get(0);
@@ -111,7 +111,7 @@ public class TableIT {
                 .set("c2", 4, Types.INTEGER)
                 .exec();
 
-        List<Object[]> data = T2.select();
+        List<Object[]> data = T2.selectAllColumns().select();
         assertEquals(1, data.size());
 
         Object[] row = data.get(0);
@@ -133,7 +133,7 @@ public class TableIT {
                 .where("c1", 1)
                 .exec();
 
-        List<Object[]> data = T2.select();
+        List<Object[]> data = T2.selectAllColumns().select();
         assertEquals(1, data.size());
 
         Object[] row = data.get(0);
@@ -141,20 +141,6 @@ public class TableIT {
         assertEquals(4, row[1]);
         assertEquals(Date.valueOf("2018-01-09"), row[2]);
         assertNull(row[3]);
-    }
-
-    @Test
-    public void testGetString() {
-        assertNull(T1.getString("c2"));
-        T1.insert(1, "xr", "yr");
-        assertEquals("xr", T1.getString("c2"));
-    }
-
-    @Test
-    public void testGetInt() {
-        assertEquals(0, T1.getInt("c1"));
-        T1.insert(56, "xr", "yr");
-        assertEquals(56, T1.getInt("c1"));
     }
 
     @Test

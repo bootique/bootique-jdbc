@@ -26,15 +26,11 @@ import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test
  * data.
+ *
+ * @since 2.0
  */
 public class Table {
 
@@ -141,55 +137,18 @@ public class Table {
     }
 
     /**
-     * Performs select operation against the table, returning result as a map using provided unique column as a key.
-     *
-     * @param mapColumn the name of a unique column to use as a map key.
-     * @return a map using provided unique column as a key.
-     */
-    public Map<Object, Object[]> selectAsMap(String mapColumn) {
-
-        int mapColumnIndex = columnIndex(mapColumn);
-        if (mapColumnIndex < 0) {
-            throw new IllegalArgumentException("Unknown column: " + mapColumn);
-        }
-
-        List<Object[]> list = select();
-
-        Map<Object, Object[]> map = new HashMap<>();
-
-        list.forEach(r -> {
-            Object[] existing = map.put(r[mapColumnIndex], r);
-            if (existing != null) {
-                throw new IllegalArgumentException("More than one row matches '" + r[mapColumnIndex] + "' value");
-            }
-        });
-
-        return map;
-    }
-
-    /**
-     * Selects all data from the table.
-     *
-     * @return a List of Object[] where each array represents a row in the underlying table.
-     */
-    public List<Object[]> select() {
-        return selectColumns(metadata.getColumns()).select();
-    }
-
-    /**
-     * Selects a single row from the mapped table.
-     */
-    public Object[] selectOne() {
-        return selectColumns(metadata.getColumns()).selectOne(null);
-    }
-
-
-    /**
      * @param columns an array of columns to select
      * @since 2.0.B1
      */
     public SelectBuilder<Object[]> selectColumns(String... columns) {
         return selectColumns(toColumnMetadata(columns));
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public SelectBuilder<Object[]> selectAllColumns() {
+        return selectColumns(metadata.getColumns());
     }
 
     /**
@@ -218,61 +177,6 @@ public class Table {
         return new SelectBuilder<>(builder);
     }
 
-    protected <T> T selectColumn(String columnName, RowReader<T> reader) {
-        return selectColumn(columnName, reader, null);
-    }
-
-    protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        return selectColumns(columnName).reader(reader).selectOne(defaultValue);
-    }
-
-    public Object getObject(String column) {
-        return selectColumn(column, RowReader.objectReader());
-    }
-
-    public byte getByte(String column) {
-        return selectColumn(column, RowReader.byteReader(), (byte) 0);
-    }
-
-    public byte[] getBytes(String column) {
-        return selectColumn(column, RowReader.bytesReader());
-    }
-
-    public int getInt(String column) {
-        return selectColumn(column, RowReader.intReader(), 0);
-    }
-
-    public long getLong(String column) {
-        return selectColumn(column, RowReader.longReader(), 0L);
-    }
-
-    public double getDouble(String column) {
-        return selectColumn(column, RowReader.doubleReader(), 0.0);
-    }
-
-    public boolean getBoolean(String column) {
-        return selectColumn(column, RowReader.booleanReader(), false);
-    }
-
-    public String getString(String column) {
-        return selectColumn(column, RowReader.stringReader());
-    }
-
-    public java.util.Date getUtilDate(String column) {
-        return getTimestamp(column);
-    }
-
-    public java.sql.Date getSqlDate(String column) {
-        return selectColumn(column, RowReader.dateReader());
-    }
-
-    public Time getTime(String column) {
-        return selectColumn(column, RowReader.timeReader());
-    }
-
-    public Timestamp getTimestamp(String column) {
-        return selectColumn(column, RowReader.timestampReader());
-    }
 
     protected DbColumnMetadata[] toColumnMetadata(String... columns) {
         if (columns == null) {

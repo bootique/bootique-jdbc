@@ -189,12 +189,9 @@ public class Table {
     }
 
     /**
-     * Performs select operation against the table, returning result as a map using provided unique column as a key.
-     *
-     * @param mapColumn the name of a unique column to use as a map key.
-     * @return a map using provided unique column as a key.
-     * @since 0.21
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
      */
+    @Deprecated
     public Map<Object, Object[]> selectAsMap(String mapColumn) {
 
         int mapColumnIndex = columnIndex(mapColumn);
@@ -217,17 +214,17 @@ public class Table {
     }
 
     /**
-     * Selects all data from the table.
-     *
-     * @return a List of Object[] where each array represents a row in the underlying table.
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
      */
+    @Deprecated
     public List<Object[]> select() {
         return selectColumns(this.columns).select();
     }
 
     /**
-     * Selects a single row from the mapped table.
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
      */
+    @Deprecated
     public Object[] selectOne() {
         return selectColumns(this.columns).selectOne(null);
     }
@@ -237,6 +234,13 @@ public class Table {
      */
     public SelectBuilder<Object[]> selectColumns(String... columns) {
         return selectColumns(toColumnsList(columns));
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public SelectBuilder<Object[]> selectAllColumns() {
+        return selectColumns(this.columns);
     }
 
     /**
@@ -277,50 +281,98 @@ public class Table {
         return ensureAtMostOneRow(builder, defaultValue);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public Object getObject(String column) {
         return selectColumn(column, RowReader.objectReader());
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public byte getByte(String column) {
         return selectColumn(column, RowReader.byteReader(), (byte) 0);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public byte[] getBytes(String column) {
         return selectColumn(column, RowReader.bytesReader());
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public int getInt(String column) {
         return selectColumn(column, RowReader.intReader(), 0);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public long getLong(String column) {
         return selectColumn(column, RowReader.longReader(), 0L);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public double getDouble(String column) {
         return selectColumn(column, RowReader.doubleReader(), 0.0);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public boolean getBoolean(String column) {
         return selectColumn(column, RowReader.booleanReader(), false);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public String getString(String column) {
         return selectColumn(column, RowReader.stringReader());
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public java.util.Date getUtilDate(String column) {
         return getTimestamp(column);
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public java.sql.Date getSqlDate(String column) {
         return selectColumn(column, RowReader.dateReader());
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public Time getTime(String column) {
         return selectColumn(column, RowReader.timeReader());
     }
 
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
     public Timestamp getTimestamp(String column) {
         return selectColumn(column, RowReader.timestampReader());
     }

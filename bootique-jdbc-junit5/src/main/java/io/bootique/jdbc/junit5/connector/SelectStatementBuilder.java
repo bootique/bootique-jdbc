@@ -87,6 +87,10 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
         }
     }
 
+    public T selectOne() {
+        return selectOne(null);
+    }
+
     public T selectOne(T defaultValue) {
 
         List<T> data = select(2);

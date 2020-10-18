@@ -72,7 +72,7 @@ public class CsvDataSetBuilderIT {
     public void testCsvDataSet_Load() {
         T1.csvDataSet().load("classpath:io/bootique/jdbc/junit5/derby/dataset/t1.csv").persist();
 
-        List<Object[]> data = T1.select();
+        List<Object[]> data = T1.selectAllColumns().select();
         assertEquals(2, data.size());
 
         // sort in memory, as there's no guarantee that DB will return data in insertion order
@@ -93,7 +93,7 @@ public class CsvDataSetBuilderIT {
     public void testCsvDataSet_Load_Nulls_Dates() {
         T2.csvDataSet().load("classpath:io/bootique/jdbc/junit5/derby/dataset/t2.csv").persist();
 
-        List<Object[]> data = T2.select();
+        List<Object[]> data = T2.selectAllColumns().select();
         assertEquals(3, data.size());
 
         // sort in memory, as there's no guarantee that DB will return data in insertion order
@@ -120,7 +120,7 @@ public class CsvDataSetBuilderIT {
     public void testCsvDataSet_Load_Binary() {
         T3.csvDataSet().load("classpath:io/bootique/jdbc/junit5/derby/dataset/t3.csv").persist();
 
-        List<Object[]> data = T3.select();
+        List<Object[]> data = T3.selectAllColumns().select();
         assertEquals(3, data.size());
 
         // sort in memory, as there's no guarantee that DB will return data in insertion order
@@ -143,7 +143,7 @@ public class CsvDataSetBuilderIT {
     public void testCsvDataSet_Load_Boolean() {
         T4.csvDataSet().load("classpath:io/bootique/jdbc/junit5/derby/dataset/t4.csv").persist();
 
-        List<Object[]> data = T4.select();
+        List<Object[]> data = T4.selectAllColumns().select();
         assertEquals(3, data.size());
 
         // sort in memory, as there's no guarantee that DB will return data in insertion order

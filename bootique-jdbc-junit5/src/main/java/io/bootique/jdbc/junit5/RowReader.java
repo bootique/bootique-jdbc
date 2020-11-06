@@ -20,6 +20,7 @@
 package io.bootique.jdbc.junit5;
 
 import java.sql.*;
+import java.util.Calendar;
 
 /**
  * @param <T>
@@ -95,10 +96,14 @@ public interface RowReader<T> {
     }
 
     static RowReader<Time> timeReader() {
-        return rs -> rs.getTime(1);
+        // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
+        // Other DBs work fine with or without the calendar
+        return rs -> rs.getTime(1, Calendar.getInstance());
     }
 
     static RowReader<Timestamp> timestampReader() {
-        return rs -> rs.getTimestamp(1);
+        // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
+        // Other DBs work fine with or without the calendar
+        return rs -> rs.getTimestamp(1, Calendar.getInstance());
     }
 }

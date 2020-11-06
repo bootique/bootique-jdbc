@@ -23,6 +23,7 @@ import io.bootique.jdbc.junit5.Table;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
@@ -46,14 +47,22 @@ public class Table_MySQLIT {
     }
 
     @Test
-    public void testDateTime() {
+    @Disabled("Until we can fix #108")
+    public void testDateTime_ViaSelect() {
         LocalDateTime ldt = LocalDateTime.of(2018, 1, 10, 4, 0, 1);
         T1.insertColumns("c1", "c3").values(1, ldt).exec();
 
-        T1.matcher().assertMatches(1);
-
-        // comparing timestamps in Java (instead of using a matcher for DB-side comparison) to be able to see the differences
+        T1.matcher().assertOneMatch();
         Object[] data = T1.selectColumns("c3").where("c1", 1).selectOne(null);
         assertEquals(Timestamp.valueOf(ldt), data[0], "Timestamps do not match");
+    }
+
+    @Test
+    public void testDateTime_ViaMatcher() {
+        LocalDateTime ldt = LocalDateTime.of(2018, 1, 10, 4, 0, 1);
+        T1.insertColumns("c1", "c3").values(1, ldt).exec();
+
+        T1.matcher().assertOneMatch();
+        T1.matcher().eq("c1", 1).eq("c3", ldt).assertOneMatch();
     }
 }

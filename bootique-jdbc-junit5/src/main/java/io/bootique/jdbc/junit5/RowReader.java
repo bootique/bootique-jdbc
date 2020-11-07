@@ -19,8 +19,8 @@
 
 package io.bootique.jdbc.junit5;
 
-import java.sql.*;
-import java.util.Calendar;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @param <T>
@@ -31,7 +31,7 @@ public interface RowReader<T> {
     T readRow(ResultSet rs) throws SQLException;
 
     /**
-     * @since 2.0.b1
+     * @since 2.0.B1
      */
     static <T> RowReader<T> arrayReader(RowConverter<T> converter) {
 
@@ -57,53 +57,5 @@ public interface RowReader<T> {
 
             return result;
         };
-    }
-
-    static RowReader<Integer> intReader() {
-        return rs -> rs.getInt(1);
-    }
-
-    static RowReader<Long> longReader() {
-        return rs -> rs.getLong(1);
-    }
-
-    static RowReader<String> stringReader() {
-        return rs -> rs.getString(1);
-    }
-
-    static RowReader<Object> objectReader() {
-        return rs -> rs.getObject(1);
-    }
-
-    static RowReader<Byte> byteReader() {
-        return rs -> rs.getByte(1);
-    }
-
-    static RowReader<byte[]> bytesReader() {
-        return rs -> rs.getBytes(1);
-    }
-
-    static RowReader<Double> doubleReader() {
-        return rs -> rs.getDouble(1);
-    }
-
-    static RowReader<Boolean> booleanReader() {
-        return rs -> rs.getBoolean(1);
-    }
-
-    static RowReader<Date> dateReader() {
-        return rs -> rs.getDate(1);
-    }
-
-    static RowReader<Time> timeReader() {
-        // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
-        // Other DBs work fine with or without the calendar
-        return rs -> rs.getTime(1, Calendar.getInstance());
-    }
-
-    static RowReader<Timestamp> timestampReader() {
-        // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
-        // Other DBs work fine with or without the calendar
-        return rs -> rs.getTimestamp(1, Calendar.getInstance());
     }
 }

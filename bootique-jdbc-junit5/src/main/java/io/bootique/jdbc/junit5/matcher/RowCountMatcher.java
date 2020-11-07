@@ -20,7 +20,6 @@
 package io.bootique.jdbc.junit5.matcher;
 
 import io.bootique.jdbc.junit5.Table;
-import io.bootique.jdbc.junit5.RowReader;
 import io.bootique.jdbc.junit5.connector.SelectStatementBuilder;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
@@ -67,7 +66,7 @@ public class RowCountMatcher {
 
     protected SelectStatementBuilder<Integer> countStatement() {
         return table.getConnector()
-                .selectStatement(RowReader.intReader())
+                .selectStatement(rs -> rs.getInt(1))
                 .append("select count(*) from ")
                 .appendTableName(table.getMetadata().getName());
     }

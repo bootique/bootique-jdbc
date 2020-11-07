@@ -31,13 +31,13 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class Table_MySQLIT {
+public class Table_PostgresIT {
 
     @BQTestTool
     static final TcDbTester db = TcDbTester
-            .db("jdbc:tc:mysql:8.0.20:///db")
+            .db("jdbc:tc:postgresql:11:///mydb")
             .deleteBeforeEachTest("t1")
-            .initDB("classpath:io/bootique/jdbc/junit5/tc/Table_MySQLIT.sql");
+            .initDB("classpath:io/bootique/jdbc/junit5/tc/Table_PostgresIT.sql");
 
     private static Table T1;
 

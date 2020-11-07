@@ -32,7 +32,7 @@ public interface RowReader<T> {
     T readRow(ResultSet rs) throws SQLException;
 
     /**
-     * @since 2.0.b1
+     * @since 2.0.B1
      */
     static <T> RowReader<T> arrayReader(RowConverter<T> converter) {
 

@@ -43,10 +43,10 @@ public class SelectBuilder<T> {
     }
 
     /**
-     * Returns another SelectBuilder that inherits the underlying SQL query, but uses a different reader for the result.
+     * Returns another SelectBuilder that inherits the underlying SQL query, but uses a converter for the result.
      */
-    public <U> SelectBuilder<U> converter(RowConverter<U> reader) {
-        return new SelectBuilder<>(builder.reader(RowReader.arrayReader(reader)));
+    public <U> SelectBuilder<U> converter(RowConverter<U> converter) {
+        return new SelectBuilder<>(builder.reader(ArrayReader.create(converter)));
     }
 
     public SelectWhereBuilder<T> where(String column, Object value) {

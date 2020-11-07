@@ -16,17 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package io.bootique.jdbc.junit5;
+package io.bootique.jdbc.junit5.connector;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @param <T>
- * @since 2.0
+ * @since 2.0.B1
  */
-public interface RowReader<T> {
+@FunctionalInterface
+public interface ColumnReader {
 
-    T readRow(ResultSet rs) throws SQLException;
+    Object read(ResultSet rs) throws SQLException;
 }

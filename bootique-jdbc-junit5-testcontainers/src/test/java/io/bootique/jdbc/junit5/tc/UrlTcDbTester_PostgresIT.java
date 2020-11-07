@@ -18,71 +18,52 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.jdbc.junit5.tc.unit.BaseTcTesterTest;
-import io.bootique.junit5.BQApp;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.jdbc.junit5.tc.unit.BasePostgresTest;
 import org.junit.jupiter.api.*;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UrlTcDbTester_PostgresIT extends BaseTcTesterTest {
-
-    @BQTestTool
-    static final TcDbTester db = TcDbTester.db("jdbc:tc:postgresql:11:///mydb");
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
+public class UrlTcDbTester_PostgresIT extends BasePostgresTest {
 
     @Test
     @Order(0)
     @DisplayName("PostgreSQL DataSource must be in use")
-    public void testPostgres() {
-        run(app, c -> Assertions.assertEquals("PostgreSQL", c.getMetaData().getDatabaseProductName()));
+    public void testPostgres() throws SQLException {
+        try (Connection c = db.getConnection()) {
+            Assertions.assertEquals("PostgreSQL", c.getMetaData().getDatabaseProductName());
+        }
     }
 
     @Test
     @Order(1)
     @DisplayName("Setup data for subsequent state test")
-    public void setupDbState() {
-        createDbState(app);
+    public void setupDbState() throws SQLException {
+        try (Connection c = db.getConnection()) {
+            try (Statement s = c.createStatement()) {
+                s.executeUpdate("create table UrlTcDbTester_PostgresIT (id integer)");
+                s.executeUpdate("insert into UrlTcDbTester_PostgresIT values (345)");
+            }
+        }
     }
 
     @Test
     @Order(2)
     @DisplayName("DB state must be preserved between the tests")
-    public void testDbState() {
-        checkDbState(app);
-    }
-
-    protected void createDbState(BQRuntime app) {
-        run(app, c -> {
+    public void testDbState() throws SQLException {
+        try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {
-                s.executeUpdate("create table a (id integer)");
-                s.executeUpdate("insert into a values (345)");
-            }
-        });
-    }
-
-    protected void checkDbState(BQRuntime app) {
-        run(app, c -> {
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from a")) {
+                try (ResultSet rs = s.executeQuery("select * from UrlTcDbTester_PostgresIT")) {
                     assertTrue(rs.next());
                     assertEquals(345, rs.getInt(1));
                 }
             }
-        });
+        }
     }
 }

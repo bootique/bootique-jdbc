@@ -27,7 +27,9 @@ import io.bootique.junit5.BQTestTool;
 public abstract class BasePostgresTest {
 
     @BQTestTool(BQTestScope.GLOBAL)
-    static final TcDbTester db = TcDbTester
+    protected static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///mydb")
+            // do not delete "t2", only "t1", "t3" and "t4"... this allows to assert the delete behavior in subclasses
+            .deleteBeforeEachTest("t1", "t3", "t4")
             .initDB("classpath:io/bootique/jdbc/junit5/tc/unit/BasePostgresTest.sql");
 }

@@ -18,71 +18,48 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.jdbc.junit5.tc.unit.BaseTcTesterTest;
-import io.bootique.junit5.BQApp;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.jdbc.junit5.tc.unit.BasePostgresTest;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@BQTest
-public class UrlTcDbTester_DeleteBeforeEachTest_PostgresIT extends BaseTcTesterTest {
+public class UrlTcDbTester_DeleteBeforeEachTest_PostgresIT extends BasePostgresTest {
 
-    @BQTestTool
-    static final TcDbTester db = TcDbTester
-            .db("jdbc:tc:postgresql:11:///mydb")
-            .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_DeleteBeforeEachTest_PostgresIT.sql")
-            .deleteBeforeEachTest("a", "b");
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
-
-    @Test
+    @RepeatedTest(2)
     @DisplayName("Check tables are clean, insert data for next test")
-    public void test1() {
+    public void test() throws SQLException {
         checkNoData();
         insertTestData();
     }
 
-    @Test
-    @DisplayName("Check tables are clean, insert data for next test")
-    public void test2() {
-        checkNoData();
-        insertTestData();
-    }
-
-    protected void checkNoData() {
-        run(app, c -> {
+    protected void checkNoData() throws SQLException {
+        try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select count(1) from a")) {
+                try (ResultSet rs = s.executeQuery("select count(1) from t3")) {
                     rs.next();
                     assertEquals(0, rs.getInt(1));
                 }
 
-                try (ResultSet rs = s.executeQuery("select count(1) from b")) {
+                try (ResultSet rs = s.executeQuery("select count(1) from t4")) {
                     rs.next();
                     assertEquals(0, rs.getInt(1));
                 }
             }
-        });
+        }
     }
 
-    protected void insertTestData() {
-        run(app, c -> {
+    protected void insertTestData() throws SQLException {
+        try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {
-                s.executeUpdate("insert into a (id, name) values (10, 'myname')");
-                s.executeUpdate("insert into b (id, name, a_id) values (11, 'myname', 10)");
+                s.executeUpdate("insert into t3 (id, name) values (10, 'myname')");
+                s.executeUpdate("insert into t4 (id, name, a_id) values (11, 'myname', 10)");
             }
-        });
+        }
     }
 }

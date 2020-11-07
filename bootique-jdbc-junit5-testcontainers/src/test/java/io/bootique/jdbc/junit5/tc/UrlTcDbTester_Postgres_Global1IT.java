@@ -22,7 +22,9 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
+
+import java.sql.SQLException;
 
 @BQTest
 public class UrlTcDbTester_Postgres_Global1IT extends BaseGlobalTcTester_PostgresTest {
@@ -33,13 +35,8 @@ public class UrlTcDbTester_Postgres_Global1IT extends BaseGlobalTcTester_Postgre
             .module(BaseGlobalTcTester_PostgresTest.db.moduleWithTestDataSource("myDS"))
             .createRuntime();
 
-    @Test
-    public void testDbState1() {
-        checkEmptyAndInsert(app);
-    }
-
-    @Test
-    public void testDbState2() {
-        checkEmptyAndInsert(app);
+    @RepeatedTest(2)
+    public void testDbState() throws SQLException {
+        checkEmptyAndInsert();
     }
 }

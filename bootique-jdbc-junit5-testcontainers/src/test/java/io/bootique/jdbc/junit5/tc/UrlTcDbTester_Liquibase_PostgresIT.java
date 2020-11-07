@@ -42,7 +42,7 @@ public class UrlTcDbTester_Liquibase_PostgresIT {
     @Test
     @DisplayName("Migrations are run")
     public void testMigrationsAreRun() throws SQLException {
-        
+
         try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from \"b\"")) {

@@ -46,7 +46,6 @@ public class SelectBuilder<T> {
      * Returns another SelectBuilder that inherits the underlying SQL query, but uses a converter for the result.
      */
     public <U> SelectBuilder<U> converter(RowConverter<U> converter) {
-        // TODO: should we preserve the current row reader, and simply add converter to it?
         return new SelectBuilder<>(builder.converter(converter));
     }
 

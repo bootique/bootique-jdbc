@@ -60,8 +60,8 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
             List<Binding> bindings,
             StringBuilder sqlBuffer) {
         super(channel, objectValueConverter, valueToStringConverter, quoter, bindings, sqlBuffer);
-        this.rowReader = rowReader;
-        this.rowConverter = rowConverter;
+        this.rowReader = Objects.requireNonNull(rowReader);
+        this.rowConverter = Objects.requireNonNull(rowConverter);
     }
 
     /**

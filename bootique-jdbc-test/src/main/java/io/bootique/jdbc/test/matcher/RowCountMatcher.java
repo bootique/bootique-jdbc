@@ -21,7 +21,6 @@ package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 
 import java.util.ArrayList;
@@ -66,7 +65,11 @@ public class RowCountMatcher {
     }
 
     protected SelectStatementBuilder<Integer> countStatement() {
-        return table.selectStatement(RowReader.intReader())
+        return table.getChannel()
+                .selectStatement()
+                // TODO: count() would usually return Long. We don't expect such large numbers in tests,
+                //  but wonder if we should still change the signature to return Long for consistency?
+                .converter(r -> ((Number) r[0]).intValue())
                 .append("SELECT COUNT(*) FROM ")
                 .appendIdentifier(table.getName());
     }

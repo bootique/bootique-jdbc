@@ -24,4 +24,8 @@ package io.bootique.jdbc.test;
 public interface RowConverter<T> {
 
     T convert(Object[] row);
+
+    static RowConverter<Object[]> identity() {
+        return t -> t;
+    }
 }

@@ -152,20 +152,6 @@ public class TableIT {
     }
 
     @Test
-    public void testGetString() {
-        assertNull(T1.getString("c2"));
-        T1.insert(1, "xr", "yr");
-        assertEquals("xr", T1.getString("c2"));
-    }
-
-    @Test
-    public void testGetInt() {
-        assertEquals(0, T1.getInt("c1"));
-        T1.insert(56, "xr", "yr");
-        assertEquals(56, T1.getInt("c1"));
-    }
-
-    @Test
     public void testDelete() {
         T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
         T1.matcher().assertMatches(2);

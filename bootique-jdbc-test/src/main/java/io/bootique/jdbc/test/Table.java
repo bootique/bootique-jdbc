@@ -22,7 +22,6 @@ package io.bootique.jdbc.test;
 import io.bootique.jdbc.test.dataset.CsvDataSetBuilder;
 import io.bootique.jdbc.test.jdbc.ArrayReader;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
-import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import io.bootique.jdbc.test.matcher.TableMatcher;
 
@@ -30,15 +29,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -80,19 +71,6 @@ public class Table {
      */
     public ExecStatementBuilder execStatement() {
         return getChannel().execStatement().quoteIdentifiersWith(quotationStrategy);
-    }
-
-    /**
-     * @param rowReader a function that converts a ResultSet row into an object.
-     * @param <T>       the type of objects read by returned statement builder.
-     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
-     * PreparedStatement using policies specified for this table.
-     * @since 0.24
-     * @deprecated since 2.0 in favor of "getChannel().selectStatement". Generally this API is too low-level
-     * and should be avoided.
-     */
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
-        return getChannel().selectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
@@ -254,8 +232,10 @@ public class Table {
             throw new IllegalArgumentException("No columns");
         }
 
-        SelectStatementBuilder<Object[]> builder = this
-                .selectStatement(ArrayReader.create(r -> r, columns.toArray(new Column[0])))
+        SelectStatementBuilder<Object[]> builder = getChannel()
+                .selectStatement()
+                .reader(ArrayReader.create(columns.toArray(new Column[0])))
+                .quoteIdentifiersWith(quotationStrategy)
                 .append("SELECT ");
 
         for (int i = 0; i < columns.size(); i++) {
@@ -269,114 +249,6 @@ public class Table {
 
         builder.append(" FROM ").appendIdentifier(name);
         return new SelectBuilder<>(builder);
-    }
-
-    @Deprecated
-    protected <T> T selectColumn(String columnName, RowReader<T> reader) {
-        return selectColumn(columnName, reader, null);
-    }
-
-    @Deprecated
-    protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        return selectColumns(columnName)
-                .reader(reader)
-                .selectOne(defaultValue);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public Object getObject(String column) {
-        return selectColumn(column, RowReader.objectReader());
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public byte getByte(String column) {
-        return selectColumn(column, RowReader.byteReader(), (byte) 0);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public byte[] getBytes(String column) {
-        return selectColumn(column, RowReader.bytesReader());
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public int getInt(String column) {
-        return selectColumn(column, RowReader.intReader(), 0);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public long getLong(String column) {
-        return selectColumn(column, RowReader.longReader(), 0L);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public double getDouble(String column) {
-        return selectColumn(column, RowReader.doubleReader(), 0.0);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public boolean getBoolean(String column) {
-        return selectColumn(column, RowReader.booleanReader(), false);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public String getString(String column) {
-        return selectColumn(column, RowReader.stringReader());
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public java.util.Date getUtilDate(String column) {
-        return getTimestamp(column);
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public java.sql.Date getSqlDate(String column) {
-        return selectColumn(column, RowReader.dateReader());
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public Time getTime(String column) {
-        return selectColumn(column, RowReader.timeReader());
-    }
-
-    /**
-     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
-     */
-    @Deprecated
-    public Timestamp getTimestamp(String column) {
-        return selectColumn(column, RowReader.timestampReader());
     }
 
     protected List<Column> toColumnsList(String... columns) {

@@ -22,130 +22,18 @@ package io.bootique.jdbc.test.jdbc;
 import java.sql.*;
 
 /**
- * @param <T>
  * @since 0.24
  */
-public interface RowReader<T> {
+@FunctionalInterface
+public interface RowReader {
 
-    T readRow(ResultSet rs) throws SQLException;
+    Object[] readRow(ResultSet rs) throws SQLException;
 
     /**
      * @deprecated since 2.0.B1. Array RowReader is now created via {@link ArrayReader}.
      */
     @Deprecated
-    static RowReader<Object[]> arrayReader(int width) {
-        return ArrayReader.create(r -> r);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Integer> intReader() {
-        return rs -> rs.getInt(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Long> longReader() {
-        return rs -> rs.getLong(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<String> stringReader() {
-        return rs -> rs.getString(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Object> objectReader() {
-        return rs -> rs.getObject(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Byte> byteReader() {
-        return rs -> rs.getByte(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<byte[]> bytesReader() {
-        return rs -> rs.getBytes(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Double> doubleReader() {
-        return rs -> rs.getDouble(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Boolean> booleanReader() {
-        return rs -> rs.getBoolean(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    static RowReader<Date> dateReader() {
-        return rs -> rs.getDate(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    // TODO: affected by #108 when MySQL 8 driver is used
-    static RowReader<Time> timeReader() {
-        return rs -> rs.getTime(1);
-    }
-
-    /**
-     * @deprecated since 2.0.B1. This API was for reading values from a single-column ResultSet used in data assertions
-     * in {@link io.bootique.jdbc.test.Table}. This use case was superceded by the
-     * {@link io.bootique.jdbc.test.Table#matcher()}, and this method is no longer relevant or useful.
-     */
-    @Deprecated
-    // TODO: affected by #108 when MySQL 8 driver is used
-    static RowReader<Timestamp> timestampReader() {
-        return rs -> rs.getTimestamp(1);
+    static RowReader arrayReader(int width) {
+        return ArrayReader.create();
     }
 }

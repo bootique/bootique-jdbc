@@ -145,7 +145,8 @@ public class Table {
         }
 
         SelectStatementBuilder<Object[]> builder = getConnector()
-                .selectStatement(ArrayReader.create(r -> r, columns))
+                .selectStatement()
+                .reader(ArrayReader.create(columns))
                 .append("select ");
 
         for (int i = 0; i < columns.length; i++) {

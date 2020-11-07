@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.junit5.RowReader;
+import io.bootique.jdbc.junit5.RowConverter;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
 
@@ -104,14 +104,14 @@ public class DbConnector {
     }
 
     /**
-     * @param rowReader a function that converts a ResultSet row into an object.
-     * @param <T>       the type of objects read by returned statement builder.
      * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
      * PreparedStatement.
+     * @since 2.0.B1
      */
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
+    public SelectStatementBuilder<Object[]> selectStatement() {
         return new SelectStatementBuilder(
-                rowReader,
+                ArrayReader.create(),
+                RowConverter.identity(),
                 this,
                 objectValueConverter,
                 valueToStringConverter,

@@ -18,7 +18,6 @@
  */
 package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.junit5.RowConverter;
 import io.bootique.jdbc.junit5.RowReader;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
@@ -32,14 +31,12 @@ import java.util.Objects;
 /**
  * @since 2.0.B1
  */
-public abstract class ArrayReader<T> implements RowReader<T> {
+public abstract class ArrayReader implements RowReader {
 
-    private final RowConverter<T> converter;
-
-    public static <T> RowReader<T> create(RowConverter<T> converter, DbColumnMetadata... columns) {
+    public static <T> RowReader create(DbColumnMetadata... columns) {
 
         if (columns.length == 0) {
-            return new ResultSetArrayReader<>(converter);
+            return ResultSetRowReader.instance;
         }
 
         ColumnReader[] columnReaders = new ColumnReader[columns.length];
@@ -47,7 +44,7 @@ public abstract class ArrayReader<T> implements RowReader<T> {
             columnReaders[i] = forJdbcType(columns[i].getType(), i + 1);
         }
 
-        return new PrecompiledArrayReader<>(converter, columnReaders);
+        return new PrecompiledRowReader(columnReaders);
     }
 
     static ColumnReader forJdbcType(int type, int pos) {
@@ -68,17 +65,11 @@ public abstract class ArrayReader<T> implements RowReader<T> {
         }
     }
 
-    protected ArrayReader(RowConverter<T> converter) {
-        this.converter = Objects.requireNonNull(converter);
+    protected ArrayReader() {
     }
 
     @Override
-    public T readRow(ResultSet rs) throws SQLException {
-        return converter.convert(readRowAsArray(rs));
-    }
-
-    protected Object[] readRowAsArray(ResultSet rs) throws SQLException {
-
+    public Object[] readRow(ResultSet rs) throws SQLException {
         ColumnReader[] columnReaders = getColumnReaders(rs);
 
         int width = columnReaders.length;
@@ -93,11 +84,9 @@ public abstract class ArrayReader<T> implements RowReader<T> {
 
     protected abstract ColumnReader[] getColumnReaders(ResultSet rs) throws SQLException;
 
-    static class ResultSetArrayReader<T> extends ArrayReader<T> {
+    static class ResultSetRowReader extends ArrayReader {
 
-        public ResultSetArrayReader(RowConverter<T> converter) {
-            super(converter);
-        }
+        static final ResultSetRowReader instance = new ResultSetRowReader();
 
         @Override
         protected ColumnReader[] getColumnReaders(ResultSet rs) throws SQLException {
@@ -113,16 +102,13 @@ public abstract class ArrayReader<T> implements RowReader<T> {
 
             return readers;
         }
-
-
     }
 
-    static class PrecompiledArrayReader<T> extends ArrayReader<T> {
+    static class PrecompiledRowReader extends ArrayReader {
 
         private final ColumnReader[] columnReaders;
 
-        public PrecompiledArrayReader(RowConverter<T> converter, ColumnReader[] columnReaders) {
-            super(converter);
+        public PrecompiledRowReader(ColumnReader[] columnReaders) {
             this.columnReaders = Objects.requireNonNull(columnReaders);
         }
 

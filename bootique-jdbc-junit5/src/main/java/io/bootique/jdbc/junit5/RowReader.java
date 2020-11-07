@@ -23,10 +23,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @param <T>
  * @since 2.0
  */
-public interface RowReader<T> {
+@FunctionalInterface
+public interface RowReader {
 
-    T readRow(ResultSet rs) throws SQLException;
+    Object[] readRow(ResultSet rs) throws SQLException;
 }

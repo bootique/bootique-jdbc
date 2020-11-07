@@ -38,7 +38,7 @@ public class SelectBuilder<T> {
     /**
      * Returns another SelectBuilder that inherits the underlying SQL query, but uses a different reader for the result.
      */
-    public <U> SelectBuilder<U> reader(RowReader<U> reader) {
+    public SelectBuilder<T> reader(RowReader reader) {
         return new SelectBuilder<>(builder.reader(reader));
     }
 
@@ -47,7 +47,7 @@ public class SelectBuilder<T> {
      */
     public <U> SelectBuilder<U> converter(RowConverter<U> converter) {
         // TODO: should we preserve the current row reader, and simply add converter to it?
-        return new SelectBuilder<>(builder.reader(ArrayReader.create(converter)));
+        return new SelectBuilder<>(builder.converter(converter));
     }
 
     public SelectWhereBuilder<T> where(String column, Object value) {

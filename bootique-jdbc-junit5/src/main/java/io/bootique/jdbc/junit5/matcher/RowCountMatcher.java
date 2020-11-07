@@ -66,7 +66,10 @@ public class RowCountMatcher {
 
     protected SelectStatementBuilder<Integer> countStatement() {
         return table.getConnector()
-                .selectStatement(rs -> rs.getInt(1))
+                .selectStatement()
+                // TODO: count() would usually return Long. We don't expect such large numbers in tests,
+                //  but wonder if we should still change the signature to return Long for consistency?
+                .converter(r -> ((Number) r[0]).intValue())
                 .append("select count(*) from ")
                 .appendTableName(table.getMetadata().getName());
     }

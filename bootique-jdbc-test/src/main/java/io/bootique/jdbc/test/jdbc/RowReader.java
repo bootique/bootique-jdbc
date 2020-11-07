@@ -19,9 +19,6 @@
 
 package io.bootique.jdbc.test.jdbc;
 
-import io.bootique.jdbc.test.Column;
-import io.bootique.jdbc.test.RowConverter;
-
 import java.sql.*;
 
 /**
@@ -33,14 +30,7 @@ public interface RowReader<T> {
     T readRow(ResultSet rs) throws SQLException;
 
     /**
-     * @since 2.0.B1
-     */
-    static <T> RowReader<T> arrayReader(RowConverter<T> converter, Column... columns) {
-        return ArrayReader.create(converter, columns);
-    }
-
-    /**
-     * @deprecated since 2.0.B1, as the width of the array can be easily determined from {@link ResultSetMetaData}.
+     * @deprecated since 2.0.B1. Array RowReader is now created via {@link ArrayReader}.
      */
     @Deprecated
     static RowReader<Object[]> arrayReader(int width) {

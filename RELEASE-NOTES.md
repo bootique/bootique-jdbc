@@ -3,6 +3,7 @@
 * #105 Upgrade Testcontainers to 1.15.0-rc2
 * #106 Test API: Table.delete().where(..)
 * #107 Test API - better SELECT builder
+* #108 MySQL 8 requires special treatment of local timestamp and time
 
 ## 2.0.M1
 

@@ -18,6 +18,7 @@
  */
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.jdbc.ArrayReader;
 import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 
@@ -42,10 +43,11 @@ public class SelectBuilder<T> {
     }
 
     /**
-     * Returns another SelectBuilder that inherits the underlying SQL query, but uses a different reader for the result.
+     * Returns another SelectBuilder that inherits the underlying SQL query, but uses a result converter.
      */
-    public <U> SelectBuilder<U> converter(RowConverter<U> reader) {
-        return new SelectBuilder<>(builder.reader(RowReader.arrayReader(reader)));
+    public <U> SelectBuilder<U> converter(RowConverter<U> converter) {
+        // TODO: should we preserve the current row reader, and simply add converter to it?
+        return new SelectBuilder<>(builder.reader(ArrayReader.create(converter)));
     }
 
     public SelectWhereBuilder<T> where(String column, Object value) {

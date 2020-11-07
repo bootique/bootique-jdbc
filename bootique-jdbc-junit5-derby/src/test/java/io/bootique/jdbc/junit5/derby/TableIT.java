@@ -154,7 +154,19 @@ public class TableIT {
     }
 
     @Test
-    public void testSelectColumns() {
+    public void testSelectColumns_Reader() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        Object[] array = T1.selectColumns("c2", "c3")
+                .reader(rs -> new Object[]{"x", "y"})
+                .where("c1", 2)
+                .selectOne(null);
+
+        assertEquals("x", array[0]);
+        assertEquals("y", array[1]);
+    }
+
+    @Test
+    public void testSelectColumns_Converter() {
         T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
         DTO dto = T1.selectColumns("c2", "c3")
                 .converter(a -> new DTO((String) a[0], (String) a[1]))
@@ -163,6 +175,19 @@ public class TableIT {
 
         assertEquals("c", dto.c2);
         assertEquals("d", dto.c3);
+    }
+
+    @Test
+    public void testSelectColumns_ConverterAndReader() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        DTO dto = T1.selectColumns("c2", "c3")
+                .reader(rs -> new Object[]{"x", "y"})
+                .converter(a -> new DTO((String) a[0], (String) a[1]))
+                .where("c1", 2)
+                .selectOne(null);
+
+        assertEquals("x", dto.c2);
+        assertEquals("y", dto.c3);
     }
 
     private static class DTO {

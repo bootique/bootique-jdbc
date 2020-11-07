@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.junit5.tc;
+package io.bootique.jdbc.junit5.tc.unit;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;

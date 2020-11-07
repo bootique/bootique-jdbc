@@ -18,32 +18,23 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.jdbc.junit5.tc.unit.BaseMySQLTest;
-import org.junit.jupiter.api.DisplayName;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.junit5.BQApp;
+import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+@BQTest
+public class UrlTcDbTester_Postgres_Global2IT extends BaseGlobalTcTester_PostgresTest {
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-public class UrlTcDbTester_InitDB_MySQLIT extends BaseMySQLTest {
+    @BQApp(skipRun = true)
+    static final BQRuntime app = Bootique.app()
+            .autoLoadModules()
+            .module(BaseGlobalTcTester_PostgresTest.db.moduleWithTestDataSource("myDS"))
+            .createRuntime();
 
     @Test
-    @DisplayName("DB was initialized")
-    public void testInitDB() throws SQLException {
-
-        try (Connection c = db.getConnection()) {
-            try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from t2")) {
-                    assertTrue(rs.next());
-                    assertEquals(12, rs.getInt("id"));
-                    assertEquals("myname", rs.getString("name"));
-                }
-            }
-        }
+    public void testDbState() {
+        checkEmptyAndInsert(app);
     }
 }

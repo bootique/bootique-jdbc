@@ -25,12 +25,12 @@ import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 
 @BQTest
-public class UrlTcDbTester_Postgres_Reusable1IT extends BaseReusableTcTesterTest {
+public class UrlTcDbTester_Postgres_Global1IT extends BaseGlobalTcTester_PostgresTest {
 
     @BQApp(skipRun = true)
     static final BQRuntime app = Bootique.app()
             .autoLoadModules()
-            .module(BaseReusableTcTesterTest.db.moduleWithTestDataSource("myDS"))
+            .module(BaseGlobalTcTester_PostgresTest.db.moduleWithTestDataSource("myDS"))
             .createRuntime();
 
     @Test

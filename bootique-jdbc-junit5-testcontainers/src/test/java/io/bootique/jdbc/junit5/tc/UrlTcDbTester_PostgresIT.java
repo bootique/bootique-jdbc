@@ -20,6 +20,7 @@ package io.bootique.jdbc.junit5.tc;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.jdbc.junit5.tc.unit.BaseTcTesterTest;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;

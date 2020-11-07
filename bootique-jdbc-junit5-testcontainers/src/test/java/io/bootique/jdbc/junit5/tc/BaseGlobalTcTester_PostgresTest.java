@@ -19,6 +19,7 @@
 package io.bootique.jdbc.junit5.tc;
 
 import io.bootique.BQRuntime;
+import io.bootique.jdbc.junit5.tc.unit.BaseTcTesterTest;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
@@ -32,14 +33,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @BQTest
-public class BaseReusableTcTesterTest extends BaseTcTesterTest {
+public abstract class BaseGlobalTcTester_PostgresTest extends BaseTcTesterTest {
 
     private static boolean wasInitialized;
 
     @BQTestTool(BQTestScope.GLOBAL)
     protected static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
-            .initDB(BaseReusableTcTesterTest::initDB)
+            .initDB(BaseGlobalTcTester_PostgresTest::initDB)
             .deleteBeforeEachTest("reusable_a");
 
     static void initDB(Connection connection) throws SQLException {

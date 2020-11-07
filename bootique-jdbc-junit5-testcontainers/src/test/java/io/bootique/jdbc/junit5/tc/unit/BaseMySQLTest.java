@@ -16,30 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.jdbc.junit5.tc.unit;
 
-package io.bootique.jdbc.junit5.tc.connector;
-
-import io.bootique.jdbc.junit5.connector.DbConnector;
-import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.jdbc.junit5.tc.TcDbTester;
 import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
-import org.junit.jupiter.api.Test;
-
-import javax.sql.DataSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class DbConnectorIT {
+public abstract class BaseMySQLTest {
 
-    @BQTestTool
-    static final TcDbTester mysqlTester = TcDbTester.db("jdbc:tc:mysql:8.0.20:///db");
+    @BQTestTool(BQTestScope.GLOBAL)
+    protected static final TcDbTester db = TcDbTester
+            .db("jdbc:tc:mysql:8.0.20:///db")
+            .deleteBeforeEachTest("t1")
+            .initDB("classpath:io/bootique/jdbc/junit5/tc/unit/BaseMySQLTest.sql");
 
-    @Test
-    public void testMySQLQuotes() {
-        DataSource dataSource = mysqlTester.getDataSource();
-        DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
-        assertEquals("`a`", connector.getIdentifierQuoter().quoted("a"));
-    }
 }

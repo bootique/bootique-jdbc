@@ -19,6 +19,7 @@
 
 package io.bootique.jdbc.test.jdbc;
 
+import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.RowConverter;
 
 import java.sql.*;
@@ -34,31 +35,16 @@ public interface RowReader<T> {
     /**
      * @since 2.0.B1
      */
-    static <T> RowReader<T> arrayReader(RowConverter<T> converter) {
-
-        return rs -> {
-            int width = rs.getMetaData().getColumnCount();
-            Object[] result = new Object[width];
-
-            for (int i = 1; i <= width; i++) {
-                result[i - 1] = rs.getObject(i);
-            }
-
-            return converter.convert(result);
-        };
+    static <T> RowReader<T> arrayReader(RowConverter<T> converter, Column... columns) {
+        return ArrayReader.create(converter, columns);
     }
 
-
+    /**
+     * @deprecated since 2.0.B1, as the width of the array can be easily determined from {@link ResultSetMetaData}.
+     */
+    @Deprecated
     static RowReader<Object[]> arrayReader(int width) {
-        return rs -> {
-            Object[] result = new Object[width];
-
-            for (int i = 1; i <= width; i++) {
-                result[i - 1] = rs.getObject(i);
-            }
-
-            return result;
-        };
+        return ArrayReader.create(r -> r);
     }
 
     /**

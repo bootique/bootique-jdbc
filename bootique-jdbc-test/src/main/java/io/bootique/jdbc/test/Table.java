@@ -254,7 +254,7 @@ public class Table {
         }
 
         SelectStatementBuilder<Object[]> builder = this
-                .selectStatement(RowReader.arrayReader(columns.size()))
+                .selectStatement(RowReader.arrayReader(r -> r, columns.toArray(new Column[0])))
                 .append("SELECT ");
 
         for (int i = 0; i < columns.size(); i++) {

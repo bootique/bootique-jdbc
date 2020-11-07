@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.junit5.connector;
+package io.bootique.jdbc.test.jdbc;
 
-import io.bootique.jdbc.junit5.RowConverter;
-import io.bootique.jdbc.junit5.RowReader;
-import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
+import io.bootique.jdbc.test.Column;
+import io.bootique.jdbc.test.RowConverter;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -36,7 +35,7 @@ public abstract class ArrayReader<T> implements RowReader<T> {
 
     private RowConverter<T> converter;
 
-    public static <T> RowReader<T> create(RowConverter<T> converter, DbColumnMetadata... columns) {
+    public static <T> RowReader<T> create(RowConverter<T> converter, Column... columns) {
 
         if (columns.length == 0) {
             return new ResultSetArrayReader<>(converter);

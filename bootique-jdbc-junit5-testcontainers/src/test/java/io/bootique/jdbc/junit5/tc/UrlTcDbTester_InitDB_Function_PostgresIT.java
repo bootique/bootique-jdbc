@@ -18,9 +18,6 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
@@ -41,12 +38,6 @@ public class UrlTcDbTester_InitDB_Function_PostgresIT {
     static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
             .initDB(UrlTcDbTester_InitDB_Function_PostgresIT::initDB);
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
 
     static void initDB(Connection c) throws SQLException {
         c.setAutoCommit(false);

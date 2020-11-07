@@ -18,9 +18,6 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.RepeatedTest;
 
@@ -28,12 +25,6 @@ import java.sql.SQLException;
 
 @BQTest
 public class UrlTcDbTester_Postgres_Global1IT extends BaseGlobalTcTester_PostgresTest {
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(BaseGlobalTcTester_PostgresTest.db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
 
     @RepeatedTest(2)
     public void testDbState() throws SQLException {

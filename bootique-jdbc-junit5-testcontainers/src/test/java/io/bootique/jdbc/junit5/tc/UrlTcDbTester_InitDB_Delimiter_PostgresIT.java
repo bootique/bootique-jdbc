@@ -18,9 +18,6 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
@@ -38,12 +35,6 @@ public class UrlTcDbTester_InitDB_Delimiter_PostgresIT {
     static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///mydb")
             .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_Delimiter_PostgresIT.sql", "--");
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
 
     @Test
     @DisplayName("DB was initialized with custom delimiter")

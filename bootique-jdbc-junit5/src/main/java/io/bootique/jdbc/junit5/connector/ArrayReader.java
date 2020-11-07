@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 public abstract class ArrayReader<T> implements RowReader<T> {
 
-    private RowConverter<T> converter;
+    private final RowConverter<T> converter;
 
     public static <T> RowReader<T> create(RowConverter<T> converter, DbColumnMetadata... columns) {
 
@@ -47,7 +47,7 @@ public abstract class ArrayReader<T> implements RowReader<T> {
             columnReaders[i] = forJdbcType(columns[i].getType(), i + 1);
         }
 
-        return new ResultSetArrayReader<>(converter);
+        return new PrecompiledArrayReader<>(converter, columnReaders);
     }
 
     static ColumnReader forJdbcType(int type, int pos) {
@@ -119,7 +119,7 @@ public abstract class ArrayReader<T> implements RowReader<T> {
 
     static class PrecompiledArrayReader<T> extends ArrayReader<T> {
 
-        private ColumnReader[] columnReaders;
+        private final ColumnReader[] columnReaders;
 
         public PrecompiledArrayReader(RowConverter<T> converter, ColumnReader[] columnReaders) {
             super(converter);
@@ -127,7 +127,7 @@ public abstract class ArrayReader<T> implements RowReader<T> {
         }
 
         @Override
-        protected ColumnReader[] getColumnReaders(ResultSet rs) throws SQLException {
+        protected ColumnReader[] getColumnReaders(ResultSet rs) {
             return columnReaders;
         }
     }

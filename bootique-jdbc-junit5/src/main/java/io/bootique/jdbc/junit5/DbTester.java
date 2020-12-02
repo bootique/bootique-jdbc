@@ -23,6 +23,7 @@ import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
+import io.bootique.jdbc.junit5.datasource.DataSourceHolder;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
 import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
@@ -68,12 +69,15 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     protected String liquibaseContext;
     protected String[] deleteTablesInInsertOrder;
 
-    protected PoolingDataSource dataSource;
+    protected final DataSourceHolder dataSourceHolder;
     protected DbConnector connector;
 
+    public DbTester() {
+        this.dataSourceHolder = new DataSourceHolder();
+    }
 
     public DataSource getDataSource() {
-        return Objects.requireNonNull(dataSource, "'dataSource' not initialized. Called outside of JUnit lifecycle?");
+        return dataSourceHolder;
     }
 
     protected DbConnector getConnector() {
@@ -189,7 +193,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
         return binder -> configure(binder, dataSourceName);
     }
 
-    protected PoolingDataSource createDataSource(BQTestScope scope) {
+    protected PoolingDataSource createPoolingDataSource(BQTestScope scope) {
         PoolingDataSourceParameters parameters = new PoolingDataSourceParameters();
         parameters.setMaxConnections(5);
         parameters.setMinConnections(1);
@@ -200,12 +204,16 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     protected abstract DataSource createNonPoolingDataSource(BQTestScope scope);
 
+    protected void initConnector() {
+        this.connector = new DbConnector(dataSourceHolder, DbMetadata.create(dataSourceHolder));
+    }
+
     protected void execInitFunction() {
         if (initFunction != null) {
 
             LOGGER.info("initializing DB from using custom init function");
 
-            try (Connection c = dataSource.getConnection()) {
+            try (Connection c = dataSourceHolder.getConnection()) {
                 initFunction.run(c);
             } catch (SQLException e) {
                 throw new RuntimeException("Error running custom init function: " + e.getMessage(), e);
@@ -220,7 +228,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
             String delimiter = this.initDBScriptDelimiter != null ? this.initDBScriptDelimiter : ";";
             Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", delimiter).getStatements(initDBScript);
 
-            try (Connection c = dataSource.getConnection()) {
+            try (Connection c = dataSourceHolder.getConnection()) {
 
                 for (String sql : statements) {
                     try (PreparedStatement statement = c.prepareStatement(sql)) {
@@ -239,7 +247,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     protected void execLiquibaseMigrations() {
         if (liquibaseChangeLog != null) {
             LOGGER.info("executing Liquibase migrations from {}", liquibaseChangeLog.getUrl());
-            new LiquibaseRunner(Collections.singletonList(liquibaseChangeLog), dataSource, null)
+            new LiquibaseRunner(Collections.singletonList(liquibaseChangeLog), dataSourceHolder, null)
                     .run(this::execLiquibaseMigrations);
         }
     }
@@ -254,33 +262,21 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
         }
     }
 
-    protected void initIfNeeded(BQTestScope scope) {
-        if (dataSource == null) {
-            synchronized (this) {
-                if (dataSource == null) {
-                    this.dataSource = createDataSource(scope);
-                    this.connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
-                    execInitFunction();
-                    execInitScript();
-                    execLiquibaseMigrations();
-                }
-            }
-        }
-    }
-
     @Override
     public void beforeScope(BQTestScope scope, ExtensionContext context) {
-        // By now the DataSource may already be initialized if BQRuntime using DbTester had some eager dependencies
-        // on DataSource
-        initIfNeeded(scope);
+
+        // By now the DataSource may already be initialized
+        // if BQRuntime using DbTester had some eager dependencies on DataSource
+
+        dataSourceHolder.initIfNeeded(() -> createPoolingDataSource(scope), this::afterDataSourceInit);
     }
 
     @Override
     public void afterScope(BQTestScope scope, ExtensionContext context) {
-        // can be null if failed to start
-        if (dataSource != null) {
-            dataSource.close();
-            dataSource = null;
+        try {
+            dataSourceHolder.close();
+        } catch (Throwable th) {
+            LOGGER.warn("Ignoring DataSource close error", th);
         }
     }
 
@@ -289,5 +285,12 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
         if (deleteTablesInInsertOrder != null && deleteTablesInInsertOrder.length > 0) {
             new DataManager(getConnector(), deleteTablesInInsertOrder).deleteData();
         }
+    }
+
+    protected void afterDataSourceInit() {
+        initConnector();
+        execInitFunction();
+        execInitScript();
+        execLiquibaseMigrations();
     }
 }

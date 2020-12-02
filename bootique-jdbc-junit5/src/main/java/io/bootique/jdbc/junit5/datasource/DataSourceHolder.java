@@ -18,8 +18,6 @@
  */
 package io.bootique.jdbc.junit5.datasource;
 
-import org.junit.jupiter.api.extension.ExtensionContext;
-
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -35,11 +33,11 @@ import java.util.logging.Logger;
  *
  * @since 2.0.B1
  */
-public class DataSourceHolder implements DataSource, ExtensionContext.Store.CloseableResource {
+public class DataSourceHolder implements DataSource {
 
-    private DataSource dataSource;
+    private PoolingDataSource dataSource;
 
-    public void initIfNeeded(Supplier<DataSource> dataSourceSupplier, Runnable runAfterInit) {
+    public void initIfNeeded(Supplier<PoolingDataSource> dataSourceSupplier, Runnable runAfterInit) {
         if (this.dataSource == null) {
             synchronized (this) {
                 if (this.dataSource == null) {
@@ -50,10 +48,9 @@ public class DataSourceHolder implements DataSource, ExtensionContext.Store.Clos
         }
     }
 
-    @Override
-    public void close() throws Throwable {
-        if (dataSource != null && dataSource instanceof ExtensionContext.Store.CloseableResource) {
-            ((ExtensionContext.Store.CloseableResource) dataSource).close();
+    public void close() {
+        if (dataSource != null) {
+            dataSource.close();
         }
     }
 

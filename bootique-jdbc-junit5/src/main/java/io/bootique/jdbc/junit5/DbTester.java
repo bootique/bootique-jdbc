@@ -273,11 +273,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     @Override
     public void afterScope(BQTestScope scope, ExtensionContext context) {
-        try {
-            dataSourceHolder.close();
-        } catch (Throwable th) {
-            LOGGER.warn("Ignoring DataSource close error", th);
-        }
+        dataSourceHolder.close();
     }
 
     @Override

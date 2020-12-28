@@ -50,12 +50,12 @@ public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
     }
 
     public JdbcModuleExtender addFactoryType(Class<? extends ManagedDataSourceFactory> factoryType) {
-        contributeFactoryTypes().add(factoryType);
+        contributeFactoryTypes().addInstance(factoryType);
         return this;
     }
 
     public JdbcModuleExtender addDataSourceListener(DataSourceListener listener) {
-        contributeListeners().add(listener);
+        contributeListeners().addInstance(listener);
         return this;
     }
 

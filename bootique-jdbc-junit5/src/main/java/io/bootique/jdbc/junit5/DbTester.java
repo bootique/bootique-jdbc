@@ -61,6 +61,7 @@ import java.util.Objects;
 public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
+    private static final String DEFAULT_DELIMITER = ";";
 
     protected ResourceFactory initDBScript;
     protected String initDBScriptDelimiter;
@@ -114,7 +115,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     }
 
     /**
-     * Executes a provided SQL script after the DB startup. The script would usually contain database schema and test
+     * Executes provided SQL script after the DB startup. The script would usually contain database schema and test
      * data. Assumes statements are separated with ";" character.
      *
      * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
@@ -125,7 +126,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     }
 
     /**
-     * Executes a provided SQL script after the DB startup. The script would usually contain database schema and test
+     * Executes provided SQL script after the DB startup. The script would usually contain database schema and test
      * data.
      *
      * @param initDBScript a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
@@ -142,6 +143,55 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     public SELF initDB(JdbcOp initFunction) {
         this.initFunction = Objects.requireNonNull(initFunction);
         return (SELF) this;
+    }
+
+    /**
+     * Executes provided SQL script. Assumes statements in the script are separated with ";" character.
+     *
+     * @param script a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
+     * @since 2.0.B1
+     */
+    public void runScript(String script) {
+        runScript(script, DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Executes provided SQL script. The script would usually contain database schema and test
+     * data.
+     *
+     * @param script    a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
+     * @param delimiter SQL statements delimiter in the "script". An explicit delimiter may be useful when
+     *                  the file contains common DB delimiters in the middle of stored procedure declarations, etc.
+     */
+    public void runScript(String script, String delimiter) {
+
+        Objects.requireNonNull(script, "Null 'script'");
+        Objects.requireNonNull(delimiter, "Null 'delimiter'");
+
+        runScript(new ResourceFactory(script), delimiter);
+    }
+
+    protected void runScript(ResourceFactory script, String delimiter) {
+
+        Objects.requireNonNull(script, "Null 'script'");
+        Objects.requireNonNull(delimiter, "Null 'delimiter'");
+
+        LOGGER.info("running SQL script {}", script.getUrl());
+        Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", delimiter).getStatements(script);
+
+        try (Connection c = dataSourceHolder.getConnection()) {
+
+            for (String sql : statements) {
+                try (PreparedStatement statement = c.prepareStatement(sql)) {
+                    statement.execute();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Error running SQL statement " + sql + ": " + e.getMessage(), e);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error running SQL from " + script.getUrl() + ": " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -223,24 +273,8 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     protected void execInitScript() {
         if (initDBScript != null) {
-
-            LOGGER.info("initializing DB from {}", initDBScript.getUrl());
-            String delimiter = this.initDBScriptDelimiter != null ? this.initDBScriptDelimiter : ";";
-            Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", delimiter).getStatements(initDBScript);
-
-            try (Connection c = dataSourceHolder.getConnection()) {
-
-                for (String sql : statements) {
-                    try (PreparedStatement statement = c.prepareStatement(sql)) {
-                        statement.execute();
-                    } catch (SQLException e) {
-                        throw new RuntimeException("Error running SQL statement " + sql + ": " + e.getMessage(), e);
-                    }
-                }
-
-            } catch (SQLException e) {
-                throw new RuntimeException("Error running SQL from " + initDBScript.getUrl() + ": " + e.getMessage(), e);
-            }
+            String delimiter = this.initDBScriptDelimiter != null ? this.initDBScriptDelimiter : DEFAULT_DELIMITER;
+            runScript(initDBScript, delimiter);
         }
     }
 

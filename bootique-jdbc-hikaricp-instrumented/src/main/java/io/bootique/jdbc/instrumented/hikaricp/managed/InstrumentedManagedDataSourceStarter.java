@@ -34,7 +34,7 @@ public class InstrumentedManagedDataSourceStarter extends ManagedDataSourceStart
     private HealthCheckGroup healthChecks;
 
     public InstrumentedManagedDataSourceStarter(
-            String url,
+            Supplier<String> url,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown,
             HealthCheckGroup healthChecks) {

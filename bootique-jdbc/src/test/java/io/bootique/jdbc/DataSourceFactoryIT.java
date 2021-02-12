@@ -132,7 +132,7 @@ public class DataSourceFactoryIT {
         @Override
         public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
             return new ManagedDataSourceStarter(
-                    url,
+                    () -> url,
                     () -> mock(DataSource.class),
                     ds -> {
                     });
@@ -151,7 +151,7 @@ public class DataSourceFactoryIT {
         @Override
         public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
             return new ManagedDataSourceStarter(
-                    url,
+                    () -> url,
                     () -> mock(DataSource.class),
                     ds -> {
                     });

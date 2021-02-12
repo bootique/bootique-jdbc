@@ -107,7 +107,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {
 
-        return new ManagedDataSourceStarter(getJdbcUrl(), startup, shutdown);
+        String url = getJdbcUrl();
+        return new ManagedDataSourceStarter(() -> url, startup, shutdown);
     }
 
     protected void validate() {

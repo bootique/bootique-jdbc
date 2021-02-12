@@ -38,14 +38,17 @@ public class UrlTcDbTester extends TcDbTester {
         this.containerDbUrl = Objects.requireNonNull(containerDbUrl);
     }
 
+    @Override
     protected String dbUser() {
         return null;
     }
 
+    @Override
     protected String dbPassword() {
         return null;
     }
 
+    @Override
     protected String dbUrl(BQTestScope scope) {
 
         Assertions.assertDoesNotThrow(
@@ -65,6 +68,11 @@ public class UrlTcDbTester extends TcDbTester {
     }
 
     protected String reusableContainerDbUrl(String url) {
+
+        // TODO: this will not do what we originally thought it does. The current understanding is that
+        //  "TC_REUSABLE" doesn't help the DB to stay around in the same process in the GLOBAL scope
+        //  (special "ryuk" container does). So we can safely remove this whole method
+
         String reusableParam = "TC_REUSABLE=true";
         String andReusableParam = "&" + reusableParam;
 

@@ -24,8 +24,7 @@ import io.bootique.di.Key;
 import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
 import io.bootique.jdbc.junit5.datasource.DataSourceHolder;
-import io.bootique.jdbc.junit5.datasource.PoolingDataSource;
-import io.bootique.jdbc.junit5.datasource.PoolingDataSourceParameters;
+import io.bootique.jdbc.junit5.datasource.DriverDataSource;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.jdbc.junit5.tester.DataManager;
 import io.bootique.jdbc.junit5.tester.DataSourcePropertyBuilder;
@@ -79,6 +78,10 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     public DataSource getDataSource() {
         return dataSourceHolder;
+    }
+
+    public String getDbUrl() {
+        return dataSourceHolder.getDbUrl();
     }
 
     protected DbConnector getConnector() {
@@ -243,16 +246,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
         return binder -> configure(binder, dataSourceName);
     }
 
-    protected PoolingDataSource createPoolingDataSource(BQTestScope scope) {
-        PoolingDataSourceParameters parameters = new PoolingDataSourceParameters();
-        parameters.setMaxConnections(5);
-        parameters.setMinConnections(1);
-        parameters.setMaxQueueWaitTime(20000);
-
-        return new PoolingDataSource(createNonPoolingDataSource(scope), parameters);
-    }
-
-    protected abstract DataSource createNonPoolingDataSource(BQTestScope scope);
+    protected abstract DriverDataSource createNonPoolingDataSource(BQTestScope scope);
 
     protected void initConnector() {
         this.connector = new DbConnector(dataSourceHolder, DbMetadata.create(dataSourceHolder));
@@ -302,7 +296,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
         // By now the DataSource may already be initialized
         // if BQRuntime using DbTester had some eager dependencies on DataSource
 
-        dataSourceHolder.initIfNeeded(() -> createPoolingDataSource(scope), this::afterDataSourceInit);
+        dataSourceHolder.initIfNeeded(() -> createNonPoolingDataSource(scope), this::afterDataSourceInit);
     }
 
     @Override

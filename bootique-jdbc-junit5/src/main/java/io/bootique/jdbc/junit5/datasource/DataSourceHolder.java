@@ -35,23 +35,40 @@ import java.util.logging.Logger;
  */
 public class DataSourceHolder implements DataSource {
 
+    private String dbUrl;
     private PoolingDataSource dataSource;
 
-    public void initIfNeeded(Supplier<PoolingDataSource> dataSourceSupplier, Runnable runAfterInit) {
+    public void initIfNeeded(Supplier<DriverDataSource> dataSourceSupplier, Runnable runAfterInit) {
         if (this.dataSource == null) {
             synchronized (this) {
                 if (this.dataSource == null) {
-                    this.dataSource = dataSourceSupplier.get();
+
+                    // capture both a DataSource and a DB URL
+                    DriverDataSource nonPooling = dataSourceSupplier.get();
+                    this.dbUrl = nonPooling.getDbUrl();
+                    this.dataSource = createPoolingDataSource(nonPooling);
                     runAfterInit.run();
                 }
             }
         }
     }
 
+    protected PoolingDataSource createPoolingDataSource(DriverDataSource nonPooling) {
+        PoolingDataSourceParameters parameters = new PoolingDataSourceParameters();
+        parameters.setMaxConnections(5);
+        parameters.setMinConnections(1);
+        parameters.setMaxQueueWaitTime(20000);
+        return new PoolingDataSource(nonPooling, parameters);
+    }
+
     public void close() {
         if (dataSource != null) {
             dataSource.close();
         }
+    }
+
+    public String getDbUrl() {
+        return Objects.requireNonNull(dbUrl, "'dbUrl' not initialized. Called outside of JUnit lifecycle?");
     }
 
     protected DataSource nonNullDataSource() {

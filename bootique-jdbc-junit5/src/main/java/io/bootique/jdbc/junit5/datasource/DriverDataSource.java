@@ -37,20 +37,24 @@ public class DriverDataSource implements DataSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverDataSource.class);
 
     protected Driver driver;
-    protected String connectionUrl;
+    protected String dbUrl;
     protected String userName;
     protected String password;
 
-    public DriverDataSource(Driver driver, String connectionUrl, String userName, String password) {
+    public DriverDataSource(Driver driver, String dbUrl, String userName, String password) {
 
-        if (connectionUrl == null) {
+        if (dbUrl == null) {
             throw new NullPointerException("Null 'connectionUrl'");
         }
 
         this.driver = driver;
-        this.connectionUrl = connectionUrl;
+        this.dbUrl = dbUrl;
         this.userName = userName;
         this.password = password;
+    }
+
+    public String getDbUrl() {
+        return dbUrl;
     }
 
     @Override
@@ -64,13 +68,13 @@ public class DriverDataSource implements DataSource {
         try {
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Connecting to '{}' as '{}'", connectionUrl, userName);
+                LOGGER.debug("Connecting to '{}' as '{}'", dbUrl, userName);
             }
 
             Connection c;
 
             if (driver == null) {
-                c = DriverManager.getConnection(connectionUrl, userName, password);
+                c = DriverManager.getConnection(dbUrl, userName, password);
             } else {
                 Properties connectProperties = new Properties();
 
@@ -81,13 +85,13 @@ public class DriverDataSource implements DataSource {
                 if (password != null) {
                     connectProperties.put("password", password);
                 }
-                c = driver.connect(connectionUrl, connectProperties);
+                c = driver.connect(dbUrl, connectProperties);
             }
 
             // some drivers (Oracle) return null connections instead of throwing an exception... fix it here
 
             if (c == null) {
-                throw new SQLException("Can't establish connection: " + connectionUrl);
+                throw new SQLException("Can't establish connection: " + dbUrl);
             }
 
             LOGGER.debug("+++ Connecting: SUCCESS.");

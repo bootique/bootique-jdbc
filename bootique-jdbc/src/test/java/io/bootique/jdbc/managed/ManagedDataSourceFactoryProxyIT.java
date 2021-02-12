@@ -212,7 +212,7 @@ public class ManagedDataSourceFactoryProxyIT {
         @Override
         public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
             return new ManagedDataSourceStarter(
-                    url,
+                    () -> url,
                     () -> mock(DataSource.class),
                     ds -> {
                     });
@@ -256,7 +256,7 @@ public class ManagedDataSourceFactoryProxyIT {
         @Override
         public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
             return new ManagedDataSourceStarter(
-                    url,
+                    () -> url,
                     () -> mock(DataSource.class),
                     ds -> {
                     });

@@ -36,12 +36,12 @@ public class ManagedDataSourceStarter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagedDataSourceStarter.class);
 
-    private String url;
+    private Supplier<String> url;
     private Supplier<DataSource> startup;
     private Consumer<DataSource> shutdown;
 
     public ManagedDataSourceStarter(
-            String url,
+            Supplier<String> url,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {
 
@@ -51,11 +51,12 @@ public class ManagedDataSourceStarter {
     }
 
     public String getUrl() {
-        return url;
+        return url.get();
     }
 
     public ManagedDataSource start() {
 
+        String url = getUrl();
         LOGGER.info("Starting DataSource: {}", url);
 
         DataSource dataSource = startup.get();

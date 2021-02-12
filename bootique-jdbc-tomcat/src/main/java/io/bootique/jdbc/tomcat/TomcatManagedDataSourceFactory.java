@@ -145,8 +145,8 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
         };
 
         Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
-
-        return new ManagedDataSourceStarter(getUrl(), startup, shutdown);
+        String url = getUrl();
+        return new ManagedDataSourceStarter(() -> url, startup, shutdown);
     }
 
     protected void validate() {

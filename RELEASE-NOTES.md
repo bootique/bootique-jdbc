@@ -6,6 +6,7 @@
 * #108 MySQL 8 requires special treatment of local timestamp and time
 * #109 Junit5 : lazy init of the test DataSource
 * #110 DbTester.runScript(..)
+* #111 Upgrade Testcontainers to 1.15.1
 
 ## 2.0.M1
 

@@ -7,6 +7,7 @@
 * #109 Junit5 : lazy init of the test DataSource
 * #110 DbTester.runScript(..)
 * #111 Upgrade Testcontainers to 1.15.1
+* #112 Log connection URL
 
 ## 2.0.M1
 

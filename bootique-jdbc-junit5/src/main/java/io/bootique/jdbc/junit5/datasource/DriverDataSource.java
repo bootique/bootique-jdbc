@@ -63,8 +63,11 @@ public class DriverDataSource implements DataSource {
     public Connection getConnection(String userName, String password) throws SQLException {
         try {
 
-            logConnect(connectionUrl, userName, password);
-            Connection c = null;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Connecting to '{}' as '{}'", connectionUrl, userName);
+            }
+
+            Connection c;
 
             if (driver == null) {
                 c = DriverManager.getConnection(connectionUrl, userName, password);
@@ -81,25 +84,18 @@ public class DriverDataSource implements DataSource {
                 c = driver.connect(connectionUrl, connectProperties);
             }
 
-            // some drivers (Oracle) return null connections instead of throwing
-            // an exception... fix it here
+            // some drivers (Oracle) return null connections instead of throwing an exception... fix it here
 
             if (c == null) {
                 throw new SQLException("Can't establish connection: " + connectionUrl);
             }
 
-            LOGGER.info("+++ Connecting: SUCCESS.");
+            LOGGER.debug("+++ Connecting: SUCCESS.");
 
             return c;
         } catch (SQLException ex) {
-            LOGGER.info("*** Connecting: FAILURE.", ex);
+            LOGGER.warn("*** Connecting: FAILURE.", ex);
             throw ex;
-        }
-    }
-
-    private void logConnect(String url, String userName, String password) {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Connecting to '" + url + "' as '" + userName + "'");
         }
     }
 

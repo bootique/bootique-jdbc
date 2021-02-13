@@ -35,8 +35,6 @@ import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -51,9 +49,7 @@ import java.util.Objects;
  * @since 2.0.M1
  */
 public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
-
+    
     protected final DbInitializer initializer;
     protected String[] deleteTablesInInsertOrder;
 

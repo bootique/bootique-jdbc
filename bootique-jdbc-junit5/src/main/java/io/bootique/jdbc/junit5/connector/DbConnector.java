@@ -88,6 +88,8 @@ public class DbConnector {
                 connection.close();
             } catch (SQLException ignored) {
             }
+
+            // TODO: this catch is suspect ... It may return connection in a closed state
         }
         return connection;
     }

@@ -37,7 +37,7 @@ public class UrlTcDbTester_Liquibase_PostgresIT {
     @BQTestTool
     static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
-            .runLiquibaseMigrations("classpath:io/bootique/jdbc/junit5/tc/TcTester_Liquibase_PostgresIT-changelog.yml");
+            .initDBWithLiquibaseChangelog("classpath:io/bootique/jdbc/junit5/tc/TcTester_Liquibase_PostgresIT-changelog.yml");
 
     @Test
     @DisplayName("Migrations are run")

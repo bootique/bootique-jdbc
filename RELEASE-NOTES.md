@@ -8,6 +8,7 @@
 * #110 DbTester.runScript(..)
 * #111 Upgrade Testcontainers to 1.15.1
 * #112 Log connection URL
+* #113 DbTester - make "initDB" calls additive
 
 ## 2.0.M1
 

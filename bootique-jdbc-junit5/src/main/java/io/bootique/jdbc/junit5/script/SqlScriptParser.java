@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.junit5.tester;
+package io.bootique.jdbc.junit5.script;
 
 import io.bootique.resource.ResourceFactory;
 
@@ -34,16 +34,16 @@ public class SqlScriptParser {
     private String commentPrefix;
     private String blockCommentStart;
     private String blockCommentEnd;
-    private String separator;
+    private String delimiter;
 
-    public SqlScriptParser(String commentPrefix, String blockCommentStart, String blockCommentEnd, String separator) {
+    public SqlScriptParser(String commentPrefix, String blockCommentStart, String blockCommentEnd, String delimiter) {
         this.commentPrefix = commentPrefix;
         this.blockCommentStart = blockCommentStart;
         this.blockCommentEnd = blockCommentEnd;
-        this.separator = separator;
+        this.delimiter = delimiter;
     }
 
-    public Iterable<String> getStatements(ResourceFactory source) {
+    public List<String> getStatements(ResourceFactory source) {
         List<String> statements = new ArrayList<>();
         readStatements(readScript(source), statements);
         return statements;
@@ -90,13 +90,13 @@ public class SqlScriptParser {
                 inLiteral = !inLiteral;
             }
             if (!inLiteral) {
-                if (script.startsWith(separator, i)) {
+                if (script.startsWith(delimiter, i)) {
                     // we've reached the end of the current statement
                     if (buffer.length() > 0) {
                         statements.add(buffer.toString());
                         buffer = new StringBuilder();
                     }
-                    i += separator.length() - 1;
+                    i += delimiter.length() - 1;
                     continue;
                 } else if (script.startsWith(commentPrefix, i)) {
                     // skip over any content from the start of the comment to the EOL

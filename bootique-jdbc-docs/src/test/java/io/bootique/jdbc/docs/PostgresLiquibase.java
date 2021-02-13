@@ -31,7 +31,7 @@ public class PostgresLiquibase {
     @BQTestTool
     static final DbTester tester = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
-            .runLiquibaseMigrations("classpath:my/app/postgres-changelog.yml"); // <1>
+            .initDBWithLiquibaseChangelog("classpath:my/app/postgres-changelog.yml"); // <1>
     // end::migrations[]
 }
 

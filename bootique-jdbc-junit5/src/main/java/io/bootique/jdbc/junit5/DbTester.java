@@ -25,28 +25,21 @@ import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
 import io.bootique.jdbc.junit5.datasource.DataSourceHolder;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
+import io.bootique.jdbc.junit5.init.DbInitializer;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
+import io.bootique.jdbc.junit5.script.SqlScriptRunner;
 import io.bootique.jdbc.junit5.tester.DataManager;
 import io.bootique.jdbc.junit5.tester.DataSourcePropertyBuilder;
-import io.bootique.jdbc.junit5.tester.SqlScriptParser;
-import io.bootique.jdbc.liquibase.LiquibaseRunner;
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
-import io.bootique.resource.ResourceFactory;
-import liquibase.Contexts;
-import liquibase.LabelExpression;
-import liquibase.Liquibase;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -55,18 +48,13 @@ import java.util.Objects;
  * one or more BQRuntimes. This class is abstract. Specific testers (such as DerbyTester or TestcontainersTester)
  * are provided in separate modules.
  *
- * @since 2.0
+ * @since 2.0.M1
  */
 public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbTester.class);
-    private static final String DEFAULT_DELIMITER = ";";
 
-    protected ResourceFactory initDBScript;
-    protected String initDBScriptDelimiter;
-    protected JdbcOp initFunction;
-    protected ResourceFactory liquibaseChangeLog;
-    protected String liquibaseContext;
+    protected final DbInitializer initializer;
     protected String[] deleteTablesInInsertOrder;
 
     protected final DataSourceHolder dataSourceHolder;
@@ -74,6 +62,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     public DbTester() {
         this.dataSourceHolder = new DataSourceHolder();
+        this.initializer = new DbInitializer();
     }
 
     public DataSource getDataSource() {
@@ -138,13 +127,54 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * @return this tester
      */
     public SELF initDB(String initDBScript, String delimiter) {
-        this.initDBScript = new ResourceFactory(initDBScript);
-        this.initDBScriptDelimiter = delimiter;
+        initializer.addScript(initDBScript, delimiter);
         return (SELF) this;
     }
 
     public SELF initDB(JdbcOp initFunction) {
-        this.initFunction = Objects.requireNonNull(initFunction);
+        initializer.addFunction(initFunction);
+        return (SELF) this;
+    }
+
+    /**
+     * @deprecated since 2.0.B1 in favor of {@link #initDBWithLiquibaseChangelog(String)}
+     */
+    @Deprecated
+    public SELF runLiquibaseMigrations(String liquibaseChangeLog) {
+        return initDBWithLiquibaseChangelog(liquibaseChangeLog);
+    }
+
+    /**
+     * @deprecated since 2.0.B1 in favor of {@link #initDBWithLiquibaseChangelog(String, String)}
+     */
+    @Deprecated
+    public SELF runLiquibaseMigrations(String liquibaseChangeLog, String liquibaseContext) {
+        return initDBWithLiquibaseChangelog(liquibaseChangeLog, liquibaseContext);
+    }
+
+    /**
+     * Schedules execution of a Liquibase changelog file after DB startup.
+     *
+     * @param changelog a location of the Liquibase changelog file in Bootique
+     *                  {@link io.bootique.resource.ResourceFactory} format.
+     * @return this tester
+     * @since 2.0.B1
+     */
+    public SELF initDBWithLiquibaseChangelog(String changelog) {
+        return initDBWithLiquibaseChangelog(changelog, null);
+    }
+
+    /**
+     * Schedules execution of a Liquibase changelog file after DB startup.
+     *
+     * @param changelog        a location of the Liquibase changelog file in Bootique
+     *                         {@link io.bootique.resource.ResourceFactory} format.
+     * @param liquibaseContext Liquibase context expression to filter migrations as appropriate for the test run.
+     * @return this tester
+     * @since 2.0.B1
+     */
+    public SELF initDBWithLiquibaseChangelog(String changelog, String liquibaseContext) {
+        initializer.addLiquibase(changelog, liquibaseContext);
         return (SELF) this;
     }
 
@@ -155,7 +185,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * @since 2.0.B1
      */
     public void runScript(String script) {
-        runScript(script, DEFAULT_DELIMITER);
+        runScript(script, null);
     }
 
     /**
@@ -163,64 +193,14 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * data.
      *
      * @param script    a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
-     * @param delimiter SQL statements delimiter in the "script". An explicit delimiter may be useful when
-     *                  the file contains common DB delimiters in the middle of stored procedure declarations, etc.
+     * @param delimiter Optional SQL statements delimiter in the "script". When null, a semicolon is assumed. An
+     *                  explicit delimiter may be useful when the file contains common DB delimiters in the middle of
+     *                  stored procedure declarations, etc.
      */
     public void runScript(String script, String delimiter) {
 
         Objects.requireNonNull(script, "Null 'script'");
-        Objects.requireNonNull(delimiter, "Null 'delimiter'");
-
-        runScript(new ResourceFactory(script), delimiter);
-    }
-
-    protected void runScript(ResourceFactory script, String delimiter) {
-
-        Objects.requireNonNull(script, "Null 'script'");
-        Objects.requireNonNull(delimiter, "Null 'delimiter'");
-
-        LOGGER.info("running SQL script {}", script.getUrl());
-        Iterable<String> statements = new SqlScriptParser("--", "/*", "*/", delimiter).getStatements(script);
-
-        try (Connection c = dataSourceHolder.getConnection()) {
-
-            for (String sql : statements) {
-                try (PreparedStatement statement = c.prepareStatement(sql)) {
-                    statement.execute();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Error running SQL statement " + sql + ": " + e.getMessage(), e);
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Error running SQL from " + script.getUrl() + ": " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Executes provides Liquibase changelog file after the DB startup.
-     *
-     * @param liquibaseChangeLog a location of the Liquibase changelog file in Bootique
-     *                           {@link io.bootique.resource.ResourceFactory} format.
-     * @return this tester
-     */
-    public SELF runLiquibaseMigrations(String liquibaseChangeLog) {
-        this.liquibaseChangeLog = new ResourceFactory(liquibaseChangeLog);
-        return (SELF) this;
-    }
-
-    /**
-     * Executes provides Liquibase changelog file after the DB startup.
-     *
-     * @param liquibaseChangeLog a location of the Liquibase changelog file in Bootique
-     *                           {@link io.bootique.resource.ResourceFactory} format.
-     * @param liquibaseContext   Liquibase context expression to filter migrations as appropriate for the test run.
-     * @return this tester
-     */
-    public SELF runLiquibaseMigrations(String liquibaseChangeLog, String liquibaseContext) {
-        this.liquibaseChangeLog = new ResourceFactory(liquibaseChangeLog);
-        this.liquibaseContext = liquibaseContext;
-        return (SELF) this;
+        new SqlScriptRunner(script).delimiter(delimiter).run(dataSourceHolder);
     }
 
     /**
@@ -248,48 +228,6 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     protected abstract DriverDataSource createNonPoolingDataSource(BQTestScope scope);
 
-    protected void initConnector() {
-        this.connector = new DbConnector(dataSourceHolder, DbMetadata.create(dataSourceHolder));
-    }
-
-    protected void execInitFunction() {
-        if (initFunction != null) {
-
-            LOGGER.info("initializing DB from using custom init function");
-
-            try (Connection c = dataSourceHolder.getConnection()) {
-                initFunction.run(c);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error running custom init function: " + e.getMessage(), e);
-            }
-        }
-    }
-
-    protected void execInitScript() {
-        if (initDBScript != null) {
-            String delimiter = this.initDBScriptDelimiter != null ? this.initDBScriptDelimiter : DEFAULT_DELIMITER;
-            runScript(initDBScript, delimiter);
-        }
-    }
-
-    protected void execLiquibaseMigrations() {
-        if (liquibaseChangeLog != null) {
-            LOGGER.info("executing Liquibase migrations from {}", liquibaseChangeLog.getUrl());
-            new LiquibaseRunner(Collections.singletonList(liquibaseChangeLog), dataSourceHolder, null)
-                    .run(this::execLiquibaseMigrations);
-        }
-    }
-
-    protected void execLiquibaseMigrations(Liquibase lb) {
-        Contexts contexts = liquibaseContext != null ? new Contexts(liquibaseContext) : new Contexts();
-
-        try {
-            lb.update(contexts, new LabelExpression());
-        } catch (Exception e) {
-            throw new RuntimeException("Error running migrations against the test DB", e);
-        }
-    }
-
     @Override
     public void beforeScope(BQTestScope scope, ExtensionContext context) {
 
@@ -313,8 +251,14 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
 
     protected void afterDataSourceInit() {
         initConnector();
-        execInitFunction();
-        execInitScript();
-        execLiquibaseMigrations();
+        initDB();
+    }
+
+    protected void initConnector() {
+        this.connector = new DbConnector(dataSourceHolder, DbMetadata.create(dataSourceHolder));
+    }
+
+    protected void initDB() {
+        initializer.exec(dataSourceHolder);
     }
 }

@@ -26,6 +26,8 @@ import javax.sql.DataSource;
  *
  * @since 0.25
  */
+// TODO: deprecate listener, or at least the methods that take JDBC URL. Passing URLs around creates issues with unit
+//   unit tests when @BQApp eagerly injects a DataSource
 public interface DataSourceListener {
 
     default void beforeStartup(String name, String jdbcUrl) {

@@ -19,9 +19,6 @@
 
 package io.bootique.jdbc.managed;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.sql.DataSource;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -33,8 +30,6 @@ import java.util.function.Supplier;
  * @since 0.25
  */
 public class ManagedDataSourceStarter {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManagedDataSourceStarter.class);
 
     private Supplier<String> url;
     private Supplier<DataSource> startup;
@@ -55,11 +50,6 @@ public class ManagedDataSourceStarter {
     }
 
     public ManagedDataSource start() {
-
-        String url = getUrl();
-        LOGGER.info("Starting DataSource: {}", url);
-
-        DataSource dataSource = startup.get();
-        return new ManagedDataSource(url, dataSource, shutdown);
+        return new ManagedDataSource(url, startup.get(), shutdown);
     }
 }

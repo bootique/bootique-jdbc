@@ -18,6 +18,8 @@
  */
 package io.bootique.jdbc.junit5.datasource;
 
+import org.slf4j.LoggerFactory;
+
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -35,6 +37,8 @@ import java.util.logging.Logger;
  */
 public class DataSourceHolder implements DataSource {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DataSourceHolder.class);
+
     private String dbUrl;
     private PoolingDataSource dataSource;
 
@@ -46,6 +50,8 @@ public class DataSourceHolder implements DataSource {
                     // capture both a DataSource and a DB URL
                     DriverDataSource nonPooling = dataSourceSupplier.get();
                     this.dbUrl = nonPooling.getDbUrl();
+                    LOGGER.info("Starting DbTester DataSource: {}", dbUrl);
+
                     this.dataSource = createPoolingDataSource(nonPooling);
                     runAfterInit.run();
                 }

@@ -21,6 +21,7 @@ package io.bootique.jdbc.managed;
 
 import javax.sql.DataSource;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * A DataSource wrapper with provider-specific strategies to read DataSource metadata and shut down the
@@ -30,18 +31,18 @@ import java.util.function.Consumer;
  */
 public class ManagedDataSource {
 
-    private String url;
+    private Supplier<String> url;
     private DataSource dataSource;
     private Consumer<DataSource> shutdownHandler;
 
-    public ManagedDataSource(String url, DataSource dataSource, Consumer<DataSource> shutdownHandler) {
+    public ManagedDataSource(Supplier<String> url, DataSource dataSource, Consumer<DataSource> shutdownHandler) {
         this.url = url;
         this.dataSource = dataSource;
         this.shutdownHandler = shutdownHandler;
     }
 
     public String getUrl() {
-        return url;
+        return url.get();
     }
 
     public DataSource getDataSource() {

@@ -70,7 +70,7 @@ public class RowCountMatcher {
                 // TODO: count() would usually return Long. We don't expect such large numbers in tests,
                 //  but wonder if we should still change the signature to return Long for consistency?
                 .converter(r -> ((Number) r[0]).intValue())
-                .append("SELECT COUNT(*) FROM ")
+                .append("select count(*) from ")
                 .appendIdentifier(table.getName());
     }
 
@@ -78,7 +78,7 @@ public class RowCountMatcher {
 
         if (conditions != null && !conditions.isEmpty()) {
 
-            String separator = " WHERE ";
+            String separator = " where ";
 
             for (BinaryCondition c : conditions) {
 
@@ -100,7 +100,7 @@ public class RowCountMatcher {
                         throw new UnsupportedOperationException("Unexpected operator: " + c.getOperator());
                 }
 
-                separator = " AND ";
+                separator = " and ";
             }
         }
 
@@ -116,7 +116,7 @@ public class RowCountMatcher {
                     .append(" ")
                     .appendBinding(table.getColumn(eq.getColumn()), eq.getValue());
         } else {
-            builder.appendIdentifier(eq.getColumn()).append(" IS NULL");
+            builder.appendIdentifier(eq.getColumn()).append(" is null");
         }
 
         return builder;
@@ -141,7 +141,7 @@ public class RowCountMatcher {
 
         builder.appendIdentifier(columnName)
                 .append(" ")
-                .append("IN")
+                .append("in")
                 .append(" (");
 
         Column column = table.getColumn(columnName);

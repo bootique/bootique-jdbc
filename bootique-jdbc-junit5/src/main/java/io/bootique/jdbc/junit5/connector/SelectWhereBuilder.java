@@ -54,9 +54,9 @@ public class SelectWhereBuilder<T> {
     public SelectWhereBuilder<T> and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
-            builder.append(" AND ");
+            builder.append(" and ");
         } else {
-            builder.append(" WHERE ");
+            builder.append(" where ");
         }
 
         builder.appendIdentifier(column)
@@ -72,7 +72,7 @@ public class SelectWhereBuilder<T> {
 
     public SelectWhereBuilder<T> or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
-            builder.append(" OR ");
+            builder.append(" or ");
         }
 
         builder.appendIdentifier(column)

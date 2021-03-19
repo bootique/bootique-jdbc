@@ -105,16 +105,16 @@ public class Table {
      */
     public UpdateSetBuilder update() {
         ExecStatementBuilder builder = execStatement()
-                .append("UPDATE ")
+                .append("update ")
                 .appendIdentifier(name)
-                .append(" SET ");
+                .append(" set ");
 
         return new UpdateSetBuilder(builder);
     }
 
     public DeleteBuilder delete() {
         ExecStatementBuilder builder = execStatement()
-                .append("DELETE FROM ")
+                .append("delete from ")
                 .appendIdentifier(name);
 
         return new DeleteBuilder(builder);
@@ -236,7 +236,7 @@ public class Table {
                 .selectStatement()
                 .reader(ArrayReader.create(columns.toArray(new Column[0])))
                 .quoteIdentifiersWith(quotationStrategy)
-                .append("SELECT ");
+                .append("select ");
 
         for (int i = 0; i < columns.size(); i++) {
             Column col = columns.get(i);
@@ -247,7 +247,7 @@ public class Table {
             builder.appendIdentifier(col.getName());
         }
 
-        builder.append(" FROM ").appendIdentifier(name);
+        builder.append(" from ").appendIdentifier(name);
         return new SelectBuilder<>(builder);
     }
 

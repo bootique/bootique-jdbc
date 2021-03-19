@@ -17,7 +17,7 @@
   under the License.
   -->
 
-[![Build Status](https://travis-ci.org/bootique/bootique-jdbc.svg)](https://travis-ci.org/bootique/bootique-jdbc)
+[![build test deploy](https://github.com/bootique/bootique-jdbc/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique-jdbc/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique.jdbc/bootique-jdbc.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique.jdbc/bootique-jdbc/)
 
 # bootique-jdbc

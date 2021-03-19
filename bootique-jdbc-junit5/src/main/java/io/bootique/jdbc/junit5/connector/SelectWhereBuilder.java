@@ -43,6 +43,11 @@ public class SelectWhereBuilder<T> {
         return builder.select(maxRows);
     }
 
+
+    public T selectOne() {
+        return builder.selectOne(null);
+    }
+
     public T selectOne(T defaultValue) {
         return builder.selectOne(defaultValue);
     }

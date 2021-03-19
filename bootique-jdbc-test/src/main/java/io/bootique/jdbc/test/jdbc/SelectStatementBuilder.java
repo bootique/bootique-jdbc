@@ -115,6 +115,13 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
     /**
      * @since 2.0.B1
      */
+    public T selectOne() {
+        return selectOne(null);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
     public T selectOne(T defaultValue) {
 
         List<T> data = select(2);

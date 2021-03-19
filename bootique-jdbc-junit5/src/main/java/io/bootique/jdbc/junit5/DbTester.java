@@ -49,7 +49,7 @@ import java.util.Objects;
  * @since 2.0.M1
  */
 public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
-    
+
     protected final DbInitializer initializer;
     protected String[] deleteTablesInInsertOrder;
 
@@ -69,7 +69,14 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
         return dataSourceHolder.getDbUrl();
     }
 
-    protected DbConnector getConnector() {
+    /**
+     * Returns test DB "connector" that is a wrapper around DB DataSource providing access to DB metadata, and various
+     * query builders. In most cases instead of DbConnector, you should use {@link Table} (via {@link #getTable(String)})
+     * to work with the DB. Connector is only needed to run SQL directly.
+     *
+     * @since 2.0.B1
+     */
+    public DbConnector getConnector() {
         return Objects.requireNonNull(connector, "'connector' not initialized. Called outside of JUnit lifecycle?");
     }
 

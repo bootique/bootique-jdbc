@@ -31,6 +31,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * A wrapper around a DB DataSource that provides access to DB metadata, {@link Table} API and various query builders.
+ *
  * @since 2.0
  */
 public class DbConnector {

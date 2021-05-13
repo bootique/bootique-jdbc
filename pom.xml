@@ -63,7 +63,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jdbc</developerConnection>
         <url>https://github.com/bootique/bootique-jdbc</url>
-        <tag>2.0.M1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencyManagement>

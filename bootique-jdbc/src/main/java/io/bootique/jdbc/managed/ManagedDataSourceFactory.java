@@ -26,8 +26,6 @@ import io.bootique.di.Injector;
 
 /**
  * Configuration factory for specific DataSource implementations.
- *
- * @since 0.25
  */
 @BQConfig("JDBC DataSource configuration.")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ManagedDataSourceFactoryProxy.class)

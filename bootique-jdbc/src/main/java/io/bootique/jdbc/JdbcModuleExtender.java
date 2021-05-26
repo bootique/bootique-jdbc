@@ -26,9 +26,6 @@ import io.bootique.di.SetBuilder;
 import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 
-/**
- * @since 0.25
- */
 public class JdbcModuleExtender extends ModuleExtender<JdbcModuleExtender> {
 
     private static final Key<Class<? extends ManagedDataSourceFactory>> FACTORY_TYPE_KEY = Key

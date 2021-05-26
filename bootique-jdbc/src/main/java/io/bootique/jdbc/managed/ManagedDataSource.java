@@ -26,8 +26,6 @@ import java.util.function.Supplier;
 /**
  * A DataSource wrapper with provider-specific strategies to read DataSource metadata and shut down the
  * DataSource.
- *
- * @since 0.25
  */
 public class ManagedDataSource {
 

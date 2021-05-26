@@ -58,7 +58,6 @@ public class Table {
 
     /**
      * @return an internal IdentifierQuotationStrategy used to generate quoted SQL identifiers.
-     * @since 0.14
      */
     public IdentifierQuotationStrategy getQuotationStrategy() {
         return quotationStrategy;
@@ -67,7 +66,6 @@ public class Table {
     /**
      * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
      * using policies specified for this table.
-     * @since 0.24
      */
     public ExecStatementBuilder execStatement() {
         return getChannel().execStatement().quoteIdentifiersWith(quotationStrategy);
@@ -75,7 +73,6 @@ public class Table {
 
     /**
      * @return returns an immutable list of columns.
-     * @since 0.13
      */
     public List<Column> getColumns() {
         return Collections.unmodifiableList(columns);
@@ -84,7 +81,6 @@ public class Table {
     /**
      * @param name column name
      * @return a column for name.
-     * @since 0.14
      */
     public Column getColumn(String name) {
 
@@ -101,7 +97,6 @@ public class Table {
      * Update table statement
      *
      * @return {@link UpdateSetBuilder}
-     * @since 0.15
      */
     public UpdateSetBuilder update() {
         ExecStatementBuilder builder = execStatement()
@@ -127,7 +122,6 @@ public class Table {
     /**
      * @param columns an array of columns that is a subset of the table columns.
      * @return a builder for insert query.
-     * @since 0.13
      */
     public InsertBuilder insertColumns(String... columns) {
         return insertColumns(toColumnsList(columns));
@@ -138,7 +132,6 @@ public class Table {
      * or from a CSV file resource.
      *
      * @return a builder of a {@link io.bootique.jdbc.test.dataset.TableDataSet}.
-     * @since 0.24
      */
     public CsvDataSetBuilder csvDataSet() {
         return new CsvDataSetBuilder(this);
@@ -163,7 +156,6 @@ public class Table {
 
     /**
      * @return a new instance of {@link TableMatcher} for this table that allows to make assertions about the table data.
-     * @since 0.24
      */
     public TableMatcher matcher() {
         return new TableMatcher(this);

@@ -35,7 +35,6 @@ public class ExecWhereBuilder {
 
     /**
      * @return the number of updated records.
-     * @since 0.24
      */
     public int exec() {
         return builder.exec();

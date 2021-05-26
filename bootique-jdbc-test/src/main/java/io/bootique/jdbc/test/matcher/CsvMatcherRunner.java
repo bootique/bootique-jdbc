@@ -30,9 +30,6 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-/**
- * @since 0.24
- */
 class CsvMatcherRunner {
 
     private final Table table;

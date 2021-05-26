@@ -23,9 +23,6 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
 
-/**
- * @since 0.24
- */
 @BQConfig
 public class DatabaseChannelFactoryFactory {
 

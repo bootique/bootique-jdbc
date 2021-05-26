@@ -25,8 +25,6 @@ import static java.util.Arrays.asList;
 
 /**
  * A DataSet that can persist multiple underlying datasets in a specific order.
- *
- * @since 0.24
  */
 public class GroupDataSet implements DataSet {
 

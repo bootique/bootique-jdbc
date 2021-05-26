@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @since 0.24
- */
 public class RowCountMatcher {
 
     private Table table;

@@ -52,9 +52,6 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         );
     }
 
-    /**
-     * @since 0.6
-     */
     @Override
     public Collection<String> allNames() {
         return starters.keySet();

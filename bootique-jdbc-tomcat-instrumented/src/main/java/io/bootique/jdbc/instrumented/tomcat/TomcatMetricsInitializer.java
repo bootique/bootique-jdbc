@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
-/**
- * @since 0.25
- */
 public class TomcatMetricsInitializer implements DataSourceListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomcatMetricsInitializer.class);

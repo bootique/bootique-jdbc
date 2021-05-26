@@ -21,9 +21,6 @@ package io.bootique.jdbc.test.jdbc;
 
 import java.sql.*;
 
-/**
- * @since 0.24
- */
 @FunctionalInterface
 public interface RowReader {
 

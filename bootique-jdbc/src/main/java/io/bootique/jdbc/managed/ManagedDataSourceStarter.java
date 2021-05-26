@@ -26,8 +26,6 @@ import java.util.function.Supplier;
 /**
  * An object that can create and start a {@link ManagedDataSource} on demand. Also provides access to common DataSource
  * metadata, namely its JDBC URL.
- *
- * @since 0.25
  */
 public class ManagedDataSourceStarter {
 

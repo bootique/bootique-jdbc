@@ -27,8 +27,6 @@ import java.util.Map;
 
 /**
  * A unit test "rule" to manage data sets for unit tests.
- *
- * @since 0.13
  */
 public class TestDataManager extends ExternalResource {
 
@@ -57,8 +55,6 @@ public class TestDataManager extends ExternalResource {
 
     /**
      * Deletes data from the managed tables.
-     *
-     * @since 0.24
      */
     public void deleteData() {
         for (int i = tablesInInsertOrder.length - 1; i >= 0; i--) {
@@ -69,7 +65,6 @@ public class TestDataManager extends ExternalResource {
     /**
      * @param tableName the name of a table whose data we'd like to check.
      * @return a new TableMatcher for the specified table.
-     * @since 0.24
      */
     public TableMatcher matcher(String tableName) {
         return getTable(tableName).matcher();
@@ -83,7 +78,6 @@ public class TestDataManager extends ExternalResource {
 
     /**
      * @return an array of registered tables in insert order.
-     * @since 0.24
      */
     public Table[] getTablesInInsertOrder() {
         return tablesInInsertOrder;

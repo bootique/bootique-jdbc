@@ -29,9 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * @since 0.12
- */
 public class JdbcTestModuleProvider implements BQModuleProvider {
 
     @Override

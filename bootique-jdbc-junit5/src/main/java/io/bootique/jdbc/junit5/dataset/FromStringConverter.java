@@ -21,9 +21,6 @@ package io.bootique.jdbc.junit5.dataset;
 
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
-/**
- * @since 0.24
- */
 public interface FromStringConverter {
 
     Object fromString(String value, DbColumnMetadata column);

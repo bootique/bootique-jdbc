@@ -30,9 +30,6 @@ import io.bootique.jdbc.instrumented.hikaricp.JdbcHikariCPInstrumentedModule;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * @since 1.0.RC1
- */
 public class HikariMetricsBridge implements IMetricsTracker {
 
     private final String dataSourceName;

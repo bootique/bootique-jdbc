@@ -42,7 +42,6 @@ public interface DatabaseChannel {
 
     /**
      * @return DB-specific identifier quotation symbol.
-     * @since 0.14
      */
     String getIdentifierQuote();
 
@@ -52,14 +51,12 @@ public interface DatabaseChannel {
 
     /**
      * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement.
-     * @since 0.24
      */
     ExecStatementBuilder execStatement();
 
     /**
      * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
      * PreparedStatement.
-     * @since 0.24
      */
     SelectStatementBuilder<Object[]> selectStatement();
 }

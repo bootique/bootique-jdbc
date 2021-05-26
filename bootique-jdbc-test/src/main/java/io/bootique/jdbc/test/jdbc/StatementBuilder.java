@@ -35,8 +35,6 @@ import java.util.stream.Collectors;
 
 /**
  * Defines API to build a SQL
- *
- * @since 0.24
  */
 public abstract class StatementBuilder<T extends StatementBuilder> {
 

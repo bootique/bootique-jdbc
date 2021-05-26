@@ -23,8 +23,6 @@ import javax.sql.DataSource;
 
 /**
  * A listener attached to {@link DataSourceFactory} that is notified about DataSource start and stop events.
- *
- * @since 0.25
  */
 // TODO: deprecate listener, or at least the methods that take JDBC URL. Passing URLs around creates issues with unit
 //   unit tests when @BQApp eagerly injects a DataSource

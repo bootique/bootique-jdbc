@@ -40,7 +40,6 @@ import java.util.function.Supplier;
 
 /**
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
- * @since 0.25
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
 @JsonTypeName("tomcat")

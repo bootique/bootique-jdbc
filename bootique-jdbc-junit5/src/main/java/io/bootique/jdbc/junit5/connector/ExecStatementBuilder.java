@@ -23,9 +23,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/**
- * @since 0.24
- */
 public class ExecStatementBuilder extends StatementBuilder<ExecStatementBuilder> {
 
     public ExecStatementBuilder(

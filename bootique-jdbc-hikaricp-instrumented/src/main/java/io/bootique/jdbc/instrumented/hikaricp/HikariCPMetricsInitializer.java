@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
-/**
- * @since 1.0.RC1
- */
 public class HikariCPMetricsInitializer implements DataSourceListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HikariCPMetricsInitializer.class);

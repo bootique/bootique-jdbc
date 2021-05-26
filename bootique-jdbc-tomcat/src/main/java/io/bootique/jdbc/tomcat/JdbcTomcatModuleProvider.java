@@ -27,9 +27,6 @@ import io.bootique.jdbc.JdbcModuleProvider;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @since 0.25
- */
 public class JdbcTomcatModuleProvider implements BQModuleProvider {
 
     @Override

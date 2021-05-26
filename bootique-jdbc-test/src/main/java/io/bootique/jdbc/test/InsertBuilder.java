@@ -24,9 +24,6 @@ import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @since 0.13
- */
 public class InsertBuilder {
 
     protected String tableName;
@@ -55,7 +52,6 @@ public class InsertBuilder {
      * Returns a list of columns for this insert.
      *
      * @return a list of columns for this insert.
-     * @since 0.14
      */
     public List<Column> getColumns() {
         return columns;

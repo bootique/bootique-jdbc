@@ -28,8 +28,6 @@ import java.util.Objects;
 
 /**
  * Represents data from a single table.
- *
- * @since 0.24
  */
 public class TableDataSet implements DataSet {
 

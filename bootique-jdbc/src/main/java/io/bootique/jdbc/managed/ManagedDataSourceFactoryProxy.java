@@ -43,8 +43,6 @@ import java.util.Set;
  * a given configuration. It looks for concrete factories in DI, and if there is one and only one such factory, uses it
  * as a delegate for DataSource creation. If there are no such factories, or if there's more than one, an exception is
  * thrown.
- *
- * @since 0.25
  */
 @BQConfig("Default JDBC DataSource configuration.")
 @JsonDeserialize(using = ManagedDataSourceFactoryProxyDeserializer.class)

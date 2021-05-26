@@ -28,8 +28,6 @@ import java.util.Objects;
 
 /**
  * A builder that assembles a data set matching a {@link Table} structure from in-memory CSV-like strings.
- *
- * @since 0.24
  */
 public class CsvStringsDataSetBuilder {
 

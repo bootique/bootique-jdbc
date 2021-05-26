@@ -31,8 +31,6 @@ import java.sql.SQLException;
 
 /**
  * A helper class to run common DB operations during unit tests.
- *
- * @since 0.12
  */
 public class DefaultDatabaseChannel implements DatabaseChannel {
 

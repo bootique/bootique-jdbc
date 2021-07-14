@@ -16,25 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.junit5.tc;
+package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
-import io.bootique.junit5.BQTest;
-import org.junit.jupiter.api.Test;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-@BQTest
-public class UrlTcDbTester_Postgres_Reusable2IT extends BaseReusableTcTesterTest {
+/**
+ * @since 2.0.B1
+ */
+@FunctionalInterface
+public interface ColumnReader {
 
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(BaseReusableTcTesterTest.db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
-
-    @Test
-    public void testDbState() {
-        checkEmptyAndInsert(app);
-    }
+    Object read(ResultSet rs) throws SQLException;
 }

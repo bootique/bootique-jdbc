@@ -33,9 +33,9 @@ import java.util.Objects;
  */
 public class TableDataSet implements DataSet {
 
-    private Table table;
-    private DbColumnMetadata[] header;
-    private List<Object[]> records;
+    private final Table table;
+    private final DbColumnMetadata[] header;
+    private final List<Object[]> records;
 
     public TableDataSet(Table table, DbColumnMetadata[] header, List<Object[]> records) {
         this.header = Objects.requireNonNull(header);

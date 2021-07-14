@@ -18,9 +18,6 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
@@ -35,18 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class UrlTcDbTester_InitDB_Function_PostgresIT extends BaseTcTesterTest {
+public class UrlTcDbTester_InitDB_Function_PostgresIT {
 
     @BQTestTool
     static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
             .initDB(UrlTcDbTester_InitDB_Function_PostgresIT::initDB);
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
 
     static void initDB(Connection c) throws SQLException {
         c.setAutoCommit(false);
@@ -58,8 +49,9 @@ public class UrlTcDbTester_InitDB_Function_PostgresIT extends BaseTcTesterTest {
 
     @Test
     @DisplayName("DB was initialized with custom function")
-    public void testInitDB() {
-        run(app, c -> {
+    public void testInitDB() throws SQLException {
+
+        try (Connection c = db.getConnection()) {
 
             // procedure must be there, and the second definition from the test must be in use
             try (Statement s = c.createStatement()) {
@@ -73,6 +65,6 @@ public class UrlTcDbTester_InitDB_Function_PostgresIT extends BaseTcTesterTest {
                     assertEquals("x", rs.getString("name"));
                 }
             }
-        });
+        }
     }
 }

@@ -19,10 +19,7 @@
 
 package io.bootique.jdbc.test.jdbc;
 
-import io.bootique.jdbc.test.BindingValueToStringConverter;
-import io.bootique.jdbc.test.DatabaseChannel;
-import io.bootique.jdbc.test.IdentifierQuotationStrategy;
-import io.bootique.jdbc.test.ObjectValueConverter;
+import io.bootique.jdbc.test.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,22 +27,67 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-/**
- * @since 0.24
- */
 public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
 
-    private RowReader<T> rowReader;
+    private final RowReader rowReader;
+    private final RowConverter<T> rowConverter;
 
     public SelectStatementBuilder(
-            RowReader<T> rowReader,
+            RowReader rowReader,
+            RowConverter<T> rowConverter,
             DatabaseChannel channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
             IdentifierQuotationStrategy quotationStrategy) {
         super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
-        this.rowReader = rowReader;
+        this.rowReader = Objects.requireNonNull(rowReader);
+        this.rowConverter = Objects.requireNonNull(rowConverter);
+    }
+
+    protected SelectStatementBuilder(
+            RowReader rowReader,
+            RowConverter<T> rowConverter,
+            DatabaseChannel channel,
+            ObjectValueConverter objectValueConverter,
+            BindingValueToStringConverter valueToStringConverter,
+            IdentifierQuotationStrategy quotationStrategy,
+            List<Binding> bindings,
+            StringBuilder sqlBuffer) {
+        super(channel, objectValueConverter, valueToStringConverter, quotationStrategy, bindings, sqlBuffer);
+        this.rowReader = Objects.requireNonNull(rowReader);
+        this.rowConverter = Objects.requireNonNull(rowConverter);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public SelectStatementBuilder<T> reader(RowReader reader) {
+        return new SelectStatementBuilder<>(
+                reader,
+                this.rowConverter,
+                this.channel,
+                this.objectValueConverter,
+                this.valueToStringConverter,
+                this.quotationStrategy,
+                this.bindings,
+                this.sqlBuffer);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public <U> SelectStatementBuilder<U> converter(RowConverter<U> converter) {
+        return new SelectStatementBuilder<>(
+                this.rowReader,
+                converter,
+                this.channel,
+                this.objectValueConverter,
+                this.valueToStringConverter,
+                this.quotationStrategy,
+                this.bindings,
+                this.sqlBuffer);
     }
 
     /**
@@ -67,6 +109,29 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
         }
     }
 
+    /**
+     * @since 2.0.B1
+     */
+    public T selectOne() {
+        return selectOne(null);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public T selectOne(T defaultValue) {
+
+        List<T> data = select(2);
+        switch (data.size()) {
+            case 0:
+                return defaultValue;
+            case 1:
+                return data.get(0);
+            default:
+                throw new IllegalArgumentException("At most one row expected in the result");
+        }
+    }
+
     protected List<T> selectWithExceptions(String sql, long maxRows) throws SQLException {
 
         List<T> result = new ArrayList<>();
@@ -78,7 +143,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
                 try (ResultSet rs = st.executeQuery()) {
 
                     while (rs.next() && result.size() < maxRows) {
-                        result.add(rowReader.readRow(rs));
+                        result.add(rowConverter.convert(rowReader.readRow(rs)));
                     }
                 }
             }

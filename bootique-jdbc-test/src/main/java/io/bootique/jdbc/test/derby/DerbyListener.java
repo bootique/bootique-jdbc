@@ -37,8 +37,6 @@ import static org.junit.Assert.fail;
 /**
  * An implementation of {@link DataSourceListener} that would ignore all DataSources, but those belonging to Apache
  * Derby database. For Derby DataSources it will setup runtime environment, and do a shutdown at the end.
- *
- * @since 0.12
  */
 public class DerbyListener implements DataSourceListener {
 

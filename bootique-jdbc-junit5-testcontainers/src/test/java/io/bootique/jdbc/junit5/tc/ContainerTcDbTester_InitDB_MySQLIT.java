@@ -18,9 +18,6 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +26,9 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @BQTest
-public class ContainerTcDbTester_InitDB_MySQLIT extends BaseTcTesterTest {
+public class ContainerTcDbTester_InitDB_MySQLIT {
 
     @Container
     static final MySQLContainer db = new MySQLContainer("mysql:8.0.20")
@@ -48,25 +47,20 @@ public class ContainerTcDbTester_InitDB_MySQLIT extends BaseTcTesterTest {
     @BQTestTool
     static final TcDbTester dbTester = TcDbTester
             .db(db)
-            .initDB("classpath:io/bootique/jdbc/junit5/tc/TcTester_InitDB_MySQLIT.sql");
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(dbTester.moduleWithTestDataSource("myDS"))
-            .createRuntime();
+            .initDB("classpath:io/bootique/jdbc/junit5/tc/unit/BaseMySQLTest.sql");
 
     @Test
     @DisplayName("DB was initialized")
-    public void testInitDB() {
-        run(app, c -> {
+    public void testInitDB() throws SQLException {
+
+        try (Connection c = dbTester.getConnection()) {
             try (Statement s = c.createStatement()) {
-                try (ResultSet rs = s.executeQuery("select * from b")) {
+                try (ResultSet rs = s.executeQuery("select * from t2")) {
                     assertTrue(rs.next());
                     assertEquals(12, rs.getInt("id"));
                     assertEquals("myname", rs.getString("name"));
                 }
             }
-        });
+        }
     }
 }

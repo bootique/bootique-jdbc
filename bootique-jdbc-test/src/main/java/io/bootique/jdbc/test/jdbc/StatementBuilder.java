@@ -35,17 +35,15 @@ import java.util.stream.Collectors;
 
 /**
  * Defines API to build a SQL
- *
- * @since 0.24
  */
 public abstract class StatementBuilder<T extends StatementBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatementBuilder.class);
 
+    protected DatabaseChannel channel;
     protected ObjectValueConverter objectValueConverter;
     protected BindingValueToStringConverter valueToStringConverter;
     protected IdentifierQuotationStrategy quotationStrategy;
-    protected DatabaseChannel channel;
 
     protected List<Binding> bindings;
     protected StringBuilder sqlBuffer;
@@ -63,6 +61,22 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
 
         this.bindings = new ArrayList<>();
         this.sqlBuffer = new StringBuilder();
+    }
+
+    protected StatementBuilder(
+            DatabaseChannel channel,
+            ObjectValueConverter objectValueConverter,
+            BindingValueToStringConverter valueToStringConverter,
+            IdentifierQuotationStrategy quotationStrategy,
+            List<Binding> bindings,
+            StringBuilder sqlBuffer) {
+
+        this.channel = channel;
+        this.objectValueConverter = objectValueConverter;
+        this.valueToStringConverter = valueToStringConverter;
+        this.quotationStrategy = quotationStrategy;
+        this.bindings = bindings;
+        this.sqlBuffer = sqlBuffer;
     }
 
     protected void bind(PreparedStatement statement) {

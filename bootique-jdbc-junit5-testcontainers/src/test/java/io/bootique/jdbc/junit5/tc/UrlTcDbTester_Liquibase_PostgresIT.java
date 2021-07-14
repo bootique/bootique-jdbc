@@ -18,34 +18,32 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @BQTest
-public class UrlTcDbTester_Liquibase_PostgresIT extends BaseTcTesterTest {
+public class UrlTcDbTester_Liquibase_PostgresIT {
 
     @BQTestTool
     static final TcDbTester db = TcDbTester
             .db("jdbc:tc:postgresql:11:///")
-            .runLiquibaseMigrations("classpath:io/bootique/jdbc/junit5/tc/TcTester_Liquibase_PostgresIT-changelog.yml");
-
-    @BQApp(skipRun = true)
-    static final BQRuntime app = BaseTcTesterTest.createRuntime(db);
+            .initDBWithLiquibaseChangelog("classpath:io/bootique/jdbc/junit5/tc/TcTester_Liquibase_PostgresIT-changelog.yml");
 
     @Test
     @DisplayName("Migrations are run")
-    public void testMigrationsAreRun() {
-        run(app, c -> {
+    public void testMigrationsAreRun() throws SQLException {
+
+        try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from \"b\"")) {
                     assertTrue(rs.next());
@@ -53,6 +51,6 @@ public class UrlTcDbTester_Liquibase_PostgresIT extends BaseTcTesterTest {
                     assertEquals("myname", rs.getString("name"));
                 }
             }
-        });
+        }
     }
 }

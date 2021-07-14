@@ -28,6 +28,8 @@ import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.ObjectName;
 import java.sql.Connection;
@@ -38,11 +40,12 @@ import java.util.function.Supplier;
 
 /**
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
- * @since 0.25
  */
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
 @JsonTypeName("tomcat")
 public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TomcatManagedDataSourceFactory.class);
 
     private int abandonWhenPercentageFull;
     private boolean alternateUsernameAllowed;
@@ -132,6 +135,9 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
         Supplier<javax.sql.DataSource> startup = () -> {
 
             validate();
+
+            LOGGER.info("Starting Tomcat DataSource: {}", url);
+
             PoolConfiguration poolConfig = toConfiguration();
             org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource(poolConfig);
 
@@ -145,8 +151,8 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
         };
 
         Consumer<javax.sql.DataSource> shutdown = ds -> ((org.apache.tomcat.jdbc.pool.DataSource) ds).close();
-
-        return new ManagedDataSourceStarter(getUrl(), startup, shutdown);
+        String url = getUrl();
+        return new ManagedDataSourceStarter(() -> url, startup, shutdown);
     }
 
     protected void validate() {

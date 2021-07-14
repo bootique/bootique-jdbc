@@ -19,9 +19,6 @@
 
 package io.bootique.jdbc.test.dataset;
 
-/**
- * @since 0.24
- */
 public interface DataSet {
 
     /**

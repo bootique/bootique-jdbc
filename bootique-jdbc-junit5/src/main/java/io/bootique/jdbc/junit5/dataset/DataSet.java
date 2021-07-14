@@ -19,9 +19,6 @@
 
 package io.bootique.jdbc.junit5.dataset;
 
-/**
- * @since 0.24
- */
 public interface DataSet {
 
     /**

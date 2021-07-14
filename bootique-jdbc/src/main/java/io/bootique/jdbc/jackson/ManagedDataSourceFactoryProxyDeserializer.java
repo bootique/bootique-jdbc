@@ -29,8 +29,6 @@ import java.io.IOException;
 
 /**
  * Custom Jackson deserializer for {@link ManagedDataSourceFactoryProxy}.
- *
- * @since 0.25
  */
 public class ManagedDataSourceFactoryProxyDeserializer extends StdDeserializer<ManagedDataSourceFactoryProxy> {
 

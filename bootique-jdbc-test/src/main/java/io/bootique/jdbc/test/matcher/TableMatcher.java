@@ -24,8 +24,6 @@ import io.bootique.resource.ResourceFactory;
 
 /**
  * Assists in making assertions about the data in a DB table.
- *
- * @since 0.24
  */
 public class TableMatcher {
 

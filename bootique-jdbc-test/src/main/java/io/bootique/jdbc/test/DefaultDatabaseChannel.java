@@ -19,8 +19,8 @@
 
 package io.bootique.jdbc.test;
 
+import io.bootique.jdbc.test.jdbc.ArrayReader;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
-import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +31,6 @@ import java.sql.SQLException;
 
 /**
  * A helper class to run common DB operations during unit tests.
- *
- * @since 0.12
  */
 public class DefaultDatabaseChannel implements DatabaseChannel {
 
@@ -108,9 +106,10 @@ public class DefaultDatabaseChannel implements DatabaseChannel {
     }
 
     @Override
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
+    public SelectStatementBuilder<Object[]> selectStatement() {
         return new SelectStatementBuilder(
-                rowReader,
+                ArrayReader.create(),
+                RowConverter.identity(),
                 this,
                 objectValueConverter,
                 valueToStringConverter,

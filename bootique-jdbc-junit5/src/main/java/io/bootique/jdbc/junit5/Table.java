@@ -20,21 +20,17 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.jdbc.junit5.connector.*;
-import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.dataset.CsvDataSetBuilder;
+import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * JDBC utility class for setting up and analyzing the DB data sets for a single table.
- * Table intentionally bypasses Cayenne stack.
+ * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test
+ * data.
+ *
+ * @since 2.0
  */
 public class Table {
 
@@ -55,30 +51,13 @@ public class Table {
     }
 
     /**
-     * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
-     * using policies specified for this table.
-     */
-    public ExecStatementBuilder execStatement() {
-        return getConnector().execStatement();
-    }
-
-    /**
-     * @param rowReader a function that converts a ResultSet row into an object.
-     * @param <T>       the type of objects read by returned statement builder.
-     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
-     * PreparedStatement using policies specified for this table.
-     */
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
-        return getConnector().selectStatement(rowReader);
-    }
-
-    /**
      * Update table statement
      *
      * @return a new {@link UpdateSetBuilder}.
      */
     public UpdateSetBuilder update() {
-        ExecStatementBuilder builder = execStatement()
+        ExecStatementBuilder builder = getConnector()
+                .execStatement()
                 .append("update ")
                 .appendTableName(metadata.getName())
                 .append(" set ");
@@ -86,12 +65,13 @@ public class Table {
         return new UpdateSetBuilder(builder);
     }
 
-    public UpdateWhereBuilder delete() {
-        ExecStatementBuilder builder = execStatement()
+    public DeleteBuilder delete() {
+        ExecStatementBuilder builder = getConnector()
+                .execStatement()
                 .append("delete from ")
                 .appendTableName(metadata.getName());
 
-        return new UpdateWhereBuilder(builder);
+        return new DeleteBuilder(builder);
     }
 
     public int deleteAll() {
@@ -103,7 +83,7 @@ public class Table {
      * @return a builder for insert query.
      */
     public InsertBuilder insertColumns(String... columns) {
-        return insertColumns(toColumnsArray(columns));
+        return insertColumns(toColumnMetadata(columns));
     }
 
     /**
@@ -130,7 +110,7 @@ public class Table {
             throw new IllegalArgumentException("No columns in the list");
         }
 
-        return new InsertBuilder(execStatement(), metadata.getName(), columns);
+        return new InsertBuilder(getConnector().execStatement(), metadata.getName(), columns);
     }
 
     /**
@@ -141,68 +121,32 @@ public class Table {
     }
 
     /**
-     * Performs select operation against the table, returning result as a map using provided unique column as a key.
-     *
-     * @param mapColumn the name of a unique column to use as a map key.
-     * @return a map using provided unique column as a key.
+     * @param columns an array of columns to select
+     * @since 2.0.B1
      */
-    public Map<Object, Object[]> selectAsMap(String mapColumn) {
-
-        int mapColumnIndex = columnIndex(mapColumn);
-        if (mapColumnIndex < 0) {
-            throw new IllegalArgumentException("Unknown column: " + mapColumn);
-        }
-
-        List<Object[]> list = select();
-
-        Map<Object, Object[]> map = new HashMap<>();
-
-        list.forEach(r -> {
-            Object[] existing = map.put(r[mapColumnIndex], r);
-            if (existing != null) {
-                throw new IllegalArgumentException("More than one row matches '" + r[mapColumnIndex] + "' value");
-            }
-        });
-
-        return map;
+    public SelectBuilder<Object[]> selectColumns(String... columns) {
+        return selectColumns(toColumnMetadata(columns));
     }
 
     /**
-     * Selects all data from the table.
-     *
-     * @return a List of Object[] where each array represents a row in the underlying table.
+     * @since 2.0.B1
      */
-    public List<Object[]> select() {
+    public SelectBuilder<Object[]> selectAllColumns() {
         return selectColumns(metadata.getColumns());
     }
 
     /**
-     * Selects a single row from the mapped table.
+     * @since 2.0.B1
      */
-    public Object[] selectOne() {
-        return ensureAtMostOneRow(selectColumnsBuilder(metadata.getColumns()), null);
-    }
+    public SelectBuilder<Object[]> selectColumns(DbColumnMetadata... columns) {
 
-    /**
-     * @param columns an array of columns to select.
-     * @return a List of Object[] where each array represents a row in the underlying table made of columns requested
-     * in this method.
-     */
-    public List<Object[]> selectColumns(String... columns) {
-        return selectColumns(toColumnsArray(columns));
-    }
-
-    public List<Object[]> selectColumns(DbColumnMetadata... columns) {
-        return selectColumnsBuilder(columns).select();
-    }
-
-    protected SelectStatementBuilder<Object[]> selectColumnsBuilder(DbColumnMetadata... columns) {
         if (columns == null || columns.length == 0) {
             throw new IllegalArgumentException("No columns");
         }
 
-        SelectStatementBuilder<Object[]> builder = this
-                .selectStatement(RowReader.arrayReader(columns.length))
+        SelectStatementBuilder<Object[]> builder = getConnector()
+                .selectStatement()
+                .reader(ArrayReader.create(columns))
                 .append("select ");
 
         for (int i = 0; i < columns.length; i++) {
@@ -214,71 +158,12 @@ public class Table {
             builder.appendIdentifier(col.getName());
         }
 
-        return builder.append(" from ").appendTableName(metadata.getName());
+        builder.append(" from ").appendTableName(metadata.getName());
+        return new SelectBuilder<>(builder);
     }
 
-    protected <T> T selectColumn(String columnName, RowReader<T> reader) {
-        return selectColumn(columnName, reader, null);
-    }
 
-    protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = selectStatement(reader)
-                .append("select ")
-                .appendIdentifier(columnName)
-                .append(" from ")
-                .appendTableName(metadata.getName());
-        return ensureAtMostOneRow(builder, defaultValue);
-    }
-
-    public Object getObject(String column) {
-        return selectColumn(column, RowReader.objectReader());
-    }
-
-    public byte getByte(String column) {
-        return selectColumn(column, RowReader.byteReader(), (byte) 0);
-    }
-
-    public byte[] getBytes(String column) {
-        return selectColumn(column, RowReader.bytesReader());
-    }
-
-    public int getInt(String column) {
-        return selectColumn(column, RowReader.intReader(), 0);
-    }
-
-    public long getLong(String column) {
-        return selectColumn(column, RowReader.longReader(), 0L);
-    }
-
-    public double getDouble(String column) {
-        return selectColumn(column, RowReader.doubleReader(), 0.0);
-    }
-
-    public boolean getBoolean(String column) {
-        return selectColumn(column, RowReader.booleanReader(), false);
-    }
-
-    public String getString(String column) {
-        return selectColumn(column, RowReader.stringReader());
-    }
-
-    public java.util.Date getUtilDate(String column) {
-        return getTimestamp(column);
-    }
-
-    public java.sql.Date getSqlDate(String column) {
-        return selectColumn(column, RowReader.dateReader());
-    }
-
-    public Time getTime(String column) {
-        return selectColumn(column, RowReader.timeReader());
-    }
-
-    public Timestamp getTimestamp(String column) {
-        return selectColumn(column, RowReader.timestampReader());
-    }
-
-    protected DbColumnMetadata[] toColumnsArray(String... columns) {
+    protected DbColumnMetadata[] toColumnMetadata(String... columns) {
         if (columns == null) {
             throw new NullPointerException("Null columns");
         }
@@ -293,30 +178,5 @@ public class Table {
         }
 
         return columnsArray;
-    }
-
-    private int columnIndex(String columnName) {
-        DbColumnMetadata[] columns = metadata.getColumns();
-
-        for (int i = 0; i < columns.length; i++) {
-            if (columnName.equals(columns[i].getName())) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    protected <T> T ensureAtMostOneRow(SelectStatementBuilder<T> builder, T defaultValue) {
-
-        List<T> data = builder.select(2);
-        switch (data.size()) {
-            case 0:
-                return defaultValue;
-            case 1:
-                return data.get(0);
-            default:
-                throw new IllegalArgumentException("At most one row expected in the result");
-        }
     }
 }

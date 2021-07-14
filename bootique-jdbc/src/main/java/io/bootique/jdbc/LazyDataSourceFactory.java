@@ -52,9 +52,6 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         );
     }
 
-    /**
-     * @since 0.6
-     */
     @Override
     public Collection<String> allNames() {
         return starters.keySet();
@@ -77,6 +74,15 @@ public class LazyDataSourceFactory implements DataSourceFactory {
         if (starter == null) {
             throw new IllegalStateException("No configuration present for DataSource named '" + name + "'");
         }
+
+        // prevent JDBC URL resolving if there are no listeners. Listeners is a legacy extension mechanism, that is
+        // better avoided to prevent eager initialization in tests and otherwise.
+        if (listeners.isEmpty()) {
+            return starter.start();
+        }
+
+        // TODO: deprecate listener, or at least the methods that take JDBC URL.
+        //  Passing URLs around creates issues with unit tests when @BQApp eagerly injects a DataSource.
 
         String url = starter.getUrl();
 

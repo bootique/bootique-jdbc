@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.junit5.RowReader;
+import io.bootique.jdbc.junit5.RowConverter;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
 
@@ -31,6 +31,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * A wrapper around a DB DataSource that provides access to DB metadata, {@link Table} API and various query builders.
+ *
  * @since 2.0
  */
 public class DbConnector {
@@ -88,6 +90,8 @@ public class DbConnector {
                 connection.close();
             } catch (SQLException ignored) {
             }
+
+            // TODO: this catch is suspect ... It may return connection in a closed state
         }
         return connection;
     }
@@ -104,14 +108,14 @@ public class DbConnector {
     }
 
     /**
-     * @param rowReader a function that converts a ResultSet row into an object.
-     * @param <T>       the type of objects read by returned statement builder.
      * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
      * PreparedStatement.
+     * @since 2.0.B1
      */
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
+    public SelectStatementBuilder<Object[]> selectStatement() {
         return new SelectStatementBuilder(
-                rowReader,
+                ArrayReader.create(),
+                RowConverter.identity(),
                 this,
                 objectValueConverter,
                 valueToStringConverter,

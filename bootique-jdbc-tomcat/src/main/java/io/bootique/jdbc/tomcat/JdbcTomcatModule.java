@@ -26,9 +26,6 @@ import io.bootique.jdbc.JdbcModule;
 
 import java.util.logging.Level;
 
-/**
- * @since 0.25
- */
 public class JdbcTomcatModule implements BQModule {
 
     @Override

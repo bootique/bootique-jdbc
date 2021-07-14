@@ -18,7 +18,6 @@
  */
 package io.bootique.jdbc.junit5.datasource;
 
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +36,7 @@ import java.util.concurrent.*;
  * @since 2.0
  */
 // courtesy of Apache Cayenne project
-public class PoolingDataSource implements DataSource, ExtensionContext.Store.CloseableResource {
+public class PoolingDataSource implements DataSource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PoolingDataSource.class);
 
@@ -92,7 +91,6 @@ public class PoolingDataSource implements DataSource, ExtensionContext.Store.Clo
         return pool.size();
     }
 
-    @Override
     public void close() {
 
         // expecting surrounding environment to block new requests for

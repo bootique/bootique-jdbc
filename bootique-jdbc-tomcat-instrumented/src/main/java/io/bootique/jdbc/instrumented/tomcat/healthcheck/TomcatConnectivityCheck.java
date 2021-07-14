@@ -28,8 +28,6 @@ import java.sql.Connection;
 
 /**
  * Checks DataSource health. Are connections available? Are they valid?
- *
- * @since 0.12
  */
 public class TomcatConnectivityCheck implements HealthCheck {
 

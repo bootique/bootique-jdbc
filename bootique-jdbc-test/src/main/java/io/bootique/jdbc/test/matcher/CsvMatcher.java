@@ -26,9 +26,6 @@ import io.bootique.resource.ResourceFactory;
 
 import java.util.Objects;
 
-/**
- * @since 0.24
- */
 public class CsvMatcher {
 
     private ResourceFactory referenceCsvResource;

@@ -26,17 +26,15 @@ import java.util.function.Supplier;
 /**
  * An object that can create and start a {@link ManagedDataSource} on demand. Also provides access to common DataSource
  * metadata, namely its JDBC URL.
- *
- * @since 0.25
  */
 public class ManagedDataSourceStarter {
 
-    private String url;
+    private Supplier<String> url;
     private Supplier<DataSource> startup;
     private Consumer<DataSource> shutdown;
 
     public ManagedDataSourceStarter(
-            String url,
+            Supplier<String> url,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {
 
@@ -46,11 +44,10 @@ public class ManagedDataSourceStarter {
     }
 
     public String getUrl() {
-        return url;
+        return url.get();
     }
 
     public ManagedDataSource start() {
-        DataSource dataSource = startup.get();
-        return new ManagedDataSource(url, dataSource, shutdown);
+        return new ManagedDataSource(url, startup.get(), shutdown);
     }
 }

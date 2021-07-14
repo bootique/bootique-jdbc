@@ -19,8 +19,6 @@
 
 package io.bootique.jdbc.test;
 
-import javax.inject.Singleton;
-
 import io.bootique.ConfigModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
@@ -32,9 +30,8 @@ import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 import io.bootique.log.BootLogger;
 
-/**
- * @since 0.12
- */
+import javax.inject.Singleton;
+
 public class JdbcTestModule extends ConfigModule {
 
     @Override

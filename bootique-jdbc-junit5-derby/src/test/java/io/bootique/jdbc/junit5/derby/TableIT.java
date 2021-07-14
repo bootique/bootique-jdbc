@@ -92,7 +92,7 @@ public class TableIT {
                 .set("c3", "b", Types.VARCHAR)
                 .exec();
 
-        List<Object[]> data = T1.select();
+        List<Object[]> data = T1.selectAllColumns().select();
         assertEquals(1, data.size());
 
         Object[] row = data.get(0);
@@ -111,14 +111,14 @@ public class TableIT {
                 .set("c2", 4, Types.INTEGER)
                 .exec();
 
-        List<Object[]> data = T2.select();
+        List<Object[]> data = T2.selectAllColumns().select();
         assertEquals(1, data.size());
 
         Object[] row = data.get(0);
         assertEquals(3, row[0]);
         assertEquals(4, row[1]);
         assertEquals(Date.valueOf("2018-01-09"), row[2]);
-        assertEquals(null, row[3]);
+        assertNull(row[3]);
     }
 
     @Test
@@ -133,28 +133,70 @@ public class TableIT {
                 .where("c1", 1)
                 .exec();
 
-        List<Object[]> data = T2.select();
+        List<Object[]> data = T2.selectAllColumns().select();
         assertEquals(1, data.size());
 
         Object[] row = data.get(0);
         assertEquals(3, row[0]);
         assertEquals(4, row[1]);
         assertEquals(Date.valueOf("2018-01-09"), row[2]);
-        assertEquals(null, row[3]);
+        assertNull(row[3]);
     }
 
     @Test
-    public void testGetString() {
-        assertNull(T1.getString("c2"));
-        T1.insert(1, "xr", "yr");
-        assertEquals("xr", T1.getString("c2"));
+    public void testDelete() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        T1.matcher().assertMatches(2);
+
+        T1.delete().where("c2", "c").exec();
+        T1.matcher().assertOneMatch();
+        T1.matcher().eq("c1", 1).assertOneMatch();
     }
 
     @Test
-    public void testGetInt() {
-        assertEquals(0, T1.getInt("c1"));
-        T1.insert(56, "xr", "yr");
-        assertEquals(56, T1.getInt("c1"));
+    public void testSelectColumns_Reader() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        Object[] array = T1.selectColumns("c2", "c3")
+                .reader(rs -> new Object[]{"x", "y"})
+                .where("c1", 2)
+                .selectOne(null);
+
+        assertEquals("x", array[0]);
+        assertEquals("y", array[1]);
     }
 
+    @Test
+    public void testSelectColumns_Converter() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        DTO dto = T1.selectColumns("c2", "c3")
+                .converter(a -> new DTO((String) a[0], (String) a[1]))
+                .where("c1", 2)
+                .selectOne(null);
+
+        assertEquals("c", dto.c2);
+        assertEquals("d", dto.c3);
+    }
+
+    @Test
+    public void testSelectColumns_ConverterAndReader() {
+        T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
+        DTO dto = T1.selectColumns("c2", "c3")
+                .reader(rs -> new Object[]{"x", "y"})
+                .converter(a -> new DTO((String) a[0], (String) a[1]))
+                .where("c1", 2)
+                .selectOne(null);
+
+        assertEquals("x", dto.c2);
+        assertEquals("y", dto.c3);
+    }
+
+    private static class DTO {
+        final String c2;
+        final String c3;
+
+        public DTO(String c2, String c3) {
+            this.c2 = c2;
+            this.c3 = c3;
+        }
+    }
 }

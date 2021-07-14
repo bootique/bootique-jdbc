@@ -16,30 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit5.BQApp;
-import io.bootique.junit5.BQTest;
+package io.bootique.jdbc.junit5.tc.connector;
+
+import io.bootique.jdbc.junit5.connector.DbConnector;
+import io.bootique.jdbc.junit5.metadata.DbMetadata;
+import io.bootique.jdbc.junit5.tc.unit.BaseMySQLTest;
 import org.junit.jupiter.api.Test;
 
-@BQTest
-public class UrlTcDbTester_Postgres_Reusable1IT extends BaseReusableTcTesterTest {
+import javax.sql.DataSource;
 
-    @BQApp(skipRun = true)
-    static final BQRuntime app = Bootique.app()
-            .autoLoadModules()
-            .module(BaseReusableTcTesterTest.db.moduleWithTestDataSource("myDS"))
-            .createRuntime();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DbConnectorMySQLIT extends BaseMySQLTest {
 
     @Test
-    public void testDbState1() {
-        checkEmptyAndInsert(app);
-    }
-
-    @Test
-    public void testDbState2() {
-        checkEmptyAndInsert(app);
+    public void testMySQLQuotes() {
+        DataSource dataSource = db.getDataSource();
+        DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
+        assertEquals("`a`", connector.getIdentifierQuoter().quoted("a"));
     }
 }

@@ -17,29 +17,39 @@
  * under the License.
  */
 
-package io.bootique.jdbc.junit5.tc.connector;
+package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.jdbc.junit5.connector.DbConnector;
-import io.bootique.jdbc.junit5.metadata.DbMetadata;
-import io.bootique.jdbc.junit5.tc.TcDbTester;
+import io.bootique.jdbc.junit5.Table;
+import io.bootique.jdbc.junit5.tc.unit.BasePostgresTest;
 import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
-import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
-public class DbConnectorIT {
+public class Table_PostgresIT extends BasePostgresTest {
 
-    @BQTestTool
-    static final TcDbTester mysqlTester = TcDbTester.db("jdbc:tc:mysql:8.0.20:///db");
+    private Table t1 = db.getTable("t1");
 
     @Test
-    public void testMySQLQuotes() {
-        DataSource dataSource = mysqlTester.getDataSource();
-        DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
-        assertEquals("`a`", connector.getIdentifierQuoter().quoted("a"));
+    public void testDateTime_ViaSelect() {
+        LocalDateTime ldt = LocalDateTime.of(2018, 1, 10, 4, 0, 1);
+        t1.insertColumns("c1", "c2").values(1, ldt).exec();
+
+        t1.matcher().assertOneMatch();
+        Object[] data = t1.selectColumns("c2").where("c1", 1).selectOne(null);
+        assertEquals(Timestamp.valueOf(ldt), data[0], "Timestamps do not match");
+    }
+
+    @Test
+    public void testDateTime_ViaMatcher() {
+        LocalDateTime ldt = LocalDateTime.of(2018, 1, 10, 4, 0, 1);
+        t1.insertColumns("c1", "c2").values(1, ldt).exec();
+
+        t1.matcher().assertOneMatch();
+        t1.matcher().eq("c1", 1).eq("c2", ldt).assertOneMatch();
     }
 }

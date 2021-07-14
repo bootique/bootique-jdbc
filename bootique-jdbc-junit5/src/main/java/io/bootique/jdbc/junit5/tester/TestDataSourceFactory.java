@@ -41,11 +41,14 @@ public class TestDataSourceFactory implements ManagedDataSourceFactory {
 
         DbTester tester = injector.getInstance(Key.get(DbTester.class, dataSourceName));
 
+        // DbTester can only access JDBC URL and DataSource within a test scope, so initializing the starter
+        // with suppliers for those two things.
+
         return new ManagedDataSourceStarter(
-                null, // we don't know the URL around here. Also passing null URL allows to bypass legacy DerbyListener
-                () -> tester.getDataSource(), // return fixed DataSource managed by JdbcTester
+                () -> tester.getDbUrl(),
+                () -> tester.getDataSource(),
                 ds -> {
-                }  // don't let Bootique to do shutdown... JdbcTester is responsible for it
+                }  // don't let Bootique to do shutdown... DbTester is responsible for it
         );
     }
 }

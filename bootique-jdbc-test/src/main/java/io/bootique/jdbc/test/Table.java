@@ -20,8 +20,8 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.jdbc.test.dataset.CsvDataSetBuilder;
+import io.bootique.jdbc.test.jdbc.ArrayReader;
 import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
-import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 import io.bootique.jdbc.test.matcher.TableMatcher;
 
@@ -29,21 +29,13 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
 /**
- * JDBC utility class for setting up and analyzing the DB data sets for a single table.
- * Table intentionally bypasses Cayenne stack.
+ * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test
+ * data.
  */
 public class Table {
 
@@ -66,7 +58,6 @@ public class Table {
 
     /**
      * @return an internal IdentifierQuotationStrategy used to generate quoted SQL identifiers.
-     * @since 0.14
      */
     public IdentifierQuotationStrategy getQuotationStrategy() {
         return quotationStrategy;
@@ -75,26 +66,13 @@ public class Table {
     /**
      * @return a new {@link ExecStatementBuilder} object that assists in creating and executing a PreparedStatement
      * using policies specified for this table.
-     * @since 0.24
      */
     public ExecStatementBuilder execStatement() {
         return getChannel().execStatement().quoteIdentifiersWith(quotationStrategy);
     }
 
     /**
-     * @param rowReader a function that converts a ResultSet row into an object.
-     * @param <T>       the type of objects read by returned statement builder.
-     * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
-     * PreparedStatement using policies specified for this table.
-     * @since 0.24
-     */
-    public <T> SelectStatementBuilder<T> selectStatement(RowReader<T> rowReader) {
-        return getChannel().selectStatement(rowReader).quoteIdentifiersWith(quotationStrategy);
-    }
-
-    /**
      * @return returns an immutable list of columns.
-     * @since 0.13
      */
     public List<Column> getColumns() {
         return Collections.unmodifiableList(columns);
@@ -103,7 +81,6 @@ public class Table {
     /**
      * @param name column name
      * @return a column for name.
-     * @since 0.14
      */
     public Column getColumn(String name) {
 
@@ -120,23 +97,22 @@ public class Table {
      * Update table statement
      *
      * @return {@link UpdateSetBuilder}
-     * @since 0.15
      */
     public UpdateSetBuilder update() {
         ExecStatementBuilder builder = execStatement()
-                .append("UPDATE ")
+                .append("update ")
                 .appendIdentifier(name)
-                .append(" SET ");
+                .append(" set ");
 
         return new UpdateSetBuilder(builder);
     }
 
-    public UpdateWhereBuilder delete() {
+    public DeleteBuilder delete() {
         ExecStatementBuilder builder = execStatement()
-                .append("DELETE FROM ")
+                .append("delete from ")
                 .appendIdentifier(name);
 
-        return new UpdateWhereBuilder(builder);
+        return new DeleteBuilder(builder);
     }
 
     public int deleteAll() {
@@ -146,7 +122,6 @@ public class Table {
     /**
      * @param columns an array of columns that is a subset of the table columns.
      * @return a builder for insert query.
-     * @since 0.13
      */
     public InsertBuilder insertColumns(String... columns) {
         return insertColumns(toColumnsList(columns));
@@ -157,7 +132,6 @@ public class Table {
      * or from a CSV file resource.
      *
      * @return a builder of a {@link io.bootique.jdbc.test.dataset.TableDataSet}.
-     * @since 0.24
      */
     public CsvDataSetBuilder csvDataSet() {
         return new CsvDataSetBuilder(this);
@@ -182,19 +156,15 @@ public class Table {
 
     /**
      * @return a new instance of {@link TableMatcher} for this table that allows to make assertions about the table data.
-     * @since 0.24
      */
     public TableMatcher matcher() {
         return new TableMatcher(this);
     }
 
     /**
-     * Performs select operation against the table, returning result as a map using provided unique column as a key.
-     *
-     * @param mapColumn the name of a unique column to use as a map key.
-     * @return a map using provided unique column as a key.
-     * @since 0.21
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
      */
+    @Deprecated
     public Map<Object, Object[]> selectAsMap(String mapColumn) {
 
         int mapColumnIndex = columnIndex(mapColumn);
@@ -217,43 +187,48 @@ public class Table {
     }
 
     /**
-     * Selects all data from the table.
-     *
-     * @return a List of Object[] where each array represents a row in the underlying table.
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
      */
+    @Deprecated
     public List<Object[]> select() {
+        return selectColumns(this.columns).select();
+    }
+
+    /**
+     * @deprecated since 2.0. This API is superceded either by the {@link #matcher()} or by {@link #selectColumns(String...)}.
+     */
+    @Deprecated
+    public Object[] selectOne() {
+        return selectColumns(this.columns).selectOne(null);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public SelectBuilder<Object[]> selectColumns(String... columns) {
+        return selectColumns(toColumnsList(columns));
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public SelectBuilder<Object[]> selectAllColumns() {
         return selectColumns(this.columns);
     }
 
     /**
-     * Selects a single row from the mapped table.
+     * @since 2.0.B1
      */
-    public Object[] selectOne() {
-        return ensureAtMostOneRow(selectColumnsBuilder(this.columns), null);
-    }
-
-    /**
-     * @param columns an array of columns to select.
-     * @return a List of Object[] where each array represents a row in the underlying table made of columns requested
-     * in this method.
-     * @since 0.14
-     */
-    public List<Object[]> selectColumns(String... columns) {
-        return selectColumns(toColumnsList(columns));
-    }
-
-    public List<Object[]> selectColumns(List<Column> columns) {
-        return selectColumnsBuilder(columns).select();
-    }
-
-    protected SelectStatementBuilder<Object[]> selectColumnsBuilder(List<Column> columns) {
+    public SelectBuilder<Object[]> selectColumns(List<Column> columns) {
         if (columns.isEmpty()) {
             throw new IllegalArgumentException("No columns");
         }
 
-        SelectStatementBuilder<Object[]> builder = this
-                .selectStatement(RowReader.arrayReader(columns.size()))
-                .append("SELECT ");
+        SelectStatementBuilder<Object[]> builder = getChannel()
+                .selectStatement()
+                .reader(ArrayReader.create(columns.toArray(new Column[0])))
+                .quoteIdentifiersWith(quotationStrategy)
+                .append("select ");
 
         for (int i = 0; i < columns.size(); i++) {
             Column col = columns.get(i);
@@ -264,68 +239,8 @@ public class Table {
             builder.appendIdentifier(col.getName());
         }
 
-        return builder.append(" FROM ").appendIdentifier(name);
-    }
-
-    protected <T> T selectColumn(String columnName, RowReader<T> reader) {
-        return selectColumn(columnName, reader, null);
-    }
-
-    protected <T> T selectColumn(String columnName, RowReader<T> reader, T defaultValue) {
-        SelectStatementBuilder<T> builder = selectStatement(reader)
-                .append("SELECT ")
-                .appendIdentifier(columnName)
-                .append(" FROM ")
-                .appendIdentifier(name);
-        return ensureAtMostOneRow(builder, defaultValue);
-    }
-
-    public Object getObject(String column) {
-        return selectColumn(column, RowReader.objectReader());
-    }
-
-    public byte getByte(String column) {
-        return selectColumn(column, RowReader.byteReader(), (byte) 0);
-    }
-
-    public byte[] getBytes(String column) {
-        return selectColumn(column, RowReader.bytesReader());
-    }
-
-    public int getInt(String column) {
-        return selectColumn(column, RowReader.intReader(), 0);
-    }
-
-    public long getLong(String column) {
-        return selectColumn(column, RowReader.longReader(), 0L);
-    }
-
-    public double getDouble(String column) {
-        return selectColumn(column, RowReader.doubleReader(), 0.0);
-    }
-
-    public boolean getBoolean(String column) {
-        return selectColumn(column, RowReader.booleanReader(), false);
-    }
-
-    public String getString(String column) {
-        return selectColumn(column, RowReader.stringReader());
-    }
-
-    public java.util.Date getUtilDate(String column) {
-        return getTimestamp(column);
-    }
-
-    public java.sql.Date getSqlDate(String column) {
-        return selectColumn(column, RowReader.dateReader());
-    }
-
-    public Time getTime(String column) {
-        return selectColumn(column, RowReader.timeReader());
-    }
-
-    public Timestamp getTimestamp(String column) {
-        return selectColumn(column, RowReader.timestampReader());
+        builder.append(" from ").appendIdentifier(name);
+        return new SelectBuilder<>(builder);
     }
 
     protected List<Column> toColumnsList(String... columns) {
@@ -361,22 +276,9 @@ public class Table {
         return -1;
     }
 
-    protected <T> T ensureAtMostOneRow(SelectStatementBuilder<T> builder, T defaultValue) {
-
-        List<T> data = builder.select(2);
-        switch (data.size()) {
-            case 0:
-                return defaultValue;
-            case 1:
-                return data.get(0);
-            default:
-                throw new IllegalArgumentException("At most one row expected in the result");
-        }
-    }
-
     public static class Builder {
 
-        private Table table;
+        private final Table table;
         private boolean quotingSqlIdentifiers;
         private boolean initColumnTypesFromDBMetadata;
 
@@ -419,7 +321,7 @@ public class Table {
                     }
                 }
 
-                if(types.isEmpty()) {
+                if (types.isEmpty()) {
                     throw new RuntimeException("Table '" + table.getName() + "' is not found in DB");
                 }
 

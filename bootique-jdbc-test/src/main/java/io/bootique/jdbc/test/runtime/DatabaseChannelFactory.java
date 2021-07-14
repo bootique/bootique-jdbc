@@ -30,9 +30,6 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @since 0.12
- */
 public class DatabaseChannelFactory {
 
     private boolean quotingIdentifiers;

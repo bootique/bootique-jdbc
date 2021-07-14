@@ -20,7 +20,6 @@
 package io.bootique.jdbc.junit5.matcher;
 
 import io.bootique.jdbc.junit5.Table;
-import io.bootique.jdbc.junit5.RowReader;
 import io.bootique.jdbc.junit5.connector.SelectStatementBuilder;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class RowCountMatcher {
 
-    private Table table;
+    private final Table table;
     private List<BinaryCondition> conditions;
 
     public RowCountMatcher(Table table) {
@@ -66,7 +65,11 @@ public class RowCountMatcher {
     }
 
     protected SelectStatementBuilder<Integer> countStatement() {
-        return table.selectStatement(RowReader.intReader())
+        return table.getConnector()
+                .selectStatement()
+                // TODO: count() would usually return Long. We don't expect such large numbers in tests,
+                //  but wonder if we should still change the signature to return Long for consistency?
+                .converter(r -> ((Number) r[0]).intValue())
                 .append("select count(*) from ")
                 .appendTableName(table.getMetadata().getName());
     }

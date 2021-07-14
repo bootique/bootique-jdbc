@@ -23,8 +23,6 @@ import io.bootique.jdbc.junit5.datasource.DriverDataSource;
 import io.bootique.junit5.BQTestScope;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
-import javax.sql.DataSource;
-
 /**
  * A DbTester based on the Testcontainers library.
  *
@@ -55,7 +53,7 @@ public abstract class TcDbTester extends DbTester<TcDbTester> {
     }
 
     @Override
-    protected DataSource createNonPoolingDataSource(BQTestScope scope) {
+    protected DriverDataSource createNonPoolingDataSource(BQTestScope scope) {
         return new DriverDataSource(null, dbUrl(scope), dbUser(), dbPassword());
     }
 

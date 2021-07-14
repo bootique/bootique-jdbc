@@ -19,6 +19,7 @@
 
 package io.bootique.jdbc.junit5.connector;
 
+import io.bootique.jdbc.junit5.RowConverter;
 import io.bootique.jdbc.junit5.RowReader;
 
 import java.sql.Connection;
@@ -27,22 +28,70 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * @since 2.0
+ * @since 2.0.M1
  */
 public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
 
-    private RowReader<T> rowReader;
+    private final RowReader rowReader;
+    private final RowConverter<T> rowConverter;
 
     public SelectStatementBuilder(
-            RowReader<T> rowReader,
+            RowReader rowReader,
+            RowConverter<T> rowConverter,
             DbConnector channel,
             ObjectValueConverter objectValueConverter,
             BindingValueToStringConverter valueToStringConverter,
-            IdentifierQuoter quotationStrategy) {
-        super(channel, objectValueConverter, valueToStringConverter, quotationStrategy);
-        this.rowReader = rowReader;
+            IdentifierQuoter quoter) {
+        super(channel, objectValueConverter, valueToStringConverter, quoter);
+        this.rowReader = Objects.requireNonNull(rowReader);
+        this.rowConverter = Objects.requireNonNull(rowConverter);
+    }
+
+    protected SelectStatementBuilder(
+            RowReader rowReader,
+            RowConverter<T> rowConverter,
+            DbConnector channel,
+            ObjectValueConverter objectValueConverter,
+            BindingValueToStringConverter valueToStringConverter,
+            IdentifierQuoter quoter,
+            List<Binding> bindings,
+            StringBuilder sqlBuffer) {
+        super(channel, objectValueConverter, valueToStringConverter, quoter, bindings, sqlBuffer);
+        this.rowReader = Objects.requireNonNull(rowReader);
+        this.rowConverter = Objects.requireNonNull(rowConverter);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public SelectStatementBuilder<T> reader(RowReader reader) {
+        return new SelectStatementBuilder<>(
+                reader,
+                this.rowConverter,
+                this.channel,
+                this.objectValueConverter,
+                this.valueToStringConverter,
+                this.quoter,
+                this.bindings,
+                this.sqlBuffer);
+    }
+
+    /**
+     * @since 2.0.B1
+     */
+    public <U> SelectStatementBuilder<U> converter(RowConverter<U> converter) {
+        return new SelectStatementBuilder<>(
+                this.rowReader,
+                converter,
+                this.channel,
+                this.objectValueConverter,
+                this.valueToStringConverter,
+                this.quoter,
+                this.bindings,
+                this.sqlBuffer);
     }
 
     public List<T> select() {
@@ -61,6 +110,23 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
         }
     }
 
+    public T selectOne() {
+        return selectOne(null);
+    }
+
+    public T selectOne(T defaultValue) {
+
+        List<T> data = select(2);
+        switch (data.size()) {
+            case 0:
+                return defaultValue;
+            case 1:
+                return data.get(0);
+            default:
+                throw new IllegalArgumentException("At most one row expected in the result");
+        }
+    }
+
     protected List<T> selectWithExceptions(String sql, long maxRows) throws SQLException {
 
         List<T> result = new ArrayList<>();
@@ -72,7 +138,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
                 try (ResultSet rs = st.executeQuery()) {
 
                     while (rs.next() && result.size() < maxRows) {
-                        result.add(rowReader.readRow(rs));
+                        result.add(rowConverter.convert(rowReader.readRow(rs)));
                     }
                 }
             }

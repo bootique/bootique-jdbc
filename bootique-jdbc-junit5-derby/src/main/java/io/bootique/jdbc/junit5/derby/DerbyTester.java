@@ -25,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -64,7 +63,7 @@ public class DerbyTester extends DbTester<DerbyTester> {
     }
 
     private final File derbyFolder;
-    private final String jdbcUrl;
+    private final String dbUrl;
 
     /**
      * Creates a tester that will use in-memory Derby DB, with DB files stored in a temporary directory.
@@ -85,15 +84,15 @@ public class DerbyTester extends DbTester<DerbyTester> {
         this.derbyFolder = Objects.requireNonNull(derbyFolder);
 
         // placing Derby in subfolder, so that the presence of the parent folder is not in the way of starting the DB
-        this.jdbcUrl = String.format("jdbc:derby:%s/derby;create=true", derbyFolder);
+        this.dbUrl = String.format("jdbc:derby:%s/derby;create=true", derbyFolder);
 
         sendDerbyLogsToDevNull();
     }
 
     @Override
-    protected DataSource createNonPoolingDataSource(BQTestScope scope) {
+    protected DriverDataSource createNonPoolingDataSource(BQTestScope scope) {
         prepareForDerbyStartup();
-        return new DriverDataSource(null, jdbcUrl, null, null);
+        return new DriverDataSource(null, dbUrl, null, null);
     }
 
     @Override

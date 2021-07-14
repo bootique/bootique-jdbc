@@ -38,14 +38,17 @@ public class ContainerTcDbTester extends TcDbTester {
         this.password = password;
     }
 
+    @Override
     protected String dbUser() {
         return userName != null ? userName : container.getUsername();
     }
 
+    @Override
     protected String dbPassword() {
         return password != null ? password : container.getPassword();
     }
 
+    @Override
     protected String dbUrl(BQTestScope scope) {
         // ignoring scope if the URL is container provided. Any way to check the container scope and ensure it matches
         // ours?

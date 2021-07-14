@@ -17,37 +17,39 @@
  * under the License.
  */
 
-package io.bootique.jdbc.test;
+package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.test.jdbc.ExecStatementBuilder;
+import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
-public class UpdateWhereBuilder {
+/**
+ * @since 2.0.B1
+ */
+public class ExecWhereBuilder {
 
     protected ExecStatementBuilder builder;
     protected int whereCount;
 
-    protected UpdateWhereBuilder(ExecStatementBuilder builder) {
+    public ExecWhereBuilder(ExecStatementBuilder builder) {
         this.builder = builder;
     }
 
     /**
      * @return the number of updated records.
-     * @since 0.24
      */
     public int exec() {
         return builder.exec();
     }
 
-    public UpdateWhereBuilder and(String column, Object value) {
-        return and(column, value, Column.NO_TYPE);
+    public ExecWhereBuilder and(String column, Object value) {
+        return and(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateWhereBuilder and(String column, Object value, int valueType) {
+    public ExecWhereBuilder and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
-            builder.append(" AND ");
+            builder.append(" and ");
         } else {
-            builder.append(" WHERE ");
+            builder.append(" where ");
         }
 
         builder.appendIdentifier(column)
@@ -57,13 +59,13 @@ public class UpdateWhereBuilder {
         return this;
     }
 
-    public UpdateWhereBuilder or(String column, Object value) {
-        return or(column, value, Column.NO_TYPE);
+    public ExecWhereBuilder or(String column, Object value) {
+        return or(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public UpdateWhereBuilder or(String column, Object value, int valueType) {
+    public ExecWhereBuilder or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
-            builder.append(" OR ");
+            builder.append(" or ");
         }
 
         builder.appendIdentifier(column)

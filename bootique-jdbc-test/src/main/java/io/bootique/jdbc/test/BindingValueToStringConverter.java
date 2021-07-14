@@ -26,9 +26,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-/**
- * @since 0.13
- */
 public class BindingValueToStringConverter {
 
     private static final int TRIM_VALUES_THRESHOLD = 30;

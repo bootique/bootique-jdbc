@@ -17,37 +17,50 @@
  * under the License.
  */
 
-package io.bootique.jdbc.junit5.connector;
+package io.bootique.jdbc.test;
 
-import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
+import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 
-public class UpdateWhereBuilder {
+import java.util.List;
 
-    protected ExecStatementBuilder builder;
+/**
+ * @since 2.0.B1
+ */
+public class SelectWhereBuilder<T> {
+
+    protected final SelectStatementBuilder<T> builder;
     protected int whereCount;
 
-    public UpdateWhereBuilder(ExecStatementBuilder builder) {
+    public SelectWhereBuilder(SelectStatementBuilder<T> builder) {
         this.builder = builder;
     }
 
-    /**
-     * @return the number of updated records.
-     * @since 0.24
-     */
-    public int exec() {
-        return builder.exec();
+    public List<T> select() {
+        return builder.select();
     }
 
-    public UpdateWhereBuilder and(String column, Object value) {
-        return and(column, value, DbColumnMetadata.NO_TYPE);
+    public List<T> select(long maxRows) {
+        return builder.select(maxRows);
     }
 
-    public UpdateWhereBuilder and(String column, Object value, int valueType) {
+    public T selectOne() {
+        return builder.selectOne(null);
+    }
+
+    public T selectOne(T defaultValue) {
+        return builder.selectOne(defaultValue);
+    }
+
+    public SelectWhereBuilder<T> and(String column, Object value) {
+        return and(column, value, Column.NO_TYPE);
+    }
+
+    public SelectWhereBuilder<T> and(String column, Object value, int valueType) {
 
         if (whereCount++ > 0) {
-            builder.append(" AND ");
+            builder.append(" and ");
         } else {
-            builder.append(" WHERE ");
+            builder.append(" where ");
         }
 
         builder.appendIdentifier(column)
@@ -57,13 +70,13 @@ public class UpdateWhereBuilder {
         return this;
     }
 
-    public UpdateWhereBuilder or(String column, Object value) {
-        return or(column, value, DbColumnMetadata.NO_TYPE);
+    public SelectWhereBuilder<T> or(String column, Object value) {
+        return or(column, value, Column.NO_TYPE);
     }
 
-    public UpdateWhereBuilder or(String column, Object value, int valueType) {
+    public SelectWhereBuilder<T> or(String column, Object value, int valueType) {
         if (whereCount++ > 0) {
-            builder.append(" OR ");
+            builder.append(" or ");
         }
 
         builder.appendIdentifier(column)

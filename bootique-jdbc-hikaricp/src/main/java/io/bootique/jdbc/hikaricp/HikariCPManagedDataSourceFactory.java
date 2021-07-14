@@ -27,6 +27,8 @@ import io.bootique.annotation.BQConfigProperty;
 import io.bootique.di.Injector;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.util.Objects;
@@ -42,6 +44,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @BQConfig("Pooling Hikari JDBC DataSource configuration.")
 @JsonTypeName("hikari")
 public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HikariCPManagedDataSourceFactory.class);
 
     private static final long CONNECTION_TIMEOUT = SECONDS.toMillis(30);
     private static final long VALIDATION_TIMEOUT = SECONDS.toMillis(5);
@@ -94,6 +98,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
         Supplier<DataSource> startup = () -> {
             validate();
+            LOGGER.info("Starting Hikari DataSource: {}", jdbcUrl);
             return new HikariDataSource(toConfiguration(dataSourceName));
         };
 
@@ -107,7 +112,8 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {
 
-        return new ManagedDataSourceStarter(getJdbcUrl(), startup, shutdown);
+        String url = getJdbcUrl();
+        return new ManagedDataSourceStarter(() -> url, startup, shutdown);
     }
 
     protected void validate() {

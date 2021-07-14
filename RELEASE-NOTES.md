@@ -1,4 +1,16 @@
-## 2.0
+## 2.0.B1
+
+* #105 Upgrade Testcontainers to 1.15.0-rc2
+* #106 Test API: Table.delete().where(..)
+* #107 Test API - better SELECT builder
+* #108 MySQL 8 requires special treatment of local timestamp and time
+* #109 Junit5 : lazy init of the test DataSource
+* #110 DbTester.runScript(..)
+* #111 Upgrade Testcontainers to 1.15.1
+* #112 Log connection URL
+* #113 DbTester - make "initDB" calls additive
+
+## 2.0.M1
 
 * #95 Support for JUnit 5
 * #96 DbTester - a JUnit 5 extension to bootstrap test databases, provide integration w/Testcontainers

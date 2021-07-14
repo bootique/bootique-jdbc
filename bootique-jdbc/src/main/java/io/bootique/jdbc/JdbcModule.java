@@ -30,10 +30,10 @@ import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
 
+import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.inject.Singleton;
 
 public class JdbcModule extends ConfigModule {
 
@@ -45,9 +45,8 @@ public class JdbcModule extends ConfigModule {
     }
 
     /**
-     * @param binder Guice DI binder.
+     * @param binder Bootique DI binder.
      * @return an instance of extender.
-     * @since 0.25
      */
     public static JdbcModuleExtender extend(Binder binder) {
         return new JdbcModuleExtender(binder);

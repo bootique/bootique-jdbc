@@ -29,8 +29,6 @@ import java.util.function.Supplier;
 /**
  * The health check checks that, on average, 99% of all calls to {@code getConnection()} obtain a
  * {@link java.sql.Connection} within a specified  number of milliseconds.
- *
- * @since 0.25
  */
 public class Wait99PercentCheck extends ValueRangeCheck<Duration> {
 

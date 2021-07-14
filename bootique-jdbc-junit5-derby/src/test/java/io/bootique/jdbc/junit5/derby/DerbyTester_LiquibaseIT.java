@@ -37,7 +37,7 @@ public class DerbyTester_LiquibaseIT extends BaseDerbyTesterTest {
     @BQTestTool
     static final DerbyTester db = DerbyTester
             .db()
-            .runLiquibaseMigrations("classpath:io/bootique/jdbc/junit5/derby/DerbyTester_LiquibaseIT-changelog.yml");
+            .initDBWithLiquibaseChangelog("classpath:io/bootique/jdbc/junit5/derby/DerbyTester_LiquibaseIT-changelog.yml");
 
     @BQApp(skipRun = true)
     static final BQRuntime app = BaseDerbyTesterTest.createRuntime(db);

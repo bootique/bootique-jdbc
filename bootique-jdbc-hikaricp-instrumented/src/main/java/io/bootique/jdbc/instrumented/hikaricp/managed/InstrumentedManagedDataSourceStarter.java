@@ -26,15 +26,12 @@ import javax.sql.DataSource;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * @since 1.0.RC1
- */
 public class InstrumentedManagedDataSourceStarter extends ManagedDataSourceStarter {
 
     private HealthCheckGroup healthChecks;
 
     public InstrumentedManagedDataSourceStarter(
-            String url,
+            Supplier<String> url,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown,
             HealthCheckGroup healthChecks) {

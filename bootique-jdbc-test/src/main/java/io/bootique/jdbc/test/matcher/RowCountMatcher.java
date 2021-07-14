@@ -21,7 +21,6 @@ package io.bootique.jdbc.test.matcher;
 
 import io.bootique.jdbc.test.Column;
 import io.bootique.jdbc.test.Table;
-import io.bootique.jdbc.test.jdbc.RowReader;
 import io.bootique.jdbc.test.jdbc.SelectStatementBuilder;
 
 import java.util.ArrayList;
@@ -30,9 +29,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @since 0.24
- */
 public class RowCountMatcher {
 
     private Table table;
@@ -66,8 +62,12 @@ public class RowCountMatcher {
     }
 
     protected SelectStatementBuilder<Integer> countStatement() {
-        return table.selectStatement(RowReader.intReader())
-                .append("SELECT COUNT(*) FROM ")
+        return table.getChannel()
+                .selectStatement()
+                // TODO: count() would usually return Long. We don't expect such large numbers in tests,
+                //  but wonder if we should still change the signature to return Long for consistency?
+                .converter(r -> ((Number) r[0]).intValue())
+                .append("select count(*) from ")
                 .appendIdentifier(table.getName());
     }
 
@@ -75,7 +75,7 @@ public class RowCountMatcher {
 
         if (conditions != null && !conditions.isEmpty()) {
 
-            String separator = " WHERE ";
+            String separator = " where ";
 
             for (BinaryCondition c : conditions) {
 
@@ -97,7 +97,7 @@ public class RowCountMatcher {
                         throw new UnsupportedOperationException("Unexpected operator: " + c.getOperator());
                 }
 
-                separator = " AND ";
+                separator = " and ";
             }
         }
 
@@ -113,7 +113,7 @@ public class RowCountMatcher {
                     .append(" ")
                     .appendBinding(table.getColumn(eq.getColumn()), eq.getValue());
         } else {
-            builder.appendIdentifier(eq.getColumn()).append(" IS NULL");
+            builder.appendIdentifier(eq.getColumn()).append(" is null");
         }
 
         return builder;
@@ -138,7 +138,7 @@ public class RowCountMatcher {
 
         builder.appendIdentifier(columnName)
                 .append(" ")
-                .append("IN")
+                .append("in")
                 .append(" (");
 
         Column column = table.getColumn(columnName);

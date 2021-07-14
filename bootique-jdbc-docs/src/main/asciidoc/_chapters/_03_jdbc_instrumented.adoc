@@ -58,7 +58,7 @@ metrics and health checks:
 ----
 // For HikariCP
 {
-  implementation: 'io.bootique.jdbc:bootique-jdbc-hikaric-instrumentedp'
+  implementation: 'io.bootique.jdbc:bootique-jdbc-hikaricp-instrumented'
 }
 ----
 ====

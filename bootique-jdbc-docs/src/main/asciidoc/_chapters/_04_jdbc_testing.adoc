@@ -33,6 +33,10 @@ you create it differently, as described in the following two sections.
 
 Testing with an in-memory DB has the advantage of speed, and a disadvantage of being only an approximation of the
 production DB. If you decide to go this way, start by including the following dependency:
+
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <dependency>
@@ -41,6 +45,19 @@ production DB. If you decide to go this way, start by including the following de
     <scope>test</scope>
 </dependency>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+{
+  testImplementation: 'io.bootique.jdbc:bootique-jdbc-junit5-derby:test'
+}
+----
+====
+
 Then create a `DbTester` in a desired scope:
 
 [source,java,indent=0]
@@ -54,6 +71,10 @@ include::../../../test/java/io/bootique/jdbc/docs/DerbyTest.java[tags=declaratio
 
 If you need a real database environment that is as close as possible to your production, you need to include a
 different dependency plus a few third-party libraries:
+
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <dependency>
@@ -76,6 +97,21 @@ different dependency plus a few third-party libraries:
     <scope>test</scope>
 </dependency>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+{
+   testImplementation: 'io.bootique.jdbc:bootique-jdbc-junit5-testcontainers'
+   testImplementation: 'org.testcontainers:mysql'
+   testImplementation: 'mysql:mysql-connector-java'
+}
+----
+====
+
 Now you can create a `DbTester` using `TcDbTester`:
 
 [source,java,indent=0]

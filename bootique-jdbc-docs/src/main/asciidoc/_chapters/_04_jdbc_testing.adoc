@@ -53,7 +53,7 @@ production DB. If you decide to go this way, start by including the following de
 [source,groovy]
 ----
 {
-  testImplementation: 'io.bootique.jdbc:bootique-jdbc-junit5-derby:test'
+  testImplementation: 'io.bootique.jdbc:bootique-jdbc-junit5-derby'
 }
 ----
 ====
@@ -69,8 +69,7 @@ include::../../../test/java/io/bootique/jdbc/docs/DerbyTest.java[tags=declaratio
 
 === Docker/Testcontainers DB
 
-If you need a real database environment that is as close as possible to your production, you need to include a
-different dependency plus a few third-party libraries:
+If you need a real database environment that is as close as possible to your production, you need to include a different dependency plus a few third-party libraries:
 
 .Maven
 [%collapsible%open]
@@ -105,7 +104,9 @@ different dependency plus a few third-party libraries:
 [source,groovy]
 ----
 {
-  testImplementation: 'io.bootique.jdbc:bootique-jdbc-junit5-testcontainers:test'
+    testImplementation: 'io.bootique.jdbc:bootique-jdbc-junit5-testcontainers'
+    testImplementation: 'org.testcontainers:mysql'
+    testImplementation: 'mysql:mysql-connector-java'
 }
 ----
 ====

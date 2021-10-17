@@ -22,30 +22,27 @@ package io.bootique.jdbc.hikaricp;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class JdbcHikariCPModuleIT {
 
-    @Rule
-    public final BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory().autoLoadModules();
 
     @Test
     public void testDataSource() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_ds.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_ds.yml").createRuntime();
 
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
@@ -65,9 +62,7 @@ public class JdbcHikariCPModuleIT {
     @Test
     public void testDataSource_DriverAutoDetected() throws SQLException {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_nodriver.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_nodriver.yml").createRuntime();
 
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
@@ -81,9 +76,7 @@ public class JdbcHikariCPModuleIT {
     @Test
     public void testDataSource_TypeAutoDetected() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_notype.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_notype.yml").createRuntime();
 
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
@@ -96,9 +89,7 @@ public class JdbcHikariCPModuleIT {
 
     @Test
     public void testDataSource_FullConfig() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_full.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_full.yml").createRuntime();
 
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");
         assertNotNull(ds);
@@ -130,5 +121,4 @@ public class JdbcHikariCPModuleIT {
             assertEquals("jdbc:derby:target/ds1", c.getMetaData().getURL());
         }
     }
-
 }

@@ -22,20 +22,22 @@ package io.bootique.jdbc.instrumented.hikaricp;
 import com.codahale.metrics.MetricRegistry;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class HikariCPMetricsInitializerIT {
 
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testMetrics() {

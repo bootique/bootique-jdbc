@@ -25,24 +25,24 @@ import io.bootique.di.Key;
 import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.DataSourceListener;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import io.bootique.metrics.health.HealthCheckRegistry;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class JdbcTomcatInstrumentedModuleIT {
 
-    @ClassRule
-    public static BQTestFactory TEST_FACTORY = new BQTestFactory();
+    @BQTestTool
+    static final BQTestFactory TEST_FACTORY = new BQTestFactory();
 
     @Test
     public void testMetricsListener_Injected() {

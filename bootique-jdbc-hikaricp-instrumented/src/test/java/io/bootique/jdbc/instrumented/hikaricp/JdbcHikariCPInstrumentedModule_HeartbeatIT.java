@@ -25,39 +25,36 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.instrumented.hikaricp.healthcheck.Wait99PercentCheck;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPConnectivityCheck;
+import io.bootique.jdbc.instrumented.hikaricp.healthcheck.Wait99PercentCheck;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import io.bootique.metrics.health.HealthCheckModule;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckStatus;
 import io.bootique.metrics.health.heartbeat.Heartbeat;
 import io.bootique.metrics.health.heartbeat.HeartbeatListener;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+@BQTest
 public class JdbcHikariCPInstrumentedModule_HeartbeatIT {
 
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     // TODO: need to fix this!
-    @Ignore("Fails on Travis")
+    @Disabled("Fails on Travis")
     public void testHeartbeat() {
 
         HeartbeatTester tester = new HeartbeatTester();
@@ -96,7 +93,7 @@ public class JdbcHikariCPInstrumentedModule_HeartbeatIT {
             this.untilFirstHeartbeat = new CountDownLatch(1);
 
             try {
-                assertTrue("No heartbeat", untilFirstHeartbeat.await(2, TimeUnit.SECONDS));
+                assertTrue(untilFirstHeartbeat.await(2, TimeUnit.SECONDS), "No heartbeat");
             } catch (InterruptedException e) {
                 fail("interrupted: " + e.getMessage());
             }
@@ -111,17 +108,17 @@ public class JdbcHikariCPInstrumentedModule_HeartbeatIT {
             HealthCheckOutcome connectivity = result.get(HikariCPConnectivityCheck.healthCheckName("db"));
             HealthCheckOutcome connectivity99Pct = result.get(Wait99PercentCheck.healthCheckName("db"));
 
-            assertNotNull("No connectivity check", connectivity);
-            assertNotNull("No 99 connectivity percentile check", connectivity99Pct);
+            assertNotNull(connectivity, "No connectivity check");
+            assertNotNull(connectivity99Pct, "No 99 connectivity percentile check");
             assertEquals(2, result.size());
 
-            assertEquals("Unexpected connectivity check result",expectedStatus, connectivity.getStatus());
-            assertEquals("Unexpected 99 connectivity percentile check result",expectedStatus, connectivity99Pct.getStatus());
+            assertEquals(expectedStatus, connectivity.getStatus(), "Unexpected connectivity check result");
+            assertEquals(expectedStatus, connectivity99Pct.getStatus(), "Unexpected 99 connectivity percentile check result");
         }
     }
 
     static class TestHeartbeatCommand implements Command {
-        private Provider<Heartbeat> heartbeatProvider;
+        private final Provider<Heartbeat> heartbeatProvider;
 
         @Inject
         public TestHeartbeatCommand(Provider<Heartbeat> heartbeatProvider) {

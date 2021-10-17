@@ -20,15 +20,15 @@
 package io.bootique.jdbc.managed;
 
 import io.bootique.di.Injector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedDataSourceFactoryProxyTest {
 
@@ -54,9 +54,7 @@ public class ManagedDataSourceFactoryProxyTest {
         assertTrue(leaves.contains(X4.class));
         assertTrue(leaves.contains(X44.class));
         assertTrue(leaves.contains(Y3.class));
-
     }
-
 
     public static class X1 implements ManagedDataSourceFactory {
 

@@ -25,9 +25,10 @@ import com.codahale.metrics.MetricRegistry;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -36,13 +37,13 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class MetricsIT {
 
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testConnectionStateMetrics() throws SQLException {
@@ -58,7 +59,7 @@ public class MetricsIT {
         // wait for the metrics to be initialized...
         Gauge<Integer> activeConnections = registry.getGauges().get(HikariMetricsBridge.activeConnectionsMetric(dsName));
 
-        assertNotNull(registry.getGauges().keySet() + "", activeConnections);
+        assertNotNull(activeConnections, registry.getGauges().keySet() + "");
         assertEquals(Integer.valueOf(0), activeConnections.getValue());
 
         for (int i = 0; i < 3; i++) {

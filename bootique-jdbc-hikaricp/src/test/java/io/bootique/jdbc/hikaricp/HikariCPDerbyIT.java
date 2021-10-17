@@ -24,29 +24,27 @@ import com.zaxxer.hikari.pool.HikariPool;
 import com.zaxxer.hikari.util.DriverDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.test.junit.BQTestFactory;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import org.apache.derby.jdbc.EmbeddedDataSource;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class HikariCPDerbyIT {
 
-    @Rule
-    public final BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory().autoLoadModules();
 
     @Test
     public void testDerbyDataSource() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml").createRuntime();
 
         DataSource ds4 = runtime.getInstance(DataSourceFactory.class).forName("derby4");
         assertNotNull(ds4);
@@ -67,9 +65,7 @@ public class HikariCPDerbyIT {
 
     @Test
     public void testDerbyDriverDataSource() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml").createRuntime();
 
         DataSource ds5 = runtime.getInstance(DataSourceFactory.class).forName("derby5");
         assertNotNull(ds5);
@@ -90,9 +86,7 @@ public class HikariCPDerbyIT {
 
     @Test
     public void testDerbyDataSource_ConnectionAttributes() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml").createRuntime();
 
         DataSource ds6 = runtime.getInstance(DataSourceFactory.class).forName("derby6");
         assertNotNull(ds6);
@@ -106,9 +100,7 @@ public class HikariCPDerbyIT {
 
     @Test
     public void testDerbyDriver_ConnectionAttributes() throws SQLException {
-        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml")
-                .autoLoadModules()
-                .createRuntime();
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml").createRuntime();
 
         DataSource ds7 = runtime.getInstance(DataSourceFactory.class).forName("derby7");
         assertNotNull(ds7);

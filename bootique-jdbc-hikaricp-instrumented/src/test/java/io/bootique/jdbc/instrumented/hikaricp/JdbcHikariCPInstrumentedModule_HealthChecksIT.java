@@ -20,20 +20,22 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
 import io.bootique.BQRuntime;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import io.bootique.metrics.health.HealthCheckRegistry;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class JdbcHikariCPInstrumentedModule_HealthChecksIT {
 
-    @Rule
+    @BQTestTool
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test

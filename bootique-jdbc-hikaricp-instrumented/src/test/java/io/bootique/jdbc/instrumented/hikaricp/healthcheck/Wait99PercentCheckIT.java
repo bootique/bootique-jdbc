@@ -21,28 +21,28 @@ package io.bootique.jdbc.instrumented.hikaricp.healthcheck;
 
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import io.bootique.metrics.health.HealthCheckData;
 import io.bootique.metrics.health.HealthCheckOutcome;
 import io.bootique.metrics.health.HealthCheckRegistry;
 import io.bootique.metrics.health.HealthCheckStatus;
-import io.bootique.test.junit.BQTestFactory;
 import io.bootique.value.Duration;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@BQTest
 public class Wait99PercentCheckIT {
 
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testHealthChecks() throws SQLException {
@@ -57,7 +57,7 @@ public class Wait99PercentCheckIT {
         HealthCheckOutcome outcome = registry.runHealthCheck(Wait99PercentCheck.healthCheckName("db"));
         assertEquals(HealthCheckStatus.OK, outcome.getStatus());
         HealthCheckData<Duration> data = (HealthCheckData<Duration>) outcome.getData().get();
-        assertTrue(data.getValue().getDuration().toMillis() == 0);
+        assertEquals(0, data.getValue().getDuration().toMillis());
 
         // checkout a few connections....
         for (int i = 0; i < 5; i++) {
@@ -66,7 +66,7 @@ public class Wait99PercentCheckIT {
         }
 
         outcome = registry.runHealthCheck(Wait99PercentCheck.healthCheckName("db"));
-        assertEquals(outcome.getMessage(), HealthCheckStatus.OK, outcome.getStatus());
+        assertEquals(HealthCheckStatus.OK, outcome.getStatus(), outcome.getMessage());
 
         data = (HealthCheckData<Duration>) outcome.getData().get();
         assertNotNull(data);

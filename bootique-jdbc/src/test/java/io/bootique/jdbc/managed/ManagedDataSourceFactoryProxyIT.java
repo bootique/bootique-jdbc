@@ -27,23 +27,23 @@ import io.bootique.di.DIRuntimeException;
 import io.bootique.di.Injector;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.JdbcModule;
-import io.bootique.test.junit.BQTestFactory;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import io.bootique.type.TypeRef;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+@BQTest
 public class ManagedDataSourceFactoryProxyIT {
 
-    @Rule
-    public final BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     private static final String configPrefix = "jdbc";
 
@@ -272,5 +272,4 @@ public class ManagedDataSourceFactoryProxyIT {
     public static class ManagedDataSourceFactoryY3 extends ManagedDataSourceFactoryY2 {
 
     }
-
 }

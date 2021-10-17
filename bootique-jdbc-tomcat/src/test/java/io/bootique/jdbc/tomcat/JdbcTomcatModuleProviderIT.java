@@ -21,15 +21,13 @@ package io.bootique.jdbc.tomcat;
 
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.JdbcModule;
-import io.bootique.test.junit.BQModuleProviderChecker;
-import io.bootique.test.junit.BQRuntimeChecker;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.junit5.*;
+import org.junit.jupiter.api.Test;
 
+@BQTest
 public class JdbcTomcatModuleProviderIT {
 
-    @Rule
+    @BQTestTool
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test

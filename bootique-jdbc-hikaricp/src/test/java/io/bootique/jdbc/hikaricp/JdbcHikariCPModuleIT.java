@@ -55,8 +55,7 @@ public class JdbcHikariCPModuleIT {
         assertEquals(1, hikariDS.getMinimumIdle());
         assertEquals(3, hikariDS.getMaximumPoolSize());
 
-        assertEquals("Hikari pool name must be the same as Bootique DataSource name",
-                "derby", hikariDS.getPoolName());
+        assertEquals("derby", hikariDS.getPoolName(), "Hikari pool name must be the same as Bootique DataSource name");
     }
 
     @Test

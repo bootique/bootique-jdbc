@@ -1,3 +1,7 @@
+## 3.0.M1
+
+* #114 JUnit 4 support deprecation
+
 ## 2.0.B1
 
 * #105 Upgrade Testcontainers to 1.15.0-rc2

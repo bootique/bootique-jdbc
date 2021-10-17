@@ -28,6 +28,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ */
+@Deprecated
 public class ExecStatementBuilder extends StatementBuilder<ExecStatementBuilder> {
 
     public ExecStatementBuilder(

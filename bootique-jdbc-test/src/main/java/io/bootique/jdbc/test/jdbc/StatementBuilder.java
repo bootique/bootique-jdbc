@@ -35,7 +35,10 @@ import java.util.stream.Collectors;
 
 /**
  * Defines API to build a SQL
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public abstract class StatementBuilder<T extends StatementBuilder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatementBuilder.class);

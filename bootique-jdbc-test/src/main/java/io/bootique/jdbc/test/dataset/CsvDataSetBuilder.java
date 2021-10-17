@@ -30,7 +30,10 @@ import java.util.Objects;
 /**
  * A builder that assembles a data set matching a {@link Table} structure either from CSV-like strings or from a CSV file
  * resource.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class CsvDataSetBuilder {
 
     private Table table;

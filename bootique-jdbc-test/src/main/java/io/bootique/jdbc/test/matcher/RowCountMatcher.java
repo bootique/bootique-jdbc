@@ -29,6 +29,10 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ */
+@Deprecated
 public class RowCountMatcher {
 
     private Table table;

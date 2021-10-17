@@ -25,6 +25,8 @@ import static java.util.Arrays.asList;
 
 /**
  * A DataSet that can persist multiple underlying datasets in a specific order.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
 public class GroupDataSet implements DataSet {
 

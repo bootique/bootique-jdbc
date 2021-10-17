@@ -31,7 +31,10 @@ import java.util.function.Function;
 
 /**
  * Converts java types into proper sql types.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class ObjectValueConverter {
 
     private Map<Class<?>, Function<Object, Object>> converters;

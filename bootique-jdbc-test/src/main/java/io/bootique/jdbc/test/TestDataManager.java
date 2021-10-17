@@ -27,7 +27,10 @@ import java.util.Map;
 
 /**
  * A unit test "rule" to manage data sets for unit tests.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class TestDataManager extends ExternalResource {
 
     private Table[] tablesInInsertOrder;

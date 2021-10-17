@@ -36,7 +36,10 @@ import static java.util.Arrays.asList;
 /**
  * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test
  * data.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class Table {
 
     protected String name;

@@ -24,7 +24,10 @@ import io.bootique.resource.ResourceFactory;
 
 /**
  * Assists in making assertions about the data in a DB table.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class TableMatcher {
 
     private Table table;

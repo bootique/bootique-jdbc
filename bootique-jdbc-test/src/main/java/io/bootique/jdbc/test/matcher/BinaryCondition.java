@@ -19,6 +19,7 @@
 
 package io.bootique.jdbc.test.matcher;
 
+@Deprecated
 class BinaryCondition {
 
     private String column;

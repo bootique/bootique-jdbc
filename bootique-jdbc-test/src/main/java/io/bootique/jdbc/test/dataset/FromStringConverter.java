@@ -21,6 +21,10 @@ package io.bootique.jdbc.test.dataset;
 
 import io.bootique.jdbc.test.Column;
 
+/**
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ */
+@Deprecated
 public interface FromStringConverter {
 
     Object fromString(String value, Column column);

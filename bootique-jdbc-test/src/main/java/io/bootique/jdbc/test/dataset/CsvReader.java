@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+@Deprecated
 class CsvReader {
 
     private FromStringConverter valueConverter;

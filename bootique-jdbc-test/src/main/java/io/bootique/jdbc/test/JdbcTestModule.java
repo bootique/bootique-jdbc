@@ -32,6 +32,10 @@ import io.bootique.log.BootLogger;
 
 import javax.inject.Singleton;
 
+/**
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ */
+@Deprecated
 public class JdbcTestModule extends ConfigModule {
 
     @Override

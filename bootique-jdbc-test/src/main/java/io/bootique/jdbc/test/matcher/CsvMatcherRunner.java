@@ -30,6 +30,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@Deprecated
 class CsvMatcherRunner {
 
     private final Table table;

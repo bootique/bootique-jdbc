@@ -32,6 +32,8 @@ import java.util.Base64;
 
 /**
  * Converts String values coming from CSV to Java value objects.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
 public class DefaultFromStringConverter implements FromStringConverter {
 

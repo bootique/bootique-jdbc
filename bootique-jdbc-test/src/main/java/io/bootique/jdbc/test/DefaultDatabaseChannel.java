@@ -30,8 +30,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * A helper class to run common DB operations during unit tests.
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class DefaultDatabaseChannel implements DatabaseChannel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDatabaseChannel.class);

@@ -25,7 +25,10 @@ import static java.util.Arrays.asList;
 
 /**
  * A key used to match rows in a tabular data set.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class RowKey {
 
     private Object[] key;

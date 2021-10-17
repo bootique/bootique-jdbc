@@ -30,8 +30,9 @@
     <artifactId>bootique-jdbc-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-jdbc-test: Helper classes for unit tests that require a database</name>
-    <description>Provides helper classes for unit tests that require a database</description>
+    <name>bootique-jdbc-test (deprecated): Helper classes for unit tests that require a database</name>
+    <description>Provides helper classes for unit tests that require a database. Deprecated since 3.0.M1, as we
+        are we phasing out JUnit 4 support in favor of JUnit 5</description>
 
     <dependencyManagement>
         <dependencies>

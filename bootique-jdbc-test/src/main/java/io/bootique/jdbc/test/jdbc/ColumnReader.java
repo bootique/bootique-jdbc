@@ -23,7 +23,9 @@ import java.sql.SQLException;
 
 /**
  * @since 2.0.B1
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 @FunctionalInterface
 public interface ColumnReader {
 

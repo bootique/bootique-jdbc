@@ -37,13 +37,6 @@ import java.util.Set;
 
 public class JdbcModule extends ConfigModule {
 
-    public JdbcModule() {
-    }
-
-    public JdbcModule(String configPrefix) {
-        super(configPrefix);
-    }
-
     /**
      * @param binder Bootique DI binder.
      * @return an instance of extender.

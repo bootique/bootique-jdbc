@@ -29,7 +29,7 @@ public abstract class BaseMySQLTest {
     @BQTestTool(BQTestScope.GLOBAL)
     protected static final TcDbTester db = TcDbTester
             .db("jdbc:tc:mysql:8.0.20:///db")
-            .deleteBeforeEachTest("t1")
+            .deleteBeforeEachTest("t1", "t5")
             .initDB("classpath:io/bootique/jdbc/junit5/tc/unit/BaseMySQLTest.sql");
 
 }

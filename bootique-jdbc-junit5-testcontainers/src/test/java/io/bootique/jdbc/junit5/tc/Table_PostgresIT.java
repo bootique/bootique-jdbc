@@ -85,4 +85,14 @@ public class Table_PostgresIT extends BasePostgresTest {
             }
         }
     }
+
+    @Test
+    public void testMatcher_NumericColumns() {
+        t5.insertColumns("id", "c1", "c2")
+                .values(2, 1234567890L, new BigDecimal("2.345"))
+                .exec();
+
+        t5.matcher().assertOneMatch();
+        t5.matcher().eq("id", 2).eq("c1", 1234567890L).eq("c2", new BigDecimal("2.345")).assertOneMatch();
+    }
 }

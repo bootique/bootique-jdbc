@@ -89,6 +89,17 @@ public class TableMatcherIT {
     }
 
     @Test
+    public void testAssertMatches_Eq_Decimal() {
+        TableMatcher matcher = new TableMatcher(T4);
+
+        T4.insertColumns("c1", "c2", "c3")
+                .values(1L, "abc", new BigDecimal("2.34"))
+                .exec();
+
+        matcher.eq("c3", new BigDecimal("2.34")).eq("c2", "abc").eq("c1", 1L).assertMatches(1);
+    }
+
+    @Test
     public void testAssertMatches_In() {
         TableMatcher matcher = new TableMatcher(T1);
 

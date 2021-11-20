@@ -27,6 +27,8 @@ import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @BQTest
@@ -35,7 +37,7 @@ public class TableMatcherIT {
     @BQTestTool
     static final DerbyTester db = DerbyTester
             .db()
-            .deleteBeforeEachTest("t1");
+            .deleteBeforeEachTest("t1", "t2", "t3", "t4");
 
     private static Table T1;
     private static Table T2;
@@ -48,7 +50,7 @@ public class TableMatcherIT {
         db.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         db.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
         db.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" VARCHAR (10) FOR BIT DATA)");
-        db.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" BIGINT, \"c2\" VARCHAR (10))");
+        db.execStatement().exec("CREATE TABLE \"t4\" (\"c1\" BIGINT, \"c2\" VARCHAR (10), \"c3\" DECIMAL(10,2))");
 
         T1 = db.getTable("t1");
         T2 = db.getTable("t2");
@@ -200,13 +202,13 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatchesCsv_Bigint() {
+    public void testAssertMatchesCsv_Numbers() {
 
         TableMatcher matcher = new TableMatcher(T4);
 
-        T4.insertColumns("c1", "c2")
-                .values(1L, "abc")
-                .values(2L, "xyz")
+        T4.insertColumns("c1", "c2", "c3")
+                .values(1L, "abc", new BigDecimal("2.34"))
+                .values(2L, "xyz", BigDecimal.ZERO)
                 .exec();
 
         matcher.assertMatchesCsv("classpath:io/bootique/jdbc/junit5/derby/matcher/t4_ref.csv", "c1");

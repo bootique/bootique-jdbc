@@ -21,6 +21,7 @@ package io.bootique.jdbc.junit5.dataset;
 
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -64,6 +65,8 @@ public class DefaultFromStringConverter implements FromStringConverter {
                 return Integer.valueOf(value);
             case Types.BIGINT:
                 return Long.valueOf(value);
+            case Types.DECIMAL:
+                return new BigDecimal(value);
             case Types.DATE:
                 return Date.valueOf(LocalDate.parse(value));
             case Types.TIME:

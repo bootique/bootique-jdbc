@@ -27,10 +27,13 @@ import io.bootique.jdbc.junit5.metadata.TableFQName;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.sql.Types;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class CsvDataSetBuilderTest {
@@ -43,7 +46,9 @@ public class CsvDataSetBuilderTest {
         DbColumnMetadata[] columns = new DbColumnMetadata[]{
                 new DbColumnMetadata("c1", Types.VARCHAR, false, true),
                 new DbColumnMetadata("c2", Types.INTEGER, false, true),
-                new DbColumnMetadata("c3", Types.VARBINARY, false, true)
+                new DbColumnMetadata("c3", Types.VARBINARY, false, true),
+                new DbColumnMetadata("c4", Types.BIGINT, false, true),
+                new DbColumnMetadata("c5", Types.DECIMAL, false, true)
         };
         DbTableMetadata metadata = new DbTableMetadata(new TableFQName(null, null, "t1"), columns);
         table = new Table(mock(DbConnector.class), metadata);
@@ -64,19 +69,28 @@ public class CsvDataSetBuilderTest {
     @Test
     public void testBuild() {
         TableDataSet ds = new CsvDataSetBuilder(table)
-                .columns("c2,c1")
+                .columns("c2,c1,c5,c4")
                 .rows(
-                        "1,z",
-                        "35,\"a\""
+                        "1,z,2.345,123456789",
+                        "35,\"a\",,"
                 ).build();
 
-        assertEquals(2, ds.getHeader().length);
+        assertEquals(4, ds.getHeader().length);
+        assertEquals(
+                asList("c2", "c1", "c5", "c4"),
+                stream(ds.getHeader()).map(DbColumnMetadata::getName).collect(Collectors.toList()));
+
         assertEquals(2, ds.size());
 
         assertEquals(1, ds.getRecords().get(0)[0]);
         assertEquals("z", ds.getRecords().get(0)[1]);
+        assertEquals(new BigDecimal("2.345"), ds.getRecords().get(0)[2]);
+        assertEquals(123456789L, ds.getRecords().get(0)[3]);
+
         assertEquals(35, ds.getRecords().get(1)[0]);
         assertEquals("a", ds.getRecords().get(1)[1]);
+        assertNull(ds.getRecords().get(1)[2]);
+        assertNull(ds.getRecords().get(1)[3]);
     }
 
 }

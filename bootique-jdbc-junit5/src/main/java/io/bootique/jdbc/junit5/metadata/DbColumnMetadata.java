@@ -18,6 +18,7 @@
  */
 package io.bootique.jdbc.junit5.metadata;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Calendar;
 
@@ -100,6 +101,14 @@ public class DbColumnMetadata {
                 // Other DBs work fine with or without the calendar
                 if (value instanceof Timestamp) {
                     statement.setTimestamp(jdbcPosition, (Timestamp) value, Calendar.getInstance());
+                } else {
+                    statement.setObject(jdbcPosition, value, type);
+                }
+                break;
+            case Types.DECIMAL:
+                // insert as BigDecimal if possible, otherwise may lose precision on Derby
+                if (value instanceof BigDecimal) {
+                    statement.setBigDecimal(jdbcPosition, (BigDecimal) value);
                 } else {
                     statement.setObject(jdbcPosition, value, type);
                 }

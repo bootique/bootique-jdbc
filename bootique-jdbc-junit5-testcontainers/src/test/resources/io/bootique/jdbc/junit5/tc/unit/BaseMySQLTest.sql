@@ -5,6 +5,12 @@ create table `t2` (
     `name` varchar(20)
 );
 
+create table `t5` (
+    `id` integer not null primary key,
+    `c1` bigint,
+    `c2` decimal(10,3)
+);
+
 insert into t2 values (
   12, 'myname'
 );

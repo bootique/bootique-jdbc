@@ -25,8 +25,8 @@ import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Date;
-import java.sql.Types;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,19 +40,22 @@ public class TableIT {
     @BQTestTool
     static final DerbyTester db = DerbyTester
             .db()
-            .deleteBeforeEachTest("t1", "t2");
+            .deleteBeforeEachTest("t1", "t2", "t3");
 
     private static Table T1;
     private static Table T2;
+    private static Table T3;
 
     @BeforeAll
     public static void setupDB() {
 
         db.execStatement().exec("CREATE TABLE \"t1\" (\"c1\" INT, \"c2\" VARCHAR(10), \"c3\" VARCHAR(10))");
         db.execStatement().exec("CREATE TABLE \"t2\" (\"c1\" INT, \"c2\" INT, \"c3\" DATE, \"c4\" TIMESTAMP)");
+        db.execStatement().exec("CREATE TABLE \"t3\" (\"c1\" INT, \"c2\" BIGINT, \"c3\" DECIMAL(10, 3))");
 
         T1 = db.getTable("t1");
         T2 = db.getTable("t2");
+        T3 = db.getTable("t3");
     }
 
     @Test
@@ -81,6 +84,37 @@ public class TableIT {
                 .values(3, 3, "2017-01-09", "2017-01-10 13:00:01")
                 .exec();
         T2.matcher().assertMatches(3);
+    }
+
+    @Test
+    public void testInsertNumericColumns() throws SQLException {
+        T3.insertColumns("c1", "c2", "c3")
+                .values(1, null, null)
+                .values(2, Long.MAX_VALUE - 5, new BigDecimal("2.345"))
+                .values(3, 0, BigDecimal.ZERO)
+                .exec();
+        T3.matcher().assertMatches(3);
+
+        try (Connection c = db.getConnection()) {
+            try (Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select \"c1\", \"c2\", \"c3\" from \"t3\" order by \"c1\"")) {
+                    rs.next();
+                    assertEquals(1, rs.getInt(1));
+                    assertEquals(null, rs.getObject(2));
+                    assertEquals(null, rs.getObject(3));
+
+                    rs.next();
+                    assertEquals(2, rs.getInt(1));
+                    assertEquals(Long.MAX_VALUE - 5, rs.getLong(2));
+                    assertEquals(new BigDecimal("2.345"), rs.getBigDecimal(3));
+
+                    rs.next();
+                    assertEquals(3, rs.getInt(1));
+                    assertEquals(0L, rs.getLong(2));
+                    assertEquals(new BigDecimal("0.000"), rs.getBigDecimal(3));
+                }
+            }
+        }
     }
 
     @Test

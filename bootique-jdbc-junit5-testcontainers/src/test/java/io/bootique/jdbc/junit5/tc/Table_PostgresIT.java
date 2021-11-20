@@ -24,7 +24,8 @@ import io.bootique.jdbc.junit5.tc.unit.BasePostgresTest;
 import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Timestamp;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @BQTest
 public class Table_PostgresIT extends BasePostgresTest {
 
-    private Table t1 = db.getTable("t1");
+    static final Table t1 = db.getTable("t1");
+    static final Table t5 = db.getTable("t5");
 
     @Test
     public void testDateTime_ViaSelect() {
@@ -51,5 +53,36 @@ public class Table_PostgresIT extends BasePostgresTest {
 
         t1.matcher().assertOneMatch();
         t1.matcher().eq("c1", 1).eq("c2", ldt).assertOneMatch();
+    }
+
+    @Test
+    public void testInsertNumericColumns() throws SQLException {
+        t5.insertColumns("id", "c1", "c2")
+                .values(1, null, null)
+                .values(2, Long.MAX_VALUE - 5, new BigDecimal("2.345"))
+                .values(3, 0, BigDecimal.ZERO)
+                .exec();
+        t5.matcher().assertMatches(3);
+
+        try (Connection c = db.getConnection()) {
+            try (Statement s = c.createStatement()) {
+                try (ResultSet rs = s.executeQuery("select id, c1, c2 from t5 order by id")) {
+                    rs.next();
+                    assertEquals(1, rs.getInt(1));
+                    assertEquals(null, rs.getObject(2));
+                    assertEquals(null, rs.getObject(3));
+
+                    rs.next();
+                    assertEquals(2, rs.getInt(1));
+                    assertEquals(Long.MAX_VALUE - 5, rs.getLong(2));
+                    assertEquals(new BigDecimal("2.345"), rs.getBigDecimal(3));
+
+                    rs.next();
+                    assertEquals(3, rs.getInt(1));
+                    assertEquals(0L, rs.getLong(2));
+                    assertEquals(new BigDecimal("0.000"), rs.getBigDecimal(3));
+                }
+            }
+        }
     }
 }

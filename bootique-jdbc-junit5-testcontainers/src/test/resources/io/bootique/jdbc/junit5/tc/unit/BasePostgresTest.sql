@@ -21,6 +21,12 @@ create table t4 (
     FOREIGN KEY (a_id) REFERENCES t3 (id)
 );
 
+create table t5 (
+    id integer not null primary key,
+    c1 bigint,
+    c2 decimal(10,3)
+);
+
 insert into t3 (id, name) values (
   10, 'myname'
 );

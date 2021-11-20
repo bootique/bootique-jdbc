@@ -1,6 +1,7 @@
 ## 3.0.M1
 
 * #114 JUnit 4 support deprecation
+* #115 Table: loss of precision when inserting BigDecimal to Derby
 
 ## 2.0.B1
 

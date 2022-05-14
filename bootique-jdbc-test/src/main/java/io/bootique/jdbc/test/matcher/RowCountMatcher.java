@@ -43,7 +43,7 @@ public class RowCountMatcher {
     }
 
     public RowCountMatcher eq(String column, Object value) {
-        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparision.eq, value));
+        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparison.eq, value));
         return this;
     }
 
@@ -51,7 +51,7 @@ public class RowCountMatcher {
      * @since 1.1
      */
     public RowCountMatcher in(String column, Object... values) {
-        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparision.in, values));
+        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparison.in, values));
         return this;
     }
 

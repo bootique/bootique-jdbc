@@ -24,45 +24,27 @@ class BinaryCondition {
 
     private String column;
     private Object value;
-    private Comparision operator;
+    private Comparison operator;
 
-    public BinaryCondition(String column, Comparision operator, Object value) {
+    BinaryCondition(String column, Comparison operator, Object value) {
         this.column = column;
         this.value = value;
         this.operator = operator;
     }
 
-    public String getColumn() {
+    String getColumn() {
         return column;
     }
 
-    public Object getValue() {
+    Object getValue() {
         return value;
     }
 
-    public Comparision getOperator() {
+    Comparison getOperator() {
         return operator;
     }
 
-    enum Comparision {
-
-        eq {
-            @Override
-            public String getSqlOperator() {
-                return "=";
-            }
-        },
-        in {
-            @Override
-            public String getSqlOperator() {
-                return "IN";
-            }
-        };
-
-        /**
-         * @deprecated since 1.1, as SQL operator is provided by translator
-         */
-        @Deprecated
-        public abstract String getSqlOperator();
+    enum Comparison {
+        eq, in
     }
 }

@@ -29,7 +29,7 @@
 
     <groupId>io.bootique.jdbc</groupId>
     <artifactId>bootique-jdbc-parent</artifactId>
-    <version>2.0.RC2-SNAPSHOT</version>
+    <version>2.0</version>
     <packaging>pom</packaging>
 
     <name>bootique-jdbc-parent: Parent of JDBC integration modules for Bootique</name>
@@ -63,7 +63,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique-jdbc</developerConnection>
         <url>https://github.com/bootique/bootique-jdbc</url>
-        <tag>HEAD</tag>
+        <tag>2.0</tag>
     </scm>
 
     <dependencyManagement>

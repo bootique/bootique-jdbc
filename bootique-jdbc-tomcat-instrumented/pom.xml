@@ -83,6 +83,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.bootique</groupId>
 			<artifactId>bootique-junit5</artifactId>
 			<scope>test</scope>

@@ -3,6 +3,7 @@
 * #114 JUnit 4 support deprecation
 * #115 Table: loss of precision when inserting BigDecimal to Derby
 * #116 CsvDataSetBuilder can't handle BigDecimal
+* #121 Upgrade Derby to 10.15.2.0
 
 ## 2.0.B1
 

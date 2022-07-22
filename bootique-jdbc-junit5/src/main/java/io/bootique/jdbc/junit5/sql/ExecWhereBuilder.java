@@ -16,30 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
+package io.bootique.jdbc.junit5.sql;
 
 /**
  * @since 2.0.B1
  */
-public class DeleteBuilder {
+public class ExecWhereBuilder extends WhereBuilder<ExecWhereBuilder, ExecStatementBuilder> {
 
-    protected final ExecStatementBuilder builder;
-
-    public DeleteBuilder(ExecStatementBuilder builder) {
-        this.builder = builder;
+    public ExecWhereBuilder(ExecStatementBuilder builder) {
+        super(builder);
     }
 
-    public ExecWhereBuilder where(String column, Object value) {
-        return where(column, value, DbColumnMetadata.NO_TYPE);
-    }
-
-    public ExecWhereBuilder where(String column, Object value, int valueType) {
-        return new ExecWhereBuilder(builder).and(column, value, valueType);
-    }
-
+    /**
+     * @return the number of updated records.
+     */
     public int exec() {
         return builder.exec();
     }
+
 }

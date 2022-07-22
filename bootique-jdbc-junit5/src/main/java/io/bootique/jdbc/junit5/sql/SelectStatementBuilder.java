@@ -17,10 +17,11 @@
  * under the License.
  */
 
-package io.bootique.jdbc.junit5.connector;
+package io.bootique.jdbc.junit5.sql;
 
 import io.bootique.jdbc.junit5.RowConverter;
 import io.bootique.jdbc.junit5.RowReader;
+import io.bootique.jdbc.junit5.connector.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

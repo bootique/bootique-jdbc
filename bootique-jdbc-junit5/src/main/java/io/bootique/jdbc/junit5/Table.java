@@ -25,6 +25,7 @@ import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
+import io.bootique.jdbc.junit5.sql.*;
 
 /**
  * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test

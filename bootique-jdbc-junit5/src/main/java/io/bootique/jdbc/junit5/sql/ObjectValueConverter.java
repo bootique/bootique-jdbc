@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.jdbc.junit5.connector;
+package io.bootique.jdbc.junit5.sql;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -32,13 +32,13 @@ import java.util.function.Function;
 /**
  * Converts java types into proper sql types.
  */
-class ObjectValueConverter {
+public class ObjectValueConverter {
 
     private Map<Class<?>, Function<Object, Object>> converters;
     private Function<Object, Object> nullConverter;
     private Function<Object, Object> defaultConverter;
 
-    ObjectValueConverter() {
+    public ObjectValueConverter() {
 
         this.converters = new ConcurrentHashMap<>();
 

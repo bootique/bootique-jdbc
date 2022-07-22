@@ -20,8 +20,8 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.jdbc.junit5.connector.DbConnector;
-import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
-import io.bootique.jdbc.junit5.connector.InsertBuilder;
+import io.bootique.jdbc.junit5.sql.ExecStatementBuilder;
+import io.bootique.jdbc.junit5.sql.InsertBuilder;
 import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;

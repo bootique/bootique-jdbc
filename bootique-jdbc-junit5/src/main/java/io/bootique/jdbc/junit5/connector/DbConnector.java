@@ -22,6 +22,9 @@ package io.bootique.jdbc.junit5.connector;
 import io.bootique.jdbc.junit5.RowConverter;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
+import io.bootique.jdbc.junit5.sql.ExecStatementBuilder;
+import io.bootique.jdbc.junit5.sql.ObjectValueConverter;
+import io.bootique.jdbc.junit5.sql.SelectStatementBuilder;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

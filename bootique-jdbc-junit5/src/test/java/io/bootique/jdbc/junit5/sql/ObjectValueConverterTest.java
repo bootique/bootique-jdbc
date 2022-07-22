@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package io.bootique.jdbc.junit5.connector;
+package io.bootique.jdbc.junit5.sql;
 
-import io.bootique.jdbc.junit5.connector.ObjectValueConverter;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Date;

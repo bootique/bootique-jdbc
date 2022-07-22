@@ -22,7 +22,7 @@ import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.jdbc.junit5.connector.DbConnector;
-import io.bootique.jdbc.junit5.connector.ExecStatementBuilder;
+import io.bootique.jdbc.junit5.sql.ExecStatementBuilder;
 import io.bootique.jdbc.junit5.datasource.DataSourceHolder;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
 import io.bootique.jdbc.junit5.init.DbInitializer;

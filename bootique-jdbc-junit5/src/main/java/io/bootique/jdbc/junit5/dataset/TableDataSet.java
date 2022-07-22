@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.junit5.dataset;
 
-import io.bootique.jdbc.junit5.connector.InsertBuilder;
+import io.bootique.jdbc.junit5.sql.InsertBuilder;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 

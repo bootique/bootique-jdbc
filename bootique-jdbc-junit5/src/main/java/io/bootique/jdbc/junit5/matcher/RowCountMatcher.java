@@ -20,7 +20,7 @@
 package io.bootique.jdbc.junit5.matcher;
 
 import io.bootique.jdbc.junit5.Table;
-import io.bootique.jdbc.junit5.connector.SelectStatementBuilder;
+import io.bootique.jdbc.junit5.sql.SelectStatementBuilder;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
 import java.util.ArrayList;

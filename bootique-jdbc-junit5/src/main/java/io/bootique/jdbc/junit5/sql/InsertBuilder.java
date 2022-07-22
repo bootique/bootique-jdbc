@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.jdbc.junit5.connector;
+package io.bootique.jdbc.junit5.sql;
 
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.TableFQName;

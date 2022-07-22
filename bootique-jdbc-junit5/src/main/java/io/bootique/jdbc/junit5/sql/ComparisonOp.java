@@ -16,37 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package io.bootique.jdbc.junit5.matcher;
+package io.bootique.jdbc.junit5.sql;
 
 /**
- * @since 2.0
+ * @since 3.0
  */
-class BinaryCondition {
-
-    private String column;
-    private Object value;
-    private Comparison operator;
-
-    BinaryCondition(String column, Comparison operator, Object value) {
-        this.column = column;
-        this.value = value;
-        this.operator = operator;
-    }
-
-    String getColumn() {
-        return column;
-    }
-
-    Object getValue() {
-        return value;
-    }
-
-    Comparison getOperator() {
-        return operator;
-    }
-
-    enum Comparison {
-        eq, in
-    }
+public enum ComparisonOp {
+    eq, gt, ge, lt, le, in, ne
 }

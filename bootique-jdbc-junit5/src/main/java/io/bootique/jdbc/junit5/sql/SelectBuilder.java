@@ -49,12 +49,30 @@ public class SelectBuilder<T> {
         return new SelectBuilder<>(builder.converter(converter));
     }
 
-    public SelectWhereBuilder<T> where(String column, Object value) {
-        return where(column, value, DbColumnMetadata.NO_TYPE);
+    /**
+     * @since 3.0
+     */
+    public SelectWhereBuilder<T> where() {
+        return new SelectWhereBuilder<>(builder);
     }
 
+    public SelectWhereBuilder<T> where(String column, Object value) {
+        return where(column, DbColumnMetadata.NO_TYPE, value);
+    }
+
+    /**
+     * @since 3.0
+     */
+    public SelectWhereBuilder<T> where(String column, int valueType, Object value) {
+        return new SelectWhereBuilder<>(builder).andEq(column, valueType, value);
+    }
+
+    /**
+     * @deprecated since 3.0 in favor of {@link #where(String, int, Object)}
+     */
+    @Deprecated
     public SelectWhereBuilder<T> where(String column, Object value, int valueType) {
-        return new SelectWhereBuilder<>(builder).and(column, value, valueType);
+        return new SelectWhereBuilder<>(builder).andEq(column, valueType, value);
     }
 
     public List<T> select() {

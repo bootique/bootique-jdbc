@@ -20,12 +20,9 @@
 package io.bootique.jdbc.junit5.matcher;
 
 import io.bootique.jdbc.junit5.Table;
+import io.bootique.jdbc.junit5.sql.SelectBuilder;
 import io.bootique.jdbc.junit5.sql.SelectStatementBuilder;
-import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import io.bootique.jdbc.junit5.sql.SelectWhereBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,14 +32,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RowCountMatcher {
 
     private final Table table;
-    private List<BinaryCondition> conditions;
+    private final SelectWhereBuilder<Integer> countBuilder;
 
     public RowCountMatcher(Table table) {
         this.table = table;
+        this.countBuilder = countBuilder(table).where();
     }
 
     public RowCountMatcher eq(String column, Object value) {
-        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparison.eq, value));
+        countBuilder.andEq(column, table.getMetadata().getColumn(column).getType(), value);
         return this;
     }
 
@@ -50,116 +48,24 @@ public class RowCountMatcher {
      * @since 1.1
      */
     public RowCountMatcher in(String column, Object... values) {
-        getConditions().add(new BinaryCondition(column, BinaryCondition.Comparison.in, values));
+        countBuilder.andIn(column, table.getMetadata().getColumn(column).getType(), values);
         return this;
     }
 
     public void assertMatches(int expectedRowCount) {
-
-        SelectStatementBuilder<Integer> builder = countStatement();
-        int count = appendConditions(builder)
-                .select(1)
-                .get(0);
-
+        int count = countBuilder.select(1).get(0);
         assertEquals(expectedRowCount, count, "Unexpected row count in the DB");
     }
 
-    protected SelectStatementBuilder<Integer> countStatement() {
-        return table.getConnector()
+    protected SelectBuilder<Integer> countBuilder(Table table) {
+        SelectStatementBuilder<Integer> statementBuilder = table.getConnector()
                 .selectStatement()
                 // TODO: count() would usually return Long. We don't expect such large numbers in tests,
                 //  but wonder if we should still change the signature to return Long for consistency?
                 .converter(r -> ((Number) r[0]).intValue())
                 .append("select count(*) from ")
                 .appendTableName(table.getMetadata().getName());
-    }
-
-    protected <T> SelectStatementBuilder<T> appendConditions(SelectStatementBuilder<T> builder) {
-
-        if (conditions != null && !conditions.isEmpty()) {
-
-            String separator = " where ";
-
-            for (BinaryCondition c : conditions) {
-
-                // TODO: use some kind of tree visitor to parse conditions?
-
-                // TODO: pull out SQL translation from here... things like NULL syntax make it non-trivial, so would
-                //  be nice to reuse elsewhere
-
-                builder.append(separator);
-
-                switch (c.getOperator()) {
-                    case eq:
-                        appendEq(builder, c);
-                        break;
-                    case in:
-                        appendIn(builder, c);
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Unexpected operator: " + c.getOperator());
-                }
-
-                separator = " and ";
-            }
-        }
-
-        return builder;
-    }
-
-    protected <T> SelectStatementBuilder<T> appendEq(SelectStatementBuilder<T> builder, BinaryCondition eq) {
-        if (eq.getValue() != null) {
-
-            builder.appendIdentifier(eq.getColumn())
-                    .append(" ")
-                    .append("=")
-                    .append(" ")
-                    .appendBinding(table.getMetadata().getColumn(eq.getColumn()), eq.getValue());
-        } else {
-            builder.appendIdentifier(eq.getColumn()).append(" IS NULL");
-        }
-
-        return builder;
-    }
-
-    protected <T> SelectStatementBuilder<T> appendIn(SelectStatementBuilder<T> builder, BinaryCondition in) {
-
-        if (in.getValue() instanceof Object[]) {
-            return appendIn(builder, in.getColumn(), (Object[]) in.getValue());
-        } else if (in.getValue() instanceof Collection) {
-            Collection<?> c = (Collection<?>) in.getValue();
-            Object[] array = new Object[c.size()];
-            c.toArray(array);
-            return appendIn(builder, in.getColumn(), array);
-        } else {
-            // null collection or scalar value
-            return appendEq(builder, in);
-        }
-    }
-
-    protected <T> SelectStatementBuilder<T> appendIn(SelectStatementBuilder<T> builder, String columnName, Object[] values) {
-
-        builder.appendIdentifier(columnName).append(" in (");
-
-        DbColumnMetadata column = table.getMetadata().getColumn(columnName);
-
-        // TODO: how to handle empty collections?
-        for (int i = 0; i < values.length; i++) {
-
-            // TODO: NULL support via an extra "OR c IS NULL" clause
-            if (values[i] == null) {
-                throw new IllegalArgumentException("Can't use nulls in the 'IN' condition");
-            }
-
-            if (i > 0) {
-                builder.append(",");
-            }
-            builder.appendBinding(column, values[i]);
-        }
-
-        builder.append(")");
-
-        return builder;
+        return new SelectBuilder<>(statementBuilder);
     }
 
     public void assertOneMatch() {
@@ -168,14 +74,5 @@ public class RowCountMatcher {
 
     public void assertNoMatches() {
         assertMatches(0);
-    }
-
-    private Collection<BinaryCondition> getConditions() {
-
-        if (conditions == null) {
-            conditions = new ArrayList<>();
-        }
-
-        return conditions;
     }
 }

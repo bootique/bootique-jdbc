@@ -16,48 +16,56 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.jdbc.junit5.connector;
 
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 
-public class UpdateSetBuilder {
+/**
+ * @since 3.0
+ */
+public abstract class WhereBuilder<
+        WHERE_BUILDER extends WhereBuilder,
+        STATEMENT_BUILDER extends StatementBuilder<STATEMENT_BUILDER>> {
 
-    protected ExecStatementBuilder builder;
-    protected int setCount;
+    protected final STATEMENT_BUILDER builder;
+    protected int whereCount;
 
-    public UpdateSetBuilder(ExecStatementBuilder builder) {
+    protected WhereBuilder(STATEMENT_BUILDER builder) {
         this.builder = builder;
     }
 
-    /**
-     * @return the number of updated records.
-     */
-    public int exec() {
-        return builder.exec();
+    public WHERE_BUILDER and(String column, Object value) {
+        return and(column, value, DbColumnMetadata.NO_TYPE);
     }
 
+    public WHERE_BUILDER and(String column, Object value, int valueType) {
 
-    public UpdateSetBuilder set(String column, Object value) {
-        return set(column, value, DbColumnMetadata.NO_TYPE);
-    }
-
-    public UpdateSetBuilder set(String column, Object value, int valueType) {
-        if (setCount++ > 0) {
-            builder.append(", ");
+        if (whereCount++ > 0) {
+            builder.append(" and ");
+        } else {
+            builder.append(" where ");
         }
 
         builder.appendIdentifier(column)
                 .append(" = ")
                 .appendBinding(column, valueType, value);
-        return this;
+
+        return (WHERE_BUILDER) this;
     }
 
-    public ExecWhereBuilder where(String column, Object value) {
-        return where(column, value, DbColumnMetadata.NO_TYPE);
+    public WHERE_BUILDER or(String column, Object value) {
+        return or(column, value, DbColumnMetadata.NO_TYPE);
     }
 
-    public ExecWhereBuilder where(String column, Object value, int valueType) {
-        return new ExecWhereBuilder(builder).and(column, value, valueType);
+    public WHERE_BUILDER or(String column, Object value, int valueType) {
+        if (whereCount++ > 0) {
+            builder.append(" or ");
+        }
+
+        builder.appendIdentifier(column)
+                .append(" = ")
+                .appendBinding(column, valueType, value);
+
+        return (WHERE_BUILDER) this;
     }
 }

@@ -19,18 +19,13 @@
 
 package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
-
 /**
  * @since 2.0.B1
  */
-public class ExecWhereBuilder {
-
-    protected ExecStatementBuilder builder;
-    protected int whereCount;
+public class ExecWhereBuilder extends WhereBuilder<ExecWhereBuilder, ExecStatementBuilder> {
 
     public ExecWhereBuilder(ExecStatementBuilder builder) {
-        this.builder = builder;
+        super(builder);
     }
 
     /**
@@ -40,38 +35,4 @@ public class ExecWhereBuilder {
         return builder.exec();
     }
 
-    public ExecWhereBuilder and(String column, Object value) {
-        return and(column, value, DbColumnMetadata.NO_TYPE);
-    }
-
-    public ExecWhereBuilder and(String column, Object value, int valueType) {
-
-        if (whereCount++ > 0) {
-            builder.append(" and ");
-        } else {
-            builder.append(" where ");
-        }
-
-        builder.appendIdentifier(column)
-                .append(" = ")
-                .appendBinding(column, valueType, value);
-
-        return this;
-    }
-
-    public ExecWhereBuilder or(String column, Object value) {
-        return or(column, value, DbColumnMetadata.NO_TYPE);
-    }
-
-    public ExecWhereBuilder or(String column, Object value, int valueType) {
-        if (whereCount++ > 0) {
-            builder.append(" or ");
-        }
-
-        builder.appendIdentifier(column)
-                .append(" = ")
-                .appendBinding(column, valueType, value);
-
-        return this;
-    }
 }

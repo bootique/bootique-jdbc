@@ -54,9 +54,7 @@ public class SelectBuilder<T> {
     }
 
     public SelectWhereBuilder<T> where(String column, Object value, int valueType) {
-        SelectWhereBuilder where = new SelectWhereBuilder(builder);
-        where.and(column, value, valueType);
-        return where;
+        return new SelectWhereBuilder<>(builder).and(column, value, valueType);
     }
 
     public List<T> select() {

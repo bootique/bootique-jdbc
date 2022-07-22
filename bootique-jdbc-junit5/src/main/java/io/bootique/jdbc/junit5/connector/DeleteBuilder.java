@@ -36,9 +36,7 @@ public class DeleteBuilder {
     }
 
     public ExecWhereBuilder where(String column, Object value, int valueType) {
-        ExecWhereBuilder where = new ExecWhereBuilder(builder);
-        where.and(column, value, valueType);
-        return where;
+        return new ExecWhereBuilder(builder).and(column, value, valueType);
     }
 
     public int exec() {

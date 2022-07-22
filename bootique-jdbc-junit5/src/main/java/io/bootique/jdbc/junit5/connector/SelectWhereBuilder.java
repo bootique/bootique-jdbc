@@ -19,20 +19,15 @@
 
 package io.bootique.jdbc.junit5.connector;
 
-import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
-
 import java.util.List;
 
 /**
  * @since 2.0.B1
  */
-public class SelectWhereBuilder<T> {
-
-    protected final SelectStatementBuilder<T> builder;
-    protected int whereCount;
+public class SelectWhereBuilder<T> extends WhereBuilder<SelectWhereBuilder<T>, SelectStatementBuilder<T>> {
 
     public SelectWhereBuilder(SelectStatementBuilder<T> builder) {
-        this.builder = builder;
+        super(builder);
     }
 
     public List<T> select() {
@@ -50,40 +45,5 @@ public class SelectWhereBuilder<T> {
 
     public T selectOne(T defaultValue) {
         return builder.selectOne(defaultValue);
-    }
-
-    public SelectWhereBuilder<T> and(String column, Object value) {
-        return and(column, value, DbColumnMetadata.NO_TYPE);
-    }
-
-    public SelectWhereBuilder<T> and(String column, Object value, int valueType) {
-
-        if (whereCount++ > 0) {
-            builder.append(" and ");
-        } else {
-            builder.append(" where ");
-        }
-
-        builder.appendIdentifier(column)
-                .append(" = ")
-                .appendBinding(column, valueType, value);
-
-        return this;
-    }
-
-    public SelectWhereBuilder<T> or(String column, Object value) {
-        return or(column, value, DbColumnMetadata.NO_TYPE);
-    }
-
-    public SelectWhereBuilder<T> or(String column, Object value, int valueType) {
-        if (whereCount++ > 0) {
-            builder.append(" or ");
-        }
-
-        builder.appendIdentifier(column)
-                .append(" = ")
-                .appendBinding(column, valueType, value);
-
-        return this;
     }
 }

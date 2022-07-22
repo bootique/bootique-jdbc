@@ -76,7 +76,7 @@ public class TableMatcherIT {
 
         T1.insert(1, "y", "z");
         T1.insert(2, "a", "b");
-        matcher.eq("c3", "z").eq("c1", 1).assertMatches(1);
+        matcher.eq("c3", "z").andEq("c1", 1).assertMatches(1);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class TableMatcherIT {
 
         T1.insert(1, "y", "z");
         T1.insert(2, "a", null);
-        matcher.eq("c3", null).eq("c1", 2).assertMatches(1);
+        matcher.eq("c3", null).andEq("c1", 2).assertMatches(1);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class TableMatcherIT {
                 .values(1L, "abc", new BigDecimal("2.34"))
                 .exec();
 
-        matcher.eq("c3", new BigDecimal("2.34")).eq("c2", "abc").eq("c1", 1L).assertMatches(1);
+        matcher.eq("c3", new BigDecimal("2.34")).andEq("c2", "abc").andEq("c1", 1L).assertMatches(1);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class TableMatcherIT {
         T1.insert(2, "a", "x");
         T1.insert(3, "c", "d");
 
-        matcher.in("c3", "z", "x").eq("c2", "a").assertMatches(1);
+        matcher.in("c3", "z", "x").andEq("c2", "a").assertMatches(1);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TableMatcherIT {
 
         T1.insert(1, "y", "z");
 
-        assertAssertionError(() -> matcher.eq("c2", "z").eq("c1", 2).assertMatches(1),
+        assertAssertionError(() -> matcher.eq("c2", "z").andEq("c1", 2).assertMatches(1),
                 "The matcher incorrectly assumed there was 1 row matching condition.");
     }
 

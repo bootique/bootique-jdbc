@@ -40,11 +40,11 @@ public class TableMatcher {
     }
 
     public RowCountMatcher eq(String column, Object value) {
-        return new RowCountMatcher(table).eq(column, value);
+        return new RowCountMatcher(table).andEq(column, value);
     }
 
     public RowCountMatcher in(String column, Object... values) {
-        return new RowCountMatcher(table).in(column, values);
+        return new RowCountMatcher(table).andIn(column, values);
     }
 
     public void assertMatches(int expectedRows) {

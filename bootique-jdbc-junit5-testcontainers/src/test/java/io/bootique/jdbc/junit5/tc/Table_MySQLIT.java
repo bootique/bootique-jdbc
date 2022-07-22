@@ -50,7 +50,7 @@ public class Table_MySQLIT extends BaseMySQLTest {
         t1.insertColumns("c1", "c2").values(1, ldt).exec();
 
         t1.matcher().assertOneMatch();
-        t1.matcher().eq("c1", 1).eq("c2", ldt).assertOneMatch();
+        t1.matcher().eq("c1", 1).andEq("c2", ldt).assertOneMatch();
     }
 
     @Test
@@ -91,6 +91,6 @@ public class Table_MySQLIT extends BaseMySQLTest {
                 .exec();
 
         t5.matcher().assertOneMatch();
-        t5.matcher().eq("id", 2).eq("c1", 1234567890L).eq("c2", new BigDecimal("2.345")).assertOneMatch();
+        t5.matcher().eq("id", 2).andEq("c1", 1234567890L).andEq("c2", new BigDecimal("2.345")).assertOneMatch();
     }
 }

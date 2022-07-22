@@ -31,12 +31,30 @@ public class DeleteBuilder {
         this.builder = builder;
     }
 
-    public ExecWhereBuilder where(String column, Object value) {
-        return where(column, value, DbColumnMetadata.NO_TYPE);
+    /**
+     * @since 3.0
+     */
+    public ExecWhereBuilder where() {
+        return new ExecWhereBuilder(builder);
     }
 
+    public ExecWhereBuilder where(String column, Object value) {
+        return where(column, DbColumnMetadata.NO_TYPE, value);
+    }
+
+    /**
+     * @since 3.0
+     */
+    public ExecWhereBuilder where(String column, int valueType, Object value) {
+        return new ExecWhereBuilder(builder).andEq(column, valueType, value);
+    }
+
+    /**
+     * @deprecated since 3.0 in favor of {@link #where(String, int, Object)}
+     */
+    @Deprecated
     public ExecWhereBuilder where(String column, Object value, int valueType) {
-        return new ExecWhereBuilder(builder).and(column, value, valueType);
+        return where(column, valueType, value);
     }
 
     public int exec() {

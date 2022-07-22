@@ -53,11 +53,23 @@ public class UpdateSetBuilder {
         return this;
     }
 
-    public ExecWhereBuilder where(String column, Object value) {
-        return where(column, value, DbColumnMetadata.NO_TYPE);
+    public ExecWhereBuilder where() {
+        return new ExecWhereBuilder(builder);
     }
 
+    public ExecWhereBuilder where(String column, Object value) {
+        return where(column, DbColumnMetadata.NO_TYPE, value);
+    }
+
+    public ExecWhereBuilder where(String column, int valueType, Object value) {
+        return where().andEq(column, valueType, value);
+    }
+
+    /**
+     * @deprecated since 3.0 in favor of {@link #where(String, int, Object)}
+     */
+    @Deprecated
     public ExecWhereBuilder where(String column, Object value, int valueType) {
-        return new ExecWhereBuilder(builder).and(column, value, valueType);
+        return where(column, valueType, value);
     }
 }

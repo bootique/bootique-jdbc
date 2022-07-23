@@ -21,7 +21,7 @@ package io.bootique.jdbc.liquibase;
 
 import io.bootique.resource.ResourceFactory;
 import liquibase.ContextExpression;
-import liquibase.LabelExpression;
+import liquibase.Labels;
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.DatabaseChangeLog;
@@ -99,12 +99,12 @@ public class LiquibaseRunner {
         changeLog.setChangeLogParameters(new ChangeLogParameters(database));
 
         // TODO: do something useful with this?
-        LabelExpression labelExpression = new LabelExpression();
+        Labels labels = new Labels();
 
         changeLogs.forEach(cl -> {
             try {
                 LOGGER.info("Including change log: '{}'", cl.getResourceId());
-                changeLog.include(cl.getResourceId(), false, resourceAccessor, new ContextExpression(), labelExpression, false, true);
+                changeLog.include(cl.getResourceId(), false, resourceAccessor, new ContextExpression(), labels, false, DatabaseChangeLog.OnUnknownFileFormat.FAIL);
             } catch (LiquibaseException e) {
                 throw new RuntimeException("Error configuring Liquibase", e);
             }

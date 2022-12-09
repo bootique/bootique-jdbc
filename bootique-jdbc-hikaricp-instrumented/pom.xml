@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.bootique.jdbc</groupId>
         <artifactId>bootique-jdbc-parent</artifactId>
-        <version>3.0.M1-SNAPSHOT</version>
+        <version>3.0.M1</version>
     </parent>
 
     <artifactId>bootique-jdbc-hikaricp-instrumented</artifactId>

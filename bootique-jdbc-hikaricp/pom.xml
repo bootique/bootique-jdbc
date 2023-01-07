@@ -33,10 +33,6 @@
     <name>bootique-jdbc-hikaricp: Hikari JDBC connection pool integration with Bootique</name>
     <description>Provides Hikari JDBC connection pool integration with Bootique</description>
 
-    <properties>
-        <hikaricp.version>2.7.3</hikaricp.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

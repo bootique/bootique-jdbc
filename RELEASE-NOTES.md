@@ -1,3 +1,7 @@
+## 3.0.M2
+
+* #125 upgrade HikariCP to 5.0.1
+
 ## 3.0.M1
 
 * #114 JUnit 4 support deprecation

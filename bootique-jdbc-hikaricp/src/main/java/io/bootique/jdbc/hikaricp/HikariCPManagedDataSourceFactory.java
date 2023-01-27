@@ -117,6 +117,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     protected void closeDataSource(DataSource dataSource) {
+        // both LazyDataSource and HikariDataSource are AutoCloseable
         if (dataSource instanceof AutoCloseable) {
             try {
                 ((AutoCloseable) dataSource).close();

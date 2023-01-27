@@ -14,31 +14,14 @@
 # limitations under the License.
 
 jdbc:
-  derby:
+  lazyNoConfig:
+    # omitting configuration for the lazy DataSource should not cause exceptions
     type: "hikari"
-    connectionTimeout: 250
-    validationTimeout: 250
-    idleTimeout: 20000
-    leakDetectionThreshold: 20000
-    maxLifetime: 50000
-    maximumPoolSize: 3
+    lazy: true
+  lazy:
+    type: "hikari"
+    lazy: true
+    driverClassName: "org.apache.derby.jdbc.EmbeddedDriver"
+    jdbcUrl: "jdbc:derby:target/lazy;create=true"
     minimumIdle: 1
-    username: x
-    password: x
-    initializationFailTimeout: 100
-    catalog: "test-catalog"
-    connectionInitSql: "VALUES 1"
-    connectionTestQuery: "VALUES 1"
-    dataSourceClassName: "org.apache.derby.jdbc.EmbeddedDataSource"
-    jdbcUrl: "jdbc:derby:target/HikariCPModuleIT_full;"
-    transactionIsolation: "TRANSACTION_SERIALIZABLE"
-    autoCommit: true
-    readOnly: false
-    isolateInternalQueries: false
-    registerMbeans: false
-    allowPoolSuspension: false
-    dataSourceProperties:
-      databaseName: "target/ds1"
-      createDatabase: "create"
-
-
+    maximumPoolSize: 3

@@ -1,6 +1,7 @@
 ## 3.0.M2
 
 * #125 upgrade HikariCP to 5.0.1
+* #126 HikariCP - support for lazy DataSource creation
 
 ## 3.0.M1
 

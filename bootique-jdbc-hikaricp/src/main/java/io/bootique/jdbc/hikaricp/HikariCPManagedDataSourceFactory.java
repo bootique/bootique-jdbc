@@ -25,6 +25,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.di.Injector;
+import io.bootique.jdbc.LazyDataSource;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private static final long IDLE_TIMEOUT = MINUTES.toMillis(10);
     private static final long MAX_LIFETIME = MINUTES.toMillis(30);
 
+    private boolean lazy;
     private boolean allowPoolSuspension;
     private boolean autoCommit;
     private String catalog;
@@ -96,17 +98,25 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     @Override
     public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
 
-        Supplier<DataSource> startup = () -> {
-            validate();
-            LOGGER.info("Starting Hikari DataSource: {}", jdbcUrl);
-            return new HikariDataSource(toConfiguration(dataSourceName));
-        };
+        Supplier<DataSource> startup = lazy
+                ? () -> createLazyDataSource(dataSourceName)
+                : () -> createDataSource(dataSourceName);
 
         Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
-        return create(dataSourceName, injector, startup, shutdown);
+        return createDataSourceStarter(dataSourceName, injector, startup, shutdown);
     }
 
-    protected ManagedDataSourceStarter create(
+    protected DataSource createLazyDataSource(String dataSourceName) {
+        return new LazyDataSource(() -> createDataSource(dataSourceName));
+    }
+
+    protected DataSource createDataSource(String dataSourceName) {
+        validate();
+        LOGGER.info("Starting Hikari DataSource '{}' pointing to {}", dataSourceName, jdbcUrl);
+        return new HikariDataSource(toConfiguration(dataSourceName));
+    }
+
+    protected ManagedDataSourceStarter createDataSourceStarter(
             String dataSourceName,
             Injector injector,
             Supplier<DataSource> startup,
@@ -118,6 +128,12 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     protected void validate() {
         Objects.requireNonNull(jdbcUrl, "'jdbcUrl' property should not be null");
+    }
+
+    @BQConfigProperty("If true, the returned DataSource is initialized lazily. This allows to avoid database connection" +
+            " attempts in certain scenarios. E.g. when reading metadata of some objects.")
+    public void setLazy(boolean lazy) {
+        this.lazy = lazy;
     }
 
     @BQConfigProperty

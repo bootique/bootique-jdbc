@@ -43,7 +43,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
     private HikariCPHealthChecksFactory health;
 
     @Override
-    protected ManagedDataSourceStarter create(
+    protected ManagedDataSourceStarter createDataSourceStarter(
             String dataSourceName,
             Injector injector,
             Supplier<DataSource> startup,
@@ -52,9 +52,8 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
         MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
         Provider<DataSourceFactory> dataSourceFactoryProvider = injector.getProvider(DataSourceFactory.class);
         HealthCheckGroup healthChecks = healthChecks(metricRegistry, dataSourceFactoryProvider, dataSourceName);
-        String url = getJdbcUrl();
 
-        return new InstrumentedManagedDataSourceStarter(() -> url, startup, shutdown, healthChecks);
+        return new InstrumentedManagedDataSourceStarter(() -> getJdbcUrl(), startup, shutdown, healthChecks);
     }
 
     @BQConfigProperty

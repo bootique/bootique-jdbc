@@ -24,6 +24,7 @@ import com.zaxxer.hikari.pool.HikariPool;
 import com.zaxxer.hikari.util.DriverDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.LazyDataSource;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestFactory;
 import io.bootique.junit5.BQTestTool;
@@ -110,5 +111,29 @@ public class HikariCPDerbyIT {
         try (Connection c = hikariDS.getConnection()) {
             assertEquals("jdbc:derby:target/derby7", c.getMetaData().getURL());
         }
+    }
+
+    @Test
+    public void testLazy() throws SQLException {
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerby_LazyIT.yml").createRuntime();
+
+        DataSource lazy = runtime.getInstance(DataSourceFactory.class).forName("lazy");
+        assertTrue(lazy instanceof LazyDataSource);
+
+        try (Connection c = lazy.getConnection()) {
+            assertEquals("jdbc:derby:target/lazy", c.getMetaData().getURL());
+        }
+
+        DataSource delegate = lazy.unwrap(DataSource.class);
+        assertTrue(delegate instanceof HikariDataSource);
+    }
+
+    @Test
+    public void testLazyNoConfig() {
+        BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerby_LazyIT.yml").createRuntime();
+
+        DataSource lazy = runtime.getInstance(DataSourceFactory.class).forName("lazyNoConfig");
+        assertTrue(lazy instanceof LazyDataSource);
+        assertThrows(NullPointerException.class, () -> lazy.getConnection());
     }
 }

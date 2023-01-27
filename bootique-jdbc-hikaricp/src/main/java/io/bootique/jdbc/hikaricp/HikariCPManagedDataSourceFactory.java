@@ -102,7 +102,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
                 ? () -> createLazyDataSource(dataSourceName)
                 : () -> createDataSource(dataSourceName);
 
-        Consumer<DataSource> shutdown = ds -> ((HikariDataSource) ds).close();
+        Consumer<DataSource> shutdown = this::closeDataSource;
         return createDataSourceStarter(dataSourceName, injector, startup, shutdown);
     }
 
@@ -114,6 +114,16 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         validate();
         LOGGER.info("Starting Hikari DataSource '{}' pointing to {}", dataSourceName, jdbcUrl);
         return new HikariDataSource(toConfiguration(dataSourceName));
+    }
+
+    protected void closeDataSource(DataSource dataSource) {
+        if (dataSource instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) dataSource).close();
+            } catch (Exception e) {
+                throw new RuntimeException("Error closing DataSource", e);
+            }
+        }
     }
 
     protected ManagedDataSourceStarter createDataSourceStarter(

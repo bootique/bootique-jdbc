@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  *
  * @since 3.0
  */
-public class LazyDataSource implements DataSource {
+public class LazyDataSource implements DataSource, AutoCloseable {
 
     private final Supplier<DataSource> supplier;
     private volatile DataSource delegate;
@@ -49,6 +49,14 @@ public class LazyDataSource implements DataSource {
         }
 
         return delegate;
+    }
+
+    @Override
+    public void close() throws Exception {
+        DataSource local = this.delegate;
+        if (local instanceof AutoCloseable) {
+            ((AutoCloseable) local).close();
+        }
     }
 
     @Override

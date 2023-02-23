@@ -18,7 +18,8 @@
   under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -32,9 +33,9 @@
 
     <name>bootique-jdbc-liquibase-internal: Non-public module with Bootique Liquibase utilities</name>
     <description>
-    	Provides utilities and dependency management for Bootique modules that need to run Liquibase 
-    	migrations embedded in their code. Not intended for direct inclusion by the end users. 
-    	NOT TO BE EXPOSED to the users via "bootique-bom".
+        Provides utilities and dependency management for Bootique modules that need to run Liquibase
+        migrations embedded in their code. Not intended for direct inclusion by the end users.
+        NOT TO BE EXPOSED to the users via "bootique-bom".
     </description>
 
     <dependencyManagement>
@@ -64,6 +65,21 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>${jackson.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -80,6 +96,12 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <!-- Need to add this module for the sake of Jakarta environments (where it is superceded by -->
+        <!-- "jackson-module-jakarta-xmlbind-annotations". This prevent LB 3.x ServiceLoader errors. -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
         </dependency>
     </dependencies>
 

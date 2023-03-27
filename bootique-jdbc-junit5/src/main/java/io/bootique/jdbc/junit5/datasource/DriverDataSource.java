@@ -125,14 +125,17 @@ public class DriverDataSource implements DataSource {
 
     @Override
     public boolean isWrapperFor(Class<?> iface) {
-        throw new UnsupportedOperationException();
+        return iface.isInstance(this);
     }
 
     @Override
-    public <T> T unwrap(Class<T> iface) {
-        throw new UnsupportedOperationException();
-    }
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        if (!iface.isInstance(this)) {
+            throw new SQLException("Can't unwrap " + iface);
+        }
 
+        return (T) this;
+    }
 
     @Override
     public java.util.logging.Logger getParentLogger() {

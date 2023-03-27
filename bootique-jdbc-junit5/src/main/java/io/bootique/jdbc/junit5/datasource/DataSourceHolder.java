@@ -118,11 +118,11 @@ public class DataSourceHolder implements DataSource {
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return nonNullDataSource().unwrap(iface);
+        return iface.isInstance(this) ? (T) this : nonNullDataSource().unwrap(iface);
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return nonNullDataSource().isWrapperFor(iface);
+        return iface.isInstance(this) ? true : nonNullDataSource().isWrapperFor(iface);
     }
 }

@@ -275,13 +275,13 @@ public class PoolingDataSource implements DataSource {
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return (PoolingDataSource.class.equals(iface)) ? true : nonPoolingDataSource.isWrapperFor(iface);
+        return iface.isInstance(this) ? true : nonPoolingDataSource.isWrapperFor(iface);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return PoolingDataSource.class.equals(iface) ? (T) this : nonPoolingDataSource.unwrap(iface);
+        return iface.isInstance(this) ? (T) this : nonPoolingDataSource.unwrap(iface);
     }
 
     @Override

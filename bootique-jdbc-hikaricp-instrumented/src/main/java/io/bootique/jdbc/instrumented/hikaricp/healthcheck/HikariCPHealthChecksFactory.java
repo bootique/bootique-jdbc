@@ -24,16 +24,17 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.jdbc.DataSourceFactory;
+import io.bootique.jdbc.DataSourceUnwrapper;
 import io.bootique.metrics.health.HealthCheck;
 import io.bootique.metrics.health.HealthCheckGroup;
 import io.bootique.metrics.health.check.DeferredHealthCheck;
 import io.bootique.metrics.health.check.DurationRangeFactory;
 
+import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import javax.inject.Provider;
 
 @BQConfig("Configures health checks for a Hikari DataSource.")
 public class HikariCPHealthChecksFactory {
@@ -75,7 +76,7 @@ public class HikariCPHealthChecksFactory {
                 dataSourceFactoryProvider
                         .get()
                         .forNameIfStarted(dataSourceName)
-                        .map(ds -> (HikariDataSource) ds)
+                        .flatMap(ds -> DataSourceUnwrapper.unwrap(ds, HikariDataSource.class))
                         .map(ds -> new HikariCPConnectivityCheckFactory(connectivity).createHealthCheck(ds));
     }
 
@@ -88,7 +89,7 @@ public class HikariCPHealthChecksFactory {
                 dataSourceFactoryProvider
                         .get()
                         .forNameIfStarted(dataSourceName)
-                        .map(ds -> (HikariDataSource) ds)
+                        .flatMap(ds -> DataSourceUnwrapper.unwrap(ds, HikariDataSource.class))
                         .map(ds -> new Wait99PercentCheckFactory(connection99Percent)
                                 .createHealthCheck(registry, dataSourceName));
     }

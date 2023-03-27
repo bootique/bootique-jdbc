@@ -22,11 +22,13 @@ package io.bootique.jdbc.instrumented.hikaricp;
 import com.codahale.metrics.MetricRegistry;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.jdbc.DataSourceListener;
+import io.bootique.jdbc.DataSourceUnwrapper;
 import io.bootique.jdbc.instrumented.hikaricp.metrics.HikariMetricsBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
 public class HikariCPMetricsInitializer implements DataSourceListener {
 
@@ -45,8 +47,10 @@ public class HikariCPMetricsInitializer implements DataSourceListener {
 
     @Override
     public void afterStartup(String name, String jdbcUrl, DataSource dataSource) {
-        if (dataSource instanceof HikariDataSource) {
-            collectPoolMetrics((HikariDataSource) dataSource);
+
+        Optional<HikariDataSource> hds = DataSourceUnwrapper.unwrap(dataSource, HikariDataSource.class);
+        if (hds.isPresent()) {
+            collectPoolMetrics(hds.get());
         } else {
             LOGGER.warn("DataSource ({}) is not an instance of HikariDataSource, skipping metrics init", dataSource.getClass());
         }

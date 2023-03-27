@@ -106,11 +106,11 @@ public class LazyDataSource implements DataSource, AutoCloseable {
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return getDelegate().unwrap(iface);
+        return iface.isInstance(this) ? (T) this : getDelegate().unwrap(iface);
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return getDelegate().isWrapperFor(iface);
+        return iface.isInstance(this) ? true : getDelegate().isWrapperFor(iface);
     }
 }

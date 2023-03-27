@@ -124,8 +124,11 @@ public class HikariCPDerbyIT {
             assertEquals("jdbc:derby:target/lazy", c.getMetaData().getURL());
         }
 
-        DataSource delegate = lazy.unwrap(DataSource.class);
-        assertTrue(delegate instanceof HikariDataSource);
+        boolean wrapsHikari = lazy.isWrapperFor(HikariDataSource.class);
+        assertTrue(wrapsHikari);
+
+        HikariDataSource delegate = lazy.unwrap(HikariDataSource.class);
+        assertNotNull(delegate);
     }
 
     @Test

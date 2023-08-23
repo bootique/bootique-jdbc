@@ -66,7 +66,7 @@ public class DerbyTester extends DbTester<DerbyTester> {
     private final String dbUrl;
 
     /**
-     * Creates a tester that will use in-memory Derby DB, with DB files stored in a temporary directory.
+     * Creates a tester that will use in-memory Derby DB, with DB files stored in a unique temporary directory.
      *
      * @return a new tester instance
      */
@@ -77,9 +77,35 @@ public class DerbyTester extends DbTester<DerbyTester> {
             tempFir[0] = Files.createTempDirectory("io.bootique.jdbc.test.derby-db");
         });
 
-        return new DerbyTester(tempFir[0].toFile());
+        return db(tempFir[0].toFile());
     }
 
+    /**
+     * Creates a tester that will use in-memory Derby DB, with DB files stored in under the provided directory in a
+     * subfolder called "derby".
+     *
+     * @return a new tester instance
+     * @since 3.0
+     */
+    public static DerbyTester db(String derbyFolder) {
+        return new DerbyTester(new File(derbyFolder));
+    }
+
+    /**
+     * Creates a tester that will use in-memory Derby DB, with DB files stored in under the provided directory in a
+     * subfolder called "derby".
+     *
+     * @return a new tester instance
+     * @since 3.0
+     */
+    public static DerbyTester db(File derbyFolder) {
+        return new DerbyTester(derbyFolder);
+    }
+
+    /**
+     * @deprecated use {@link #db(File)}. This constructor will be made non-public eventually.
+     */
+    @Deprecated(since = "3.0")
     public DerbyTester(File derbyFolder) {
         this.derbyFolder = Objects.requireNonNull(derbyFolder);
 

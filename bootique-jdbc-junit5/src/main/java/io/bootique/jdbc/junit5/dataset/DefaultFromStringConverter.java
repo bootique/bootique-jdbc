@@ -66,6 +66,7 @@ public class DefaultFromStringConverter implements FromStringConverter {
             case Types.BIGINT:
                 return Long.valueOf(value);
             case Types.DECIMAL:
+            case Types.NUMERIC:
                 return new BigDecimal(value);
             case Types.DATE:
                 return Date.valueOf(LocalDate.parse(value));

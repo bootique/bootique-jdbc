@@ -47,7 +47,7 @@ public class DataSourceFactoryIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testForName_NoImpl() {
+    public void forName_NoImpl() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_notype.yml")
                 .autoLoadModules()
@@ -62,7 +62,7 @@ public class DataSourceFactoryIT {
     }
 
     @Test
-    public void testForName_SingleImpl() {
+    public void forName_SingleImpl() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_notype.yml")
                 .autoLoadModules()
@@ -75,7 +75,7 @@ public class DataSourceFactoryIT {
     }
 
     @Test
-    public void testForName_MultiImpl() {
+    public void forName_MultiImpl() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/DataSourceFactoryIT_notype.yml")
                 .autoLoadModules()
@@ -91,7 +91,7 @@ public class DataSourceFactoryIT {
     }
 
     @Test
-    public void testForName_ListenerLifecycle() {
+    public void forName_ListenerLifecycle() {
 
         TestListener listener = new TestListener();
 

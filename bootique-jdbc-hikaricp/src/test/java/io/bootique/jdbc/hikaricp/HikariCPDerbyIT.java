@@ -44,7 +44,7 @@ public class HikariCPDerbyIT {
     final BQTestFactory testFactory = new BQTestFactory().autoLoadModules();
 
     @Test
-    public void testDerbyDataSource() throws SQLException {
+    public void derbyDataSource() throws SQLException {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml").createRuntime();
 
         DataSource ds4 = runtime.getInstance(DataSourceFactory.class).forName("derby4");
@@ -65,7 +65,7 @@ public class HikariCPDerbyIT {
     }
 
     @Test
-    public void testDerbyDriverDataSource() throws SQLException {
+    public void derbyDriverDataSource() throws SQLException {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT.yml").createRuntime();
 
         DataSource ds5 = runtime.getInstance(DataSourceFactory.class).forName("derby5");
@@ -86,7 +86,7 @@ public class HikariCPDerbyIT {
     }
 
     @Test
-    public void testDerbyDataSource_ConnectionAttributes() throws SQLException {
+    public void derbyDataSource_ConnectionAttributes() throws SQLException {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml").createRuntime();
 
         DataSource ds6 = runtime.getInstance(DataSourceFactory.class).forName("derby6");
@@ -100,7 +100,7 @@ public class HikariCPDerbyIT {
     }
 
     @Test
-    public void testDerbyDriver_ConnectionAttributes() throws SQLException {
+    public void derbyDriver_ConnectionAttributes() throws SQLException {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerbyIT_connAttrs.yml").createRuntime();
 
         DataSource ds7 = runtime.getInstance(DataSourceFactory.class).forName("derby7");
@@ -114,7 +114,7 @@ public class HikariCPDerbyIT {
     }
 
     @Test
-    public void testLazy() throws SQLException {
+    public void lazy() throws SQLException {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerby_LazyIT.yml").createRuntime();
 
         DataSource lazy = runtime.getInstance(DataSourceFactory.class).forName("lazy");
@@ -132,7 +132,7 @@ public class HikariCPDerbyIT {
     }
 
     @Test
-    public void testLazyNoConfig() {
+    public void lazyNoConfig() {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPDerby_LazyIT.yml").createRuntime();
 
         DataSource lazy = runtime.getInstance(DataSourceFactory.class).forName("lazyNoConfig");

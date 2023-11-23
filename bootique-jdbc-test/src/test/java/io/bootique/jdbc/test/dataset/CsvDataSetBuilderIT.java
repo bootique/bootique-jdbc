@@ -73,13 +73,13 @@ public class CsvDataSetBuilderIT {
     }
 
     @Test
-    public void testLoad_Empty() {
+    public void load_Empty() {
         T1.csvDataSet().load("classpath:io/bootique/jdbc/test/dataset/empty.csv").persist();
         T1.matcher().assertNoMatches();
     }
 
     @Test
-    public void testCsvDataSet_Load() {
+    public void csvDataSet_Load() {
         T1.csvDataSet().load("classpath:io/bootique/jdbc/test/dataset/t1.csv").persist();
 
         List<Object[]> data = T1.select();
@@ -100,7 +100,7 @@ public class CsvDataSetBuilderIT {
     }
 
     @Test
-    public void testCsvDataSet_Load_Nulls_Dates() {
+    public void csvDataSet_Load_Nulls_Dates() {
         T2.csvDataSet().load("classpath:io/bootique/jdbc/test/dataset/t2.csv").persist();
 
         List<Object[]> data = T2.select();
@@ -127,7 +127,7 @@ public class CsvDataSetBuilderIT {
     }
 
     @Test
-    public void testCsvDataSet_Load_Binary() {
+    public void csvDataSet_Load_Binary() {
         T3.csvDataSet().load("classpath:io/bootique/jdbc/test/dataset/t3.csv").persist();
 
         List<Object[]> data = T3.select();
@@ -150,7 +150,7 @@ public class CsvDataSetBuilderIT {
     }
 
     @Test
-    public void testCsvDataSet_Load_Boolean() {
+    public void csvDataSet_Load_Boolean() {
         T4.csvDataSet().load("classpath:io/bootique/jdbc/test/dataset/t4.csv").persist();
 
         List<Object[]> data = T4.select();

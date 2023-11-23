@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test;
 
 public class JdbcModuleProviderIT {
     @Test
-    public void testAutoLoadable() {
+    public void autoLoadable() {
         BQModuleProviderChecker.testAutoLoadable(JdbcModuleProvider.class);
     }
 
     @Test
-    public void testMetadata() {
+    public void metadata() {
         BQModuleProviderChecker.testMetadata(JdbcModuleProvider.class);
     }
 }

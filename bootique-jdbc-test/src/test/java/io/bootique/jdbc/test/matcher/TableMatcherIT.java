@@ -65,7 +65,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches() {
+    public void assertMatches() {
         TableMatcher matcher = new TableMatcher(T1);
         matcher.assertMatches(0);
 
@@ -77,7 +77,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_Eq() {
+    public void assertMatches_Eq() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -86,7 +86,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_Eq_Null() {
+    public void assertMatches_Eq_Null() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -95,7 +95,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_In() {
+    public void assertMatches_In() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -118,7 +118,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_In_Eq() {
+    public void assertMatches_In_Eq() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -129,14 +129,14 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatches_Negative() {
+    public void assertMatches_Negative() {
         TableMatcher matcher = new TableMatcher(T1);
         assertAssertionError(() -> matcher.assertMatches(1), "The matcher incorrectly assumed there's 1 row in " +
                 "DB when there's none.");
     }
 
     @Test
-    public void testAssertMatches_Eq_Negative() {
+    public void assertMatches_Eq_Negative() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");
@@ -146,7 +146,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatchesCsv() {
+    public void assertMatchesCsv() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insertColumns("c1", "c2", "c3")
@@ -158,7 +158,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatchesCsv_NoMatch() {
+    public void assertMatchesCsv_NoMatch() {
 
         TableMatcher matcher = new TableMatcher(T1);
 
@@ -180,7 +180,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatchesCsv_Dates() {
+    public void assertMatchesCsv_Dates() {
 
         TableMatcher matcher = new TableMatcher(T2);
 
@@ -194,7 +194,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatchesCsv_Binary() {
+    public void assertMatchesCsv_Binary() {
 
         TableMatcher matcher = new TableMatcher(T3);
 
@@ -208,7 +208,7 @@ public class TableMatcherIT {
     }
 
     @Test
-    public void testAssertMatchesCsv_Bigint() {
+    public void assertMatchesCsv_Bigint() {
 
         TableMatcher matcher = new TableMatcher(T4);
 

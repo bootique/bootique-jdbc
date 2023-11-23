@@ -30,13 +30,13 @@ import static org.mockito.Mockito.mock;
 public class LazyDataSourceFactoryTest {
 
     @Test
-    public void testCreateManagedDataSource_NoConfig() {
+    public void createManagedDataSource_NoConfig() {
         LazyDataSourceFactory factory = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet());
         assertThrows(IllegalStateException.class, () -> factory.createManagedDataSource("nosuchname"));
     }
 
     @Test
-    public void testAllNames() {
+    public void allNames() {
         LazyDataSourceFactory f1 = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet());
         assertEquals(0, f1.allNames().size());
 

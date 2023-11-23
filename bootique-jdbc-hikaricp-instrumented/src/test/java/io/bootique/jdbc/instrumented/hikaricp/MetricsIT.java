@@ -46,7 +46,7 @@ public class MetricsIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testConnectionStateMetrics() throws SQLException {
+    public void connectionStateMetrics() throws SQLException {
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/MetricsIT.yml")
                 .autoLoadModules()
@@ -78,7 +78,7 @@ public class MetricsIT {
 
 
     @Test
-    public void testUsageMetric() throws SQLException, InterruptedException {
+    public void usageMetric() throws SQLException, InterruptedException {
 
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/MetricsIT.yml")

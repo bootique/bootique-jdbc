@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ManagedDataSourceFactoryProxyTest {
 
     @Test
-    public void testLeafFactories() {
+    public void leafFactories() {
 
         Set<Class<? extends ManagedDataSourceFactory>> factories = new HashSet<>(
                 asList(

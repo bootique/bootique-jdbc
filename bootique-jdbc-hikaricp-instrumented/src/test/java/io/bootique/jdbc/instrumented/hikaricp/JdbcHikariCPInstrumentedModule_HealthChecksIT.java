@@ -39,7 +39,7 @@ public class JdbcHikariCPInstrumentedModule_HealthChecksIT {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testHealthChecks() {
+    public void healthChecks() {
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/JdbcHikariCPInstrumentedModule_HealthChecksIT.yml")
                 .autoLoadModules()
@@ -54,7 +54,7 @@ public class JdbcHikariCPInstrumentedModule_HealthChecksIT {
     }
 
     @Test
-    public void testHealthChecksMultipleDs() {
+    public void healthChecksMultipleDs() {
 
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/JdbcHikariCPInstrumentedModule_HealthChecksIT_multi.yml")
@@ -72,7 +72,7 @@ public class JdbcHikariCPInstrumentedModule_HealthChecksIT {
     }
 
     @Test
-    public void testHealthChecks_Implicit() {
+    public void healthChecks_Implicit() {
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/JdbcHikariCPInstrumentedModule_HealthChecksIT_no_health.yml")
                 .autoLoadModules()

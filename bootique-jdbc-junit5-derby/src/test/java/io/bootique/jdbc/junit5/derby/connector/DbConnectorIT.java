@@ -37,7 +37,7 @@ public class DbConnectorIT {
     static final DerbyTester derbyTester = DerbyTester.db();
 
     @Test
-    public void testDerbyQuotes() {
+    public void derbyQuotes() {
         DataSource dataSource = derbyTester.getDataSource();
         DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
         assertEquals("\"a\"", connector.getIdentifierQuoter().quoted("a"));

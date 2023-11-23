@@ -38,14 +38,14 @@ public class RowKeyFactoryTest {
     }
 
     @Test
-    public void testCreateKey_OneColumn() {
+    public void createKey_OneColumn() {
         RowKeyFactory factory = RowKeyFactory.create(columns, new String[]{"A"});
         RowKey key = factory.createKey(new Object[]{1, 2, 3});
         assertEquals("[1]", key.toString());
     }
 
     @Test
-    public void testCreateKey_MultiColumn() {
+    public void createKey_MultiColumn() {
         RowKeyFactory factory = RowKeyFactory.create(columns, new String[]{"A", "C"});
         RowKey key = factory.createKey(new Object[]{1, 2, 3});
         assertEquals("[1, 3]", key.toString());

@@ -29,7 +29,7 @@ import static org.junit.Assert.assertFalse;
 public class DerbyLifecycleListenerTest {
 
     @Test
-    public void testGetDbDir() {
+    public void getDbDir() {
 
         assertFalse(DerbyListener.getDbDir(Optional.empty()).isPresent());
         assertFalse(DerbyListener.getDbDir(Optional.of("jdbc:mysql:")).isPresent());

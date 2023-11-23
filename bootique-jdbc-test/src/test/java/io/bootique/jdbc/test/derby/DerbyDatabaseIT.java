@@ -54,7 +54,7 @@ public class DerbyDatabaseIT {
     }
 
     @Test
-    public void testDbOp1() {
+    public void dbOp1() {
 
         channel.execStatement().append("CREATE TABLE A (ID int)").exec();
 
@@ -68,7 +68,7 @@ public class DerbyDatabaseIT {
     }
 
     @Test
-    public void testDbOp2() {
+    public void dbOp2() {
 
         // second test, to ensure the DB was cleaned up...
 

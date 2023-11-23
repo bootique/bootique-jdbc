@@ -45,7 +45,7 @@ public class DerbyTester_ModuleWithTestDataSourceIT {
             .createRuntime();
 
     @Test
-    public void testTwoDataSources() {
+    public void twoDataSources() {
         DataSourceFactory dsf = app.getInstance(DataSourceFactory.class);
         assertEquals(new HashSet<>(asList("db1", "db2")), dsf.allNames());
     }

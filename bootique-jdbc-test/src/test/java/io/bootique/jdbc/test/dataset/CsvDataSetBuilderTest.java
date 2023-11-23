@@ -51,14 +51,14 @@ public class CsvDataSetBuilderTest {
     }
 
     @Test
-    public void testBuild_Empty() {
+    public void build_Empty() {
         TableDataSet ds = new CsvDataSetBuilder(table).columns("c2,c1").build();
         assertEquals(2, ds.getHeader().size());
         assertEquals(0, ds.size());
     }
 
     @Test
-    public void testBuild() {
+    public void build() {
         TableDataSet ds = new CsvDataSetBuilder(table)
                 .columns("c2,c1")
                 .rows(

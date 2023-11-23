@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DriverDataSourceTest {
 
     @Test
-    public void testIsWrapperFor() {
+    public void isWrapperFor() {
 
         DriverDataSource ds = new DriverDataSource(null, "jdbc:derby:target/derby/bla", null, null);
 
@@ -43,7 +43,7 @@ public class DriverDataSourceTest {
     }
 
     @Test
-    public void testUnwrap() throws SQLException {
+    public void unwrap() throws SQLException {
 
         DriverDataSource ds = new DriverDataSource(null, "jdbc:derby:target/derby/bla", null, null);
 

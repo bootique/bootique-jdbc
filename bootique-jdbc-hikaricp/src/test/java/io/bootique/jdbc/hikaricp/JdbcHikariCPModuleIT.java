@@ -40,7 +40,7 @@ public class JdbcHikariCPModuleIT {
     final BQTestFactory testFactory = new BQTestFactory().autoLoadModules();
 
     @Test
-    public void testDataSource() {
+    public void dataSource() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_ds.yml").createRuntime();
 
@@ -59,7 +59,7 @@ public class JdbcHikariCPModuleIT {
     }
 
     @Test
-    public void testDataSource_DriverAutoDetected() throws SQLException {
+    public void dataSource_DriverAutoDetected() throws SQLException {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_nodriver.yml").createRuntime();
 
@@ -73,7 +73,7 @@ public class JdbcHikariCPModuleIT {
     }
 
     @Test
-    public void testDataSource_TypeAutoDetected() {
+    public void dataSource_TypeAutoDetected() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_notype.yml").createRuntime();
 
@@ -87,7 +87,7 @@ public class JdbcHikariCPModuleIT {
     }
 
     @Test
-    public void testDataSource_FullConfig() throws SQLException {
+    public void dataSource_FullConfig() throws SQLException {
         BQRuntime runtime = testFactory.app("-c", "classpath:HikariCPModuleIT_full.yml").createRuntime();
 
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("derby");

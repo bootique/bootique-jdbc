@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class RowKeyTest {
 
     @Test
-    public void testHashCode() {
+    public void hashCodeTest() {
 
         RowKey rk1 = new RowKey(new Object[] {"a", 1});
         RowKey rk2 = new RowKey(new Object[] {"a", 1});
@@ -39,7 +39,7 @@ public class RowKeyTest {
     }
 
     @Test
-    public void testEquals() {
+    public void equals() {
 
         RowKey rk1 = new RowKey(new Object[] {"a", 1});
         RowKey rk2 = new RowKey(new Object[] {"a", 1});

@@ -37,7 +37,7 @@ public class Table_PostgresIT extends BasePostgresTest {
     static final Table t5 = db.getTable("t5");
 
     @Test
-    public void testDateTime_ViaSelect() {
+    public void dateTime_ViaSelect() {
         LocalDateTime ldt = LocalDateTime.of(2018, 1, 10, 4, 0, 1);
         t1.insertColumns("c1", "c2").values(1, ldt).exec();
 
@@ -47,7 +47,7 @@ public class Table_PostgresIT extends BasePostgresTest {
     }
 
     @Test
-    public void testDateTime_ViaMatcher() {
+    public void dateTime_ViaMatcher() {
         LocalDateTime ldt = LocalDateTime.of(2018, 1, 10, 4, 0, 1);
         t1.insertColumns("c1", "c2").values(1, ldt).exec();
 
@@ -56,7 +56,7 @@ public class Table_PostgresIT extends BasePostgresTest {
     }
 
     @Test
-    public void testInsertNumericColumns() throws SQLException {
+    public void insertNumericColumns() throws SQLException {
         t5.insertColumns("id", "c1", "c2")
                 .values(1, null, null)
                 .values(2, Long.MAX_VALUE - 5, new BigDecimal("2.345"))
@@ -87,7 +87,7 @@ public class Table_PostgresIT extends BasePostgresTest {
     }
 
     @Test
-    public void testMatcher_NumericColumns() {
+    public void matcher_NumericColumns() {
         t5.insertColumns("id", "c1", "c2")
                 .values(2, 1234567890L, new BigDecimal("2.345"))
                 .exec();

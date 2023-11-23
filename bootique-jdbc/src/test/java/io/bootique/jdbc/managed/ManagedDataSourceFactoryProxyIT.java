@@ -48,7 +48,7 @@ public class ManagedDataSourceFactoryProxyIT {
     private static final String configPrefix = "jdbc";
 
     @Test
-    public void testFactory_MultiLevel() {
+    public void factory_MultiLevel() {
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/factory-type.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b)
@@ -76,7 +76,7 @@ public class ManagedDataSourceFactoryProxyIT {
     }
 
     @Test
-    public void testFactory_Hierarchical() {
+    public void factory_Hierarchical() {
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/factory-type.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b)
@@ -106,7 +106,7 @@ public class ManagedDataSourceFactoryProxyIT {
     }
 
     @Test
-    public void testFactories_Hierarchical() {
+    public void factories_Hierarchical() {
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/factories-type.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b)
@@ -136,7 +136,7 @@ public class ManagedDataSourceFactoryProxyIT {
     }
 
     @Test
-    public void testFactory_MultilevelNoType() {
+    public void factory_MultilevelNoType() {
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/factory-notype.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b)
@@ -163,7 +163,7 @@ public class ManagedDataSourceFactoryProxyIT {
     }
 
     @Test
-    public void testFactory_HierarchicalNoType_Exception() {
+    public void factory_HierarchicalNoType_Exception() {
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/factory-notype.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b)
@@ -182,7 +182,7 @@ public class ManagedDataSourceFactoryProxyIT {
     }
 
     @Test
-    public void testFactories_NoType_Exception() {
+    public void factories_NoType_Exception() {
         BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/jdbc/factory-notype.yml")
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b)

@@ -58,7 +58,7 @@ public class TableTest {
     }
 
     @Test
-    public void testInsertColumns() {
+    public void insertColumns() {
         Table t = createTable();
 
         InsertBuilder insertBuilder = t.insertColumns("c", "a");
@@ -72,7 +72,7 @@ public class TableTest {
     }
 
     @Test
-    public void testMatcher() {
+    public void matcher() {
         Table t = createTable();
 
         TableMatcher m = t.matcher();
@@ -81,7 +81,7 @@ public class TableTest {
     }
 
     @Test
-    public void testCsvDataSet() {
+    public void csvDataSet() {
 
         Table t = createTable();
 

@@ -42,7 +42,7 @@ public class DerbyTester_TestFactoryIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testCreateRuntimeWithTestFactory() {
+    public void createRuntimeWithTestFactory() {
         BQRuntime rt1 = testFactory
                 .app()
                 .autoLoadModules()
@@ -64,7 +64,7 @@ public class DerbyTester_TestFactoryIT {
     }
 
     @Test
-    public void testRunWithTestFactory() {
+    public void runWithTestFactory() {
 
         Command c = cli -> CommandOutcome.succeeded();
         CommandOutcome ran = testFactory

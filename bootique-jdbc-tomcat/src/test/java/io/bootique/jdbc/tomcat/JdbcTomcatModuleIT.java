@@ -39,7 +39,7 @@ public class JdbcTomcatModuleIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testDataSource() {
+    public void dataSource() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:TomcatJdbcModuleIT_full.yml")
                 .autoLoadModules()
@@ -60,7 +60,7 @@ public class JdbcTomcatModuleIT {
     }
 
     @Test
-    public void testDataSource_DriverAutoDetected() throws SQLException {
+    public void dataSource_DriverAutoDetected() throws SQLException {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:TomcatJdbcModuleIT_nodriver.yml")
                 .autoLoadModules()
@@ -76,7 +76,7 @@ public class JdbcTomcatModuleIT {
     }
 
     @Test
-    public void testDataSource_TypeAutoDetected() {
+    public void dataSource_TypeAutoDetected() {
 
         BQRuntime runtime = testFactory.app("-c", "classpath:TomcatJdbcModuleIT_notype.yml")
                 .autoLoadModules()

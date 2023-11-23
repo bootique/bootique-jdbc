@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PoolingDataSourceTest {
 
     @Test
-    public void testIsWrapperFor() throws SQLException {
+    public void isWrapperFor() throws SQLException {
         PoolingDataSourceParameters params =  new PoolingDataSourceParameters();
         params.setMaxConnections(1);
         params.setMinConnections(0);
@@ -50,7 +50,7 @@ public class PoolingDataSourceTest {
     }
 
     @Test
-    public void testUnwrap() throws SQLException {
+    public void unwrap() throws SQLException {
 
         DS1 wrapped = new DS1();
 

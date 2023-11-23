@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 public class GroupDataSetTest {
 
     @Test
-    public void testPersist() {
+    public void persist() {
         DataSet ds1 = mock(DataSet.class);
         DataSet ds2 = mock(DataSet.class);
 

@@ -31,17 +31,17 @@ public class JdbcHikariCPModuleProviderIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testAutoLoadable() {
+    public void autoLoadable() {
         BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPModuleProvider.class);
     }
 
     @Test
-    public void testMetadata() {
+    public void metadata() {
         BQModuleProviderChecker.testMetadata(JdbcHikariCPModuleProvider.class);
     }
 
     @Test
-    public void testModuleDeclaresDependencies() {
+    public void moduleDeclaresDependencies() {
         final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcHikariCPModuleProvider()).createRuntime();
         BQRuntimeChecker.testModulesLoaded(bqRuntime, JdbcModule.class);
     }

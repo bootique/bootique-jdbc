@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DbConnectorMySQLIT extends BaseMySQLTest {
 
     @Test
-    public void testMySQLQuotes() {
+    public void mySQLQuotes() {
         DataSource dataSource = db.getDataSource();
         DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource));
         assertEquals("`a`", connector.getIdentifierQuoter().quoted("a"));

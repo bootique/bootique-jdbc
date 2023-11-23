@@ -55,19 +55,19 @@ public class CsvDataSetBuilderTest {
     }
 
     @Test
-    public void testBuild_BadColumns() {
+    public void build_BadColumns() {
         assertThrows(RuntimeException.class, () -> new CsvDataSetBuilder(table).columns("a,b").build());
     }
 
     @Test
-    public void testBuild_Empty() {
+    public void build_Empty() {
         TableDataSet ds = new CsvDataSetBuilder(table).columns("c2,c1").build();
         assertEquals(2, ds.getHeader().length);
         assertEquals(0, ds.size());
     }
 
     @Test
-    public void testBuild() {
+    public void build() {
         TableDataSet ds = new CsvDataSetBuilder(table)
                 .columns("c2,c1,c5,c4")
                 .rows(

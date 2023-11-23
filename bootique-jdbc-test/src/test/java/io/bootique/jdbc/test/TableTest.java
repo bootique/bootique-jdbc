@@ -47,7 +47,7 @@ public class TableTest {
     }
 
     @Test
-    public void testInsertColumns() {
+    public void insertColumns() {
         Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
 
         InsertBuilder insertBuilder = t.insertColumns("c", "a");
@@ -57,7 +57,7 @@ public class TableTest {
     }
 
     @Test
-    public void testMatcher() {
+    public void matcher() {
         Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
 
         TableMatcher m = t.matcher();
@@ -66,7 +66,7 @@ public class TableTest {
     }
 
     @Test
-    public void testCsvDataSet() {
+    public void csvDataSet() {
 
         Table t = Table.builder(mockChannel, "t").columnNames("a", "b", "c").build();
 

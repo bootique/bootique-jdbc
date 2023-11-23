@@ -45,7 +45,7 @@ public class JdbcTomcatInstrumentedModuleIT {
     static final BQTestFactory TEST_FACTORY = new BQTestFactory();
 
     @Test
-    public void testMetricsListener_Injected() {
+    public void metricsListener_Injected() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/dummy-ds.yml")
                 .autoLoadModules()
                 .createRuntime();
@@ -59,7 +59,7 @@ public class JdbcTomcatInstrumentedModuleIT {
     }
 
     @Test
-    public void testMetrics() {
+    public void metrics() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/dummy-ds.yml")
                 .autoLoadModules()
                 .createRuntime();
@@ -81,7 +81,7 @@ public class JdbcTomcatInstrumentedModuleIT {
     }
 
     @Test
-    public void testHealthChecks() {
+    public void healthChecks() {
         BQRuntime runtime = TEST_FACTORY.app("-c", "classpath:io/bootique/jdbc/instrumented/dummy-ds.yml")
                 .autoLoadModules()
                 .createRuntime();

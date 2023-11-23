@@ -40,7 +40,7 @@ public class HikariCPMetricsInitializerIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testMetrics() {
+    public void metrics() {
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/HikariCPMetricsInitializer.yml")
                 .autoLoadModules()

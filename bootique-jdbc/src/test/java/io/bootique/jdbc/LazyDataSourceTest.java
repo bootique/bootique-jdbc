@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LazyDataSourceTest {
 
     @Test
-    public void testIsWrapperFor() throws SQLException {
+    public void isWrapperFor() throws SQLException {
 
 
         LazyDataSource ds = new LazyDataSource(DS1::new);
@@ -47,7 +47,7 @@ public class LazyDataSourceTest {
     }
 
     @Test
-    public void testUnwrap() throws SQLException {
+    public void unwrap() throws SQLException {
 
         DS1 wrapped = new DS1();
         LazyDataSource ds = new LazyDataSource(() -> wrapped);

@@ -31,7 +31,7 @@ public class TestDataManagerTest {
     private DatabaseChannel channel = mock(DatabaseChannel.class);
 
     @Test
-    public void testGetTable() {
+    public void getTable() {
         Table t1 = Table.builder(channel, "t1").build();
         Table t2 = Table.builder(channel, "t2").build();
 
@@ -50,13 +50,13 @@ public class TestDataManagerTest {
     }
 
     @Test
-    public void testEmptyConstructor() throws Throwable {
+    public void emptyConstructor() throws Throwable {
         TestDataManager dm = new TestDataManager(true);
         dm.before();
     }
 
     @Test
-    public void testMatcher() {
+    public void matcher() {
         Table t1 = Table.builder(channel, "t1").build();
         Table t2 = Table.builder(channel, "t2").build();
 

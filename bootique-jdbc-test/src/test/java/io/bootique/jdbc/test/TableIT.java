@@ -64,25 +64,25 @@ public class TableIT {
     }
 
     @Test
-    public void testInsert() {
+    public void insert() {
         T1.insert(1, "x", "y");
         T1.matcher().assertMatches(1);
     }
 
     @Test
-    public void testInsertColumns1() {
+    public void insertColumns1() {
         T1.insertColumns("c2").values("v1").values("v2").exec();
         T1.matcher().assertMatches(2);
     }
 
     @Test
-    public void testInsertColumns_OutOfOrder() {
+    public void insertColumns_OutOfOrder() {
         T1.insertColumns("c2", "c1").values("v1", 1).values("v2", 2).exec();
         T1.matcher().assertMatches(2);
     }
 
     @Test
-    public void testInsertDateTimeColumns() {
+    public void insertDateTimeColumns() {
         T2.insertColumns("c1", "c2", "c3", "c4")
                 .values(1, null, LocalDate.parse("2018-01-09"), LocalDateTime.parse("2018-01-10T04:00:01"))
                 .values(2, null, "2016-01-09", "2016-01-10 10:00:00")
@@ -92,7 +92,7 @@ public class TableIT {
     }
 
     @Test
-    public void testUpdate() {
+    public void update() {
         T1.insert(1, "x", "y");
         T1.update()
                 .set("c1", 2, Types.INTEGER)
@@ -110,7 +110,7 @@ public class TableIT {
     }
 
     @Test
-    public void testUpdateColumns_OutOfOrder() {
+    public void updateColumns_OutOfOrder() {
         T2.insert(1, 2, LocalDate.now(), null);
 
         T2.update()
@@ -130,7 +130,7 @@ public class TableIT {
     }
 
     @Test
-    public void testUpdateColumns_Where() {
+    public void updateColumns_Where() {
         T2.insert(1, 0, LocalDate.now(), new Date(0));
 
         T2.update()
@@ -152,7 +152,7 @@ public class TableIT {
     }
 
     @Test
-    public void testDelete() {
+    public void delete() {
         T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
         T1.matcher().assertMatches(2);
 
@@ -162,7 +162,7 @@ public class TableIT {
     }
 
     @Test
-    public void testSelectColumns_Reader() {
+    public void selectColumns_Reader() {
         T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
         Object[] array = T1.selectColumns("c2", "c3")
                 .reader(rs -> new Object[]{"x", "y"})
@@ -185,7 +185,7 @@ public class TableIT {
     }
 
     @Test
-    public void testSelectColumns_ConverterAndReader() {
+    public void selectColumns_ConverterAndReader() {
         T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
         DTO dto = T1.selectColumns("c2", "c3")
                 .reader(rs -> new Object[]{"x", "y"})

@@ -41,7 +41,7 @@ public class HikariCPConnectivityCheckIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testHealthChecks() {
+    public void healthChecks() {
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/healthcheck/HikariCPConnectivityCheckIT.yml")
                 .autoLoadModules()

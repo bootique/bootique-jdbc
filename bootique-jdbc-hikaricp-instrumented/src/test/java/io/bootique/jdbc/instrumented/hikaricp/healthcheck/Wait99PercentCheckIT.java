@@ -45,7 +45,7 @@ public class Wait99PercentCheckIT {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testHealthChecks() throws SQLException {
+    public void healthChecks() throws SQLException {
         BQRuntime runtime = testFactory
                 .app("-c", "classpath:io/bootique/jdbc/instrumented/hikaricp/healthcheck/Wait99PercentCheckIT.yml")
                 .autoLoadModules()

@@ -41,7 +41,7 @@ public class UrlTcDbTester_Liquibase_PostgresIT {
 
     @Test
     @DisplayName("Migrations are run")
-    public void testMigrationsAreRun() throws SQLException {
+    public void migrationsAreRun() throws SQLException {
 
         try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {

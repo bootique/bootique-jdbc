@@ -27,7 +27,7 @@ import java.sql.SQLException;
 public class UrlTcDbTester_Postgres_Global1IT extends BaseGlobalTcTester_PostgresTest {
 
     @RepeatedTest(2)
-    public void testDbState() throws SQLException {
+    public void dbState() throws SQLException {
         checkEmptyAndInsert();
     }
 }

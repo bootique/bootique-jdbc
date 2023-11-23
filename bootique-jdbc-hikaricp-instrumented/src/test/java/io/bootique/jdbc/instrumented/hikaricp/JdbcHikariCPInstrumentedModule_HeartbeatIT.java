@@ -55,7 +55,7 @@ public class JdbcHikariCPInstrumentedModule_HeartbeatIT {
     @Test
     // TODO: need to fix this!
     @Disabled("Fails on Travis")
-    public void testHeartbeat() {
+    public void heartbeat() {
 
         HeartbeatTester tester = new HeartbeatTester();
         HeartbeatListener listener = tester::addResult;

@@ -36,7 +36,7 @@ public class UrlTcDbTester_InitDB_PostgresIT extends BasePostgresTest {
 
     @Test
     @DisplayName("DB was initialized")
-    public void testInitDB() throws SQLException {
+    public void initDB() throws SQLException {
 
         try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {

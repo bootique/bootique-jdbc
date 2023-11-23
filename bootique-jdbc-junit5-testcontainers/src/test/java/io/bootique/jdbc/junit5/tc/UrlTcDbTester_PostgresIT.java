@@ -35,7 +35,7 @@ public class UrlTcDbTester_PostgresIT extends BasePostgresTest {
     @Test
     @Order(0)
     @DisplayName("PostgreSQL DataSource must be in use")
-    public void testPostgres() throws SQLException {
+    public void postgres() throws SQLException {
         try (Connection c = db.getConnection()) {
             Assertions.assertEquals("PostgreSQL", c.getMetaData().getDatabaseProductName());
         }
@@ -56,7 +56,7 @@ public class UrlTcDbTester_PostgresIT extends BasePostgresTest {
     @Test
     @Order(2)
     @DisplayName("DB state must be preserved between the tests")
-    public void testDbState() throws SQLException {
+    public void dbState() throws SQLException {
         try (Connection c = db.getConnection()) {
             try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from UrlTcDbTester_PostgresIT")) {

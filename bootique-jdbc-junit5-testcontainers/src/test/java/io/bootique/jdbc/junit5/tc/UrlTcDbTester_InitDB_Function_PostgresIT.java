@@ -49,7 +49,7 @@ public class UrlTcDbTester_InitDB_Function_PostgresIT {
 
     @Test
     @DisplayName("DB was initialized with custom function")
-    public void testInitDB() throws SQLException {
+    public void initDB() throws SQLException {
 
         try (Connection c = db.getConnection()) {
 

@@ -52,7 +52,7 @@ public class ContainerTcDbTester_InitDB_MySQL_RootIT {
 
     @Test
     @DisplayName("Root user - DB was initialized")
-    public void testInitDB() throws SQLException {
+    public void initDB() throws SQLException {
 
         try (Connection c = dbTester.getConnection()) {
             try (Statement s = c.createStatement()) {

@@ -38,7 +38,7 @@ public class UrlTcDbTester_InitDB_Delimiter_PostgresIT {
 
     @Test
     @DisplayName("DB was initialized with custom delimiter")
-    public void testInitDB() throws SQLException {
+    public void initDB() throws SQLException {
         try (Connection c = db.getConnection()) {
 
             // procedure must be there, and the second definition from the test must be in use

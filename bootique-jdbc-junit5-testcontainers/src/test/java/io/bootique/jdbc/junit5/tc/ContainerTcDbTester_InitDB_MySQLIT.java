@@ -51,7 +51,7 @@ public class ContainerTcDbTester_InitDB_MySQLIT {
 
     @Test
     @DisplayName("DB was initialized")
-    public void testInitDB() throws SQLException {
+    public void initDB() throws SQLException {
 
         try (Connection c = dbTester.getConnection()) {
             try (Statement s = c.createStatement()) {

@@ -50,7 +50,7 @@ public class DerbyTester_ExplicitFolderIT extends BaseDerbyTesterTest {
     @Test
     @Order(0)
     @DisplayName("Derby DataSource must be in use")
-    public void testDerby() {
+    public void derby() {
         assertTrue(tempDir.isDirectory());
         assertTrue(new File(tempDir, "derby").isDirectory());
     }

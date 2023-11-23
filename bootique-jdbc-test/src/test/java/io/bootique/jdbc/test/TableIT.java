@@ -173,7 +173,8 @@ public class TableIT {
         assertEquals("y", array[1]);
     }
 
-    public void testSelectColumns_Converter() {
+    @Test
+    public void selectColumns_Converter() {
         T1.insertColumns("c1", "c2", "c3").values(1, "a", "b").values(2, "c", "d").exec();
         DTO dto = T1.selectColumns("c2", "c3")
                 .converter(a -> new DTO((String) a[0], (String) a[1]))

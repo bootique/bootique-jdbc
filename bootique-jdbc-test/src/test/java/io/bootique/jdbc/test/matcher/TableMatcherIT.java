@@ -107,7 +107,7 @@ public class TableMatcherIT {
 
     // TODO: no null support in IN yet
     @Test(expected = IllegalArgumentException.class)
-    public void testAssertMatches_In_Null() {
+    public void assertMatches_In_Null() {
         TableMatcher matcher = new TableMatcher(T1);
 
         T1.insert(1, "y", "z");

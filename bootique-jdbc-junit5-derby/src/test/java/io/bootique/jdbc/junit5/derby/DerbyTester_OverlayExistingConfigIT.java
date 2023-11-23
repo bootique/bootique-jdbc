@@ -46,7 +46,7 @@ public class DerbyTester_OverlayExistingConfigIT extends BaseDerbyTesterTest {
     @Test
     @Order(0)
     @DisplayName("Existing DataSource config properties must be ignored")
-    public void testDerby() {
+    public void derby() {
         // assertion details are irrelevant here... We just need to make sure the DB started
         run(app, c -> assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
     }

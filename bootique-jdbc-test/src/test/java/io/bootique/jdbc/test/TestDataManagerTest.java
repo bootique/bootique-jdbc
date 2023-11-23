@@ -41,7 +41,7 @@ public class TestDataManagerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetTable_BadName() {
+    public void getTable_BadName() {
         Table t1 = Table.builder(channel, "t1").build();
         Table t2 = Table.builder(channel, "t2").build();
 
@@ -72,7 +72,7 @@ public class TestDataManagerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMatcher_BadName() {
+    public void matcher_BadName() {
         Table t1 = Table.builder(channel, "t1").build();
         TestDataManager dm = new TestDataManager(true, t1);
         dm.matcher("t3");

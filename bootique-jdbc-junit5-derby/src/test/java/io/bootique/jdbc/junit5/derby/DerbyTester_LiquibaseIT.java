@@ -44,7 +44,7 @@ public class DerbyTester_LiquibaseIT extends BaseDerbyTesterTest {
 
     @Test
     @DisplayName("Migrations are run")
-    public void testMigrationsAreRun() {
+    public void migrationsAreRun() {
         run(app, c -> {
             try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from \"b\"")) {

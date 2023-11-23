@@ -47,7 +47,7 @@ public class DerbyTesterIT extends BaseDerbyTesterTest {
     @Test
     @Order(0)
     @DisplayName("Derby DataSource must be in use")
-    public void testDerby() {
+    public void derby() {
         run(app, c -> Assertions.assertEquals("Apache Derby", c.getMetaData().getDatabaseProductName()));
     }
 
@@ -61,7 +61,7 @@ public class DerbyTesterIT extends BaseDerbyTesterTest {
     @Test
     @Order(2)
     @DisplayName("DB state must be preserved between the tests")
-    public void testDbState() {
+    public void dbState() {
         checkDbState(app);
     }
 

@@ -56,7 +56,7 @@ public class DerbyTester_InitDB_ChainIT extends BaseDerbyTesterTest {
 
     @Test
     @DisplayName("DB was initialized")
-    public void testInitDB() {
+    public void initDB() {
         run(app, c -> {
             try (Statement s = c.createStatement()) {
                 try (ResultSet rs = s.executeQuery("select * from \"a\"")) {

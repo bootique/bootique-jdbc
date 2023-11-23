@@ -46,7 +46,7 @@ public class CsvDataSetBuilderTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testBuild_BadColumns() {
+    public void build_BadColumns() {
         new CsvDataSetBuilder(table).columns("a,b").build();
     }
 

@@ -32,7 +32,7 @@
 
     <name>bootique-jdbc: Abstract JDBC DataSource module for Bootique</name>
     <description>Provides JDBC integration mechanism for Bootique without implementing a specific DataSource.
-        Requires an extra implementor module in runtime, such as 'bootique-jdbc-tomcat", etc.
+        Requires an extra implementor module in runtime, such as 'bootique-jdbc-hikaricp", etc.
     </description>
 
     <dependencies>

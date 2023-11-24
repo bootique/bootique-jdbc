@@ -1,3 +1,7 @@
+## 3.0-M3
+
+* 132 Deprecate Tomcat DataSource
+
 ## 3.0.M2
 
 * #125 upgrade HikariCP to 5.0.1

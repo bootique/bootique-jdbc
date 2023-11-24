@@ -40,7 +40,9 @@ import java.util.function.Supplier;
 
 /**
  * @see org.apache.tomcat.jdbc.pool.DataSourceFactory#parsePoolProperties(Properties)
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
  */
+@Deprecated(since = "3.0", forRemoval = true)
 @BQConfig("Pooling Tomcat JDBC DataSource configuration.")
 @JsonTypeName("tomcat")
 public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory {
@@ -547,19 +549,19 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
         if (defaultTransactionIsolation == null) {
             return DataSourceFactory.UNKNOWN_TRANSACTIONISOLATION;
         }
-        if ("NONE".equalsIgnoreCase(defaultTransactionIsolation)) {
+        if ("NONE" .equalsIgnoreCase(defaultTransactionIsolation)) {
             return Connection.TRANSACTION_NONE;
         }
-        if ("READ_COMMITTED".equalsIgnoreCase(defaultTransactionIsolation)) {
+        if ("READ_COMMITTED" .equalsIgnoreCase(defaultTransactionIsolation)) {
             return Connection.TRANSACTION_READ_COMMITTED;
         }
-        if ("READ_UNCOMMITTED".equalsIgnoreCase(defaultTransactionIsolation)) {
+        if ("READ_UNCOMMITTED" .equalsIgnoreCase(defaultTransactionIsolation)) {
             return Connection.TRANSACTION_READ_UNCOMMITTED;
         }
-        if ("REPEATABLE_READ".equalsIgnoreCase(defaultTransactionIsolation)) {
+        if ("REPEATABLE_READ" .equalsIgnoreCase(defaultTransactionIsolation)) {
             return Connection.TRANSACTION_REPEATABLE_READ;
         }
-        if ("SERIALIZABLE".equalsIgnoreCase(defaultTransactionIsolation)) {
+        if ("SERIALIZABLE" .equalsIgnoreCase(defaultTransactionIsolation)) {
             return Connection.TRANSACTION_SERIALIZABLE;
         }
 

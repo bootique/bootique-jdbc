@@ -26,6 +26,10 @@ import io.bootique.jdbc.JdbcModuleProvider;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 public class JdbcTomcatModuleProvider implements BQModuleProvider {
 
     @Override

@@ -26,6 +26,10 @@ import io.bootique.jdbc.JdbcModule;
 
 import java.util.logging.Level;
 
+/**
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 public class JdbcTomcatModule implements BQModule {
 
     @Override

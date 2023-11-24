@@ -32,7 +32,10 @@ import java.util.function.Supplier;
 /**
  * Generates individual healthchecks for a {@link io.bootique.jdbc.DataSourceFactory} DataSources. It is important to
  * report DataSource health individually.
+ *
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public class TomcatHealthChecks implements HealthCheckGroup {
 
     private DataSourceFactory dataSourceFactory;

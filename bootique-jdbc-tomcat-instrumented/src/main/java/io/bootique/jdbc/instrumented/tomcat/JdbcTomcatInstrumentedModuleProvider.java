@@ -29,6 +29,10 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 
+/**
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 public class JdbcTomcatInstrumentedModuleProvider implements BQModuleProvider {
 
     @Override

@@ -28,7 +28,10 @@ import java.sql.Connection;
 
 /**
  * Checks DataSource health. Are connections available? Are they valid?
+ *
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public class TomcatConnectivityCheck implements HealthCheck {
 
     private DataSource dataSource;

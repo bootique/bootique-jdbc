@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
+/**
+ * @deprecated The alternative is switching to bootique-jdbc-hikaricp.
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 public class TomcatMetricsInitializer implements DataSourceListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomcatMetricsInitializer.class);

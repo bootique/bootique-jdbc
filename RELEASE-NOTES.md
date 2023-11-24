@@ -1,6 +1,7 @@
 ## 3.0-M3
 
-* 132 Deprecate Tomcat DataSource
+* #132 Deprecate Tomcat DataSource
+* #133 Upgrade to Hikari 5.1.0
 
 ## 3.0.M2
 

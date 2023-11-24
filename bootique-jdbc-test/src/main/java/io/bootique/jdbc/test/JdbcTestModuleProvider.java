@@ -20,29 +20,26 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.jdbc.JdbcModuleProvider;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
- * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ * @deprecated As we are we phasing out JUnit 4 support in favor of JUnit 5
  */
-@Deprecated
+@Deprecated(since = "3.0", forRemoval = true)
 public class JdbcTestModuleProvider implements BQModuleProvider {
 
     @Override
-    public BQModule module() {
-        return new JdbcTestModule();
-    }
-
-    @Override
-    public Map<String, Type> configs() {
-        return Collections.singletonMap("jdbctest", DatabaseChannelFactoryFactory.class);
+    public BuiltModule buildModule() {
+        return BuiltModule.of(new JdbcTestModule())
+                .provider(this)
+                .description("Integrates JUnit 4 test extensions for JDBC")
+                .config("jdbctest", DatabaseChannelFactoryFactory.class)
+                .build();
     }
 
     @Override

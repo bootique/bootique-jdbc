@@ -19,37 +19,24 @@
 
 package io.bootique.jdbc;
 
-import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.type.TypeRef;
 
-import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Map;
 
-public class  JdbcModuleProvider implements BQModuleProvider {
+public class JdbcModuleProvider implements BQModuleProvider {
 
     @Override
-    public BQModule module() {
-        return new JdbcModule();
-    }
-
-    @Override
-    public BQModuleMetadata.Builder moduleBuilder() {
-        return BQModuleProvider.super
-                .moduleBuilder()
-                .description("Provides configuration for and access to named JDBC DataSources.");
-    }
-
-    @Override
-    public Map<String, Type> configs() {
-        // TODO: config prefix is hardcoded. Refactor away from ConfigModule, and make provider
-        // generate config prefix, reusing it in metadata...
-
-        TypeRef<Map<String, ManagedDataSourceFactory>> type = new TypeRef<Map<String, ManagedDataSourceFactory>>() {
+    public BuiltModule buildModule() {
+        TypeRef<Map<String, ManagedDataSourceFactory>> type = new TypeRef<>() {
         };
-        return Collections.singletonMap("jdbc", type.getType());
+
+        return BuiltModule.of(new JdbcModule())
+                .provider(this)
+                .description("Integrates configuration and access to named JDBC DataSources")
+                .config("jdbc", type.getType())
+                .build();
     }
 }

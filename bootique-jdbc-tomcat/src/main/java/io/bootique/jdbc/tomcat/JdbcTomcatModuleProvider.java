@@ -19,9 +19,8 @@
 
 package io.bootique.jdbc.tomcat;
 
-import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.jdbc.JdbcModuleProvider;
 
 import java.util.Collection;
@@ -30,15 +29,11 @@ import java.util.Collections;
 public class JdbcTomcatModuleProvider implements BQModuleProvider {
 
     @Override
-    public BQModule module() {
-        return new JdbcTomcatModule();
-    }
-
-    @Override
-    public BQModuleMetadata.Builder moduleBuilder() {
-        return BQModuleProvider.super
-                .moduleBuilder()
-                .description("Integrates Tomcat DataSource implementation.");
+    public BuiltModule buildModule() {
+        return BuiltModule.of(new JdbcTomcatModule())
+                .provider(this)
+                .description("Integrates Tomcat JDBC DataSource")
+                .build();
     }
 
     @Override

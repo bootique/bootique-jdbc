@@ -19,9 +19,8 @@
 
 package io.bootique.jdbc.hikaricp;
 
-import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.jdbc.JdbcModuleProvider;
 
 import java.util.Collection;
@@ -30,15 +29,11 @@ import java.util.Collections;
 public class JdbcHikariCPModuleProvider implements BQModuleProvider {
 
     @Override
-    public BQModule module() {
-        return new JdbcHikariCPModule();
-    }
-
-    @Override
-    public BQModuleMetadata.Builder moduleBuilder() {
-        return BQModuleProvider.super
-                .moduleBuilder()
-                .description("Integrates HikariCP DataSource implementation.");
+    public BuiltModule buildModule() {
+        return BuiltModule.of(new JdbcHikariCPModule())
+                .provider(this)
+                .description("Integrates HikariCP JDBC DataSource")
+                .build();
     }
 
     @Override

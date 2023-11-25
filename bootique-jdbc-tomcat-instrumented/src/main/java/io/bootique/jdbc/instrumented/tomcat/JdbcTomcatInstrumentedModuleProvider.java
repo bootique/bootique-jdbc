@@ -39,7 +39,7 @@ public class JdbcTomcatInstrumentedModuleProvider implements BQModuleProvider {
     public BuiltModule buildModule() {
         return BuiltModule.of(new JdbcTomcatInstrumentedModule())
                 .provider(this)
-                .description("Deprecated and should be replaced with 'bootique-jdbc-hikaricp-instrumented'.")
+                .description("Deprecated and can be replaced with 'bootique-jdbc-hikaricp-instrumented'.")
                 .build();
     }
 

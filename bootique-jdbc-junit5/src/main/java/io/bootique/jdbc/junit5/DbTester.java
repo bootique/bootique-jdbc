@@ -46,7 +46,7 @@ import java.util.Objects;
  * one or more BQRuntimes. This class is abstract. Specific testers (such as DerbyTester or TestcontainersTester)
  * are provided in separate modules.
  *
- * @since 2.0.M1
+ * @since 2.0
  */
 public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback {
 
@@ -74,7 +74,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * query builders. In most cases instead of DbConnector, you should use {@link Table} (via {@link #getTable(String)})
      * to work with the DB. Connector is only needed to run SQL directly.
      *
-     * @since 2.0.B1
+     * @since 2.0
      */
     public DbConnector getConnector() {
         return Objects.requireNonNull(connector, "'connector' not initialized. Called outside of JUnit lifecycle?");
@@ -161,7 +161,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * @param changelog a location of the Liquibase changelog file in Bootique
      *                  {@link io.bootique.resource.ResourceFactory} format.
      * @return this tester
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SELF initDBWithLiquibaseChangelog(String changelog) {
         return initDBWithLiquibaseChangelog(changelog, null);
@@ -174,7 +174,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      *                         {@link io.bootique.resource.ResourceFactory} format.
      * @param liquibaseContext Liquibase context expression to filter migrations as appropriate for the test run.
      * @return this tester
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SELF initDBWithLiquibaseChangelog(String changelog, String liquibaseContext) {
         initializer.addLiquibase(changelog, liquibaseContext);
@@ -185,7 +185,7 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
      * Executes provided SQL script. Assumes statements in the script are separated with ";" character.
      *
      * @param script a location of the SQL script in Bootique {@link io.bootique.resource.ResourceFactory} format.
-     * @since 2.0.B1
+     * @since 2.0
      */
     public void runScript(String script) {
         runScript(script, null);

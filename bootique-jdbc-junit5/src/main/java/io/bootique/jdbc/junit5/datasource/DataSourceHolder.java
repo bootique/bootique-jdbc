@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * A DataSource wrapper that allows to pass around a DataSource before it is fully initialized. Needed for deferred
  * DataSource initialization within JUnit 5 lifecycle.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public class DataSourceHolder implements DataSource {
 

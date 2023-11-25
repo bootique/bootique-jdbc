@@ -20,7 +20,7 @@
 package io.bootique.jdbc.junit5.sql;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class ExecWhereBuilder extends WhereBuilder<ExecWhereBuilder, ExecStatementBuilder> {
 

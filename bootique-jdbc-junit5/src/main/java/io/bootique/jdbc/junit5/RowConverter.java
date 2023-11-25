@@ -19,7 +19,7 @@
 package io.bootique.jdbc.junit5;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public interface RowConverter<T> {
 

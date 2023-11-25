@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.Objects;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public abstract class ArrayReader implements RowReader {
 

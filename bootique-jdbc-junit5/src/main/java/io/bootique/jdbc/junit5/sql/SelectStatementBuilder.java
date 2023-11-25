@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @since 2.0.M1
+ * @since 2.0
  */
 public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementBuilder<T>> {
 
@@ -66,7 +66,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectStatementBuilder<T> reader(RowReader reader) {
         return new SelectStatementBuilder<>(
@@ -81,7 +81,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public <U> SelectStatementBuilder<U> converter(RowConverter<U> converter) {
         return new SelectStatementBuilder<>(

@@ -25,7 +25,7 @@ import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import java.util.List;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class SelectBuilder<T> {
 

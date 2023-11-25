@@ -113,7 +113,7 @@ public class DbConnector {
     /**
      * @return a new {@link SelectStatementBuilder} object that assists in creating and running a selecting
      * PreparedStatement.
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectStatementBuilder<Object[]> selectStatement() {
         return new SelectStatementBuilder(

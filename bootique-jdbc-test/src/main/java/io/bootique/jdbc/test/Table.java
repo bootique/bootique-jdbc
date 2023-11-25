@@ -206,21 +206,21 @@ public class Table {
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectBuilder<Object[]> selectColumns(String... columns) {
         return selectColumns(toColumnsList(columns));
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectBuilder<Object[]> selectAllColumns() {
         return selectColumns(this.columns);
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectBuilder<Object[]> selectColumns(List<Column> columns) {
         if (columns.isEmpty()) {

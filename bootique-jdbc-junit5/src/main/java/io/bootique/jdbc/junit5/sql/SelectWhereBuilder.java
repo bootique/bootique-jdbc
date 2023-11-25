@@ -22,7 +22,7 @@ package io.bootique.jdbc.junit5.sql;
 import java.util.List;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class SelectWhereBuilder<T> extends WhereBuilder<SelectWhereBuilder<T>, SelectStatementBuilder<T>> {
 

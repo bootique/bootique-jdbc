@@ -123,21 +123,21 @@ public class Table {
 
     /**
      * @param columns an array of columns to select
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectBuilder<Object[]> selectColumns(String... columns) {
         return selectColumns(toColumnMetadata(columns));
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectBuilder<Object[]> selectAllColumns() {
         return selectColumns(metadata.getColumns());
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectBuilder<Object[]> selectColumns(DbColumnMetadata... columns) {
 

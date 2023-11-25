@@ -66,7 +66,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public SelectStatementBuilder<T> reader(RowReader reader) {
         return new SelectStatementBuilder<>(
@@ -81,7 +81,7 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public <U> SelectStatementBuilder<U> converter(RowConverter<U> converter) {
         return new SelectStatementBuilder<>(
@@ -115,14 +115,14 @@ public class SelectStatementBuilder<T> extends StatementBuilder<SelectStatementB
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public T selectOne() {
         return selectOne(null);
     }
 
     /**
-     * @since 2.0.B1
+     * @since 2.0
      */
     public T selectOne(T defaultValue) {
 

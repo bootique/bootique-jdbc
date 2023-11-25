@@ -22,7 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 @FunctionalInterface
 public interface ColumnReader {

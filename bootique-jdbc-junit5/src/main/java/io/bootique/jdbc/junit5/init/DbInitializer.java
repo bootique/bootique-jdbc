@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class DbInitializer {
 

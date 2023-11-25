@@ -20,21 +20,47 @@
 package io.bootique.jdbc.instrumented.hikaricp;
 
 import com.codahale.metrics.MetricRegistry;
-import io.bootique.di.Binder;
+import io.bootique.BQModuleProvider;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.jdbc.JdbcModule;
+import io.bootique.jdbc.hikaricp.JdbcHikariCPModule;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecks;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.MetricNaming;
+import io.bootique.metrics.MetricsModuleProvider;
 import io.bootique.metrics.health.HealthCheckModule;
+import io.bootique.metrics.health.HealthCheckModuleProvider;
 
-import java.util.Map;
 import javax.inject.Singleton;
+import java.util.Collection;
+import java.util.Map;
 
-public class JdbcHikariCPInstrumentedModule implements BQModule {
+import static java.util.Arrays.asList;
+
+public class JdbcHikariCPInstrumentedModule implements BQModule, BQModuleProvider {
 
     public static final MetricNaming METRIC_NAMING = MetricNaming.forModule(JdbcHikariCPInstrumentedModule.class);
+
+    @Override
+    public BuiltModule buildModule() {
+        return BuiltModule.of(this)
+                .provider(this)
+                .description("Integrates metrics for HikariCP JDBC DataSource")
+                .build();
+    }
+
+    @Override
+    @Deprecated(since = "3.0", forRemoval = true)
+    public Collection<BQModuleProvider> dependencies() {
+        return asList(
+                new JdbcHikariCPModule(),
+                new MetricsModuleProvider(),
+                new HealthCheckModuleProvider()
+        );
+    }
 
     @Override
     public void configure(Binder binder) {
@@ -52,6 +78,6 @@ public class JdbcHikariCPInstrumentedModule implements BQModule {
     @Singleton
     @Provides
     HikariCPMetricsInitializer provideMetricsInitializer(MetricRegistry metricRegistry) {
-        return  new HikariCPMetricsInitializer(metricRegistry);
+        return new HikariCPMetricsInitializer(metricRegistry);
     }
 }

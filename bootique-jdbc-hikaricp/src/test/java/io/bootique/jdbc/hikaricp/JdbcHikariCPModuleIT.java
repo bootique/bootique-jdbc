@@ -22,9 +22,8 @@ package io.bootique.jdbc.hikaricp;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestFactory;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.jdbc.JdbcModule;
+import io.bootique.junit5.*;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -38,6 +37,12 @@ public class JdbcHikariCPModuleIT {
 
     @BQTestTool
     final BQTestFactory testFactory = new BQTestFactory().autoLoadModules();
+
+    @Test
+    public void moduleDeclaresDependencies() {
+        final BQRuntime bqRuntime = testFactory.app().module(new JdbcHikariCPModule()).createRuntime();
+        BQRuntimeChecker.testModulesLoaded(bqRuntime, JdbcModule.class);
+    }
 
     @Test
     public void dataSource() {

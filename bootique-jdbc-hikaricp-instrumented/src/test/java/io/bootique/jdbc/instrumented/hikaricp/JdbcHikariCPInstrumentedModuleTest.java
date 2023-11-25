@@ -17,32 +17,36 @@
  * under the License.
  */
 
-package io.bootique.jdbc.hikaricp;
+package io.bootique.jdbc.instrumented.hikaricp;
 
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.junit5.*;
+import io.bootique.metrics.MetricsModule;
+import io.bootique.metrics.health.HealthCheckModule;
 import org.junit.jupiter.api.Test;
 
 @BQTest
-public class JdbcHikariCPModuleProviderIT {
+public class JdbcHikariCPInstrumentedModuleTest {
 
     @BQTestTool
-    final BQTestFactory testFactory = new BQTestFactory();
+    public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPModuleProvider.class);
-    }
-
-    @Test
-    public void metadata() {
-        BQModuleProviderChecker.testMetadata(JdbcHikariCPModuleProvider.class);
+        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPInstrumentedModule.class);
     }
 
     @Test
     public void moduleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcHikariCPModuleProvider()).createRuntime();
-        BQRuntimeChecker.testModulesLoaded(bqRuntime, JdbcModule.class);
+        BQRuntime bqRuntime = testFactory.app()
+                .moduleProvider(new JdbcHikariCPInstrumentedModule())
+                .createRuntime();
+
+        BQRuntimeChecker.testModulesLoaded(bqRuntime,
+                HealthCheckModule.class,
+                MetricsModule.class,
+                JdbcModule.class
+        );
     }
 }

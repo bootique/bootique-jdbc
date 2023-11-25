@@ -16,34 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.jdbc.hikaricp;
 
-package io.bootique.jdbc.instrumented.hikaricp;
-
-import io.bootique.BQRuntime;
-import io.bootique.jdbc.JdbcModule;
-import io.bootique.junit5.*;
-import io.bootique.metrics.MetricsModule;
-import io.bootique.metrics.health.HealthCheckModule;
+import io.bootique.junit5.BQModuleProviderChecker;
 import org.junit.jupiter.api.Test;
 
-@BQTest
-public class JdbcHikariCPInstrumentedModuleProviderTest {
-
-    @BQTestTool
-    public BQTestFactory testFactory = new BQTestFactory();
+public class JdbcHikariCPModuleTest {
 
     @Test
     public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPInstrumentedModuleProvider.class);
+        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPModule.class);
     }
 
     @Test
-    public void moduleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcHikariCPInstrumentedModuleProvider()).createRuntime();
-        BQRuntimeChecker.testModulesLoaded(bqRuntime,
-                HealthCheckModule.class,
-                MetricsModule.class,
-                JdbcModule.class
-        );
+    public void metadata() {
+        BQModuleProviderChecker.testMetadata(JdbcHikariCPModule.class);
     }
+
 }

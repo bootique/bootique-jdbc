@@ -1,1 +1,1 @@
-io.bootique.jdbc.instrumented.hikaricp.JdbcHikariCPInstrumentedModuleProvider
+io.bootique.jdbc.instrumented.hikaricp.JdbcHikariCPInstrumentedModule

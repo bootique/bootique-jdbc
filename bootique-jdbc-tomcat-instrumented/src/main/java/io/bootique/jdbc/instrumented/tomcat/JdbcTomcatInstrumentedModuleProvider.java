@@ -22,8 +22,8 @@ package io.bootique.jdbc.instrumented.tomcat;
 import io.bootique.BQModuleProvider;
 import io.bootique.bootstrap.BuiltModule;
 import io.bootique.jdbc.tomcat.JdbcTomcatModuleProvider;
-import io.bootique.metrics.MetricsModuleProvider;
-import io.bootique.metrics.health.HealthCheckModuleProvider;
+import io.bootique.metrics.MetricsModule;
+import io.bootique.metrics.health.HealthCheckModule;
 
 import java.util.Collection;
 
@@ -48,8 +48,8 @@ public class JdbcTomcatInstrumentedModuleProvider implements BQModuleProvider {
     public Collection<BQModuleProvider> dependencies() {
         return asList(
                 new JdbcTomcatModuleProvider(),
-                new MetricsModuleProvider(),
-                new HealthCheckModuleProvider()
+                new MetricsModule(),
+                new HealthCheckModule()
         );
     }
 }

@@ -30,9 +30,8 @@ import io.bootique.jdbc.hikaricp.JdbcHikariCPModule;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecks;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.MetricNaming;
-import io.bootique.metrics.MetricsModuleProvider;
+import io.bootique.metrics.MetricsModule;
 import io.bootique.metrics.health.HealthCheckModule;
-import io.bootique.metrics.health.HealthCheckModuleProvider;
 
 import javax.inject.Singleton;
 import java.util.Collection;
@@ -57,8 +56,8 @@ public class JdbcHikariCPInstrumentedModule implements BQModule, BQModuleProvide
     public Collection<BQModuleProvider> dependencies() {
         return asList(
                 new JdbcHikariCPModule(),
-                new MetricsModuleProvider(),
-                new HealthCheckModuleProvider()
+                new MetricsModule(),
+                new HealthCheckModule()
         );
     }
 

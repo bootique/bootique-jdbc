@@ -1,1 +1,1 @@
-io.bootique.jdbc.JdbcModuleProvider
+io.bootique.jdbc.JdbcModule

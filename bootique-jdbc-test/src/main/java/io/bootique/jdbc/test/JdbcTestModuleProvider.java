@@ -21,7 +21,7 @@ package io.bootique.jdbc.test;
 
 import io.bootique.BQModuleProvider;
 import io.bootique.bootstrap.BuiltModule;
-import io.bootique.jdbc.JdbcModuleProvider;
+import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 
 import java.util.Collection;
@@ -45,8 +45,6 @@ public class JdbcTestModuleProvider implements BQModuleProvider {
     @Override
     @Deprecated(since = "3.0", forRemoval = true)
     public Collection<BQModuleProvider> dependencies() {
-        return Collections.singletonList(
-                new JdbcModuleProvider()
-        );
+        return Collections.singletonList(new JdbcModule());
     }
 }

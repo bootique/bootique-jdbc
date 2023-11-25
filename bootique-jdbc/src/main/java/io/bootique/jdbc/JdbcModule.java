@@ -19,8 +19,10 @@
 
 package io.bootique.jdbc;
 
-import io.bootique.ConfigModule;
+import io.bootique.BQModuleProvider;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Injector;
 import io.bootique.di.Provides;
@@ -35,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class JdbcModule extends ConfigModule {
+public class JdbcModule implements BQModule, BQModuleProvider {
 
     /**
      * @param binder Bootique DI binder.
@@ -43,6 +45,18 @@ public class JdbcModule extends ConfigModule {
      */
     public static JdbcModuleExtender extend(Binder binder) {
         return new JdbcModuleExtender(binder);
+    }
+
+    @Override
+    public BuiltModule buildModule() {
+        TypeRef<Map<String, ManagedDataSourceFactory>> type = new TypeRef<>() {
+        };
+
+        return BuiltModule.of(this)
+                .provider(this)
+                .description("Configures and exposes named JDBC DataSources")
+                .config("jdbc", type.getType())
+                .build();
     }
 
     @Override

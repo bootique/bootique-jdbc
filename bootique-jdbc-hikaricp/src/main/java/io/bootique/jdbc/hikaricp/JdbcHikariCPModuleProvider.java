@@ -21,7 +21,7 @@ package io.bootique.jdbc.hikaricp;
 
 import io.bootique.BQModuleProvider;
 import io.bootique.bootstrap.BuiltModule;
-import io.bootique.jdbc.JdbcModuleProvider;
+import io.bootique.jdbc.JdbcModule;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +39,6 @@ public class JdbcHikariCPModuleProvider implements BQModuleProvider {
     @Override
     @Deprecated(since = "3.0", forRemoval = true)
     public Collection<BQModuleProvider> dependencies() {
-        return Collections.singletonList(new JdbcModuleProvider());
+        return Collections.singletonList(new JdbcModule());
     }
 }

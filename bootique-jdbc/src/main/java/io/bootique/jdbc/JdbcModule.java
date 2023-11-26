@@ -33,11 +33,12 @@ import io.bootique.shutdown.ShutdownManager;
 import io.bootique.type.TypeRef;
 
 import javax.inject.Singleton;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class JdbcModule implements BQModule, BQModuleProvider {
+
+    private static final String CONFIG_PREFIX = "jdbc";
 
     /**
      * @param binder Bootique DI binder.
@@ -55,7 +56,7 @@ public class JdbcModule implements BQModule, BQModuleProvider {
         return ModuleCrate.of(this)
                 .provider(this)
                 .description("Configures and exposes named JDBC DataSources")
-                .config("jdbc", type.getType())
+                .config(CONFIG_PREFIX, JdbcFactory.class)
                 .build();
     }
 
@@ -86,14 +87,6 @@ public class JdbcModule implements BQModule, BQModuleProvider {
     Map<String, ManagedDataSourceStarter> provideDataSourceStarters(
             ConfigurationFactory configurationFactory,
             Injector injector) {
-
-        Map<String, ManagedDataSourceFactory> configs = configurationFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
-                }, "jdbc");
-
-        Map<String, ManagedDataSourceStarter> starters = new HashMap<>();
-        configs.forEach((n, mdsf) -> starters.put(n, mdsf.create(n, injector)));
-
-        return starters;
+        return configurationFactory.config(JdbcFactory.class, CONFIG_PREFIX).create(injector);
     }
 }

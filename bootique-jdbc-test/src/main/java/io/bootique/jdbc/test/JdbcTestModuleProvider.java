@@ -20,7 +20,7 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 
@@ -34,8 +34,8 @@ import java.util.Collections;
 public class JdbcTestModuleProvider implements BQModuleProvider {
 
     @Override
-    public BuiltModule buildModule() {
-        return BuiltModule.of(new JdbcTestModule())
+    public ModuleCrate moduleCrate() {
+        return ModuleCrate.of(new JdbcTestModule())
                 .provider(this)
                 .description("Integrates JUnit 4 test extensions for JDBC")
                 .config("jdbctest", DatabaseChannelFactoryFactory.class)

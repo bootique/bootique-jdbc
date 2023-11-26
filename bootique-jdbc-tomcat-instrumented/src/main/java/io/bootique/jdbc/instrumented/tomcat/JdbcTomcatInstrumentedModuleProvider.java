@@ -20,7 +20,7 @@
 package io.bootique.jdbc.instrumented.tomcat;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.jdbc.tomcat.JdbcTomcatModuleProvider;
 import io.bootique.metrics.MetricsModule;
 import io.bootique.metrics.health.HealthCheckModule;
@@ -36,8 +36,8 @@ import static java.util.Arrays.asList;
 public class JdbcTomcatInstrumentedModuleProvider implements BQModuleProvider {
 
     @Override
-    public BuiltModule buildModule() {
-        return BuiltModule.of(new JdbcTomcatInstrumentedModule())
+    public ModuleCrate moduleCrate() {
+        return ModuleCrate.of(new JdbcTomcatInstrumentedModule())
                 .provider(this)
                 .description("Deprecated, can be replaced with 'bootique-jdbc-hikaricp-instrumented'.")
                 .build();

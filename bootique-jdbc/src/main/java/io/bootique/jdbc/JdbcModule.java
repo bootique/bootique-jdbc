@@ -20,7 +20,7 @@
 package io.bootique.jdbc;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
@@ -48,11 +48,11 @@ public class JdbcModule implements BQModule, BQModuleProvider {
     }
 
     @Override
-    public BuiltModule buildModule() {
+    public ModuleCrate moduleCrate() {
         TypeRef<Map<String, ManagedDataSourceFactory>> type = new TypeRef<>() {
         };
 
-        return BuiltModule.of(this)
+        return ModuleCrate.of(this)
                 .provider(this)
                 .description("Configures and exposes named JDBC DataSources")
                 .config("jdbc", type.getType())

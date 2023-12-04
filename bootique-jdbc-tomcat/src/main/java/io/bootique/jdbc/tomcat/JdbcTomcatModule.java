@@ -22,7 +22,7 @@ package io.bootique.jdbc.tomcat;
 import io.bootique.BQCoreModule;
 import io.bootique.ModuleCrate;
 import io.bootique.di.Binder;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.jdbc.JdbcModule;
 
 import java.util.logging.Level;

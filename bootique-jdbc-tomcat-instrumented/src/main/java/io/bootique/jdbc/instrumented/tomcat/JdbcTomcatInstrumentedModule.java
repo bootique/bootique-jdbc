@@ -21,7 +21,7 @@ package io.bootique.jdbc.instrumented.tomcat;
 
 import com.codahale.metrics.MetricRegistry;
 import io.bootique.ModuleCrate;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.jdbc.DataSourceFactory;

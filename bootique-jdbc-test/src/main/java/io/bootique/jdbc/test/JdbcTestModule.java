@@ -20,6 +20,7 @@
 package io.bootique.jdbc.test;
 
 import io.bootique.ConfigModule;
+import io.bootique.ModuleCrate;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
@@ -33,10 +34,18 @@ import io.bootique.log.BootLogger;
 import javax.inject.Singleton;
 
 /**
- * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
-@Deprecated
+@Deprecated(since = "3.0", forRemoval = true)
 public class JdbcTestModule extends ConfigModule {
+
+    @Override
+    public ModuleCrate crate() {
+        return ModuleCrate.of(this)
+                .description("Integrates JUnit 4 test extensions for JDBC")
+                .config("jdbctest", DatabaseChannelFactoryFactory.class)
+                .build();
+    }
 
     @Override
     public void configure(Binder binder) {

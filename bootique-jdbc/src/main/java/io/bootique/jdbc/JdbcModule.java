@@ -19,7 +19,6 @@
 
 package io.bootique.jdbc;
 
-import io.bootique.BQModuleProvider;
 import io.bootique.ModuleCrate;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.BQModule;
@@ -34,7 +33,7 @@ import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 
-public class JdbcModule implements BQModule, BQModuleProvider {
+public class JdbcModule implements BQModule {
 
     private static final String CONFIG_PREFIX = "jdbc";
 
@@ -47,9 +46,8 @@ public class JdbcModule implements BQModule, BQModuleProvider {
     }
 
     @Override
-    public ModuleCrate moduleCrate() {
+    public ModuleCrate crate() {
         return ModuleCrate.of(this)
-                .provider(this)
                 .description("Configures and exposes named JDBC DataSources")
                 .config(CONFIG_PREFIX, JdbcFactory.class)
                 .build();

@@ -20,6 +20,7 @@
 package io.bootique.jdbc.tomcat;
 
 import io.bootique.BQCoreModule;
+import io.bootique.ModuleCrate;
 import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
 import io.bootique.jdbc.JdbcModule;
@@ -31,6 +32,13 @@ import java.util.logging.Level;
  */
 @Deprecated(since = "3.0", forRemoval = true)
 public class JdbcTomcatModule implements BQModule {
+
+    @Override
+    public ModuleCrate crate() {
+        return ModuleCrate.of(this)
+                .description("Deprecated, can be replaced with 'bootique-jdbc-hikaricp'.")
+                .build();
+    }
 
     @Override
     public void configure(Binder binder) {

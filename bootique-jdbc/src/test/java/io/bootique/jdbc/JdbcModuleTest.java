@@ -19,18 +19,13 @@
 
 package io.bootique.jdbc;
 
-import io.bootique.junit5.BQModuleProviderChecker;
+import io.bootique.junit5.BQModuleTester;
 import org.junit.jupiter.api.Test;
 
 public class JdbcModuleTest {
 
     @Test
-    public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcModule.class);
-    }
-
-    @Test
-    public void metadata() {
-        BQModuleProviderChecker.testMetadata(JdbcModule.class);
+    public void check() {
+        BQModuleTester.of(JdbcModule.class).testAutoLoadable().testConfig();
     }
 }

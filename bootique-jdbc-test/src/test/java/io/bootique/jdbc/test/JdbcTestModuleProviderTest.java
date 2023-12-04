@@ -19,27 +19,13 @@
 
 package io.bootique.jdbc.test;
 
-import io.bootique.BQRuntime;
-import io.bootique.jdbc.JdbcModule;
-import io.bootique.test.junit.BQModuleProviderChecker;
-import io.bootique.test.junit.BQRuntimeChecker;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
+import io.bootique.test.junit.BQModuleTester;
 import org.junit.Test;
 
 public class JdbcTestModuleProviderTest {
 
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
-
     @Test
     public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcTestModuleProvider.class);
-    }
-
-    @Test
-    public void moduleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcTestModuleProvider()).createRuntime();
-        BQRuntimeChecker.testModulesLoaded(bqRuntime, JdbcModule.class);
+        BQModuleTester.of(JdbcTestModule.class).testAutoLoadable().testConfig();
     }
 }

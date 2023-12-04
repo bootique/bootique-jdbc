@@ -18,19 +18,13 @@
  */
 package io.bootique.jdbc.hikaricp;
 
-import io.bootique.junit5.BQModuleProviderChecker;
+import io.bootique.junit5.BQModuleTester;
 import org.junit.jupiter.api.Test;
 
 public class JdbcHikariCPModuleTest {
 
     @Test
     public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPModule.class);
+        BQModuleTester.of(JdbcHikariCPModule.class).testConfig().testAutoLoadable();
     }
-
-    @Test
-    public void metadata() {
-        BQModuleProviderChecker.testMetadata(JdbcHikariCPModule.class);
-    }
-
 }

@@ -19,21 +19,16 @@
 
 package io.bootique.jdbc.hikaricp;
 
-import io.bootique.BQModuleProvider;
 import io.bootique.ModuleCrate;
-import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.jdbc.JdbcModule;
 
-import java.util.Collection;
-import java.util.Collections;
-
-public class JdbcHikariCPModule implements BQModule, BQModuleProvider {
+public class JdbcHikariCPModule implements BQModule {
 
     @Override
-    public ModuleCrate moduleCrate() {
+    public ModuleCrate crate() {
         return ModuleCrate.of(this)
-                .provider(this)
                 .description("Integrates HikariCP JDBC DataSource")
                 .build();
     }
@@ -41,12 +36,5 @@ public class JdbcHikariCPModule implements BQModule, BQModuleProvider {
     @Override
     public void configure(Binder binder) {
         JdbcModule.extend(binder).addFactoryType(HikariCPManagedDataSourceFactory.class);
-    }
-
-
-    @Override
-    @Deprecated(since = "3.0", forRemoval = true)
-    public Collection<BQModuleProvider> dependencies() {
-        return Collections.singletonList(new JdbcModule());
     }
 }

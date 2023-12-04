@@ -17,35 +17,18 @@
  * under the License.
  */
 
-package io.bootique.jdbc.tomcat;
+package io.bootique.jdbc.instrumented.tomcat;
 
-import io.bootique.BQRuntime;
-import io.bootique.jdbc.JdbcModule;
-import io.bootique.junit5.*;
+import io.bootique.junit5.BQModuleTester;
+import io.bootique.junit5.BQTest;
 import org.junit.jupiter.api.Test;
 
 @BQTest
-public class JdbcTomcatModuleProviderIT {
+public class JdbcTomcatInstrumentedModuleTest {
 
-    @BQTestTool
-    public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcTomcatModuleProvider.class);
-    }
-
-    @Test
-    public void metadata() {
-        BQModuleProviderChecker.testMetadata(JdbcTomcatModuleProvider.class);
-    }
-
-    @Test
-    public void moduleDeclaresDependencies() {
-        final BQRuntime bqRuntime = testFactory.app().moduleProvider(new JdbcTomcatModuleProvider()).createRuntime();
-        BQRuntimeChecker.testModulesLoaded(bqRuntime,
-                JdbcTomcatModule.class,
-                JdbcModule.class
-        );
+        BQModuleTester.of(JdbcTomcatInstrumentedModule.class).testAutoLoadable().testConfig();
     }
 }

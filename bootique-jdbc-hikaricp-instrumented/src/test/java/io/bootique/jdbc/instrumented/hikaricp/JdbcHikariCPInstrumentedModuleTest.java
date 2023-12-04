@@ -19,11 +19,10 @@
 
 package io.bootique.jdbc.instrumented.hikaricp;
 
-import io.bootique.BQRuntime;
-import io.bootique.jdbc.JdbcModule;
-import io.bootique.junit5.*;
-import io.bootique.metrics.MetricsModule;
-import io.bootique.metrics.health.HealthCheckModule;
+import io.bootique.junit5.BQModuleTester;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 @BQTest
@@ -33,20 +32,7 @@ public class JdbcHikariCPInstrumentedModuleTest {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(JdbcHikariCPInstrumentedModule.class);
-    }
-
-    @Test
-    public void moduleDeclaresDependencies() {
-        BQRuntime bqRuntime = testFactory.app()
-                .moduleProvider(new JdbcHikariCPInstrumentedModule())
-                .createRuntime();
-
-        BQRuntimeChecker.testModulesLoaded(bqRuntime,
-                HealthCheckModule.class,
-                MetricsModule.class,
-                JdbcModule.class
-        );
+    public void check() {
+        BQModuleTester.of(JdbcHikariCPInstrumentedModule.class).testAutoLoadable().testConfig();
     }
 }

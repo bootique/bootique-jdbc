@@ -18,7 +18,7 @@
  */
 package io.bootique.jdbc.junit5;
 
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.jdbc.junit5.connector.DbConnector;

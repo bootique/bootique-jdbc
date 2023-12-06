@@ -55,10 +55,12 @@ public class DataSourceFactoryIT {
 
         try {
             runtime.getInstance(DataSourceFactory.class).forName("ds1");
-            fail("Exception expected");
         } catch (DIRuntimeException e) {
-            assertTrue(e.getCause() instanceof BootiqueException);
+            assertTrue(e.getCause() instanceof BootiqueException, () -> "Unexpected exception: " + e.getCause());
+            return;
         }
+
+        fail("Exception expected");
     }
 
     @Test
@@ -68,7 +70,6 @@ public class DataSourceFactoryIT {
                 .autoLoadModules()
                 .module(b -> JdbcModule.extend(b).addFactoryType(Factory1.class))
                 .createRuntime();
-
 
         DataSource ds = runtime.getInstance(DataSourceFactory.class).forName("ds1");
         assertNotNull(ds);
@@ -84,10 +85,12 @@ public class DataSourceFactoryIT {
 
         try {
             runtime.getInstance(DataSourceFactory.class).forName("ds1");
-            fail("Exception expected");
         } catch (DIRuntimeException e) {
-            assertTrue(e.getCause() instanceof BootiqueException);
+            assertTrue(e.getCause() instanceof BootiqueException, () -> "Unexpected exception: " + e.getCause());
+            return;
         }
+
+        fail("Exception expected");
     }
 
     @Test

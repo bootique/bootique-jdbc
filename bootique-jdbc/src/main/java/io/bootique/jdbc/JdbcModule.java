@@ -66,13 +66,9 @@ public class JdbcModule implements BQModule {
             ShutdownManager shutdownManager,
             Set<DataSourceListener> listeners) {
 
-        LazyDataSourceFactory factory = new LazyDataSourceFactory(starters, listeners);
-        shutdownManager.addShutdownHook(() -> {
-            bootLogger.trace(() -> "shutting down LazyDataSourceFactory...");
-            factory.shutdown();
-        });
-
-        return factory;
+        return shutdownManager.onShutdown(
+                new LazyDataSourceFactory(starters, listeners),
+                LazyDataSourceFactory::shutdown);
     }
 
     @Singleton

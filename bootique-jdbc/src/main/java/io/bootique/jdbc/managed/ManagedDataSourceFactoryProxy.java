@@ -84,7 +84,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
         ManagedDataSourceFactory factory;
 
         try {
-            factory = factoryType.newInstance();
+            factory = factoryType.getDeclaredConstructor().newInstance();
             mapper.readerForUpdating(factory).readValue(new TreeTraversingParser(jsonNode, mapper), factoryType);
         } catch (Exception e) {
             throw new BootiqueException(1, "Deserialization of JDBC DataSource configuration failed.", e);
@@ -99,8 +99,8 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
 
     private Class<? extends ManagedDataSourceFactory> delegateFactoryType(Injector injector) {
 
-        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key
-                .get(new TypeLiteral<Set<Class<? extends ManagedDataSourceFactory>>>() {});
+        Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key.get(new TypeLiteral<>() {
+        });
 
         Set<Class<? extends ManagedDataSourceFactory>> allFactories = injector.getProvider(setKey).get();
 

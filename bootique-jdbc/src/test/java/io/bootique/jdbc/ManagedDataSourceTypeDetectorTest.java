@@ -17,9 +17,12 @@
  * under the License.
  */
 
-package io.bootique.jdbc.managed;
+package io.bootique.jdbc;
 
 import io.bootique.di.Injector;
+import io.bootique.jdbc.ManagedDataSourceTypeDetector;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -30,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ManagedDataSourceFactoryProxyTest {
+public class ManagedDataSourceTypeDetectorTest {
 
     @Test
     public void leafFactories() {
@@ -48,7 +51,7 @@ public class ManagedDataSourceFactoryProxyTest {
                         Y3.class
                 ));
 
-        Set<Class<? extends ManagedDataSourceFactory>> leaves = ManagedDataSourceFactoryProxy.leafFactories(factories);
+        Set<Class<? extends ManagedDataSourceFactory>> leaves = ManagedDataSourceTypeDetector.leafFactories(factories);
         assertEquals(4, leaves.size());
         assertTrue(leaves.contains(X33.class));
         assertTrue(leaves.contains(X4.class));

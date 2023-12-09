@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.jdbc.managed;
+package io.bootique.jdbc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.BQRuntime;
@@ -27,6 +27,8 @@ import io.bootique.di.DIRuntimeException;
 import io.bootique.di.Injector;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.JdbcModule;
+import io.bootique.jdbc.managed.ManagedDataSourceFactory;
+import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestFactory;
 import io.bootique.junit5.BQTestTool;
@@ -40,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @BQTest
-public class ManagedDataSourceFactoryProxyIT {
+public class ManagedDataSourceTypeDetectorIT {
 
     @BQTestTool
     final BQTestFactory testFactory = new BQTestFactory();
@@ -59,9 +61,8 @@ public class ManagedDataSourceFactoryProxyIT {
                 .createRuntime();
 
         ConfigurationFactory configFactory = runtime.getInstance(ConfigurationFactory.class);
-        Map<String, ManagedDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
-                }, configPrefix);
+        Map<String, ManagedDataSourceFactory> configs = configFactory.config(new TypeRef<>() {
+        }, configPrefix);
 
         assertTrue(configs.get("ds1") instanceof ManagedDataSourceFactoryX4);
         assertTrue(configs.get("ds2") instanceof ManagedDataSourceFactoryX1);
@@ -89,9 +90,8 @@ public class ManagedDataSourceFactoryProxyIT {
                 .createRuntime();
 
         ConfigurationFactory configFactory = runtime.getInstance(ConfigurationFactory.class);
-        Map<String, ManagedDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
-                }, configPrefix);
+        Map<String, ManagedDataSourceFactory> configs = configFactory.config(new TypeRef<>() {
+        }, configPrefix);
 
         assertTrue(configs.get("ds1") instanceof ManagedDataSourceFactoryX4);
         assertTrue(configs.get("ds2") instanceof ManagedDataSourceFactoryX1);
@@ -146,12 +146,11 @@ public class ManagedDataSourceFactoryProxyIT {
                 .createRuntime();
 
         ConfigurationFactory configFactory = runtime.getInstance(ConfigurationFactory.class);
-        Map<String, ManagedDataSourceFactory> configs = configFactory
-                .config(new TypeRef<Map<String, ManagedDataSourceFactory>>() {
-                }, configPrefix);
+        Map<String, ManagedDataSourceFactory> configs = configFactory.config(new TypeRef<>() {
+        }, configPrefix);
 
-        assertTrue(configs.get("ds1") instanceof ManagedDataSourceFactoryProxy);
-        assertTrue(configs.get("ds2") instanceof ManagedDataSourceFactoryProxy);
+        assertTrue(configs.get("ds1") instanceof ManagedDataSourceFactoryX3);
+        assertTrue(configs.get("ds2") instanceof ManagedDataSourceFactoryX3);
 
         DataSourceFactory factory = runtime.getInstance(DataSourceFactory.class);
 

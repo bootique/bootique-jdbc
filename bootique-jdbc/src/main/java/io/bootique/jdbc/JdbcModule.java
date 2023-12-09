@@ -19,9 +19,10 @@
 
 package io.bootique.jdbc;
 
+import io.bootique.BQCoreModule;
+import io.bootique.BQModule;
 import io.bootique.ModuleCrate;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Injector;
 import io.bootique.di.Provides;
@@ -35,7 +36,7 @@ import java.util.Set;
 
 public class JdbcModule implements BQModule {
 
-    private static final String CONFIG_PREFIX = "jdbc";
+    static final String CONFIG_PREFIX = "jdbc";
 
     /**
      * @param binder Bootique DI binder.
@@ -56,6 +57,7 @@ public class JdbcModule implements BQModule {
     @Override
     public void configure(Binder binder) {
         JdbcModule.extend(binder).initAllExtensions();
+        BQCoreModule.extend(binder).addConfigLoader(ManagedDataSourceTypeDetector.class);
     }
 
     @Singleton

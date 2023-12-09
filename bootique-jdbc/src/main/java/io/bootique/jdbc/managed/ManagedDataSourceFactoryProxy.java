@@ -19,11 +19,11 @@
 
 package io.bootique.jdbc.managed;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import io.bootique.BootiqueException;
 import io.bootique.annotation.BQConfig;
@@ -31,7 +31,6 @@ import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.di.TypeLiteral;
 import io.bootique.jackson.JacksonService;
-import io.bootique.jdbc.jackson.ManagedDataSourceFactoryProxyDeserializer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,11 +44,11 @@ import java.util.Set;
  * thrown.
  */
 @BQConfig("Default JDBC DataSource configuration.")
-@JsonDeserialize(using = ManagedDataSourceFactoryProxyDeserializer.class)
 public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
 
-    private JsonNode jsonNode;
+    private final JsonNode jsonNode;
 
+    @JsonCreator
     public ManagedDataSourceFactoryProxy(JsonNode jsonNode) {
         this.jsonNode = jsonNode;
     }

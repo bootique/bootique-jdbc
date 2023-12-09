@@ -19,7 +19,7 @@
 
 package io.bootique.jdbc.test;
 
-import io.bootique.ConfigModule;
+import io.bootique.BQModule;
 import io.bootique.ModuleCrate;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
@@ -37,13 +37,15 @@ import javax.inject.Singleton;
  * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
 @Deprecated(since = "3.0", forRemoval = true)
-public class JdbcTestModule extends ConfigModule {
+public class JdbcTestModule implements BQModule {
+
+    private final String CONFIG_PREFIX = "jdbctest";
 
     @Override
     public ModuleCrate crate() {
         return ModuleCrate.of(this)
                 .description("Integrates JUnit 4 test extensions for JDBC")
-                .config("jdbctest", DatabaseChannelFactoryFactory.class)
+                .config(CONFIG_PREFIX, DatabaseChannelFactoryFactory.class)
                 .build();
     }
 
@@ -59,7 +61,7 @@ public class JdbcTestModule extends ConfigModule {
             ConfigurationFactory configFactory,
             DataSourceFactory dataSourceFactory) {
 
-        return config(DatabaseChannelFactoryFactory.class, configFactory).createFactory(dataSourceFactory);
+        return configFactory.config(DatabaseChannelFactoryFactory.class, CONFIG_PREFIX).createFactory(dataSourceFactory);
     }
 
     @Singleton

@@ -24,9 +24,6 @@ import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.DIRuntimeException;
-import io.bootique.di.Injector;
-import io.bootique.jdbc.DataSourceFactory;
-import io.bootique.jdbc.JdbcModule;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.junit5.BQTest;
@@ -209,7 +206,7 @@ public class ManagedDataSourceTypeDetectorIT {
         }
 
         @Override
-        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+        public ManagedDataSourceStarter create(String dataSourceName) {
             return new ManagedDataSourceStarter(
                     () -> url,
                     () -> mock(DataSource.class),
@@ -253,7 +250,7 @@ public class ManagedDataSourceTypeDetectorIT {
         }
 
         @Override
-        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+        public ManagedDataSourceStarter create(String dataSourceName) {
             return new ManagedDataSourceStarter(
                     () -> url,
                     () -> mock(DataSource.class),

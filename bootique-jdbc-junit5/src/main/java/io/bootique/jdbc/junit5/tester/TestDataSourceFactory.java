@@ -23,9 +23,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
+import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
-import io.bootique.jdbc.junit5.DbTester;
+
+import javax.inject.Inject;
 
 /**
  * @since 2.0
@@ -36,8 +38,15 @@ import io.bootique.jdbc.junit5.DbTester;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestDataSourceFactory implements ManagedDataSourceFactory {
 
+    private final Injector injector;
+
+    @Inject
+    public TestDataSourceFactory(Injector injector) {
+        this.injector = injector;
+    }
+
     @Override
-    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName) {
 
         DbTester tester = injector.getInstance(Key.get(DbTester.class, dataSourceName));
 

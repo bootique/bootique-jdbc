@@ -22,7 +22,6 @@ package io.bootique.jdbc.managed;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.bootique.annotation.BQConfig;
 import io.bootique.config.PolymorphicConfiguration;
-import io.bootique.di.Injector;
 
 /**
  * Configuration factory for specific DataSource implementations.
@@ -31,5 +30,5 @@ import io.bootique.di.Injector;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface ManagedDataSourceFactory extends PolymorphicConfiguration {
 
-    ManagedDataSourceStarter create(String dataSourceName, Injector injector);
+    ManagedDataSourceStarter create(String dataSourceName);
 }

@@ -23,7 +23,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.di.Injector;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.hikaricp.HikariCPManagedDataSourceFactory;
 import io.bootique.jdbc.instrumented.hikaricp.healthcheck.HikariCPHealthChecksFactory;
@@ -31,6 +30,7 @@ import io.bootique.jdbc.instrumented.hikaricp.managed.InstrumentedManagedDataSou
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.health.HealthCheckGroup;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
 import java.util.function.Consumer;
@@ -40,19 +40,26 @@ import java.util.function.Supplier;
 @JsonTypeName("hikari-instrumented")
 public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSourceFactory {
 
+    private final Provider<MetricRegistry> metricRegistry;
+    private final Provider<DataSourceFactory> dataSourceFactory;
+
     private HikariCPHealthChecksFactory health;
+
+    @Inject
+    public HikariCPInstrumentedDataSourceFactory(
+            Provider<MetricRegistry> metricRegistry,
+            Provider<DataSourceFactory> dataSourceFactory) {
+        this.metricRegistry = metricRegistry;
+        this.dataSourceFactory = dataSourceFactory;
+    }
 
     @Override
     protected ManagedDataSourceStarter createDataSourceStarter(
             String dataSourceName,
-            Injector injector,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {
 
-        MetricRegistry metricRegistry = injector.getInstance(MetricRegistry.class);
-        Provider<DataSourceFactory> dataSourceFactoryProvider = injector.getProvider(DataSourceFactory.class);
-        HealthCheckGroup healthChecks = healthChecks(metricRegistry, dataSourceFactoryProvider, dataSourceName);
-
+        HealthCheckGroup healthChecks = healthChecks(dataSourceName);
         return new InstrumentedManagedDataSourceStarter(() -> getJdbcUrl(), startup, shutdown, healthChecks);
     }
 
@@ -61,12 +68,11 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
         this.health = health;
     }
 
-    private HealthCheckGroup healthChecks(
-            MetricRegistry metricRegistry,
-            Provider<DataSourceFactory> dataSourceFactoryProvider,
-            String dataSourceName) {
+    private HealthCheckGroup healthChecks(String dataSourceName) {
 
-        HikariCPHealthChecksFactory factory = this.health != null ? this.health : new HikariCPHealthChecksFactory();
-        return factory.createHealthChecks(metricRegistry, dataSourceFactoryProvider, dataSourceName);
+        HikariCPHealthChecksFactory factory = this.health != null
+                ? this.health
+                : new HikariCPHealthChecksFactory(metricRegistry, dataSourceFactory);
+        return factory.createHealthChecks(dataSourceName);
     }
 }

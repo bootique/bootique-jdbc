@@ -19,8 +19,6 @@
 
 package io.bootique.jdbc;
 
-import io.bootique.di.Injector;
-import io.bootique.jdbc.ManagedDataSourceTypeDetector;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.junit.jupiter.api.Test;
@@ -29,9 +27,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedDataSourceTypeDetectorTest {
 
@@ -62,7 +60,7 @@ public class ManagedDataSourceTypeDetectorTest {
     public static class X1 implements ManagedDataSourceFactory {
 
         @Override
-        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+        public ManagedDataSourceStarter create(String dataSourceName) {
             return mock(ManagedDataSourceStarter.class);
         }
     }
@@ -90,7 +88,7 @@ public class ManagedDataSourceTypeDetectorTest {
     public static class Y1 extends Superclass0 implements ManagedDataSourceFactory {
 
         @Override
-        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+        public ManagedDataSourceStarter create(String dataSourceName) {
             return mock(ManagedDataSourceStarter.class);
         }
     }

@@ -30,6 +30,7 @@ import io.bootique.metrics.health.HealthCheckGroup;
 import io.bootique.metrics.health.check.DeferredHealthCheck;
 import io.bootique.metrics.health.check.DurationRangeFactory;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +40,19 @@ import java.util.function.Supplier;
 @BQConfig("Configures health checks for a Hikari DataSource.")
 public class HikariCPHealthChecksFactory {
 
+    private final Provider<MetricRegistry> metricRegistry;
+    private final Provider<DataSourceFactory> dataSourceFactory;
+
     private DurationRangeFactory connectivity;
     private DurationRangeFactory connection99Percent;
+
+    @Inject
+    public HikariCPHealthChecksFactory(
+            Provider<MetricRegistry> metricRegistry,
+            Provider<DataSourceFactory> dataSourceFactory) {
+        this.metricRegistry = metricRegistry;
+        this.dataSourceFactory = dataSourceFactory;
+    }
 
     @BQConfigProperty("Configures a time threshold for DB connectivity check.")
     public void setConnectivity(DurationRangeFactory connectivity) {
@@ -53,44 +65,32 @@ public class HikariCPHealthChecksFactory {
         this.connection99Percent = connection99Percent;
     }
 
-    public HealthCheckGroup createHealthChecks(MetricRegistry registry,
-                                               Provider<DataSourceFactory> dataSourceFactoryProvider,
-                                               String dataSourceName) {
+    public HealthCheckGroup createHealthChecks(String dataSourceName) {
 
         Map<String, HealthCheck> checks = new HashMap<>(3);
 
         checks.put(HikariCPConnectivityCheck.healthCheckName(dataSourceName),
-                new DeferredHealthCheck(createConnectivityCheck(dataSourceFactoryProvider, dataSourceName)));
+                new DeferredHealthCheck(createConnectivityCheck(dataSourceName)));
 
         checks.put(Wait99PercentCheck.healthCheckName(dataSourceName),
-                new DeferredHealthCheck(createConnection99PercentCheck(registry, dataSourceFactoryProvider, dataSourceName)));
+                new DeferredHealthCheck(createConnection99PercentCheck(dataSourceName)));
 
         return () -> checks;
     }
 
-    private Supplier<Optional<HealthCheck>> createConnectivityCheck(
-            Provider<DataSourceFactory> dataSourceFactoryProvider,
-            String dataSourceName) {
-
-        return () ->
-                dataSourceFactoryProvider
-                        .get()
-                        .forNameIfStarted(dataSourceName)
-                        .flatMap(ds -> DataSourceUnwrapper.unwrap(ds, HikariDataSource.class))
-                        .map(ds -> new HikariCPConnectivityCheckFactory(connectivity).createHealthCheck(ds));
+    private Supplier<Optional<HealthCheck>> createConnectivityCheck(String dataSourceName) {
+        return () -> dataSourceFactory
+                .get()
+                .forNameIfStarted(dataSourceName)
+                .flatMap(ds -> DataSourceUnwrapper.unwrap(ds, HikariDataSource.class))
+                .map(ds -> new HikariCPConnectivityCheckFactory(connectivity).createHealthCheck(ds));
     }
 
-    private Supplier<Optional<HealthCheck>> createConnection99PercentCheck(
-            MetricRegistry registry,
-            Provider<DataSourceFactory> dataSourceFactoryProvider,
-            String dataSourceName) {
-
-        return () ->
-                dataSourceFactoryProvider
-                        .get()
-                        .forNameIfStarted(dataSourceName)
-                        .flatMap(ds -> DataSourceUnwrapper.unwrap(ds, HikariDataSource.class))
-                        .map(ds -> new Wait99PercentCheckFactory(connection99Percent)
-                                .createHealthCheck(registry, dataSourceName));
+    private Supplier<Optional<HealthCheck>> createConnection99PercentCheck(String dataSourceName) {
+        return () -> dataSourceFactory
+                .get()
+                .forNameIfStarted(dataSourceName)
+                .flatMap(ds -> DataSourceUnwrapper.unwrap(ds, HikariDataSource.class))
+                .map(ds -> new Wait99PercentCheckFactory(connection99Percent).createHealthCheck(metricRegistry.get(), dataSourceName));
     }
 }

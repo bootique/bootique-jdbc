@@ -20,7 +20,6 @@ package io.bootique.jdbc;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.bootique.annotation.BQConfig;
-import io.bootique.di.Injector;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 
@@ -42,9 +41,9 @@ public class JdbcFactory {
 
     // returning Starters map instead of DataSources, as it needs to be injectable independently for the sake of
     // instrumentation
-    public Map<String, ManagedDataSourceStarter> create(Injector injector) {
+    public Map<String, ManagedDataSourceStarter> create() {
         Map<String, ManagedDataSourceStarter> starters = new HashMap<>();
-        configs.forEach((n, mdsf) -> starters.put(n, mdsf.create(n, injector)));
+        configs.forEach((n, mdsf) -> starters.put(n, mdsf.create(n)));
         return starters;
     }
 }

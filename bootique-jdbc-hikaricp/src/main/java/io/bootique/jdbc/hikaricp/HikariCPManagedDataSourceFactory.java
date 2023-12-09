@@ -24,7 +24,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.di.Injector;
 import io.bootique.jdbc.LazyDataSource;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
@@ -96,14 +95,14 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     }
 
     @Override
-    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName) {
 
         Supplier<DataSource> startup = lazy
                 ? () -> createLazyDataSource(dataSourceName)
                 : () -> createDataSource(dataSourceName);
 
         Consumer<DataSource> shutdown = this::closeDataSource;
-        return createDataSourceStarter(dataSourceName, injector, startup, shutdown);
+        return createDataSourceStarter(dataSourceName, startup, shutdown);
     }
 
     protected DataSource createLazyDataSource(String dataSourceName) {
@@ -129,7 +128,6 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     protected ManagedDataSourceStarter createDataSourceStarter(
             String dataSourceName,
-            Injector injector,
             Supplier<DataSource> startup,
             Consumer<DataSource> shutdown) {
 

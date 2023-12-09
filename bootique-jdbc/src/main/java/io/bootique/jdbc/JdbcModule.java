@@ -24,7 +24,6 @@ import io.bootique.BQModule;
 import io.bootique.ModuleCrate;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
-import io.bootique.di.Injector;
 import io.bootique.di.Provides;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.log.BootLogger;
@@ -75,9 +74,7 @@ public class JdbcModule implements BQModule {
 
     @Singleton
     @Provides
-    Map<String, ManagedDataSourceStarter> provideDataSourceStarters(
-            ConfigurationFactory configurationFactory,
-            Injector injector) {
-        return configurationFactory.config(JdbcFactory.class, CONFIG_PREFIX).create(injector);
+    Map<String, ManagedDataSourceStarter> provideDataSourceStarters(ConfigurationFactory configFactory) {
+        return configFactory.config(JdbcFactory.class, CONFIG_PREFIX).create();
     }
 }

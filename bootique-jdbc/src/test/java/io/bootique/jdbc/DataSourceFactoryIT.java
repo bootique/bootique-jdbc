@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
 import io.bootique.di.DIRuntimeException;
-import io.bootique.di.Injector;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.junit5.BQTest;
@@ -131,7 +130,7 @@ public class DataSourceFactoryIT {
         }
 
         @Override
-        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+        public ManagedDataSourceStarter create(String dataSourceName) {
             return new ManagedDataSourceStarter(
                     () -> url,
                     () -> mock(DataSource.class),
@@ -150,7 +149,7 @@ public class DataSourceFactoryIT {
         }
 
         @Override
-        public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+        public ManagedDataSourceStarter create(String dataSourceName) {
             return new ManagedDataSourceStarter(
                     () -> url,
                     () -> mock(DataSource.class),

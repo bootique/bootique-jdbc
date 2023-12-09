@@ -22,7 +22,6 @@ package io.bootique.jdbc.tomcat;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.di.Injector;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
@@ -132,7 +131,7 @@ public class TomcatManagedDataSourceFactory implements ManagedDataSourceFactory 
     }
 
     @Override
-    public ManagedDataSourceStarter create(String dataSourceName, Injector injector) {
+    public ManagedDataSourceStarter create(String dataSourceName) {
 
         Supplier<javax.sql.DataSource> startup = () -> {
 

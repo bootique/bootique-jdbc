@@ -111,7 +111,7 @@ public class ManagedDataSourceFactoryProxy implements ManagedDataSourceFactory {
         switch (set.size()) {
             case 0:
                 throw new BootiqueException(1, "No concrete 'bootique-jdbc' implementation found. " +
-                        "You will need to add one (such as 'bootique-jdbc-tomcat', etc.) as an application dependency.");
+                        "You will need to add one (such as 'bootique-jdbc-hikaricp', etc.) as an application dependency.");
             case 1:
                 return set.iterator().next();
             default:

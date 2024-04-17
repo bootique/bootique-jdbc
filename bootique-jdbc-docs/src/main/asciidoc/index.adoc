@@ -16,7 +16,7 @@
 // under the License.
 
 // use custom header
-:bq-header: _chapters/header.html
+:hugo-header: _chapters/header.html
 
 include::_chapters/_01_jdbc_integration.adoc[]
 include::_chapters/_02_jdbc_programming.adoc[]

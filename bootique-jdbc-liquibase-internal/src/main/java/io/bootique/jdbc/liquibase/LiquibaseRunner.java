@@ -31,6 +31,7 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
+import liquibase.parser.ChangeLogParserFactory;
 import liquibase.resource.ResourceAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,7 @@ public class LiquibaseRunner {
 
     protected Liquibase createLiquibase() {
         ResourceAccessor resourceAccessor = new ResourceFactoryAccessor();
+        ChangeLogParserFactory.getInstance().register(new ModernYamlChangeLogParser());
 
         try {
             Database liquibaseDB = createDatabase(dataSource.getConnection());

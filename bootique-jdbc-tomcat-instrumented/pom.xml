@@ -58,17 +58,14 @@
 		<dependency>
 			<groupId>io.bootique.jdbc</groupId>
 			<artifactId>bootique-jdbc-tomcat</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.bootique.metrics</groupId>
 			<artifactId>bootique-metrics</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.bootique.metrics</groupId>
 			<artifactId>bootique-metrics-healthchecks</artifactId>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Unit test dependencies -->

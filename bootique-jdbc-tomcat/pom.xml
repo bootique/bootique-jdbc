@@ -57,12 +57,10 @@
         <dependency>
             <groupId>io.bootique.jdbc</groupId>
             <artifactId>bootique-jdbc</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <!-- Unit test dependencies -->

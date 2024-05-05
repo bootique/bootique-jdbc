@@ -1,3 +1,7 @@
+## 3.0-M5
+
+* #123 Upgrade to Liquibase 4.x
+
 ## 3.0-M3
 
 * #132 Deprecate Tomcat DataSource
@@ -17,7 +21,6 @@
 * #116 CsvDataSetBuilder can't handle BigDecimal
 * #121 Upgrade Derby to 10.15.2.0
 * #122 JUnit 5 connector - unify and expand test SQL conditions builders
-* #123 Upgrade to Liquibase 4.x
 
 ## 2.0.B1
 

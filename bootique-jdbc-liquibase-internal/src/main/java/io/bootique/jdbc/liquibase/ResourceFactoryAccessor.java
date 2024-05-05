@@ -20,16 +20,15 @@
 package io.bootique.jdbc.liquibase;
 
 import io.bootique.resource.ResourceFactory;
-import liquibase.resource.InputStreamList;
+import liquibase.resource.Resource;
 import liquibase.resource.ResourceAccessor;
+import liquibase.resource.URIResource;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A Liquibase {@link ResourceAccessor} that treats paths as Bootique resource URLs that should be processed via
@@ -40,38 +39,36 @@ import java.util.TreeSet;
 public class ResourceFactoryAccessor implements ResourceAccessor {
 
     @Override
-    public InputStream openStream(String relativeTo, String streamPath) throws IOException {
-        return toUrl(relativeTo, streamPath).openStream();
+    public List<Resource> getAll(String path) {
+        return new ResourceFactory(path).getUrls()
+                .stream()
+                .map(this::toURI)
+                .map(u -> new URIResource(path, u))
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public InputStreamList openStreams(String relativeTo, String streamPath) throws IOException {
-        URL url = toUrl(relativeTo, streamPath);
+    private URI toURI(URL url) {
         try {
-            return new InputStreamList(url.toURI(), url.openStream());
+            return url.toURI();
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Can't convert to a URI: " + url);
+            throw new RuntimeException(e);
         }
     }
 
-    protected URL toUrl(String relativeTo, String streamPath) {
-
-        // TODO: make sure there's a slash between relativeTo and streamPath
-        String path = relativeTo != null
-                ? relativeTo + streamPath
-                : streamPath;
-
-        return new ResourceFactory(path).getUrl();
+    @Override
+    public void close() {
+        // do nothing
     }
 
     @Override
-    public SortedSet<String> describeLocations() {
-        // TODO: anything more meaningful?
-        return new TreeSet<>();
+    public List<String> describeLocations() {
+        // TODO: should we provide a meaningful implementation?
+        return List.of();
     }
 
     @Override
-    public SortedSet<String> list(String relativeTo, String path, boolean recursive, boolean includeFiles, boolean includeDirectories) throws IOException {
-        throw new UnsupportedOperationException("'list' operation is not defined");
+    public List<Resource> search(String path, boolean recursive) {
+        // TODO: should we provide a meaningful implementation?
+        throw new UnsupportedOperationException("'search' operation is not defined");
     }
 }

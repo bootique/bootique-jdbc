@@ -22,11 +22,7 @@ package io.bootique.jdbc.liquibase;
 import io.bootique.resource.ResourceFactory;
 import liquibase.resource.Resource;
 import liquibase.resource.ResourceAccessor;
-import liquibase.resource.URIResource;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,17 +38,8 @@ public class ResourceFactoryAccessor implements ResourceAccessor {
     public List<Resource> getAll(String path) {
         return new ResourceFactory(path).getUrls()
                 .stream()
-                .map(this::toURI)
-                .map(u -> new URIResource(path, u))
+                .map(u -> new UrlResource(path, u))
                 .collect(Collectors.toList());
-    }
-
-    private URI toURI(URL url) {
-        try {
-            return url.toURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

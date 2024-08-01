@@ -42,7 +42,8 @@
         <derby.version>10.15.2.0</derby.version>
         <postgresql.version>42.4.3</postgresql.version>
         <mysql.version>8.0.33</mysql.version>
-        <liquibase.version>3.10.3</liquibase.version>
+        <liquibase.version>4.27.0</liquibase.version>
+        <jaxb.version>2.3.1</jaxb.version>
         <hikaricp.version>5.1.0</hikaricp.version>
     </properties>
 

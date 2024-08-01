@@ -19,18 +19,18 @@
 
 package io.bootique.jdbc.liquibase;
 
+import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.core.DerbyDatabase;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.ExecutorService;
-import liquibase.logging.LogService;
 
 import java.lang.reflect.Field;
 
 /**
  * Reimplements "close" method for Liquibase {@link liquibase.database.core.DerbyDatabase} to prevent Derby shutdown.
- * Liquibase operates with Bootique-provided DataSource and should not attempt to manage underlying DB state.
+ * Liquibase operates with Bootique-provided DataSource and should not attempt to manage the underlying DB state.
  *
  * @since 2.0
  */
@@ -47,7 +47,7 @@ public class NonClosingDerbyDatabase extends DerbyDatabase {
 
         // copy-paste from AbstractJdbcDatabase plus reflection to deal with private fields...
 
-        ExecutorService.getInstance().clearExecutor(this);
+        Scope.getCurrentScope().getSingleton(ExecutorService.class).clearExecutor("jdbc", this);
         DatabaseConnection connection = getConnection();
         if (connection != null) {
 
@@ -56,7 +56,8 @@ public class NonClosingDerbyDatabase extends DerbyDatabase {
                 try {
                     connection.setAutoCommit(previousAutoCommit);
                 } catch (DatabaseException e) {
-                    LogService.getLog(getClass()).warning("Failed to restore the auto commit to " + previousAutoCommit);
+                    Scope.getCurrentScope().getLog(getClass()).warning("Failed to restore the auto commit to " + previousAutoCommit);
+
                     throw e;
                 }
             }
@@ -68,7 +69,7 @@ public class NonClosingDerbyDatabase extends DerbyDatabase {
 
         // ugly hack ... reading private field from superclass...
 
-        Field fPreviousAutoCommit = null;
+        Field fPreviousAutoCommit;
         try {
             fPreviousAutoCommit = AbstractJdbcDatabase.class.getDeclaredField("previousAutoCommit");
         } catch (NoSuchFieldException e) {

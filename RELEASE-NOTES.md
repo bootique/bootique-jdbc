@@ -1,3 +1,7 @@
+## 3.0-M5
+
+* #123 Upgrade to Liquibase 4.x
+
 ## 3.0-M3
 
 * #132 Deprecate Tomcat DataSource

@@ -21,7 +21,7 @@ package io.bootique.jdbc.liquibase;
 
 import io.bootique.resource.ResourceFactory;
 import liquibase.ContextExpression;
-import liquibase.LabelExpression;
+import liquibase.Labels;
 import liquibase.Liquibase;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.DatabaseChangeLog;
@@ -31,7 +31,6 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
-import liquibase.parser.ChangeLogParserFactory;
 import liquibase.resource.ResourceAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +82,6 @@ public class LiquibaseRunner {
 
     protected Liquibase createLiquibase() {
         ResourceAccessor resourceAccessor = new ResourceFactoryAccessor();
-        ChangeLogParserFactory.getInstance().register(new ModernYamlChangeLogParser());
 
         try {
             Database liquibaseDB = createDatabase(dataSource.getConnection());
@@ -96,15 +94,18 @@ public class LiquibaseRunner {
 
     protected DatabaseChangeLog createDatabaseChangeLog(Database database, ResourceAccessor resourceAccessor) {
         DatabaseChangeLog changeLog = new DatabaseChangeLog();
+
+        // adding a star
+        changeLog.setLogicalFilePath("bootique-liquibase-root*");
         changeLog.setChangeLogParameters(new ChangeLogParameters(database));
 
         // TODO: do something useful with this?
-        LabelExpression labelExpression = new LabelExpression();
+        Labels labels = new Labels();
 
         changeLogs.forEach(cl -> {
             try {
                 LOGGER.info("Including change log: '{}'", cl.getResourceId());
-                changeLog.include(cl.getResourceId(), false, resourceAccessor, new ContextExpression(), labelExpression, false, true);
+                changeLog.include(cl.getResourceId(), false, true, resourceAccessor, new ContextExpression(), labels, false, DatabaseChangeLog.OnUnknownFileFormat.FAIL);
             } catch (LiquibaseException e) {
                 throw new RuntimeException("Error configuring Liquibase", e);
             }

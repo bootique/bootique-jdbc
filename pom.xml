@@ -40,7 +40,7 @@
     <properties>
         <bootique.version>${project.version}</bootique.version>
         <derby.version>10.15.2.0</derby.version>
-        <postgresql.version>42.4.3</postgresql.version>
+        <postgresql.version>42.7.4</postgresql.version>
         <mysql.version>8.0.33</mysql.version>
         <liquibase.version>4.30.0</liquibase.version>
         <jaxb.version>2.3.1</jaxb.version>

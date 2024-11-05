@@ -20,9 +20,7 @@
 package io.bootique.jdbc.liquibase;
 
 import io.bootique.resource.ResourceFactory;
-import liquibase.ContextExpression;
-import liquibase.Labels;
-import liquibase.Liquibase;
+import liquibase.*;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
@@ -37,8 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -84,15 +82,21 @@ public class LiquibaseRunner {
         ResourceAccessor resourceAccessor = new ResourceFactoryAccessor();
 
         try {
-            Database liquibaseDB = createDatabase(dataSource.getConnection());
-            DatabaseChangeLog changeLog = createDatabaseChangeLog(liquibaseDB, resourceAccessor);
-            return new Liquibase(changeLog, resourceAccessor, liquibaseDB);
-        } catch (SQLException | LiquibaseException e) {
+            // A special scope forcing relative resource resolution.
+            // See https://github.com/liquibase/liquibase/pull/5894
+            return Scope.child(Map.of(GlobalConfiguration.PRESERVE_CLASSPATH_PREFIX_IN_NORMALIZED_PATHS.getKey(), "true"), () -> {
+                
+                Database liquibaseDB = createDatabase(dataSource.getConnection());
+                DatabaseChangeLog changeLog = createDatabaseChangeLog(liquibaseDB, resourceAccessor);
+                return new Liquibase(changeLog, resourceAccessor, liquibaseDB);
+            });
+        } catch (Exception e) {
             throw new RuntimeException("Error creating liquibase", e);
         }
     }
 
     protected DatabaseChangeLog createDatabaseChangeLog(Database database, ResourceAccessor resourceAccessor) {
+
         DatabaseChangeLog changeLog = new DatabaseChangeLog();
 
         // adding a star

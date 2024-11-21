@@ -1,6 +1,7 @@
 ## 3.0-M5
 
 * #123 Upgrade to Liquibase 4.x
+* #135 Explicitly disable Liquibase analytics
 
 ## 3.0-M3
 

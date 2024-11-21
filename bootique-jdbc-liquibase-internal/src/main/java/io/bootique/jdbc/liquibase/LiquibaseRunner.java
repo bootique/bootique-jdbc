@@ -21,6 +21,7 @@ package io.bootique.jdbc.liquibase;
 
 import io.bootique.resource.ResourceFactory;
 import liquibase.*;
+import liquibase.analytics.configuration.AnalyticsArgs;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.Database;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -59,40 +61,54 @@ public class LiquibaseRunner {
     }
 
     public <T> T call(Function<Liquibase, T> op) {
-
-        Liquibase lb = createLiquibase();
-        try {
-            return op.apply(lb);
-        } finally {
-            closeLiquibase(lb);
-        }
+        return withCustomConfigScope(() -> {
+                    Liquibase lb = createLiquibase();
+                    try {
+                        return op.apply(lb);
+                    } finally {
+                        closeLiquibase(lb);
+                    }
+                }
+        );
     }
 
     public void run(Consumer<Liquibase> op) {
+        withCustomConfigScope(() -> {
+            Liquibase lb = createLiquibase();
+            try {
+                op.accept(lb);
+            } finally {
+                closeLiquibase(lb);
+            }
 
-        Liquibase lb = createLiquibase();
-        try {
-            op.accept(lb);
-        } finally {
-            closeLiquibase(lb);
-        }
+            return null;
+        });
     }
 
-    protected Liquibase createLiquibase() {
+    protected Liquibase createLiquibase() throws SQLException, DatabaseException {
         ResourceAccessor resourceAccessor = new ResourceFactoryAccessor();
+        Database liquibaseDB = createDatabase(dataSource.getConnection());
+        DatabaseChangeLog changeLog = createDatabaseChangeLog(liquibaseDB, resourceAccessor);
+        return new Liquibase(changeLog, resourceAccessor, liquibaseDB);
+    }
 
+    protected <T> T withCustomConfigScope(Scope.ScopedRunnerWithReturn<T> op) {
         try {
-            // A special scope forcing relative resource resolution.
-            // See https://github.com/liquibase/liquibase/pull/5894
-            return Scope.child(Map.of(GlobalConfiguration.PRESERVE_CLASSPATH_PREFIX_IN_NORMALIZED_PATHS.getKey(), "true"), () -> {
-                
-                Database liquibaseDB = createDatabase(dataSource.getConnection());
-                DatabaseChangeLog changeLog = createDatabaseChangeLog(liquibaseDB, resourceAccessor);
-                return new Liquibase(changeLog, resourceAccessor, liquibaseDB);
-            });
+            return Scope.child(liquibaseConfiguration(), op);
         } catch (Exception e) {
             throw new RuntimeException("Error creating liquibase", e);
         }
+    }
+
+    protected Map<String, Object> liquibaseConfiguration() {
+        return Map.of(
+
+                // Forcing relative resource resolution per https://github.com/liquibase/liquibase/pull/5894
+                GlobalConfiguration.PRESERVE_CLASSPATH_PREFIX_IN_NORMALIZED_PATHS.getKey(), "true",
+
+                // Forcing no analytics per https://github.com/bootique/bootique-jdbc/issues/135
+                AnalyticsArgs.ENABLED.getKey(), "false"
+        );
     }
 
     protected DatabaseChangeLog createDatabaseChangeLog(Database database, ResourceAccessor resourceAccessor) {

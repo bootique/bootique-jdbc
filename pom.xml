@@ -42,6 +42,7 @@
         <postgresql.version>42.7.4</postgresql.version>
         <mysql.version>8.0.33</mysql.version>
         <liquibase.version>4.30.0</liquibase.version>
+        <commons.lang.version>3.17.0</commons.lang.version>
         <jaxb.version>2.3.1</jaxb.version>
         <hikaricp.version>5.1.0</hikaricp.version>
     </properties>

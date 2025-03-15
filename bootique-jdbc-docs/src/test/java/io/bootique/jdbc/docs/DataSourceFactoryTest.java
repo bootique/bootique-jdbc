@@ -20,7 +20,7 @@ package io.bootique.jdbc.docs;
 
 import io.bootique.jdbc.DataSourceFactory;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;

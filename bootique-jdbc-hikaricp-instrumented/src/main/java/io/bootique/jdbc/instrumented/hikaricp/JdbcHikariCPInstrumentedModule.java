@@ -30,7 +30,7 @@ import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.MetricNaming;
 import io.bootique.metrics.health.HealthCheckModule;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Map;
 
 public class JdbcHikariCPInstrumentedModule implements BQModule {

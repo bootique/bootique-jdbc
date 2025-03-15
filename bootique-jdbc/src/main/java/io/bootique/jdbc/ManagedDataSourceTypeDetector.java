@@ -29,7 +29,7 @@ import io.bootique.di.Key;
 import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

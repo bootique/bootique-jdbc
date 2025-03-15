@@ -31,7 +31,7 @@ import io.bootique.jdbc.test.runtime.DatabaseChannelFactory;
 import io.bootique.jdbc.test.runtime.DatabaseChannelFactoryFactory;
 import io.bootique.log.BootLogger;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5

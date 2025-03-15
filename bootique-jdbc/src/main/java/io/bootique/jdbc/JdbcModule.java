@@ -29,7 +29,7 @@ import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 

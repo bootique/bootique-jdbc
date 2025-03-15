@@ -32,7 +32,7 @@ import io.bootique.test.junit.BQTestFactory;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.sql.DataSource;
 import java.util.Set;
 

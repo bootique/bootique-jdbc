@@ -30,7 +30,7 @@ import io.bootique.jdbc.instrumented.tomcat.healthcheck.TomcatHealthChecks;
 import io.bootique.metrics.MetricNaming;
 import io.bootique.metrics.health.HealthCheckModule;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * @deprecated The alternative is switching to bootique-jdbc-hikaricp.

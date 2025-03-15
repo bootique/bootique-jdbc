@@ -27,7 +27,7 @@ import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * @since 2.0

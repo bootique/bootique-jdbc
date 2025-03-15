@@ -30,8 +30,8 @@ import io.bootique.metrics.health.HealthCheckGroup;
 import io.bootique.metrics.health.check.DeferredHealthCheck;
 import io.bootique.metrics.health.check.DurationRangeFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

@@ -30,8 +30,8 @@ import io.bootique.jdbc.instrumented.hikaricp.managed.InstrumentedManagedDataSou
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import io.bootique.metrics.health.HealthCheckGroup;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import javax.sql.DataSource;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

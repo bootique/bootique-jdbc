@@ -1,3 +1,7 @@
+## 3.0-RC1
+
+* #136 Upgrade HikariCP to 6.2.1
+
 ## 3.0-M6
 
 * #123 Upgrade to Liquibase 4.x

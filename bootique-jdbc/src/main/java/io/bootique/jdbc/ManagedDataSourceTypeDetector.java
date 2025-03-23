@@ -92,7 +92,7 @@ class ManagedDataSourceTypeDetector implements JsonConfigurationLoader {
         Key<Set<Class<? extends ManagedDataSourceFactory>>> setKey = Key.get(new TypeLiteral<>() {
         });
 
-        Set<Class<? extends ManagedDataSourceFactory>> allFactories = injector.getProvider(setKey).get();
+        Set<Class<? extends ManagedDataSourceFactory>> allFactories = injector.getJakartaProvider(setKey).get();
 
         // the resulting set should contain this class plus one or more concrete ManagedDataSourceFactory implementors.
         // We can guess the default only if there's a single implementor.

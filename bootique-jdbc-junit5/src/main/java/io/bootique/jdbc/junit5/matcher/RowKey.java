@@ -30,7 +30,7 @@ import static java.util.Arrays.asList;
  */
 public class RowKey {
 
-    private Object[] key;
+    private final Object[] key;
 
     RowKey(Object[] key) {
         this.key = key;
@@ -38,13 +38,7 @@ public class RowKey {
 
     @Override
     public boolean equals(Object object) {
-
-        if (!(object instanceof RowKey)) {
-            return false;
-        }
-
-        RowKey anotherKey = (RowKey) object;
-        return Arrays.equals(key, anotherKey.key);
+        return object instanceof RowKey rc && Arrays.equals(key, rc.key);
     }
 
     @Override

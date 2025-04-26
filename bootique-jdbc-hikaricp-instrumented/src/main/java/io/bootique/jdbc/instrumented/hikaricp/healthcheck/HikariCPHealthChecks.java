@@ -47,8 +47,8 @@ public class HikariCPHealthChecks implements HealthCheckGroup {
         starters.forEach((b, s) -> {
 
             // extract health checks from Hikari instrumented starters
-            if (s instanceof InstrumentedManagedDataSourceStarter) {
-                checks.putAll(((InstrumentedManagedDataSourceStarter) s).getHealthChecks().getHealthChecks());
+            if (s instanceof InstrumentedManagedDataSourceStarter is) {
+                checks.putAll(is.getHealthChecks().getHealthChecks());
             }
         });
 

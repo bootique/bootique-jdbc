@@ -147,7 +147,7 @@ public class DbMetadata {
             DatabaseMetaData md = c.getMetaData();
 
             try (ResultSet columnsRs = md.getColumns(
-                    tableName.getCatalog(), tableName.getSchema(), tableName.getTable(), null)) {
+                    tableName.catalog(), tableName.schema(), tableName.table(), null)) {
 
                 while (columnsRs.next()) {
                     String name = columnsRs.getString("COLUMN_NAME");
@@ -164,7 +164,7 @@ public class DbMetadata {
             if (columnsAndTypes.isEmpty()) {
 
                 try (ResultSet tablesRs = md.getTables(
-                        tableName.getCatalog(), tableName.getSchema(), tableName.getTable(), null)) {
+                        tableName.catalog(), tableName.schema(), tableName.table(), null)) {
                     if (!tablesRs.next()) {
                         throw new RuntimeException("Non-existent table '" + tableName + "'");
                     }
@@ -172,7 +172,7 @@ public class DbMetadata {
             }
 
             try (ResultSet pkRs = md.getPrimaryKeys(
-                    tableName.getCatalog(), tableName.getSchema(), tableName.getTable())) {
+                    tableName.catalog(), tableName.schema(), tableName.table())) {
 
                 while (pkRs.next()) {
                     pks.add(pkRs.getString("COLUMN_NAME"));

@@ -111,14 +111,14 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
     public T appendTableName(TableFQName name) {
 
         if (name.hasCatalog()) {
-            sqlBuffer.append(quoter.quoted(name.getCatalog())).append(".");
+            sqlBuffer.append(quoter.quoted(name.catalog())).append(".");
         }
 
         if (name.hasSchema()) {
-            sqlBuffer.append(quoter.quoted(name.getSchema())).append(".");
+            sqlBuffer.append(quoter.quoted(name.schema())).append(".");
         }
 
-        sqlBuffer.append(quoter.quoted(name.getTable()));
+        sqlBuffer.append(quoter.quoted(name.table()));
 
         return (T) this;
     }

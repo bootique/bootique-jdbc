@@ -54,8 +54,8 @@ public class LazyDataSource implements DataSource, AutoCloseable {
     @Override
     public void close() throws Exception {
         DataSource local = this.delegate;
-        if (local instanceof AutoCloseable) {
-            ((AutoCloseable) local).close();
+        if (local instanceof AutoCloseable ac) {
+            ac.close();
         }
     }
 

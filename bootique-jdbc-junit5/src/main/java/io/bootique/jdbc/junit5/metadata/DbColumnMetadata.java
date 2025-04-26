@@ -90,8 +90,8 @@ public class DbColumnMetadata {
             case Types.TIME:
                 // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
                 // Other DBs work fine with or without the calendar
-                if (value instanceof Time) {
-                    statement.setTime(jdbcPosition, (Time) value, Calendar.getInstance());
+                if (value instanceof Time t) {
+                    statement.setTime(jdbcPosition, t, Calendar.getInstance());
                 } else {
                     statement.setObject(jdbcPosition, value, type);
                 }
@@ -99,16 +99,16 @@ public class DbColumnMetadata {
             case Types.TIMESTAMP:
                 // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
                 // Other DBs work fine with or without the calendar
-                if (value instanceof Timestamp) {
-                    statement.setTimestamp(jdbcPosition, (Timestamp) value, Calendar.getInstance());
+                if (value instanceof Timestamp ts) {
+                    statement.setTimestamp(jdbcPosition, ts, Calendar.getInstance());
                 } else {
                     statement.setObject(jdbcPosition, value, type);
                 }
                 break;
             case Types.DECIMAL:
                 // insert as BigDecimal if possible, otherwise may lose precision on Derby
-                if (value instanceof BigDecimal) {
-                    statement.setBigDecimal(jdbcPosition, (BigDecimal) value);
+                if (value instanceof BigDecimal bd) {
+                    statement.setBigDecimal(jdbcPosition, bd);
                 } else {
                     statement.setObject(jdbcPosition, value, type);
                 }

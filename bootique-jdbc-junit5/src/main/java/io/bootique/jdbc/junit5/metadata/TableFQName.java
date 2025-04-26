@@ -25,15 +25,11 @@ import java.util.Objects;
  *
  * @since 2.0
  */
-public class TableFQName {
-
-    private String catalog;
-    private String schema;
-    private String table;
+public record TableFQName(String catalog, String schema, String table) {
 
     public TableFQName(String catalog, String schema, String table) {
-        this.catalog = catalog != null && catalog.length() == 0 ? null : catalog;
-        this.schema = schema != null && schema.length() == 0 ? null : schema;
+        this.catalog = catalog != null && catalog.isEmpty() ? null : catalog;
+        this.schema = schema != null && schema.isEmpty() ? null : schema;
         this.table = Objects.requireNonNull(table);
     }
 
@@ -61,50 +57,15 @@ public class TableFQName {
         return schema != null;
     }
 
-    public String getCatalog() {
-        return catalog;
-    }
-
-    public String getSchema() {
-        return schema;
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-
-        if (o == this) {
-            return true;
-        }
-
-        if (o instanceof TableFQName) {
-
-            TableFQName ot = (TableFQName) o;
-            return Objects.equals(catalog, ot.catalog)
-                    && Objects.equals(schema, ot.schema)
-                    && Objects.equals(table, ot.table);
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(catalog, schema, table);
-    }
-
     @Override
     public String toString() {
 
         StringBuilder buffer = new StringBuilder();
-        if(catalog != null) {
+        if (catalog != null) {
             buffer.append(catalog).append(".");
         }
 
-        if(schema != null) {
+        if (schema != null) {
             buffer.append(schema).append(".");
         }
 

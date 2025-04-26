@@ -1,6 +1,7 @@
 ## 4.0-M1
 
 * #137 Remove deprecated modules and APIs
+* #138 Liquibase - exclude "javax.xml.bind:jaxb-api" dependency
 
 ## 3.0-RC1
 

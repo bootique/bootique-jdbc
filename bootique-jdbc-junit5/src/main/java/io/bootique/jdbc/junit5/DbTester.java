@@ -140,22 +140,6 @@ public abstract class DbTester<SELF extends DbTester> implements BQBeforeScopeCa
     }
 
     /**
-     * @deprecated since 2.0.B1 in favor of {@link #initDBWithLiquibaseChangelog(String)}
-     */
-    @Deprecated
-    public SELF runLiquibaseMigrations(String liquibaseChangeLog) {
-        return initDBWithLiquibaseChangelog(liquibaseChangeLog);
-    }
-
-    /**
-     * @deprecated since 2.0.B1 in favor of {@link #initDBWithLiquibaseChangelog(String, String)}
-     */
-    @Deprecated
-    public SELF runLiquibaseMigrations(String liquibaseChangeLog, String liquibaseContext) {
-        return initDBWithLiquibaseChangelog(liquibaseChangeLog, liquibaseContext);
-    }
-
-    /**
      * Schedules execution of a Liquibase changelog file after DB startup.
      *
      * @param changelog a location of the Liquibase changelog file in Bootique

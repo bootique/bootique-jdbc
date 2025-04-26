@@ -1,3 +1,7 @@
+## 4.0-M1
+
+* #137 Remove deprecated modules and APIs
+
 ## 3.0-RC1
 
 * #136 Upgrade HikariCP to 6.2.1

@@ -120,38 +120,6 @@ public abstract class WhereBuilder<
         return appendCondition("or", column, ComparisonOp.in, valueType, values);
     }
 
-    /**
-     * @deprecated since 3.0 in favor of {@link #andEq(String, Object)}
-     */
-    @Deprecated
-    public WHERE_BUILDER and(String column, Object value) {
-        return andEq(column, value);
-    }
-
-    /**
-     * @deprecated since 3.0 in favor of {@link #andEq(String, int, Object)}
-     */
-    @Deprecated
-    public WHERE_BUILDER and(String column, Object value, int valueType) {
-        return andEq(column, valueType, value);
-    }
-
-    /**
-     * @deprecated since 3.0 in favor of {@link #orEq(String, Object)}
-     */
-    @Deprecated
-    public WHERE_BUILDER or(String column, Object value) {
-        return orEq(column, value);
-    }
-
-    /**
-     * @deprecated since 3.0 in favor of {@link #orEq(String, int, Object)}
-     */
-    @Deprecated
-    public WHERE_BUILDER or(String column, Object value, int valueType) {
-        return orEq(column, valueType, value);
-    }
-
     protected WHERE_BUILDER appendCondition(String joinWith, String column, ComparisonOp op, int valueType, Object value) {
         if (whereCount++ == 0) {
             builder.append(" where ");

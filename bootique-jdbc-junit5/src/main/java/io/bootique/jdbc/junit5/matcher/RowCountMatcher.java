@@ -48,27 +48,11 @@ public class RowCountMatcher {
     }
 
     /**
-     * @deprecated since 3.0 in favor of {@link #andEq(String, Object)}
-     */
-    @Deprecated
-    public RowCountMatcher eq(String column, Object value) {
-        return andEq(column, value);
-    }
-
-    /**
      * @since 3.0
      */
     public RowCountMatcher andIn(String column, Object... values) {
         countBuilder.andIn(column, table.getMetadata().getColumn(column).getType(), values);
         return this;
-    }
-
-    /**
-     * @deprecated since 3.0 in favor of {@link #andIn(String, Object...)}
-     */
-    @Deprecated
-    public RowCountMatcher in(String column, Object... values) {
-        return andIn(column, values);
     }
 
     public void assertMatches(int expectedRowCount) {

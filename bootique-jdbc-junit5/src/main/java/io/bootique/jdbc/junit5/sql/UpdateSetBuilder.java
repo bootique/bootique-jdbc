@@ -64,12 +64,4 @@ public class UpdateSetBuilder {
     public ExecWhereBuilder where(String column, int valueType, Object value) {
         return where().andEq(column, valueType, value);
     }
-
-    /**
-     * @deprecated since 3.0 in favor of {@link #where(String, int, Object)}
-     */
-    @Deprecated
-    public ExecWhereBuilder where(String column, Object value, int valueType) {
-        return where(column, valueType, value);
-    }
 }

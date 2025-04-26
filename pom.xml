@@ -49,12 +49,9 @@
 
 	<modules>
 		<module>bootique-jdbc</module>
-		<module>bootique-jdbc-tomcat</module>
-        <module>bootique-jdbc-tomcat-instrumented</module>
         <module>bootique-jdbc-hikaricp</module>
         <module>bootique-jdbc-hikaricp-instrumented</module>
         <module>bootique-jdbc-liquibase-internal</module>
-        <module>bootique-jdbc-test</module>
         <module>bootique-jdbc-junit5</module>
         <module>bootique-jdbc-junit5-derby</module>
         <module>bootique-jdbc-junit5-testcontainers</module>

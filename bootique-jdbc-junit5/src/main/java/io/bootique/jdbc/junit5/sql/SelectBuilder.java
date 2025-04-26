@@ -67,14 +67,6 @@ public class SelectBuilder<T> {
         return new SelectWhereBuilder<>(builder).andEq(column, valueType, value);
     }
 
-    /**
-     * @deprecated since 3.0 in favor of {@link #where(String, int, Object)}
-     */
-    @Deprecated
-    public SelectWhereBuilder<T> where(String column, Object value, int valueType) {
-        return new SelectWhereBuilder<>(builder).andEq(column, valueType, value);
-    }
-
     public List<T> select() {
         return builder.select();
     }

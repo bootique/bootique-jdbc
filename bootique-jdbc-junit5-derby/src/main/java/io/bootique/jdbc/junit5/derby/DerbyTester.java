@@ -102,11 +102,7 @@ public class DerbyTester extends DbTester<DerbyTester> {
         return new DerbyTester(derbyFolder);
     }
 
-    /**
-     * @deprecated use {@link #db(File)}. This constructor will be made non-public eventually.
-     */
-    @Deprecated(since = "3.0")
-    public DerbyTester(File derbyFolder) {
+    private DerbyTester(File derbyFolder) {
         this.derbyFolder = Objects.requireNonNull(derbyFolder);
 
         // placing Derby in subfolder, so that the presence of the parent folder is not in the way of starting the DB

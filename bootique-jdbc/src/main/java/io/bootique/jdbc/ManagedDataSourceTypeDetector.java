@@ -30,6 +30,7 @@ import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 
 import jakarta.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -98,18 +99,19 @@ class ManagedDataSourceTypeDetector implements JsonConfigurationLoader {
         // We can guess the default only if there's a single implementor.
         Set<Class<? extends ManagedDataSourceFactory>> types = leafFactories(allFactories);
 
-        switch (types.size()) {
-            case 0:
-                throw new BootiqueException(1, "No concrete 'bootique-jdbc' implementation found. " +
-                        "You will need to add one (such as 'bootique-jdbc-hikaricp', etc.) as an application dependency.");
-            case 1:
-                return jsonTypeName(types.iterator().next());
-            default:
+        return switch (types.size()) {
+            case 0 -> throw new BootiqueException(1, """
+                    No concrete 'bootique-jdbc' implementation found. You will need to add one \
+                    (such as 'bootique-jdbc-hikaricp', etc.) as an application dependency.""");
+            case 1 -> jsonTypeName(types.iterator().next());
+            default -> {
                 List<String> typeNames = types.stream().map(t -> jsonTypeName(t)).collect(Collectors.toList());
-                throw new BootiqueException(1, "More than one 'bootique-jdbc' implementation is found. There's no single default. " +
-                        "As a result, each DataSource configuration must provide an explicit 'type' property. " +
-                        "Supported types: " + typeNames);
-        }
+                throw new BootiqueException(1, """
+                        More than one 'bootique-jdbc' implementation is found. There's no single default. \
+                        As a result, each DataSource configuration must provide an explicit 'type' property. \
+                        Supported types: """ + typeNames);
+            }
+        };
     }
 
     static String jsonTypeName(Class<?> type) {

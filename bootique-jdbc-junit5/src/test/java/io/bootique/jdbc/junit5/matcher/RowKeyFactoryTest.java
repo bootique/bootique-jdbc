@@ -19,8 +19,6 @@
 
 package io.bootique.jdbc.junit5.matcher;
 
-import io.bootique.jdbc.junit5.matcher.RowKey;
-import io.bootique.jdbc.junit5.matcher.RowKeyFactory;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RowKeyFactoryTest {
 
-    private static DbColumnMetadata[] columns = new DbColumnMetadata[]{
+    private static final DbColumnMetadata[] columns = new DbColumnMetadata[]{
             new DbColumnMetadata("A", Types.BINARY, false, true),
             new DbColumnMetadata("B", Types.BINARY, false, true),
             new DbColumnMetadata("C", Types.BINARY, false, true)

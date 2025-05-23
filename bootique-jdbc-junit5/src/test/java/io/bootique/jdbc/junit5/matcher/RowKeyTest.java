@@ -19,7 +19,6 @@
 
 package io.bootique.jdbc.junit5.matcher;
 
-import io.bootique.jdbc.junit5.matcher.RowKey;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 public abstract class ArrayReader implements RowReader {
 
-    public static <T> RowReader create(DbColumnMetadata... columns) {
+    public static RowReader create(DbColumnMetadata... columns) {
 
         if (columns.length == 0) {
             return ResultSetRowReader.instance;
@@ -50,19 +50,17 @@ public abstract class ArrayReader implements RowReader {
     static ColumnReader forJdbcType(int type, int pos) {
         // TODO: add conversions to java.time types?
 
-        switch (type) {
-            // only care about types requiring special handling.. Let the driver handle the rest via "getObject"
-            case Types.TIME:
-                // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
-                // Other DBs work fine with or without the calendar
-                return rs -> rs.getTime(pos, Calendar.getInstance());
-            case Types.TIMESTAMP:
-                // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
-                // Other DBs work fine with or without the calendar
-                return rs -> rs.getTimestamp(pos, Calendar.getInstance());
-            default:
-                return rs -> rs.getObject(pos);
-        }
+        return switch (type) {
+            // We only care about types requiring special handling. Let the driver handle the rest via "getObject"
+
+            // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
+            // Other DBs work fine with or without the calendar
+            case Types.TIME -> rs -> rs.getTime(pos, Calendar.getInstance());
+            // MySQL 8 requires a Calendar instance to save local time without undesired TZ conversion.
+            // Other DBs work fine with or without the calendar
+            case Types.TIMESTAMP -> rs -> rs.getTimestamp(pos, Calendar.getInstance());
+            default -> rs -> rs.getObject(pos);
+        };
     }
 
     protected ArrayReader() {

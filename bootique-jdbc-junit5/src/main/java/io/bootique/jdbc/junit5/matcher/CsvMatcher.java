@@ -31,8 +31,8 @@ import java.util.Objects;
  */
 public class CsvMatcher {
 
+    private final Table table;
     private ResourceFactory referenceCsvResource;
-    private Table table;
     private String[] keyColumns;
 
     public CsvMatcher(Table table) {
@@ -60,13 +60,13 @@ public class CsvMatcher {
 
     private RowKeyFactory createRowKeyFactory(TableDataSet refData, String... keyColumns) {
         if (keyColumns == null || keyColumns.length == 0) {
-            DbColumnMetadata[] columns = refData.getHeader();
+            DbColumnMetadata[] columns = refData.header();
             keyColumns = new String[columns.length];
             for(int i = 0; i < columns.length; i++) {
                 keyColumns[i] = columns[i].getName();
             }
         }
 
-        return RowKeyFactory.create(refData.getHeader(), keyColumns);
+        return RowKeyFactory.create(refData.header(), keyColumns);
     }
 }

@@ -31,24 +31,15 @@ import java.util.Objects;
  *
  * @since 2.0
  */
-public class TableDataSet implements DataSet {
-
-    private final Table table;
-    private final DbColumnMetadata[] header;
-    private final List<Object[]> records;
+public record TableDataSet(
+        Table table,
+        DbColumnMetadata[] header,
+        List<Object[]> records) implements DataSet {
 
     public TableDataSet(Table table, DbColumnMetadata[] header, List<Object[]> records) {
         this.header = Objects.requireNonNull(header);
         this.records = Objects.requireNonNull(records);
         this.table = Objects.requireNonNull(table);
-    }
-
-    public Table getTable() {
-        return table;
-    }
-
-    public DbColumnMetadata[] getHeader() {
-        return header;
     }
 
     public int size() {
@@ -59,17 +50,13 @@ public class TableDataSet implements DataSet {
         return records.isEmpty();
     }
 
-    public List<Object[]> getRecords() {
-        return records;
-    }
-
     /**
      * Inserts data set records to the underlying DB table.
      */
     @Override
     public void persist() {
         if (size() > 0) {
-            InsertBuilder builder = table.insertColumns(getHeader());
+            InsertBuilder builder = table.insertColumns(header());
             records.forEach(builder::values);
             builder.exec();
         }

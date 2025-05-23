@@ -60,7 +60,7 @@ public class HikariCPInstrumentedDataSourceFactory extends HikariCPManagedDataSo
             Consumer<DataSource> shutdown) {
 
         HealthCheckGroup healthChecks = healthChecks(dataSourceName);
-        return new InstrumentedManagedDataSourceStarter(() -> getJdbcUrl(), startup, shutdown, healthChecks);
+        return new InstrumentedManagedDataSourceStarter(this::getJdbcUrl, startup, shutdown, healthChecks);
     }
 
     @BQConfigProperty

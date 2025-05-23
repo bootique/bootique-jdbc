@@ -45,7 +45,7 @@ public class DefaultFromStringConverter implements FromStringConverter {
             return null;
         }
 
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             // this is an empty String for char columns and a null for all others
             return isChar(column.getType()) ? "" : null;
         }
@@ -60,44 +60,26 @@ public class DefaultFromStringConverter implements FromStringConverter {
             return value;
         }
 
-        switch (column.getType()) {
-            case Types.INTEGER:
-                return Integer.valueOf(value);
-            case Types.BIGINT:
-                return Long.valueOf(value);
-            case Types.DECIMAL:
-            case Types.NUMERIC:
-                return new BigDecimal(value);
-            case Types.DATE:
-                return Date.valueOf(LocalDate.parse(value));
-            case Types.TIME:
-                return Time.valueOf(LocalTime.parse(value));
-            case Types.TIMESTAMP:
-                // The format is ISO-8601: yyyy-MM-ddTHH:mm:ss
-                return Timestamp.valueOf(LocalDateTime.parse(value));
-            case Types.BINARY:
-            case Types.VARBINARY:
-            case Types.LONGVARBINARY:
-            case Types.BLOB:
-                return Base64.getDecoder().decode(value);
-            case Types.BIT:
-            case Types.BOOLEAN:
-                return Boolean.valueOf(value);
+        return switch (column.getType()) {
+            case Types.INTEGER -> Integer.valueOf(value);
+            case Types.BIGINT -> Long.valueOf(value);
+            case Types.DECIMAL, Types.NUMERIC -> new BigDecimal(value);
+            case Types.DATE -> Date.valueOf(LocalDate.parse(value));
+            case Types.TIME -> Time.valueOf(LocalTime.parse(value));
+            // The format is ISO-8601: yyyy-MM-ddTHH:mm:ss
+            case Types.TIMESTAMP -> Timestamp.valueOf(LocalDateTime.parse(value));
+            case Types.BINARY, Types.VARBINARY, Types.LONGVARBINARY, Types.BLOB -> Base64.getDecoder().decode(value);
+            case Types.BIT, Types.BOOLEAN -> Boolean.valueOf(value);
             // TODO: other conversions...
-            default:
-                return value;
-        }
+            default -> value;
+        };
     }
 
     private static boolean isChar(int jdbcType) {
-        switch (jdbcType) {
-            case Types.VARCHAR:
-            case Types.CHAR:
-            case Types.CLOB:
-                return true;
-            default:
-                return false;
-        }
+        return switch (jdbcType) {
+            case Types.VARCHAR, Types.CHAR, Types.CLOB -> true;
+            default -> false;
+        };
     }
 
 

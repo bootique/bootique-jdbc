@@ -35,18 +35,18 @@ import java.util.concurrent.*;
  *
  * @since 2.0
  */
-// courtesy of Apache Cayenne project
+// courtesy of the Apache Cayenne project
 public class PoolingDataSource implements DataSource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PoolingDataSource.class);
 
-    private DataSource nonPoolingDataSource;
-    private long maxQueueWaitTime;
+    private final DataSource nonPoolingDataSource;
+    private final long maxQueueWaitTime;
 
     private Map<PoolAwareConnection, Object> pool;
-    private Semaphore poolCap;
-    private BlockingQueue<PoolAwareConnection> available;
-    private String validationQuery;
+    private final Semaphore poolCap;
+    private final BlockingQueue<PoolAwareConnection> available;
+    private final String validationQuery;
 
     public PoolingDataSource(DataSource nonPoolingDataSource, PoolingDataSourceParameters parameters) {
 
@@ -93,8 +93,8 @@ public class PoolingDataSource implements DataSource {
 
     public void close() {
 
-        // expecting surrounding environment to block new requests for
-        // connections before calling this method. Still previously unchecked
+        // Expecting surrounding environment to block new requests for
+        // connections before calling this method. Still, previously unchecked
         // connections may be returned. I.e. "pool" will not grow during
         // shutdown, which is the only thing that we need
 
@@ -130,19 +130,18 @@ public class PoolingDataSource implements DataSource {
 
         // TODO: rollback any in-process tx?
 
-        // the queue may overflow potentially and we won't be able to add the
-        // object
+        // the queue may overflow potentially, and we won't be able to add the object
         if (!available.offer(connection)) {
             retire(connection);
         }
     }
 
-    PoolAwareConnection uncheckNonBlocking(boolean validate) {
+    PoolAwareConnection uncheckNonBlocking() {
         PoolAwareConnection c = available.poll();
-        return validate ? validateUnchecked(c) : c;
+        return validateUnchecked(c);
     }
 
-    PoolAwareConnection uncheckBlocking(boolean validate) {
+    PoolAwareConnection uncheckBlocking() {
         PoolAwareConnection c;
         try {
             c = available.poll(maxQueueWaitTime, TimeUnit.MILLISECONDS);
@@ -150,7 +149,7 @@ public class PoolingDataSource implements DataSource {
             return null;
         }
 
-        return validate ? validateUnchecked(c) : c;
+        return validateUnchecked(c);
     }
 
     PoolAwareConnection validateUnchecked(PoolAwareConnection c) {
@@ -225,7 +224,7 @@ public class PoolingDataSource implements DataSource {
 
         PoolAwareConnection c;
 
-        c = uncheckNonBlocking(true);
+        c = uncheckNonBlocking();
         if (c != null) {
             return resetState(c);
         }
@@ -235,7 +234,7 @@ public class PoolingDataSource implements DataSource {
             return resetState(c);
         }
 
-        c = uncheckBlocking(true);
+        c = uncheckBlocking();
         if (c != null) {
             return resetState(c);
         }
@@ -275,7 +274,7 @@ public class PoolingDataSource implements DataSource {
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return iface.isInstance(this) ? true : nonPoolingDataSource.isWrapperFor(iface);
+        return iface.isInstance(this) || nonPoolingDataSource.isWrapperFor(iface);
     }
 
     @SuppressWarnings("unchecked")

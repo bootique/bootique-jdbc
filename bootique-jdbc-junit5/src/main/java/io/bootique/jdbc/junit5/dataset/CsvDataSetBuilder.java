@@ -25,6 +25,7 @@ import io.bootique.resource.ResourceFactory;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Objects;
  */
 public class CsvDataSetBuilder {
 
-    private Table table;
+    private final Table table;
     private FromStringConverter valueConverter;
 
     public CsvDataSetBuilder(Table table) {
@@ -72,7 +73,7 @@ public class CsvDataSetBuilder {
 
     public TableDataSet load(ResourceFactory csvResource) {
 
-        try (Reader reader = new InputStreamReader(csvResource.getUrl().openStream(), "UTF-8")) {
+        try (Reader reader = new InputStreamReader(csvResource.getUrl().openStream(), StandardCharsets.UTF_8)) {
             return new CsvReader(table, valueConverter).loadDataSet(reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading CSV " + csvResource, e);

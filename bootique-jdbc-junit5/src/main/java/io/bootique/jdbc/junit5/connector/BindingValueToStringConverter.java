@@ -37,9 +37,9 @@ public class BindingValueToStringConverter {
     private static final int BYTE_TRIM_VALUES_THRESHOLD = TRIM_VALUES_THRESHOLD / 2;
 
 
-    private Map<Class<?>, Function<Object, String>> converters;
-    private Function<Object, String> nullConverter;
-    private Function<Object, String> defaultConverter;
+    private final Map<Class<?>, Function<Object, String>> converters;
+    private final Function<Object, String> nullConverter;
+    private final Function<Object, String> defaultConverter;
 
     public BindingValueToStringConverter() {
         this.nullConverter = o -> "null";
@@ -62,7 +62,7 @@ public class BindingValueToStringConverter {
             int endPos;
 
             while ((endPos = literal.indexOf('\'', curPos)) >= 0) {
-                buffer.append(literal.substring(curPos, endPos + 1)).append('\'');
+                buffer.append(literal, curPos, endPos + 1).append('\'');
                 curPos = endPos + 1;
             }
 
@@ -142,7 +142,7 @@ public class BindingValueToStringConverter {
 
         byte[] bytes = (byte[]) value;
 
-        int l = bytes.length <= BYTE_TRIM_VALUES_THRESHOLD ? bytes.length : BYTE_TRIM_VALUES_THRESHOLD;
+        int l = Math.min(bytes.length, BYTE_TRIM_VALUES_THRESHOLD);
 
         char[] out = new char[l << 1];
         int i = 0;

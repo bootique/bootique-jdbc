@@ -32,7 +32,7 @@ import java.util.Objects;
 public class CsvStringsDataSetBuilder {
 
     protected StringBuilder data;
-    private Table table;
+    private final Table table;
     private boolean containsHeader;
     private FromStringConverter valueConverter;
 

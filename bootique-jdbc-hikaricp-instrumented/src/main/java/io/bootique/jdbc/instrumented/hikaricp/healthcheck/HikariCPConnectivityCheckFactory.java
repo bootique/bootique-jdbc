@@ -28,7 +28,7 @@ import io.bootique.value.Duration;
 
 class HikariCPConnectivityCheckFactory {
 
-    private DurationRangeFactory thresholdsFactory;
+    private final DurationRangeFactory thresholdsFactory;
 
     HikariCPConnectivityCheckFactory(DurationRangeFactory thresholdsFactory) {
         this.thresholdsFactory = thresholdsFactory;

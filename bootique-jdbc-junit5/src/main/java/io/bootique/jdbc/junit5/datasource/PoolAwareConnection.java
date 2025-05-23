@@ -29,10 +29,9 @@ import java.util.concurrent.Executor;
 // courtesy of Apache Cayenne project
 public class PoolAwareConnection implements Connection {
 
-
-    private PoolingDataSource parent;
+    private final PoolingDataSource parent;
     private Connection connection;
-    private String validationQuery;
+    private final String validationQuery;
 
     public PoolAwareConnection(PoolingDataSource parent, Connection connection, String validationQuery) {
         this.parent = parent;
@@ -52,9 +51,9 @@ public class PoolAwareConnection implements Connection {
 
         try {
 
-            try (Statement statement = connection.createStatement();) {
+            try (Statement statement = connection.createStatement()) {
 
-                try (ResultSet rs = statement.executeQuery(validationQuery);) {
+                try (ResultSet rs = statement.executeQuery(validationQuery)) {
 
                     if (!rs.next()) {
                         throw new SQLException("Connection validation failed, no result for query: " + validationQuery);
@@ -98,7 +97,7 @@ public class PoolAwareConnection implements Connection {
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         parent.reclaim(this);
     }
 
@@ -327,45 +326,44 @@ public class PoolAwareConnection implements Connection {
     }
 
     @Override
-    public void setHoldability(int holdability) throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method setHoldability() not yet implemented.");
+    public void setHoldability(int holdability) {
+        throw new UnsupportedOperationException("Method setHoldability() not yet implemented.");
     }
 
     @Override
-    public int getHoldability() throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method getHoldability() not yet implemented.");
+    public int getHoldability() {
+        throw new UnsupportedOperationException("Method getHoldability() not yet implemented.");
     }
 
     @Override
-    public Savepoint setSavepoint() throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method setSavepoint() not yet implemented.");
+    public Savepoint setSavepoint() {
+        throw new UnsupportedOperationException("Method setSavepoint() not yet implemented.");
     }
 
     @Override
-    public Savepoint setSavepoint(String name) throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method setSavepoint() not yet implemented.");
+    public Savepoint setSavepoint(String name) {
+        throw new UnsupportedOperationException("Method setSavepoint() not yet implemented.");
     }
 
     @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method rollback() not yet implemented.");
+    public void rollback(Savepoint savepoint) {
+        throw new UnsupportedOperationException("Method rollback() not yet implemented.");
     }
 
     @Override
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method releaseSavepoint() not yet implemented.");
+    public void releaseSavepoint(Savepoint savepoint) {
+        throw new UnsupportedOperationException("Method releaseSavepoint() not yet implemented.");
     }
 
     @Override
-    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method createStatement() not yet implemented.");
+    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) {
+        throw new UnsupportedOperationException("Method createStatement() not yet implemented.");
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
-                                              int resultSetHoldability) throws SQLException {
-        throw new java.lang.UnsupportedOperationException("Method prepareStatement() not yet implemented.");
+                                              int resultSetHoldability) {
+        throw new UnsupportedOperationException("Method prepareStatement() not yet implemented.");
     }
 
     @Override
@@ -493,7 +491,7 @@ public class PoolAwareConnection implements Connection {
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return (PoolAwareConnection.class.equals(iface)) ? true : connection.isWrapperFor(iface);
+        return PoolAwareConnection.class.equals(iface) || connection.isWrapperFor(iface);
     }
 
     @SuppressWarnings("unchecked")

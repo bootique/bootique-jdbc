@@ -61,7 +61,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
     private long connectionTimeout;
     private String dataSourceClassName;
     private String dataSourceJNDI;
-    private Properties dataSourceProperties;
+    private final Properties dataSourceProperties;
     private String driverClassName;
     private long idleTimeout;
     private long initializationFailTimeout;
@@ -338,7 +338,7 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
 
     private static class HikariThreadFactory implements ThreadFactory {
 
-        private AtomicInteger counter = new AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         @Override
         public Thread newThread(Runnable r) {

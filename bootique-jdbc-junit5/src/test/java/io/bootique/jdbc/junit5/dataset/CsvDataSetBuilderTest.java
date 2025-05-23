@@ -62,7 +62,7 @@ public class CsvDataSetBuilderTest {
     @Test
     public void build_Empty() {
         TableDataSet ds = new CsvDataSetBuilder(table).columns("c2,c1").build();
-        assertEquals(2, ds.getHeader().length);
+        assertEquals(2, ds.header().length);
         assertEquals(0, ds.size());
     }
 
@@ -75,22 +75,22 @@ public class CsvDataSetBuilderTest {
                         "35,\"a\",,"
                 ).build();
 
-        assertEquals(4, ds.getHeader().length);
+        assertEquals(4, ds.header().length);
         assertEquals(
                 asList("c2", "c1", "c5", "c4"),
-                stream(ds.getHeader()).map(DbColumnMetadata::getName).collect(Collectors.toList()));
+                stream(ds.header()).map(DbColumnMetadata::getName).collect(Collectors.toList()));
 
         assertEquals(2, ds.size());
 
-        assertEquals(1, ds.getRecords().get(0)[0]);
-        assertEquals("z", ds.getRecords().get(0)[1]);
-        assertEquals(new BigDecimal("2.345"), ds.getRecords().get(0)[2]);
-        assertEquals(123456789L, ds.getRecords().get(0)[3]);
+        assertEquals(1, ds.records().get(0)[0]);
+        assertEquals("z", ds.records().get(0)[1]);
+        assertEquals(new BigDecimal("2.345"), ds.records().get(0)[2]);
+        assertEquals(123456789L, ds.records().get(0)[3]);
 
-        assertEquals(35, ds.getRecords().get(1)[0]);
-        assertEquals("a", ds.getRecords().get(1)[1]);
-        assertNull(ds.getRecords().get(1)[2]);
-        assertNull(ds.getRecords().get(1)[3]);
+        assertEquals(35, ds.records().get(1)[0]);
+        assertEquals("a", ds.records().get(1)[1]);
+        assertNull(ds.records().get(1)[2]);
+        assertNull(ds.records().get(1)[3]);
     }
 
 }

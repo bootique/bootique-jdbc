@@ -35,9 +35,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CsvMatcherRunner {
 
-    private Table table;
-    private TableDataSet referenceData;
-    private RowKeyFactory keyFactory;
+    private final Table table;
+    private final TableDataSet referenceData;
+    private final RowKeyFactory keyFactory;
 
     public CsvMatcherRunner(Table table, TableDataSet referenceData, RowKeyFactory keyFactory) {
         this.table = table;
@@ -79,14 +79,14 @@ class CsvMatcherRunner {
     }
 
     private List<Object[]> readTableData() {
-        DbColumnMetadata[] header = referenceData.getHeader();
+        DbColumnMetadata[] header = referenceData.header();
         List<Object[]> data = table.selectColumns(header).select();
         assertSizeMatches(referenceData, data);
         return data;
     }
 
     private void matchData(Map<RowKey, Object[]> mappedData) {
-        referenceData.getRecords().forEach(ref -> {
+        referenceData.records().forEach(ref -> {
 
             RowKey rowKey = keyFactory.createKey(ref);
             Object[] row = mappedData.get(rowKey);
@@ -96,7 +96,7 @@ class CsvMatcherRunner {
                 Object refVal = ref[i];
                 Object dbVal = row[i];
 
-                DbColumnMetadata c = referenceData.getHeader()[i];
+                DbColumnMetadata c = referenceData.header()[i];
 
                 if (refVal == null) {
                     compareNull(c, rowKey, dbVal);
@@ -121,7 +121,7 @@ class CsvMatcherRunner {
 
     private Map<RowKey, Object[]> mapTableData(List<Object[]> data) {
         Map<RowKey, Object[]> mappedData = new HashMap<>();
-        data.stream().forEach(row -> {
+        data.forEach(row -> {
 
             RowKey key = keyFactory.createKey(row);
 

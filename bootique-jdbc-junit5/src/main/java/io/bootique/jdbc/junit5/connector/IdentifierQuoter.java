@@ -36,7 +36,7 @@ public interface IdentifierQuoter {
     }
 
     /**
-     * @return a strategy that will returns identifiers unchanged.
+     * @return a strategy that will return identifiers unchanged.
      */
     static IdentifierQuoter noQuote() {
         return id -> id;

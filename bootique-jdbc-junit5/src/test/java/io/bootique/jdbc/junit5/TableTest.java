@@ -86,7 +86,7 @@ public class TableTest {
         Table t = createTable();
 
         TableDataSet ds = t.csvDataSet().columns("c,b").build();
-        assertEquals(2, ds.getHeader().length);
+        assertEquals(2, ds.header().length);
         assertEquals(0, ds.size());
     }
 

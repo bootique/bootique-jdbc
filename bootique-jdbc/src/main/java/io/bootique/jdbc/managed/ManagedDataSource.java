@@ -29,9 +29,9 @@ import java.util.function.Supplier;
  */
 public class ManagedDataSource {
 
-    private Supplier<String> url;
-    private DataSource dataSource;
-    private Consumer<DataSource> shutdownHandler;
+    private final Supplier<String> url;
+    private final DataSource dataSource;
+    private final Consumer<DataSource> shutdownHandler;
 
     public ManagedDataSource(Supplier<String> url, DataSource dataSource, Consumer<DataSource> shutdownHandler) {
         this.url = url;

@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class HikariCPHealthChecks implements HealthCheckGroup {
 
-    private Map<String, ManagedDataSourceStarter> starters;
+    private final Map<String, ManagedDataSourceStarter> starters;
 
     public HikariCPHealthChecks(Map<String, ManagedDataSourceStarter> starters) {
         this.starters = starters;

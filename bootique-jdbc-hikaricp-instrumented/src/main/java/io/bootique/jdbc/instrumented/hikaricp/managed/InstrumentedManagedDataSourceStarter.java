@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 
 public class InstrumentedManagedDataSourceStarter extends ManagedDataSourceStarter {
 
-    private HealthCheckGroup healthChecks;
+    private final HealthCheckGroup healthChecks;
 
     public InstrumentedManagedDataSourceStarter(
             Supplier<String> url,

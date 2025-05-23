@@ -26,25 +26,9 @@ import java.sql.PreparedStatement;
 /**
  * @since 2.0
  */
-public class Binding {
-
-    private DbColumnMetadata column;
-    private Object value;
-
-    public Binding(DbColumnMetadata column, Object value) {
-        this.column = column;
-        this.value = value;
-    }
+public record Binding(DbColumnMetadata column, Object value) {
 
     public void bind(PreparedStatement statement, int position) {
         column.bind(statement, position, value);
-    }
-
-    public DbColumnMetadata getColumn() {
-        return column;
-    }
-
-    public Object getValue() {
-        return value;
     }
 }

@@ -34,7 +34,7 @@ public class HikariCPMetricsInitializer implements DataSourceListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HikariCPMetricsInitializer.class);
 
-    private MetricRegistry metricRegistry;
+    private final MetricRegistry metricRegistry;
 
     public HikariCPMetricsInitializer(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;

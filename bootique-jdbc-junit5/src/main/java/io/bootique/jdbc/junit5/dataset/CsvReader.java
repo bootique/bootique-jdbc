@@ -34,8 +34,8 @@ import java.util.List;
 
 class CsvReader {
 
-    private FromStringConverter valueConverter;
-    private Table table;
+    private final FromStringConverter valueConverter;
+    private final Table table;
 
     CsvReader(Table table, FromStringConverter valueConverter) {
         this.valueConverter = valueConverter;

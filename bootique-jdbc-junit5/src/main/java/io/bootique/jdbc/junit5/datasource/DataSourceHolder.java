@@ -40,7 +40,7 @@ public class DataSourceHolder implements DataSource {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DataSourceHolder.class);
 
     private String dbUrl;
-    private PoolingDataSource dataSource;
+    private volatile PoolingDataSource dataSource;
 
     public void initIfNeeded(Supplier<DriverDataSource> dataSourceSupplier, Runnable runAfterInit) {
         if (this.dataSource == null) {
@@ -123,6 +123,6 @@ public class DataSourceHolder implements DataSource {
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return iface.isInstance(this) ? true : nonNullDataSource().isWrapperFor(iface);
+        return iface.isInstance(this) || nonNullDataSource().isWrapperFor(iface);
     }
 }

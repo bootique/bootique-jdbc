@@ -28,14 +28,12 @@ import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.di.TypeLiteral;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
-
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A configuration loader extension that fills missing "type" properties of DataSources.
@@ -105,7 +103,7 @@ class ManagedDataSourceTypeDetector implements JsonConfigurationLoader {
                     (such as 'bootique-jdbc-hikaricp', etc.) as an application dependency.""");
             case 1 -> jsonTypeName(types.iterator().next());
             default -> {
-                List<String> typeNames = types.stream().map(t -> jsonTypeName(t)).collect(Collectors.toList());
+                List<String> typeNames = types.stream().map(ManagedDataSourceTypeDetector::jsonTypeName).toList();
                 throw new BootiqueException(1, """
                         More than one 'bootique-jdbc' implementation is found. There's no single default. \
                         As a result, each DataSource configuration must provide an explicit 'type' property. \

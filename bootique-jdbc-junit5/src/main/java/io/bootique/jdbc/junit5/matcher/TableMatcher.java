@@ -29,7 +29,7 @@ import io.bootique.resource.ResourceFactory;
  */
 public class TableMatcher {
 
-    private Table table;
+    private final Table table;
 
     public TableMatcher(Table table) {
         this.table = table;

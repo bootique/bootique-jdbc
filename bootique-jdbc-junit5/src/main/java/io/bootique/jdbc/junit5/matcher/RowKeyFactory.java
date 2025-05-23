@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Assertions;
  */
 public class RowKeyFactory {
 
-    private int[] keyIndexes;
+    private final int[] keyIndexes;
 
     RowKeyFactory(int[] keyIndexes) {
         this.keyIndexes = keyIndexes;

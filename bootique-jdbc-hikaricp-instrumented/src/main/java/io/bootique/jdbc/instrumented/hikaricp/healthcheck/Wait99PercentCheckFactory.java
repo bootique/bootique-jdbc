@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 
 class Wait99PercentCheckFactory {
 
-    private DurationRangeFactory thresholdsFactory;
+    private final DurationRangeFactory thresholdsFactory;
 
     public Wait99PercentCheckFactory(DurationRangeFactory thresholdsFactory) {
         this.thresholdsFactory = thresholdsFactory;
@@ -73,13 +73,10 @@ class Wait99PercentCheckFactory {
     private Timer findTimer(MetricRegistry registry, String name) {
 
         Collection<Timer> timers = registry.getTimers((n, m) -> name.equals(n)).values();
-        switch (timers.size()) {
-            case 0:
-                throw new IllegalArgumentException("Timer not found: " + name);
-            case 1:
-                return timers.iterator().next();
-            default:
-                throw new IllegalArgumentException("More than one Timer matching the name: " + name);
-        }
+        return switch (timers.size()) {
+            case 0 -> throw new IllegalArgumentException("Timer not found: " + name);
+            case 1 -> timers.iterator().next();
+            default -> throw new IllegalArgumentException("More than one Timer matching the name: " + name);
+        };
     }
 }

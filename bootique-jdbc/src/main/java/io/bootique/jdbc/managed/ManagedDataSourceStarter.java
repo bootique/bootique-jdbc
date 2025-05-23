@@ -29,9 +29,9 @@ import java.util.function.Supplier;
  */
 public class ManagedDataSourceStarter {
 
-    private Supplier<String> url;
-    private Supplier<DataSource> startup;
-    private Consumer<DataSource> shutdown;
+    private final Supplier<String> url;
+    private final Supplier<DataSource> startup;
+    private final Consumer<DataSource> shutdown;
 
     public ManagedDataSourceStarter(
             Supplier<String> url,

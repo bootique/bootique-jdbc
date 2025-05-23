@@ -68,14 +68,12 @@ public class HikariCPConnectivityCheck implements HealthCheck {
 
         HealthCheckOutcome warningOutcome = checkThreshold(ThresholdType.WARNING, HealthCheckOutcome::warning);
 
-        switch (warningOutcome.getStatus()) {
-            case WARNING:
-                return warningOutcome;
-            case UNKNOWN:
-                return checkThreshold(ThresholdType.CRITICAL, HealthCheckOutcome::critical);
-        }
+        return switch (warningOutcome.getStatus()) {
+            case WARNING -> warningOutcome;
+            case UNKNOWN -> checkThreshold(ThresholdType.CRITICAL, HealthCheckOutcome::critical);
+            default -> HealthCheckOutcome.ok();
+        };
 
-        return HealthCheckOutcome.ok();
     }
 
     protected HealthCheckOutcome checkThreshold(ThresholdType type, Function<SQLException, HealthCheckOutcome> onFailure) {

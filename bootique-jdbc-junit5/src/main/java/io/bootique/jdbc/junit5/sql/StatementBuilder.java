@@ -93,7 +93,7 @@ public abstract class StatementBuilder<T extends StatementBuilder> {
 
         String toLog = bindings
                 .stream()
-                .map(b -> b.getColumn().getName() + "->" + valueToStringConverter.convert(b.getValue()))
+                .map(b -> b.column().getName() + "->" + valueToStringConverter.convert(b.value()))
                 .collect(Collectors.joining(", ", sql + " [", "]"));
 
         LOGGER.info(toLog);

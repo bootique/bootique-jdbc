@@ -31,9 +31,9 @@ import java.util.concurrent.ConcurrentMap;
 
 public class LazyDataSourceFactory implements DataSourceFactory {
 
-    private Collection<DataSourceListener> listeners;
-    private Map<String, ManagedDataSourceStarter> starters;
-    private ConcurrentMap<String, ManagedDataSource> dataSources;
+    private final Collection<DataSourceListener> listeners;
+    private final Map<String, ManagedDataSourceStarter> starters;
+    private final ConcurrentMap<String, ManagedDataSource> dataSources;
 
     public LazyDataSourceFactory(
             Map<String, ManagedDataSourceStarter> starters,

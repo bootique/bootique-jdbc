@@ -77,7 +77,7 @@ public class TableTest {
 
         TableMatcher m = t.matcher();
         assertNotNull(m);
-        assertSame(t, m.getTable());
+        assertSame(t, m.table());
     }
 
     @Test

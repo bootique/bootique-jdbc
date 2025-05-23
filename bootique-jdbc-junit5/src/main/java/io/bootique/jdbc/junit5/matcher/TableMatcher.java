@@ -27,17 +27,7 @@ import io.bootique.resource.ResourceFactory;
  *
  * @since 2.0
  */
-public class TableMatcher {
-
-    private final Table table;
-
-    public TableMatcher(Table table) {
-        this.table = table;
-    }
-
-    public Table getTable() {
-        return table;
-    }
+public record TableMatcher(Table table) {
 
     public RowCountMatcher eq(String column, Object value) {
         return new RowCountMatcher(table).andEq(column, value);

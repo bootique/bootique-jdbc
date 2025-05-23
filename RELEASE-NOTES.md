@@ -3,6 +3,7 @@
 * #137 Remove deprecated modules and APIs
 * #138 Liquibase - exclude "javax.xml.bind:jaxb-api" dependency
 * #139 Upgrade Apache Derby dependency to 10.17.x.x
+* #140 "assertMatchesCsv(..)" can not compare CSVs that store nulls as empty strings
 
 ## 3.0-RC1
 

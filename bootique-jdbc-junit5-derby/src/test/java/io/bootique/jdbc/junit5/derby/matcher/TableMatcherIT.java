@@ -150,6 +150,7 @@ public class TableMatcherIT {
                 "The matcher incorrectly assumed there was 1 row matching condition.");
     }
 
+    @Deprecated
     @Test
     public void assertMatchesCsv() {
         TableMatcher matcher = new TableMatcher(T1);
@@ -162,6 +163,7 @@ public class TableMatcherIT {
         matcher.assertMatchesCsv("classpath:io/bootique/jdbc/junit5/derby/matcher/t1_ref.csv", "c1");
     }
 
+    @Deprecated
     @Test
     public void assertMatchesCsv_NoMatch() {
 
@@ -184,6 +186,7 @@ public class TableMatcherIT {
         assertFalse(succeeded, "Must have failed - data sets do not match");
     }
 
+    @Deprecated
     @Test
     public void assertMatchesCsv_Dates() {
 
@@ -198,6 +201,7 @@ public class TableMatcherIT {
         matcher.assertMatchesCsv("classpath:io/bootique/jdbc/junit5/derby/matcher/t2_ref.csv", "c1");
     }
 
+    @Deprecated
     @Test
     public void assertMatchesCsv_Binary() {
 
@@ -212,6 +216,7 @@ public class TableMatcherIT {
         matcher.assertMatchesCsv("classpath:io/bootique/jdbc/junit5/derby/matcher/t3_ref.csv", "c1");
     }
 
+    @Deprecated
     @Test
     public void assertMatchesCsv_Numbers() {
 

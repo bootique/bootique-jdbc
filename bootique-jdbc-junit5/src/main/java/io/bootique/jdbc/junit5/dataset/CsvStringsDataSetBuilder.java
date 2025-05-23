@@ -20,6 +20,7 @@
 package io.bootique.jdbc.junit5.dataset;
 
 import io.bootique.jdbc.junit5.Table;
+import org.apache.commons.csv.CSVFormat;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,15 +34,22 @@ public class CsvStringsDataSetBuilder {
 
     protected StringBuilder data;
     private final Table table;
+    private CSVFormat format;
     private boolean containsHeader;
     private FromStringConverter valueConverter;
 
+    /**
+     * @deprecated use a full constructor.
+     */
+    @Deprecated(since = "4.0", forRemoval = true)
     public CsvStringsDataSetBuilder(Table table, FromStringConverter valueConverter) {
-        this(table, null, valueConverter);
+        this(table, null, CSVFormat.DEFAULT, valueConverter);
     }
 
-    public CsvStringsDataSetBuilder(Table table, String header, FromStringConverter valueConverter) {
+    public CsvStringsDataSetBuilder(Table table, String header, CSVFormat format, FromStringConverter valueConverter) {
         this.table = Objects.requireNonNull(table);
+
+        this.format = Objects.requireNonNull(format);
         this.valueConverter = Objects.requireNonNull(valueConverter);
         this.data = new StringBuilder();
 
@@ -49,6 +57,14 @@ public class CsvStringsDataSetBuilder {
             data.append(header).append("\n");
             containsHeader = true;
         }
+    }
+
+    /**
+     * @since 4.0
+     */
+    public CsvStringsDataSetBuilder format(CSVFormat format) {
+        this.format = Objects.requireNonNull(format);
+        return this;
     }
 
     public CsvStringsDataSetBuilder valueConverter(FromStringConverter converter) {
@@ -73,7 +89,7 @@ public class CsvStringsDataSetBuilder {
 
     private TableDataSet buildWithStringHeader() {
         try (Reader reader = getDataReader()) {
-            return new CsvReader(table, valueConverter).loadDataSet(reader);
+            return new CsvReader(table, format, valueConverter).loadDataSet(reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading CSV", e);
         }
@@ -81,7 +97,7 @@ public class CsvStringsDataSetBuilder {
 
     private TableDataSet buildWithTableHeader() {
         try (Reader reader = getDataReader()) {
-            return new CsvReader(table, valueConverter).loadDataSet(table.getMetadata().getColumns(), reader);
+            return new CsvReader(table, format, valueConverter).loadDataSet(table.getMetadata().getColumns(), reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading CSV", e);
         }

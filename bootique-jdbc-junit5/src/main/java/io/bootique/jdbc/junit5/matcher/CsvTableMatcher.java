@@ -16,46 +16,62 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.jdbc.junit5.matcher;
 
 import io.bootique.jdbc.junit5.Table;
+import io.bootique.jdbc.junit5.dataset.CsvDataSetBuilder;
 import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.resource.ResourceFactory;
+import org.apache.commons.csv.CSVFormat;
 
 import java.util.Objects;
 
 /**
- * @since 2.0
- * @deprecated in favor of {@link CsvTableMatcher} and {@link Table#csvMatcher()}
+ * Matches table data with a reference dataset coming from CSV data.
+ *
+ * @since 4.0
  */
-@Deprecated(since = "4.0", forRemoval = true)
-public class CsvMatcher {
+public class CsvTableMatcher {
 
     private final Table table;
-    private ResourceFactory referenceCsvResource;
+    private final CsvDataSetBuilder refDataSetBuilder;
+
     private String[] keyColumns;
 
-    public CsvMatcher(Table table) {
+    public CsvTableMatcher(Table table) {
         this.table = Objects.requireNonNull(table);
+        this.refDataSetBuilder = table.csvDataSet();
     }
 
-    public CsvMatcher referenceCsvResource(ResourceFactory csvResource) {
-        this.referenceCsvResource = csvResource;
-        return this;
-    }
-
-    public CsvMatcher rowKeyColumns(String... keyColumns) {
+    public CsvTableMatcher keyColumns(String... keyColumns) {
         this.keyColumns = keyColumns;
         return this;
     }
 
-    public void assertMatches() {
+    public CsvTableMatcher emptyStringIsNull() {
+        return nullString("");
+    }
 
-        Objects.requireNonNull(referenceCsvResource);
+    public CsvTableMatcher nullString(String nullString) {
+        Objects.requireNonNull(nullString);
+        refDataSetBuilder.format(CSVFormat.DEFAULT
+                .builder()
+                .setNullString(nullString)
+                .build());
 
-        TableDataSet refDataSet = table.csvDataSet().load(referenceCsvResource);
+        return this;
+    }
+
+    public void assertMatches(String refCsv) {
+        assertMatches(new ResourceFactory(refCsv));
+    }
+
+    public void assertMatches(ResourceFactory refCsv) {
+
+        Objects.requireNonNull(refCsv);
+
+        TableDataSet refDataSet = refDataSetBuilder.load(refCsv);
         RowKeyFactory keyFactory = createRowKeyFactory(refDataSet, keyColumns);
         new DataSetMatcher(table, refDataSet, keyFactory).assertMatches();
     }
@@ -64,7 +80,7 @@ public class CsvMatcher {
         if (keyColumns == null || keyColumns.length == 0) {
             DbColumnMetadata[] columns = refData.header();
             keyColumns = new String[columns.length];
-            for(int i = 0; i < columns.length; i++) {
+            for (int i = 0; i < columns.length; i++) {
                 keyColumns[i] = columns[i].getName();
             }
         }

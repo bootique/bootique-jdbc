@@ -49,10 +49,18 @@ public record TableMatcher(Table table) {
         new RowCountMatcher(table).assertNoMatches();
     }
 
+    /**
+     * @deprecated in favor of {@link Table#csvMatcher()}
+     */
+    @Deprecated(since = "4.0", forRemoval = true)
     public void assertMatchesCsv(String csvResource, String... keyColumns) {
         assertMatchesCsv(new ResourceFactory(csvResource), keyColumns);
     }
 
+    /**
+     * @deprecated in favor of {@link Table#csvMatcher()}
+     */
+    @Deprecated(since = "4.0", forRemoval = true)
     public void assertMatchesCsv(ResourceFactory csvResource, String... keyColumns) {
         new CsvMatcher(table).referenceCsvResource(csvResource).rowKeyColumns(keyColumns).assertMatches();
     }

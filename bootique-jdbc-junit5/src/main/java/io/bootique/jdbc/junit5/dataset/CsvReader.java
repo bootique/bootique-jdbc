@@ -31,32 +31,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 class CsvReader {
 
-    private final FromStringConverter valueConverter;
     private final Table table;
+    private final CSVFormat format;
+    private final FromStringConverter valueConverter;
 
-    CsvReader(Table table, FromStringConverter valueConverter) {
-        this.valueConverter = valueConverter;
+    CsvReader(Table table, CSVFormat format, FromStringConverter valueConverter) {
         this.table = table;
+        this.format = Objects.requireNonNull(format);
+        this.valueConverter = valueConverter;
     }
 
     TableDataSet loadDataSet(Reader dataReader) throws IOException {
-        try (CSVParser parser = new CSVParser(dataReader, CSVFormat.DEFAULT, 0, 0)) {
+        try (CSVParser parser = new CSVParser(dataReader, format, 0, 0)) {
 
             Iterator<CSVRecord> rows = parser.iterator();
             if (!rows.hasNext()) {
                 return new TableDataSet(table, new DbColumnMetadata[0], Collections.emptyList());
             }
 
-           DbColumnMetadata[] header = getHeader(rows.next());
+            DbColumnMetadata[] header = getHeader(rows.next());
             return readData(header, rows);
         }
     }
 
     TableDataSet loadDataSet(DbColumnMetadata[] header, Reader dataReader) throws IOException {
-        try (CSVParser parser = new CSVParser(dataReader, CSVFormat.DEFAULT, 0, 0)) {
+        try (CSVParser parser = new CSVParser(dataReader, format, 0, 0)) {
             return readData(header, parser.iterator());
         }
     }

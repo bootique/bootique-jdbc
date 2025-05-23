@@ -21,6 +21,7 @@ package io.bootique.jdbc.junit5.dataset;
 
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.resource.ResourceFactory;
+import org.apache.commons.csv.CSVFormat;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -35,15 +36,26 @@ import java.util.Objects;
 public class CsvDataSetBuilder {
 
     private final Table table;
+
+    private CSVFormat format;
     private FromStringConverter valueConverter;
 
     public CsvDataSetBuilder(Table table) {
         this.table = table;
         this.valueConverter = DefaultFromStringConverter.DEFAULT_CONVERTER;
+        this.format = CSVFormat.DEFAULT;
     }
 
     public CsvDataSetBuilder valueConverter(FromStringConverter converter) {
         this.valueConverter = Objects.requireNonNull(converter);
+        return this;
+    }
+
+    /**
+     * @since 4.0
+     */
+    public CsvDataSetBuilder format(CSVFormat format) {
+        this.format = Objects.requireNonNull(format);
         return this;
     }
 
@@ -54,7 +66,7 @@ public class CsvDataSetBuilder {
      * @return a builder for API-based DataSet.
      */
     public CsvStringsDataSetBuilder columns(String csvString) {
-        return new CsvStringsDataSetBuilder(table, csvString, valueConverter);
+        return new CsvStringsDataSetBuilder(table, csvString, format, valueConverter);
     }
 
     /**
@@ -64,7 +76,7 @@ public class CsvDataSetBuilder {
      * @return a builder for API-based DataSet.
      */
     public CsvStringsDataSetBuilder rows(String... csvStrings) {
-        return new CsvStringsDataSetBuilder(table, valueConverter).rows(csvStrings);
+        return new CsvStringsDataSetBuilder(table, null, format, valueConverter).rows(csvStrings);
     }
 
     public TableDataSet load(String csvResource) {
@@ -74,7 +86,7 @@ public class CsvDataSetBuilder {
     public TableDataSet load(ResourceFactory csvResource) {
 
         try (Reader reader = new InputStreamReader(csvResource.getUrl().openStream(), StandardCharsets.UTF_8)) {
-            return new CsvReader(table, valueConverter).loadDataSet(reader);
+            return new CsvReader(table, format, valueConverter).loadDataSet(reader);
         } catch (IOException e) {
             throw new RuntimeException("Error reading CSV " + csvResource, e);
         }

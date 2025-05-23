@@ -30,20 +30,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @since 2.0
- */
-class CsvMatcherRunner {
-
-    private final Table table;
-    private final TableDataSet referenceData;
-    private final RowKeyFactory keyFactory;
-
-    public CsvMatcherRunner(Table table, TableDataSet referenceData, RowKeyFactory keyFactory) {
-        this.table = table;
-        this.referenceData = referenceData;
-        this.keyFactory = keyFactory;
-    }
+record DataSetMatcher(Table table, TableDataSet referenceData, RowKeyFactory keyFactory) {
 
     private static void compareNull(DbColumnMetadata c, RowKey rowKey, Object dbVal) {
         assertNull(dbVal, () -> "Expected null value in column [" + c.getName() + "], row " + rowKey);

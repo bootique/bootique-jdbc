@@ -19,13 +19,20 @@
 
 package io.bootique.jdbc.junit5;
 
-import io.bootique.jdbc.junit5.connector.*;
+import io.bootique.jdbc.junit5.connector.ArrayReader;
+import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.dataset.CsvDataSetBuilder;
 import io.bootique.jdbc.junit5.dataset.TableDataSet;
+import io.bootique.jdbc.junit5.matcher.CsvTableMatcher;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
-import io.bootique.jdbc.junit5.sql.*;
+import io.bootique.jdbc.junit5.sql.DeleteBuilder;
+import io.bootique.jdbc.junit5.sql.ExecStatementBuilder;
+import io.bootique.jdbc.junit5.sql.InsertBuilder;
+import io.bootique.jdbc.junit5.sql.SelectBuilder;
+import io.bootique.jdbc.junit5.sql.SelectStatementBuilder;
+import io.bootique.jdbc.junit5.sql.UpdateSetBuilder;
 
 /**
  * JDBC utility class for manipulating and analyzing data in a single DB table. Used to load, clean up and match test
@@ -88,7 +95,7 @@ public class Table {
     }
 
     /**
-     * Returns a builder object to assemble a data set matching this table structure either from CSV-like strings,
+     * Returns a builder object to assemble a dataset matching this table structure either from CSV-like strings,
      * or from a CSV file resource.
      *
      * @return a builder of a {@link TableDataSet}.
@@ -119,6 +126,13 @@ public class Table {
      */
     public TableMatcher matcher() {
         return new TableMatcher(this);
+    }
+
+    /**
+     * @since 4.0
+     */
+    public CsvTableMatcher csvMatcher() {
+        return new CsvTableMatcher(this);
     }
 
     /**

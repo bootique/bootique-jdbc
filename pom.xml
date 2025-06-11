@@ -39,7 +39,7 @@
 
     <properties>
         <derby.version>10.17.1.0</derby.version>
-        <postgresql.version>42.7.4</postgresql.version>
+        <postgresql.version>42.7.7</postgresql.version>
         <mysql.version>9.2.0</mysql.version>
         <liquibase.version>4.30.0</liquibase.version>
         <commons.lang.version>3.17.0</commons.lang.version>

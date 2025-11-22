@@ -20,6 +20,7 @@
 [![build test deploy](https://github.com/bootique/bootique-jdbc/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique-jdbc/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique.jdbc/bootique-jdbc.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique.jdbc/bootique-jdbc/)
 
+
 # bootique-jdbc
 
 Provides a number of modules for your [Bootique](https://bootique.io) apps to work with JDBC data stores:

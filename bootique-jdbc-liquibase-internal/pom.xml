@@ -60,7 +60,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-        <!-- Need to add this module for the sake of Jakarta environments (where it is superceded by -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+        </dependency>
+        <!-- Need to add this module for the sake of Jakarta environments (where it is superseded by -->
         <!-- "jackson-module-jakarta-xmlbind-annotations". This prevent LB 3.x ServiceLoader errors. -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>

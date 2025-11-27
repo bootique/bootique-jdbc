@@ -45,6 +45,7 @@
         <commons.compress.version>1.26.1</commons.compress.version>
         <commons.io.version>2.19.0</commons.io.version>
         <commons.lang.version>3.18.0</commons.lang.version>
+        <commons.text.version>1.14.0</commons.text.version>
         <jaxb.version>2.3.1</jaxb.version>
         <hikaricp.version>6.2.1</hikaricp.version>
     </properties>
@@ -118,6 +119,10 @@
                     <exclusion>
                         <groupId>commons-io</groupId>
                         <artifactId>commons-io</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-text</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -221,6 +226,11 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>

@@ -23,9 +23,9 @@ import io.bootique.jdbc.managed.ManagedDataSourceStarter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 public class LazyDataSourceFactoryTest {
 
@@ -40,9 +40,8 @@ public class LazyDataSourceFactoryTest {
         LazyDataSourceFactory f1 = new LazyDataSourceFactory(Collections.emptyMap(), Collections.emptySet());
         assertEquals(0, f1.allNames().size());
 
-        ManagedDataSourceStarter factory = mock(ManagedDataSourceStarter.class);
-
-        LazyDataSourceFactory f2 = new LazyDataSourceFactory(Collections.singletonMap("a", factory), Collections.emptySet());
+        ManagedDataSourceStarter factory = new ManagedDataSourceStarter(null, null, null);
+        LazyDataSourceFactory f2 = new LazyDataSourceFactory(Map.of("a", factory), Collections.emptySet());
         assertEquals(1, f2.allNames().size());
         assertTrue(f2.allNames().contains("a"));
     }

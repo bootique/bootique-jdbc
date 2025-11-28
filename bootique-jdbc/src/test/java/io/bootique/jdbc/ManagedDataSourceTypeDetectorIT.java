@@ -36,7 +36,6 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 @BQTest
 public class ManagedDataSourceTypeDetectorIT {
@@ -209,7 +208,7 @@ public class ManagedDataSourceTypeDetectorIT {
         public ManagedDataSourceStarter create(String dataSourceName) {
             return new ManagedDataSourceStarter(
                     () -> url,
-                    () -> mock(DataSource.class),
+                    () -> new TestDataSource(),
                     ds -> {
                     });
         }
@@ -253,7 +252,7 @@ public class ManagedDataSourceTypeDetectorIT {
         public ManagedDataSourceStarter create(String dataSourceName) {
             return new ManagedDataSourceStarter(
                     () -> url,
-                    () -> mock(DataSource.class),
+                    () -> new TestDataSource(),
                     ds -> {
                     });
         }

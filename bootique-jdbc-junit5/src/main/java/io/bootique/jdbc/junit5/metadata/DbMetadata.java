@@ -34,9 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DbMetadata {
 
-    private DataSource dataSource;
-    private DbFlavor flavor;
-    private Map<TableFQName, DbTableMetadata> tables;
+    private final DataSource dataSource;
+    private final DbFlavor flavor;
+    private final Map<TableFQName, DbTableMetadata> tables;
 
     protected DbMetadata(DataSource dataSource, DbFlavor flavor) {
 
@@ -50,6 +50,13 @@ public class DbMetadata {
 
     public static DbMetadata create(DataSource dataSource) {
         DbFlavor flavor = DbFlavorFactory.create(dataSource);
+        return new DbMetadata(dataSource, flavor);
+    }
+
+    /**
+     * @since 4.0
+     */
+    public static DbMetadata create(DataSource dataSource, DbFlavor flavor) {
         return new DbMetadata(dataSource, flavor);
     }
 

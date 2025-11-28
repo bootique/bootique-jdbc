@@ -20,32 +20,30 @@
 package io.bootique.jdbc.junit5;
 
 import io.bootique.jdbc.junit5.connector.DbConnector;
-import io.bootique.jdbc.junit5.sql.ExecStatementBuilder;
-import io.bootique.jdbc.junit5.sql.InsertBuilder;
 import io.bootique.jdbc.junit5.dataset.TableDataSet;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
+import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
 import io.bootique.jdbc.junit5.metadata.TableFQName;
+import io.bootique.jdbc.junit5.metadata.flavors.DbFlavor;
+import io.bootique.jdbc.junit5.sql.InsertBuilder;
 import org.junit.jupiter.api.Test;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TableTest {
 
     private Table createTable() {
 
-        ExecStatementBuilder mockExecBuilder = mock(ExecStatementBuilder.class);
-
-        DbConnector mockConnector = mock(DbConnector.class);
-        when(mockConnector.execStatement()).thenReturn(mockExecBuilder);
+        DataSource dataSource = new TestDataSource();
+        DbConnector connector = new DbConnector(dataSource, DbMetadata.create(dataSource, new TestDbFlavor()));
 
         DbColumnMetadata[] columns = new DbColumnMetadata[]{
                 new DbColumnMetadata("a", DbColumnMetadata.NO_TYPE, false, true),
@@ -54,7 +52,7 @@ public class TableTest {
         };
 
         DbTableMetadata tableMetadata = new DbTableMetadata(new TableFQName(null, null, "t"), columns);
-        return new Table(mockConnector, tableMetadata);
+        return new Table(connector, tableMetadata);
     }
 
     @Test
@@ -90,4 +88,31 @@ public class TableTest {
         assertEquals(0, ds.size());
     }
 
+    static class TestDbFlavor implements DbFlavor {
+
+        @Override
+        public String getIdentifierQuote() {
+            return "";
+        }
+
+        @Override
+        public boolean supportsParamsMetadata() {
+            return false;
+        }
+
+        @Override
+        public boolean supportsBatchUpdates() {
+            return false;
+        }
+
+        @Override
+        public boolean supportsCatalogs() {
+            return false;
+        }
+
+        @Override
+        public boolean supportsSchemas() {
+            return false;
+        }
+    }
 }

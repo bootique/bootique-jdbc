@@ -70,9 +70,4 @@ public class GenericFlavor implements DbFlavor {
     public boolean supportsSchemas() {
         return supportsSchemas;
     }
-
-    @Override
-    public int columnType(int jdbcType, String nativeType) {
-        return jdbcType;
-    }
 }

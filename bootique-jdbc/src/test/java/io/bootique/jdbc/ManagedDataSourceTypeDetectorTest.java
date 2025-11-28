@@ -29,7 +29,6 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class ManagedDataSourceTypeDetectorTest {
 
@@ -61,7 +60,7 @@ public class ManagedDataSourceTypeDetectorTest {
 
         @Override
         public ManagedDataSourceStarter create(String dataSourceName) {
-            return mock(ManagedDataSourceStarter.class);
+            return new ManagedDataSourceStarter(null, null, null);
         }
     }
 
@@ -89,7 +88,7 @@ public class ManagedDataSourceTypeDetectorTest {
 
         @Override
         public ManagedDataSourceStarter create(String dataSourceName) {
-            return mock(ManagedDataSourceStarter.class);
+            return new ManagedDataSourceStarter(null, null, null);
         }
     }
 

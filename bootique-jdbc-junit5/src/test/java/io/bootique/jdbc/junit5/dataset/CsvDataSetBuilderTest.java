@@ -20,7 +20,6 @@
 package io.bootique.jdbc.junit5.dataset;
 
 import io.bootique.jdbc.junit5.Table;
-import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.metadata.DbColumnMetadata;
 import io.bootique.jdbc.junit5.metadata.DbTableMetadata;
 import io.bootique.jdbc.junit5.metadata.TableFQName;
@@ -34,7 +33,6 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 public class CsvDataSetBuilderTest {
 
@@ -51,7 +49,7 @@ public class CsvDataSetBuilderTest {
                 new DbColumnMetadata("c5", Types.DECIMAL, false, true)
         };
         DbTableMetadata metadata = new DbTableMetadata(new TableFQName(null, null, "t1"), columns);
-        table = new Table(mock(DbConnector.class), metadata);
+        table = new Table(null, metadata);
     }
 
     @Test

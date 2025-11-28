@@ -21,18 +21,27 @@ package io.bootique.jdbc.junit5.dataset;
 
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroupDataSetTest {
 
     @Test
     public void persist() {
-        DataSet ds1 = mock(DataSet.class);
-        DataSet ds2 = mock(DataSet.class);
+        TestDataSet ds1 = new TestDataSet();
+        TestDataSet ds2 = new TestDataSet();
 
         new GroupDataSet(ds1, ds2).persist();
-        verify(ds1).persist();
-        verify(ds2).persist();
+        assertTrue(ds1.wasPersisted);
+        assertTrue(ds1.wasPersisted);
+    }
+
+    static class TestDataSet implements DataSet {
+
+        boolean wasPersisted;
+
+        @Override
+        public void persist() {
+            wasPersisted = true;
+        }
     }
 }

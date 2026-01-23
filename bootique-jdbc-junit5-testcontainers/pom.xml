@@ -50,20 +50,12 @@
             <artifactId>bootique-jdbc-junit5</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.bootique</groupId>
+            <artifactId>bootique-testcontainers-internal</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
         </dependency>
 
         <!-- Unit test dependencies -->

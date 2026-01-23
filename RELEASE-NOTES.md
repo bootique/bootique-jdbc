@@ -1,3 +1,7 @@
+## 4.0-M3
+
+* #144 Upgrade Testcontainers to 2.0.3
+
 ## 4.0-M1
 
 * #137 Remove deprecated modules and APIs

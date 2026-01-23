@@ -42,7 +42,6 @@
         <postgresql.version>42.7.7</postgresql.version>
         <mysql.version>9.2.0</mysql.version>
         <liquibase.version>4.30.0</liquibase.version>
-        <commons.compress.version>1.26.1</commons.compress.version>
         <commons.io.version>2.19.0</commons.io.version>
         <commons.lang.version>3.18.0</commons.lang.version>
         <commons.text.version>1.14.0</commons.text.version>
@@ -88,6 +87,11 @@
             <dependency>
                 <groupId>io.bootique</groupId>
                 <artifactId>bootique-junit5</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.bootique</groupId>
+                <artifactId>bootique-testcontainers-internal</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -153,16 +157,14 @@
                 <artifactId>derbytools</artifactId>
                 <version>${derby.version}</version>
             </dependency>
-            <!-- Importing testcontainers modules individually instead of using a BOM
-            to have more control over the transitive dependencies -->
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-jdbc</artifactId>
                 <version>${testcontainers.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-compress</artifactId>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -170,11 +172,23 @@
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-postgresql</artifactId>
                 <version>${testcontainers.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-mysql</artifactId>
                 <version>${testcontainers.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
@@ -182,8 +196,8 @@
                 <version>${testcontainers.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-api</artifactId>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -201,21 +215,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>1.11.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
-                <version>${commons.compress.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-lang3</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-io</groupId>
-                        <artifactId>commons-io</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

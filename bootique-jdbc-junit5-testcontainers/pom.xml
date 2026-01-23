@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>jdbc</artifactId>
+            <artifactId>testcontainers-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -74,12 +74,12 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
+            <artifactId>testcontainers-mysql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -94,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

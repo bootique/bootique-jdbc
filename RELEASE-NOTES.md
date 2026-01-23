@@ -10,7 +10,7 @@
 * #140 "assertMatchesCsv(..)" can not compare CSVs that store nulls as empty strings
 * #143 Update transitive dependency on commons-compress to 1.26.1
 
-## 3.0-RC2
+## 3.0
 
 * #142 Bump org.apache.commons:commons-lang3 from 3.17.0 to 3.18.0
 

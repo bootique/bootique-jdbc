@@ -20,9 +20,9 @@ package io.bootique.jdbc.docs;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.jdbc.junit5.DbTester;
-import io.bootique.jdbc.junit5.Table;
-import io.bootique.jdbc.junit5.tc.TcDbTester;
+import io.bootique.jdbc.junit.DbTester;
+import io.bootique.jdbc.junit.Table;
+import io.bootique.jdbc.junit.tc.TcDbTester;
 import io.bootique.junit.BQApp;
 import io.bootique.junit.BQTest;
 import io.bootique.junit.BQTestScope;

@@ -41,13 +41,10 @@ a variation of `bootique-jdbc-tomcat` with support for performance metrics.
 * [bootique-jdbc-hikaricp-instrumented](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-hikaricp-instrumented) -
 a variation of `bootique-jdbc-hikaricp` with support for performance metrics and health checks.
 
-* [bootique-jdbc-junit5](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-junit5) - a DB testing
+* [bootique-jdbc-junit](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-junit) - a DB testing
 facility for JUnit 5 that helps to prepare test databases (in-memory or Docker-based), datasets and run assertions 
 against the DB data. Supports API-based and CSV-based data sets. Can be used to test any apps that read or write 
 from/to RDBMS. E.g. Bootique JDBC apps, non-Bootique JDBC apps, 
-[Cayenne apps](https://github.com/bootique/bootique-cayenne/tree/master/bootique-cayenne41-junit5).
-
-* [bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/tree/master/bootique-jdbc-test) - a DB testing
-facility for JUnit 4. Not as advanced and somewhat convoluted compared to `bootique-jdbc-junit5`.
+[Cayenne apps](https://github.com/bootique/bootique-cayenne/tree/master/bootique-cayenne41-junit).
 
 See usage example [bootique-jdbc-demo](https://github.com/bootique-examples/bootique-jdbc-demo).

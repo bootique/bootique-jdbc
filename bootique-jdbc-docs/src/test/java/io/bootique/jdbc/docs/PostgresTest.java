@@ -18,8 +18,8 @@
  */
 package io.bootique.jdbc.docs;
 
-import io.bootique.jdbc.junit5.DbTester;
-import io.bootique.jdbc.junit5.tc.TcDbTester;
+import io.bootique.jdbc.junit.DbTester;
+import io.bootique.jdbc.junit.tc.TcDbTester;
 import io.bootique.junit.BQTest;
 import io.bootique.junit.BQTestScope;
 import io.bootique.junit.BQTestTool;

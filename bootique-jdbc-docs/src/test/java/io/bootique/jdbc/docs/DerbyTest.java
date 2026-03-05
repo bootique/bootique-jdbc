@@ -18,8 +18,8 @@
  */
 package io.bootique.jdbc.docs;
 
-import io.bootique.jdbc.junit5.DbTester;
-import io.bootique.jdbc.junit5.derby.DerbyTester;
+import io.bootique.jdbc.junit.DbTester;
+import io.bootique.jdbc.junit.derby.DerbyTester;
 import io.bootique.junit.BQTest;
 import io.bootique.junit.BQTestTool;
 

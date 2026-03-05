@@ -64,19 +64,19 @@
         </dependency>
         <dependency>
             <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-junit5</artifactId>
+            <artifactId>bootique-jdbc-junit</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-junit5-derby</artifactId>
+            <artifactId>bootique-jdbc-junit-derby</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.bootique.jdbc</groupId>
-            <artifactId>bootique-jdbc-junit5-testcontainers</artifactId>
+            <artifactId>bootique-jdbc-junit-testcontainers</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

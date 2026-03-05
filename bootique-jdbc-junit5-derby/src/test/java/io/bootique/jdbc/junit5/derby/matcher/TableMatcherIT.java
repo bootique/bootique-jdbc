@@ -22,8 +22,8 @@ package io.bootique.jdbc.junit5.derby.matcher;
 import io.bootique.jdbc.junit5.Table;
 import io.bootique.jdbc.junit5.derby.DerbyTester;
 import io.bootique.jdbc.junit5.matcher.TableMatcher;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -30,10 +30,10 @@ import io.bootique.jdbc.junit5.metadata.DbMetadata;
 import io.bootique.jdbc.junit5.script.SqlScriptRunner;
 import io.bootique.jdbc.junit5.tester.DataManager;
 import io.bootique.jdbc.junit5.tester.DataSourcePropertyBuilder;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.scope.BQAfterScopeCallback;
-import io.bootique.junit5.scope.BQBeforeMethodCallback;
-import io.bootique.junit5.scope.BQBeforeScopeCallback;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.scope.BQAfterScopeCallback;
+import io.bootique.junit.scope.BQBeforeMethodCallback;
+import io.bootique.junit.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.sql.DataSource;

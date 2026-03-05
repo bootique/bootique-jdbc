@@ -18,8 +18,8 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

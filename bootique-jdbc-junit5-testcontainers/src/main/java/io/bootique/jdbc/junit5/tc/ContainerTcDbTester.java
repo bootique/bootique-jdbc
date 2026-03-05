@@ -18,7 +18,7 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.junit5.BQTestScope;
+import io.bootique.junit.BQTestScope;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
 import java.util.Objects;

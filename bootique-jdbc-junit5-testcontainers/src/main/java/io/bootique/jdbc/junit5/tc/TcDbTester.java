@@ -20,7 +20,8 @@ package io.bootique.jdbc.junit5.tc;
 
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
-import io.bootique.junit5.BQTestScope;
+import io.bootique.junit.BQTestTool;
+import io.bootique.junit.BQTestScope;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
 /**
@@ -32,7 +33,7 @@ public abstract class TcDbTester extends DbTester<TcDbTester> {
 
     /**
      * Creates a tester that will bootstrap a DB using Docker/Testcontainers. If the tester is executed in the "global"
-     * scope (per {@link io.bootique.junit5.BQTestTool} annotation), the tester will alter "containerDbUrl" internally
+     * scope (per {@link BQTestTool} annotation), the tester will alter "containerDbUrl" internally
      * before passing it to Testcontainers, forcing a "TC_REUSABLE=true" parameter regardless of its presence
      * or value in the original String.
      *

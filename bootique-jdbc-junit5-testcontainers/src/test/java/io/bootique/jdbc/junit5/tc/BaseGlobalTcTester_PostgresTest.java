@@ -18,9 +18,9 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.BQTestTool;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

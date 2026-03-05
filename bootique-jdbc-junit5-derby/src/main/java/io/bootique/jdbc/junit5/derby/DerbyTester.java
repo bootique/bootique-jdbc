@@ -20,7 +20,7 @@ package io.bootique.jdbc.junit5.derby;
 
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.datasource.DriverDataSource;
-import io.bootique.junit5.BQTestScope;
+import io.bootique.junit.BQTestScope;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

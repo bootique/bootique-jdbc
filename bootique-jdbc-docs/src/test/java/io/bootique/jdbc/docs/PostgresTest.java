@@ -20,9 +20,9 @@ package io.bootique.jdbc.docs;
 
 import io.bootique.jdbc.junit5.DbTester;
 import io.bootique.jdbc.junit5.tc.TcDbTester;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.BQTestTool;
 
 // tag::declarations[]
 @BQTest

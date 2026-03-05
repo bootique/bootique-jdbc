@@ -23,7 +23,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.bootique.BQRuntime;
 import io.bootique.jdbc.DataSourceFactory;
 import io.bootique.jdbc.JdbcModule;
-import io.bootique.junit5.*;
+import io.bootique.junit.BQRuntimeChecker;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestFactory;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;

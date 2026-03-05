@@ -22,8 +22,8 @@ package io.bootique.jdbc.junit5.derby.connector;
 import io.bootique.jdbc.junit5.connector.DbConnector;
 import io.bootique.jdbc.junit5.derby.DerbyTester;
 import io.bootique.jdbc.junit5.metadata.DbMetadata;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;

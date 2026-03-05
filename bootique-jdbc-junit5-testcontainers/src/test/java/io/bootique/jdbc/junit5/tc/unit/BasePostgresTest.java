@@ -19,9 +19,9 @@
 package io.bootique.jdbc.junit5.tc.unit;
 
 import io.bootique.jdbc.junit5.tc.TcDbTester;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.BQTestTool;
 
 @BQTest
 public abstract class BasePostgresTest {

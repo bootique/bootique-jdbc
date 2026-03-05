@@ -18,7 +18,7 @@
  */
 package io.bootique.jdbc.junit5.tc;
 
-import io.bootique.junit5.BQTest;
+import io.bootique.junit.BQTest;
 import org.junit.jupiter.api.RepeatedTest;
 
 import java.sql.SQLException;

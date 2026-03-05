@@ -26,9 +26,9 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.jdbc.managed.ManagedDataSourceFactory;
 import io.bootique.jdbc.managed.ManagedDataSourceStarter;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestFactory;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestFactory;
+import io.bootique.junit.BQTestTool;
 import io.bootique.type.TypeRef;
 import org.junit.jupiter.api.Test;
 

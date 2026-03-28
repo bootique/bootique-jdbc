@@ -20,7 +20,7 @@
 
 To work with а database you need an instance of `javax.sql.DataSource`. `bootique-jdbc` provides a way to configure
 one or more named DataSource in the app. Here is a minimal configuration example using HikariCP format. Full
-reference for both Tomcat and HikariCP configuration is provided in <<jdbc-configuration-ref,this chapter>>. (And don't
+reference is provided in <<jdbc-configuration-ref,this chapter>>. (And don't
 forget that you can print full configuration docs for your version of Bootique by running your app with `-H` flag).
 
 [source,yaml]

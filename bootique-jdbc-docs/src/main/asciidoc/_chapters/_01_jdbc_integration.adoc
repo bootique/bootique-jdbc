@@ -24,32 +24,12 @@ helps to configure one or more DataSources in your app. It also provides advance
 connection pool monitoring and database testing. `bootique-jdbc` is used by applications directly, as well as by
 other Bootique modules that require database access (Cayenne, JOOQ, MyBatis, etc.).
 
-Out of the box Bootique supports a choice of two connection pool providers:
-
-* https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html[Tomcat JDBC]
-* https://github.com/brettwooldridge/HikariCP[HikariCP].
-
-Both are production-quality. From the application perspective the difference is in configuration and available
-<<jdbc-merics-and-healthchecks,metrics and health checks>>. Beyond that Bootique (and JDBC) gives you the API
-abstraction common to both, so you can pick either one.
-
-Import one of these Bootique modules in your app, depending on your connection pool choice:
-
+Out of the box Bootique supports https://github.com/brettwooldridge/HikariCP[HikariCP connection pool provider]:
 .Maven
 [%collapsible%open]
 ====
 [source,xml]
 ----
-<!-- For Tomcat DataSource -->
-<dependency>
-    <groupId>io.bootique.jdbc</groupId>
-    <artifactId>bootique-jdbc-tomcat</artifactId>
-</dependency>
-----
-
-[source,xml]
-----
-<!-- For HikariCP -->
 <dependency>
     <groupId>io.bootique.jdbc</groupId>
     <artifactId>bootique-jdbc-hikaricp</artifactId>
@@ -62,14 +42,6 @@ Import one of these Bootique modules in your app, depending on your connection p
 ====
 [source,groovy]
 ----
-// For Tomcat DataSource
-{
-  implementation: 'io.bootique.jdbc:bootique-jdbc-tomcat'
-}
-----
-
-[source,groovy]
-----
 // For HikariCP
 {
   implementation: 'io.bootique.jdbc:bootique-jdbc-hikaricp'
@@ -77,7 +49,7 @@ Import one of these Bootique modules in your app, depending on your connection p
 ----
 ====
 
-Alternatively you may include an <<jdbc-merics-and-healthchecks,"instrumented" version>> of each module, that will
+Alternatively you may include an <<jdbc-merics-and-healthchecks,"instrumented" version>> of this module, that will
 enable a number of metrics for your running app.
 
 You will also need to add JDBC driver jar to the app dependencies corresponding to your database.

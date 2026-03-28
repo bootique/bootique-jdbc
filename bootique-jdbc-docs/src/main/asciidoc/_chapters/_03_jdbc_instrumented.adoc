@@ -18,7 +18,7 @@
 [#jdbc-merics-and-healthchecks]
 == Metrics and Health Checks
 
-You may use the "instrumented" version of one of the `bootique-jdbc-*` connection pools, that will expose a number of
+You may use the "instrumented" version of one of the `bootique-jdbc` connection pool, that will expose a number of
 metrics and health checks:
 
 .Maven
@@ -26,16 +26,6 @@ metrics and health checks:
 ====
 [source,xml]
 ----
-<!-- For Tomcat DataSource -->
-<dependency>
-    <groupId>io.bootique.jdbc</groupId>
-    <artifactId>bootique-jdbc-tomcat-instrumented</artifactId>
-</dependency>
-----
-
-[source,xml]
-----
-<!-- For HikariCP -->
 <dependency>
     <groupId>io.bootique.jdbc</groupId>
     <artifactId>bootique-jdbc-hikaricp-instrumented</artifactId>
@@ -46,14 +36,6 @@ metrics and health checks:
 .Gradle
 [%collapsible]
 ====
-[source,groovy]
-----
-// For Tomcat DataSource
-{
-  implementation: 'io.bootique.jdbc:bootique-jdbc-tomcat-instrumented'
-}
-----
-
 [source,groovy]
 ----
 // For HikariCP

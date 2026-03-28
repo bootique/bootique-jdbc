@@ -18,9 +18,6 @@
 [#jdbc-testing]
 == Testing
 
-NOTE: Bootique provides integration for both JUnit 4 and JUnit 5. This chapter will focus exclusively on the latter.
-JUnit 5 integration is much more capable.
-
 "bootique-jdbc" test extensions provide a way to create a test database. This can be either an in-memory DB (Derby),
 or a real DB started via Docker / https://www.testcontainers.org/[testcontainers library]. The test database can be
 initialized with either a SQL script, Liquibase migrations, or custom code. There's an API to create test data sets and

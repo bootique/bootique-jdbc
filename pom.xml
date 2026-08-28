@@ -42,7 +42,7 @@
         <postgresql.version>42.7.12</postgresql.version>
         <mysql.version>9.6.0</mysql.version>
         <liquibase.version>4.30.0</liquibase.version>
-        <commons.io.version>2.19.0</commons.io.version>
+        <commons.io.version>2.21.0</commons.io.version>
         <commons.lang.version>3.18.0</commons.lang.version>
         <commons.text.version>1.14.0</commons.text.version>
         <jaxb.version>2.3.1</jaxb.version>

@@ -43,6 +43,7 @@
         <mysql.version>9.6.0</mysql.version>
         <liquibase.version>4.30.0</liquibase.version>
         <commons.io.version>2.21.0</commons.io.version>
+        <commons.codec.version>1.19.0</commons.codec.version>
         <commons.lang.version>3.20.0</commons.lang.version>
         <commons.text.version>1.14.0</commons.text.version>
         <jaxb.version>2.3.1</jaxb.version>
@@ -215,6 +216,18 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>1.11.0</version>
+                <exclusions>
+                    <!-- Re-declared in bootique-jdbc-junit at the Bootique-wide version -->
+                    <exclusion>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

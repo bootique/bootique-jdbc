@@ -139,13 +139,19 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         Objects.requireNonNull(jdbcUrl, "'jdbcUrl' property should not be null");
     }
 
-    @BQConfigProperty("If true, the returned DataSource is initialized lazily. This allows to avoid database connection" +
-            " attempts in certain scenarios. E.g. when reading metadata of some objects.")
+    @BQConfigProperty("""
+            If true, the pool is not created until the DataSource is first used. This setting
+            allows to avoid database connection attempts on startup. Another, possibly more robust way to allow the app
+            to start and operate under intermittent database failures is 'initializationFailTimeout' set to -1.
+            Default is 'false'. """)
     public void setLazy(boolean lazy) {
         this.lazy = lazy;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("""
+            Maximum number of milliseconds that a caller waits for a connection from the pool before
+            SQLTransientConnectionException is thrown. This is also how long a caller waits when the database is down.
+            Minimum is 250; 0 means wait indefinitely. Default is 30000 (30 seconds).""")
     public void setConnectionTimeout(long connectionTimeoutMs) {
         if (connectionTimeoutMs == 0) {
             this.connectionTimeout = Integer.MAX_VALUE;
@@ -182,7 +188,10 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.maximumPoolSize = maxPoolSize;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("""
+            Minimum number of idle connections that the pool tries to maintain. Setting it to 0 makes the pool fully
+            on-demand, but does not by itself allow the app to start when the database is down. Use
+            'initializationFailTimeout' for that. Default is 10.""")
     public void setMinimumIdle(int minIdle) {
         if (minIdle < 0) {
             throw new IllegalArgumentException("'minimumIdle' cannot be negative");
@@ -263,7 +272,14 @@ public class HikariCPManagedDataSourceFactory implements ManagedDataSourceFactor
         this.allowPoolSuspension = allowPoolSuspension;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty("""
+            Controls whether the pool checks database connectivity on startup, and hence whether the app fails to start
+            when the database is down. A value greater than 0 is the number of milliseconds to keep trying to obtain a
+            connection before failing. 0 makes a single connection attempt and starts the pool even if it fails.
+            A negative value skips the check entirely, so the pool starts without touching the database, and a database
+            that is down at startup behaves the same as one that goes down later: 'getConnection()' throws
+            SQLTransientConnectionException after 'connectionTimeout', and the pool recovers on its own once the
+            database is back. Default is 1.""")
     public void setInitializationFailTimeout(long initializationFailTimeout) {
         this.initializationFailTimeout = initializationFailTimeout;
     }
